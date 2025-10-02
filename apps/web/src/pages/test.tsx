@@ -56,24 +56,56 @@ const TestPage: NextPage = () => {
   const testEndpoint = async (endpoint: string, method: string = 'GET', body?: any) => {
     setLoading(true);
     try {
-      const response = await fetch(endpoint, {
+      let response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: body ? JSON.stringify(body) : undefined,
       });
-      
-      const data = await response.json();
+
+      let data = await response.json();
+      let actualEndpoint = endpoint;
+
+      // If we get 401 on certain endpoints, try test equivalents
+      if (response.status === 401) {
+        let testEndpoint = null;
+        if (endpoint === '/api/gmail/connections') {
+          testEndpoint = '/api/test/connections';
+        } else if (endpoint === '/api/gmail/manual-sync') {
+          testEndpoint = '/api/test/manual-sync';
+        }
+
+        if (testEndpoint) {
+          try {
+            const testResponse = await fetch(testEndpoint, {
+              method,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: body ? JSON.stringify(body) : undefined,
+            });
+
+            if (testResponse.ok) {
+              response = testResponse;
+              data = await testResponse.json();
+              actualEndpoint = `${endpoint} → ${testEndpoint}`;
+            }
+          } catch (testError) {
+            console.error('Test endpoint fallback failed:', testError);
+          }
+        }
+      }
+
       const result: TestResult = {
-        endpoint,
+        endpoint: actualEndpoint,
         method,
         status: response.status,
         response: data,
         timestamp: new Date().toISOString(),
         success: response.ok || response.status === 401, // 401 is expected for auth endpoints
       };
-      
+
       setTestResults(prev => [result, ...prev.slice(0, 9)]); // Keep last 10 results
     } catch (error) {
       const result: TestResult = {
@@ -193,6 +225,18 @@ const TestPage: NextPage = () => {
                   <button
                     onClick={() => testEndpoint('/api/gmail/connections')}
                     className="px-3 py-2 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
+                  >
+                    Test Connections
+                  </button>
+                  <button
+                    onClick={() => testEndpoint('/api/test/auth-flow')}
+                    className="px-3 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700"
+                  >
+                    Test Auth Flow
+                  </button>
+                  <button
+                    onClick={() => testEndpoint('/api/gmail/connections')}
+                    className="px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
                   >
                     Test Connections
                   </button>

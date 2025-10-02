@@ -26,7 +26,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = authHelpers.onAuthStateChange(
       async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
+        if (event === 'SIGNED_IN' && session?.user && session?.access_token) {
+          // Establish server-side session
+          try {
+            await fetch('/api/auth/session', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                access_token: session.access_token,
+              }),
+            });
+          } catch (error) {
+            console.error('Failed to establish server session:', error);
+          }
+
           setUser({
             id: session.user.id,
             email: session.user.email!,
@@ -35,6 +50,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
           setError(null);
         } else if (event === 'SIGNED_OUT') {
+          // Clear server-side session
+          try {
+            await fetch('/api/auth/session', {
+              method: 'DELETE',
+            });
+          } catch (error) {
+            console.error('Failed to clear server session:', error);
+          }
+
           setUser(null);
           setError(null);
         }
@@ -53,6 +77,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setError(error.message);
         setUser(null);
       } else if (user) {
+        // Also establish server-side session if we have a valid client session
+        try {
+          const { session } = await authHelpers.getSession();
+          if (session?.access_token) {
+            await fetch('/api/auth/session', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                access_token: session.access_token,
+              }),
+            });
+          }
+        } catch (error) {
+          console.error('Failed to establish server session:', error);
+        }
+
         setUser({
           id: user.id,
           email: user.email!,

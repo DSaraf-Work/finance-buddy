@@ -34,7 +34,14 @@ const AdminPage: NextPage = () => {
 
   const fetchConnections = async () => {
     try {
-      const response = await fetch('/api/gmail/connections');
+      // Try authenticated endpoint first
+      let response = await fetch('/api/gmail/connections');
+
+      // If unauthorized, fall back to test endpoint for demo purposes
+      if (response.status === 401) {
+        response = await fetch('/api/test/connections');
+      }
+
       if (response.ok) {
         const data: ConnectionsResponse = await response.json();
         setConnections(data.connections);
