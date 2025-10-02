@@ -211,6 +211,17 @@ body {
   margin-top: 1.5rem;
 }
 
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
 /* Responsive */
 @media (min-width: 768px) {
   .md\\:grid-cols-2 {

@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { EmailPublic, EmailSearchRequest, PaginatedResponse, EmailStatus } from '@finance-buddy/shared';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 interface EmailFilters {
   date_from?: string;
@@ -126,7 +127,7 @@ const EmailsPage: NextPage = () => {
   };
 
   return (
-    <>
+    <ProtectedRoute>
       <Head>
         <title>Finance Buddy - Email Management</title>
         <meta name="description" content="Manage and review Gmail emails" />
@@ -486,7 +487,7 @@ const EmailsPage: NextPage = () => {
           </div>
         )}
       </div>
-    </>
+    </ProtectedRoute>
   );
 };
 

@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { GmailConnectionPublic, ConnectionsResponse } from '@finance-buddy/shared';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 interface SystemHealth {
   status: string;
@@ -118,7 +119,7 @@ const AdminPage: NextPage = () => {
   };
 
   return (
-    <>
+    <ProtectedRoute>
       <Head>
         <title>Finance Buddy - Admin Dashboard</title>
         <meta name="description" content="Admin dashboard for Finance Buddy" />
@@ -406,7 +407,7 @@ const AdminPage: NextPage = () => {
           )}
         </div>
       </div>
-    </>
+    </ProtectedRoute>
   );
 };
 

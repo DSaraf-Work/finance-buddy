@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { ManualSyncRequest, ConnectionsResponse, ManualSyncResponse } from '@finance-buddy/shared';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 interface HealthStatus {
   status: string;
@@ -107,7 +108,7 @@ const TestPage: NextPage = () => {
   };
 
   return (
-    <>
+    <ProtectedRoute>
       <Head>
         <title>Finance Buddy - Testing Dashboard</title>
         <meta name="description" content="Testing interface for Finance Buddy L1 features" />
@@ -320,7 +321,7 @@ const TestPage: NextPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </ProtectedRoute>
   );
 };
 

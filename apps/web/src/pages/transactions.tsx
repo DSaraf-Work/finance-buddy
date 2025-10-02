@@ -1,12 +1,13 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
-import { 
-  ExtractedTransactionPublic, 
-  TransactionSearchRequest, 
-  PaginatedResponse, 
-  TransactionDirection 
+import {
+  ExtractedTransactionPublic,
+  TransactionSearchRequest,
+  PaginatedResponse,
+  TransactionDirection
 } from '@finance-buddy/shared';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 interface TransactionFilters {
   date_from?: string;
@@ -151,7 +152,7 @@ const TransactionsPage: NextPage = () => {
   };
 
   return (
-    <>
+    <ProtectedRoute>
       <Head>
         <title>Finance Buddy - Transaction Management</title>
         <meta name="description" content="Review and manage extracted financial transactions" />
@@ -578,7 +579,7 @@ const TransactionsPage: NextPage = () => {
           </div>
         )}
       </div>
-    </>
+    </ProtectedRoute>
   );
 };
 
