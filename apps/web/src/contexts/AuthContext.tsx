@@ -6,6 +6,8 @@ interface AuthContextType extends AuthState {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
   isAuthenticated: boolean;
 }
 
@@ -156,6 +158,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } = await authHelpers.resetPassword(email);
+
+      if (error) {
+        setError(error.message);
+        return { error };
+      }
+
+      return { error: null };
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Password reset failed';
+      setError(errorMessage);
+      return { error: { message: errorMessage } };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updatePassword = async (password: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } = await authHelpers.updatePassword(password);
+
+      if (error) {
+        setError(error.message);
+        return { error };
+      }
+
+      return { error: null };
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Password update failed';
+      setError(errorMessage);
+      return { error: { message: errorMessage } };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     loading,
@@ -163,6 +209,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signUp,
     signOut,
+    resetPassword,
+    updatePassword,
     isAuthenticated: !!user,
   };
 

@@ -197,6 +197,17 @@ const AuthPage: NextPage = () => {
                   )}
                 </button>
               </div>
+
+              {!isSignUp && (
+                <div className="text-center">
+                  <a
+                    href="/auth/forgot-password"
+                    className="text-sm text-blue-600 hover:text-blue-500"
+                  >
+                    Forgot your password?
+                  </a>
+                </div>
+              )}
             </form>
 
             <div className="mt-6">
