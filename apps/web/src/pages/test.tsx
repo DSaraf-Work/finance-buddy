@@ -278,6 +278,35 @@ const TestPage: NextPage = () => {
             </button>
           </div>
 
+          {/* Additional Testing Tools */}
+          <div className="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Additional Testing Tools</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <a
+                href="/test/auth"
+                className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+              >
+                <div className="flex items-center">
+                  <div className="text-2xl mr-3">🔐</div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">Authentication Testing</h3>
+                    <p className="text-sm text-gray-600">Test auth flows, password reset, and route protection</p>
+                  </div>
+                </div>
+              </a>
+
+              <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="flex items-center">
+                  <div className="text-2xl mr-3">🚧</div>
+                  <div>
+                    <h3 className="font-medium text-gray-500">More Testing Tools</h3>
+                    <p className="text-sm text-gray-500">Additional testing interfaces coming soon</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Test Results */}
           <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">

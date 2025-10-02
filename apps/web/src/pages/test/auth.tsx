@@ -10,15 +10,24 @@ const TestAuthPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Finance Buddy - Auth Test</title>
-        <meta name="description" content="Test authentication flows" />
+        <title>Finance Buddy - Authentication Testing</title>
+        <meta name="description" content="Test authentication flows and components" />
       </Head>
 
       <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Authentication Flow Test
-          </h1>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Authentication Testing Suite
+            </h1>
+            <p className="text-gray-600">
+              Comprehensive testing interface for all authentication flows and components
+            </p>
+            <div className="mt-4 text-sm text-blue-600">
+              <span className="font-medium">Test Route:</span> /test/auth
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Sign In/Up */}
@@ -190,14 +199,25 @@ const TestAuthPage: NextPage = () => {
             </div>
           </div>
 
-          {/* Back to Home */}
-          <div className="mt-8 text-center">
-            <a
-              href="/"
-              className="text-blue-600 hover:text-blue-500"
-            >
-              ← Back to Homepage
-            </a>
+          {/* Navigation */}
+          <div className="mt-8 text-center space-y-2">
+            <div>
+              <a
+                href="/test"
+                className="text-blue-600 hover:text-blue-500 mr-4"
+              >
+                ← Back to Testing Dashboard
+              </a>
+              <a
+                href="/"
+                className="text-blue-600 hover:text-blue-500"
+              >
+                Home
+              </a>
+            </div>
+            <div className="text-sm text-gray-500">
+              Part of the /test/** testing suite
+            </div>
           </div>
         </div>
       </div>
