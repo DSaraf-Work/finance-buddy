@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Finance Buddy Global Styles */
 * {
   box-sizing: border-box;
@@ -15,8 +17,11 @@ body {
   line-height: 1.6;
 }
 
-/* Utility Classes */
+/* Custom Component Classes */
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   background-color: #2563eb;
   color: white;
@@ -25,11 +30,15 @@ body {
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
+  text-decoration: none;
   transition: background-color 0.2s;
+  min-height: 2.5rem;
 }
 
 .btn-primary:hover {
   background-color: #1d4ed8;
+  text-decoration: none;
+  color: white;
 }
 
 .btn-primary:disabled {
@@ -38,6 +47,9 @@ body {
 }
 
 .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   background-color: #6b7280;
   color: white;
@@ -46,11 +58,15 @@ body {
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
+  text-decoration: none;
   transition: background-color 0.2s;
+  min-height: 2.5rem;
 }
 
 .btn-secondary:hover {
   background-color: #4b5563;
+  text-decoration: none;
+  color: white;
 }
 
 .input-field {
@@ -75,172 +91,17 @@ body {
   padding: 1.5rem;
 }
 
-/* Layout Classes */
-.min-h-screen {
-  min-height: 100vh;
+/* Improved spacing for action buttons */
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
 }
 
-.max-w-7xl {
-  max-width: 80rem;
+/* Ensure consistent button widths */
+.w-full {
+  width: 100%;
 }
 
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-}
-
-.mb-8 {
-  margin-bottom: 2rem;
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.text-gray-900 {
-  color: #111827;
-}
-
-.text-gray-600 {
-  color: #4b5563;
-}
-
-.text-gray-500 {
-  color: #6b7280;
-}
-
-.bg-white {
-  background-color: white;
-}
-
-.bg-gray-50 {
-  background-color: #f9fafb;
-}
-
-.shadow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-}
-
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
-.grid {
-  display: grid;
-}
-
-.grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.grid-cols-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.gap-4 {
-  gap: 1rem;
-}
-
-.gap-6 {
-  gap: 1.5rem;
-}
-
-.flex {
-  display: flex;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.space-y-4 > * + * {
-  margin-top: 1rem;
-}
-
-.space-y-6 > * + * {
-  margin-top: 1.5rem;
-}
-
-/* Animations */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Responsive */
-@media (min-width: 768px) {
-  .md\\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .md\\:px-6 {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .lg\\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .lg\\:px-8 {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+/* Better text alignment for buttons */
+.text-left {
+  text-align: left;
 }
