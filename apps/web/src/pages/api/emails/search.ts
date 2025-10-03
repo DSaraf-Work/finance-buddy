@@ -31,10 +31,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   try {
     const {
       google_user_id,
-      email_address,
+      email_address = 'dheerajsaraf1996@gmail.com', // Default account filter
       date_from,
       date_to,
-      sender,
+      sender = 'alerts@dcbbank.com', // Default sender filter
       status,
       q,
       page = 1,

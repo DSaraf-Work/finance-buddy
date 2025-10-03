@@ -10,10 +10,13 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
     "@finance-buddy/shared": "*",
+    "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.38.0",
     "googleapis": "^128.0.0",
     "next": "^14.0.0",
+    "openai": "^6.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "uuid": "^9.0.0"
