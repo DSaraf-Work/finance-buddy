@@ -41,7 +41,26 @@ export class TransactionExtractor {
         fromAddress: request.fromAddress,
         bodyPreview: request.plainBody?.substring(0, 200) + '...',
         snippetPreview: request.snippet?.substring(0, 100) + '...',
+        hasPlainBody: !!request.plainBody,
+        hasSnippet: !!request.snippet,
+        contentSource: request.plainBody ? 'plain_body' : (request.snippet ? 'snippet' : 'none'),
       });
+
+      // If plain_body is empty but we have a snippet, use the snippet as content
+      if (!request.plainBody && request.snippet) {
+        console.log('⚠️ Plain body is empty, using snippet as content source');
+        request.plainBody = request.snippet;
+      }
+
+      if (!request.plainBody && !request.snippet) {
+        console.error('❌ No email content available (neither plain_body nor snippet)');
+        return {
+          success: false,
+          error: 'No email content available for processing',
+          modelUsed: 'none',
+          processingTime: Date.now() - startTime,
+        };
+      }
 
       // Step 1: Extract basic transaction information
       console.log('🤖 Step 1: Performing basic AI extraction...');

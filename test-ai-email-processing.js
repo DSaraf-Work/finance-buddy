@@ -44,9 +44,43 @@ async function testAIEmailProcessing() {
       console.log(`${index + 1}. ${email.subject} (${email.from_address}) - Status: ${email.status}`);
     });
 
-    // Step 2: Test AI model status
-    console.log('\n🤖 Step 2: Checking AI model status...');
-    
+    // Step 2: Test email search with default filters
+    console.log('\n📧 Step 2: Testing email search with default filters...');
+
+    try {
+      const searchResponse = await fetch('http://localhost:3000/api/emails/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': 'fb_session=eyJhbGciOiJIUzI1NiIsImtpZCI6ImVuQlhhdWJ2aXo0RkNGU1oiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2V3dnpwcGFoam9janBpcGF5d2xnLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIxOWViYmFlMC00NzViLTQwNDMtODVmOS00MzhjZDA3YzM2NzciLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU5NTAxMDMzLCJpYXQiOjE3NTk0OTc0MzMsImVtYWlsIjoiZGhlZXJhanNhcmFmMTk5NkBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZGhlZXJhanNhcmFmMTk5NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIxOWViYmFlMC00NzViLTQwNDMtODVmOS00MzhjZDA3YzM2NzcifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc1OTQ0ODQzN31dLCJzZXNzaW9uX2lkIjoiY2ZhMmQwYWItM2FiZC00N2M4LWExOGItOThmOWE2ZDliYjcyIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.KCMx_B6ZTjG3Ny4OMsa2G-D0qMvVCgoAxojqUNh944U'
+        },
+        body: JSON.stringify({
+          db_only: true,
+          page: 1,
+          pageSize: 10
+        })
+      });
+
+      if (searchResponse.ok) {
+        const searchData = await searchResponse.json();
+        console.log('✅ Email search with defaults successful:', {
+          total: searchData.total,
+          items: searchData.items_count,
+          defaultFilters: {
+            sender: 'alerts@dcbbank.com',
+            account: 'dheerajsaraf1996@gmail.com'
+          }
+        });
+      } else {
+        console.log('❌ Email search failed:', searchResponse.status);
+      }
+    } catch (error) {
+      console.log('❌ Error testing email search:', error.message);
+    }
+
+    // Step 3: Test AI model status
+    console.log('\n🤖 Step 3: Checking AI model status...');
+
     try {
       const response = await fetch('http://localhost:3000/api/ai/models', {
         method: 'GET',
@@ -76,8 +110,8 @@ async function testAIEmailProcessing() {
       console.log('❌ Error checking AI models:', error.message);
     }
 
-    // Step 3: Test single email extraction
-    console.log('\n🔍 Step 3: Testing single email transaction extraction...');
+    // Step 4: Test single email extraction with detailed debugging
+    console.log('\n🔍 Step 4: Testing single email transaction extraction with detailed debugging...');
     
     const testEmail = emails[0];
     console.log(`Testing with email: "${testEmail.subject}"`);
@@ -125,8 +159,50 @@ async function testAIEmailProcessing() {
       console.log('❌ Error testing extraction:', error.message);
     }
 
-    // Step 4: Check extracted transactions
-    console.log('\n📊 Step 4: Checking extracted transactions...');
+    // Step 5: Test batch processing
+    console.log('\n🔄 Step 5: Testing batch email processing...');
+
+    try {
+      const batchResponse = await fetch('http://localhost:3000/api/emails/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': 'fb_session=eyJhbGciOiJIUzI1NiIsImtpZCI6ImVuQlhhdWJ2aXo0RkNGU1oiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2V3dnpwcGFoam9janBpcGF5d2xnLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIxOWViYmFlMC00NzViLTQwNDMtODVmOS00MzhjZDA3YzM2NzciLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU5NTAxMDMzLCJpYXQiOjE3NTk0OTc0MzMsImVtYWlsIjoiZGhlZXJhanNhcmFmMTk5NkBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZGhlZXJhanNhcmFmMTk5NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIxOWViYmFlMC00NzViLTQwNDMtODVmOS00MzhjZDA3YzM2NzcifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc1OTQ0ODQzN31dLCJzZXNzaW9uX2lkIjoiY2ZhMmQwYWItM2FiZC00N2M4LWExOGItOThmOWE2ZDliYjcyIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.KCMx_B6ZTjG3Ny4OMsa2G-D0qMvVCgoAxojqUNh944U'
+        },
+        body: JSON.stringify({
+          batchSize: 3,
+          forceReprocess: false
+        })
+      });
+
+      if (batchResponse.ok) {
+        const batchData = await batchResponse.json();
+        console.log('✅ Batch processing result:', {
+          success: batchData.success,
+          processed: batchData.processed,
+          successful: batchData.successful,
+          errors: batchData.errors,
+          processingTime: batchData.processingTime,
+          errorDetails: batchData.errorDetails,
+        });
+
+        if (batchData.errorDetails && batchData.errorDetails.length > 0) {
+          console.log('\n❌ Processing errors:');
+          batchData.errorDetails.forEach((error, index) => {
+            console.log(`   ${index + 1}. Email ${error.emailId}: ${error.error}`);
+          });
+        }
+      } else {
+        const errorData = await batchResponse.json();
+        console.log('❌ Batch processing failed:', errorData.error);
+        console.log('   Details:', errorData.details);
+      }
+    } catch (error) {
+      console.log('❌ Error testing batch processing:', error.message);
+    }
+
+    // Step 6: Check extracted transactions
+    console.log('\n📊 Step 6: Checking extracted transactions...');
     
     const { data: transactions, error: txnError } = await supabase
       .from('fb_extracted_transactions')

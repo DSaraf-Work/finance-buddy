@@ -4,6 +4,7 @@ import { BaseAIModel, AIRequest, AIResponse, AIError, AIManagerConfig, ModelSele
 import { OpenAIModel } from './models/openai';
 import { AnthropicModel } from './models/anthropic';
 import { GoogleModel } from './models/google';
+import { MockAIModel } from './models/mock';
 import { getAIManagerConfig } from './config';
 
 export class AIModelManager {
@@ -19,23 +20,46 @@ export class AIModelManager {
 
   private initializeModels(): void {
     const { hierarchy } = this.config;
-    
+
+    console.log('🔧 Initializing AI models...');
+
     // Initialize primary model
     if (hierarchy.primary) {
-      const model = this.createModel(hierarchy.primary);
-      this.models.set('primary', model);
+      try {
+        const model = this.createModel(hierarchy.primary);
+        this.models.set('primary', model);
+        console.log(`✅ Primary model initialized: ${hierarchy.primary.provider}/${hierarchy.primary.model}`);
+      } catch (error: any) {
+        console.error(`❌ Failed to initialize primary model: ${error.message}`);
+      }
     }
-    
+
     // Initialize secondary model
     if (hierarchy.secondary) {
-      const model = this.createModel(hierarchy.secondary);
-      this.models.set('secondary', model);
+      try {
+        const model = this.createModel(hierarchy.secondary);
+        this.models.set('secondary', model);
+        console.log(`✅ Secondary model initialized: ${hierarchy.secondary.provider}/${hierarchy.secondary.model}`);
+      } catch (error: any) {
+        console.error(`❌ Failed to initialize secondary model: ${error.message}`);
+      }
     }
-    
+
     // Initialize tertiary model
     if (hierarchy.tertiary) {
-      const model = this.createModel(hierarchy.tertiary);
-      this.models.set('tertiary', model);
+      try {
+        const model = this.createModel(hierarchy.tertiary);
+        this.models.set('tertiary', model);
+        console.log(`✅ Tertiary model initialized: ${hierarchy.tertiary.provider}/${hierarchy.tertiary.model}`);
+      } catch (error: any) {
+        console.error(`❌ Failed to initialize tertiary model: ${error.message}`);
+      }
+    }
+
+    console.log(`🤖 AI Manager initialized with ${this.models.size} models`);
+
+    if (this.models.size === 0) {
+      console.error('⚠️ No AI models were successfully initialized! Check your API keys.');
     }
   }
 
@@ -47,6 +71,8 @@ export class AIModelManager {
         return new AnthropicModel(config);
       case 'google':
         return new GoogleModel(config);
+      case 'mock':
+        return new MockAIModel(config);
       default:
         throw new Error(`Unsupported AI provider: ${config.provider}`);
     }
@@ -55,10 +81,15 @@ export class AIModelManager {
   async generateResponse(request: AIRequest): Promise<AIResponse> {
     const startTime = Date.now();
     let lastError: AIError | null = null;
-    
+
+    // Check if any models are available
+    if (this.models.size === 0) {
+      throw new Error('No AI models are available. Please check your API key configuration.');
+    }
+
     // Ensure health status is up to date
     await this.updateHealthStatus();
-    
+
     // Get model order based on strategy
     const modelOrder = this.getModelOrder();
     
