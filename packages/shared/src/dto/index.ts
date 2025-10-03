@@ -2,7 +2,7 @@
 
 // Base types
 export type UUID = string;
-export type EmailStatus = 'Fetched' | 'Processed' | 'Failed' | 'Invalid';
+export type EmailStatus = 'Fetched' | 'Processed' | 'Failed' | 'Invalid' | 'NON_TRANSACTIONAL' | 'REJECT';
 export type TransactionDirection = 'debit' | 'credit';
 export type JobStatus = 'queued' | 'running' | 'completed' | 'failed';
 export type SortOrder = 'asc' | 'desc';
@@ -72,6 +72,7 @@ export interface EmailPublic {
   status: EmailStatus;
   error_reason?: string;
   processed_at?: string;
+  remarks?: string;
   created_at: string;
   updated_at: string;
 }
@@ -179,6 +180,7 @@ export interface EmailSearchRequest {
   page?: number;
   pageSize?: number;
   sort?: SortOrder;
+  db_only?: boolean; // if true, fetch only from Supabase DB, not Gmail
 }
 
 export interface TransactionSearchRequest {

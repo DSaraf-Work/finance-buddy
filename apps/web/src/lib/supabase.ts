@@ -33,17 +33,15 @@ export const createSupabaseClient = (accessToken?: string) => {
 
   const client = createClient<Database>(supabaseUrl, anonKey, {
     auth: {
-      autoRefreshToken: true,
-      persistSession: true,
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+    global: {
+      headers: accessToken ? {
+        Authorization: `Bearer ${accessToken}`,
+      } : {},
     },
   });
-
-  if (accessToken) {
-    client.auth.setSession({
-      access_token: accessToken,
-      refresh_token: '', // Will be handled by Supabase
-    });
-  }
 
   return client;
 };

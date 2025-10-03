@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { 
-  TransactionSearchRequest, 
-  PaginatedResponse, 
-  ExtractedTransactionPublic 
+import {
+  TransactionSearchRequest,
+  PaginatedResponse,
+  ExtractedTransactionPublic
 } from '@finance-buddy/shared';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {

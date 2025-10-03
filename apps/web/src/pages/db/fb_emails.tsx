@@ -11,6 +11,7 @@ interface EmailFilters {
   sender?: string;
   status?: EmailStatus;
   q?: string;
+  db_only?: boolean;
 }
 
 const EmailWorkbenchPage: NextPage = () => {
@@ -25,13 +26,24 @@ const EmailWorkbenchPage: NextPage = () => {
     hasNext: false,
     hasPrev: false,
   });
+  // Helper function to format date as YYYY-MM-DD
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  // Calculate default dates
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 7);
+
   const [filters, setFilters] = useState<EmailFilters>({
-    date_from: '',
-    date_to: '',
+    date_from: formatDate(sevenDaysAgo),
+    date_to: formatDate(today),
     email_address: '',
     sender: '',
     status: undefined,
     q: '',
+    db_only: true, // Default to database-only search
   });
   const [selectedEmail, setSelectedEmail] = useState<EmailPublic | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -93,6 +105,29 @@ const EmailWorkbenchPage: NextPage = () => {
       [key]: value || undefined,
     }));
   };
+
+  const handleBooleanFilterChange = (key: keyof EmailFilters, value: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPagination(prev => ({
+      ...prev,
+      pageSize: newPageSize,
+      page: 1, // Reset to first page when changing page size
+    }));
+  };
+
+  // Use useEffect to trigger search when page size changes
+  useEffect(() => {
+    // Only trigger search if page size has been changed from initial load
+    if (emails.length > 0) { // Only if we have loaded emails before
+      searchEmails(1); // Always go to page 1 when page size changes
+    }
+  }, [pagination.pageSize]);
 
   const handleSearch = () => {
     searchEmails(1);
@@ -229,6 +264,56 @@ const EmailWorkbenchPage: NextPage = () => {
                     />
                   </div>
                 </div>
+
+                {/* Pagination Controls and Database Toggle */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                    <select
+                      value={pagination.page}
+                      onChange={(e) => handlePageChange(parseInt(e.target.value))}
+                      className="input-field"
+                    >
+                      {Array.from({ length: Math.min(pagination.totalPages, 50) }, (_, i) => i + 1).map(pageNum => (
+                        <option key={pageNum} value={pageNum}>
+                          Page {pageNum}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={pagination.pageSize}
+                      onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
+                      className="input-field"
+                      placeholder="50"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
+                    <div className="flex items-center space-x-3 mt-2">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filters.db_only || false}
+                          onChange={(e) => handleBooleanFilterChange('db_only', e.target.checked)}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">Database Only</span>
+                      </label>
+                      <span className="text-xs text-gray-500">
+                        {filters.db_only ? 'Searching local database only' : 'Will fetch from Gmail if needed'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mt-4 flex justify-between">
                   <button
                     onClick={handleSearch}

@@ -11,6 +11,7 @@ interface EmailFilters {
   sender?: string;
   status?: EmailStatus;
   q?: string;
+  db_only?: boolean;
 }
 
 const EmailsPage: NextPage = () => {
@@ -24,16 +25,31 @@ const EmailsPage: NextPage = () => {
     hasNext: false,
     hasPrev: false,
   });
+  // Helper function to format date as YYYY-MM-DD
+  const formatDateForInput = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  // Calculate default dates
+  const today = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(today.getDate() - 7);
+
   const [filters, setFilters] = useState<EmailFilters>({
-    date_from: '',
-    date_to: '',
+    date_from: formatDateForInput(sevenDaysAgo),
+    date_to: formatDateForInput(today),
     email_address: '',
     sender: '',
     status: undefined,
     q: '',
+    db_only: true, // Default to database-only search
   });
   const [selectedEmail, setSelectedEmail] = useState<EmailPublic | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [statusModalEmail, setStatusModalEmail] = useState<EmailPublic | null>(null);
+  const [newStatus, setNewStatus] = useState<EmailStatus>('Fetched');
+  const [statusRemarks, setStatusRemarks] = useState('');
 
   const searchEmails = async (page: number = 1) => {
     setLoading(true);
@@ -93,6 +109,29 @@ const EmailsPage: NextPage = () => {
     }));
   };
 
+  const handleBooleanFilterChange = (key: keyof EmailFilters, value: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPagination(prev => ({
+      ...prev,
+      pageSize: newPageSize,
+      page: 1, // Reset to first page when changing page size
+    }));
+  };
+
+  // Use useEffect to trigger search when page size changes
+  useEffect(() => {
+    // Only trigger search if page size has been changed from initial load
+    if (emails.length > 0) { // Only if we have loaded emails before
+      searchEmails(1); // Always go to page 1 when page size changes
+    }
+  }, [pagination.pageSize]);
+
   const handleSearch = () => {
     searchEmails(1);
   };
@@ -111,7 +150,99 @@ const EmailsPage: NextPage = () => {
     setSelectedEmail(null);
   };
 
-  const formatDate = (dateString?: string) => {
+  const handleProcessEmail = async (email: EmailPublic) => {
+    try {
+      const response = await fetch(`/api/emails/${email.id}/process`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Refresh the emails list
+        searchEmails(pagination.page);
+        alert('Email processed successfully!');
+      } else {
+        const error = await response.json();
+        alert(`Failed to process email: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Process email error:', error);
+      alert('Failed to process email');
+    }
+  };
+
+  const handleRejectEmail = async (email: EmailPublic) => {
+    try {
+      const response = await fetch(`/api/emails/${email.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'REJECT',
+          remarks: 'Non-transactional',
+        }),
+      });
+
+      if (response.ok) {
+        // Refresh the emails list
+        searchEmails(pagination.page);
+      } else {
+        const error = await response.json();
+        alert(`Failed to reject email: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Reject email error:', error);
+      alert('Failed to reject email');
+    }
+  };
+
+  const openStatusModal = (email: EmailPublic) => {
+    setStatusModalEmail(email);
+    setNewStatus(email.status);
+    setStatusRemarks(email.remarks || '');
+    setShowStatusModal(true);
+  };
+
+  const closeStatusModal = () => {
+    setShowStatusModal(false);
+    setStatusModalEmail(null);
+    setNewStatus('Fetched');
+    setStatusRemarks('');
+  };
+
+  const handleStatusUpdate = async () => {
+    if (!statusModalEmail) return;
+
+    try {
+      const response = await fetch(`/api/emails/${statusModalEmail.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus,
+          remarks: statusRemarks,
+        }),
+      });
+
+      if (response.ok) {
+        // Refresh the emails list
+        searchEmails(pagination.page);
+        closeStatusModal();
+      } else {
+        const error = await response.json();
+        alert(`Failed to update status: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Status update error:', error);
+      alert('Failed to update status');
+    }
+  };
+
+  const formatDateTime = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString();
   };
@@ -227,7 +358,56 @@ const EmailsPage: NextPage = () => {
                 />
               </div>
             </div>
-            
+
+            {/* Pagination Controls and Database Toggle */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                <select
+                  value={pagination.page}
+                  onChange={(e) => handlePageChange(parseInt(e.target.value))}
+                  className="input-field"
+                >
+                  {Array.from({ length: Math.min(pagination.totalPages, 50) }, (_, i) => i + 1).map(pageNum => (
+                    <option key={pageNum} value={pageNum}>
+                      Page {pageNum}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={pagination.pageSize}
+                  onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
+                  className="input-field"
+                  placeholder="10"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
+                <div className="flex items-center space-x-3 mt-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.db_only || false}
+                      onChange={(e) => handleBooleanFilterChange('db_only', e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Database Only</span>
+                  </label>
+                  <span className="text-xs text-gray-500">
+                    {filters.db_only ? 'Searching local database only' : 'Will fetch from Gmail if needed'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <button
                 onClick={handleSearch}
@@ -236,10 +416,23 @@ const EmailsPage: NextPage = () => {
               >
                 {loading ? 'Searching...' : 'Search'}
               </button>
-              
+
               <button
                 onClick={() => {
-                  setFilters({});
+                  // Reset to default values including default dates
+                  const today = new Date();
+                  const sevenDaysAgo = new Date();
+                  sevenDaysAgo.setDate(today.getDate() - 7);
+
+                  setFilters({
+                    date_from: formatDateForInput(sevenDaysAgo),
+                    date_to: formatDateForInput(today),
+                    email_address: '',
+                    sender: '',
+                    status: undefined,
+                    q: '',
+                    db_only: true,
+                  });
                   searchEmails(1);
                 }}
                 className="btn-secondary"
@@ -285,6 +478,9 @@ const EmailsPage: NextPage = () => {
                           Account
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Remarks
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50">
                           Actions
                         </th>
                       </tr>
@@ -293,7 +489,7 @@ const EmailsPage: NextPage = () => {
                       {emails.map((email) => (
                         <tr key={email.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {formatDate(email.internal_date)}
+                            {formatDateTime(email.internal_date)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div className="truncate max-w-xs" title={email.from_address || 'N/A'}>
@@ -315,19 +511,49 @@ const EmailsPage: NextPage = () => {
                               {email.email_address}
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => openEmailDrawer(email)}
-                              className="text-blue-600 hover:text-blue-900 mr-3"
-                            >
-                              View
-                            </button>
-                            <button className="text-gray-600 hover:text-gray-900 mr-3">
-                              Re-Extract
-                            </button>
-                            <button className="text-red-600 hover:text-red-900">
-                              Mark Invalid
-                            </button>
+                          <td className="px-6 py-4 text-sm text-gray-900">
+                            <div className="truncate max-w-xs" title={email.remarks || 'No remarks'}>
+                              {email.remarks || '-'}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-white">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => openEmailDrawer(email)}
+                                className="text-blue-600 hover:text-blue-900"
+                                title="View Details"
+                              >
+                                👁️
+                              </button>
+
+                              {email.status === 'Fetched' && (
+                                <button
+                                  onClick={() => handleProcessEmail(email)}
+                                  className="text-green-600 hover:text-green-900"
+                                  title="Process Email"
+                                >
+                                  ✅
+                                </button>
+                              )}
+
+                              {email.status !== 'REJECT' && (
+                                <button
+                                  onClick={() => handleRejectEmail(email)}
+                                  className="text-red-600 hover:text-red-900"
+                                  title="Reject Email"
+                                >
+                                  ❌
+                                </button>
+                              )}
+
+                              <button
+                                onClick={() => openStatusModal(email)}
+                                className="text-purple-600 hover:text-purple-900"
+                                title="Update Status"
+                              >
+                                ⚙️
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -404,7 +630,7 @@ const EmailsPage: NextPage = () => {
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Internal Date</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedEmail.internal_date)}</dd>
+                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.internal_date)}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -458,16 +684,16 @@ const EmailsPage: NextPage = () => {
                       <dl className="space-y-2">
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedEmail.created_at)}</dd>
+                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.created_at)}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedEmail.updated_at)}</dd>
+                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.updated_at)}</dd>
                         </div>
                         {selectedEmail.processed_at && (
                           <div>
                             <dt className="text-sm font-medium text-gray-500">Processed At</dt>
-                            <dd className="text-sm text-gray-900">{formatDate(selectedEmail.processed_at)}</dd>
+                            <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.processed_at)}</dd>
                           </div>
                         )}
                       </dl>
@@ -480,6 +706,77 @@ const EmailsPage: NextPage = () => {
                   <button className="btn-secondary">Set Fetched</button>
                   <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                     Mark Invalid
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Status Update Modal */}
+        {showStatusModal && statusModalEmail && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen px-4">
+              <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeStatusModal}></div>
+              <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-lg font-medium text-gray-900">Update Email Status</h3>
+                </div>
+
+                <div className="px-6 py-4 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Subject
+                    </label>
+                    <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                      {statusModalEmail.subject || 'No Subject'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      New Status
+                    </label>
+                    <select
+                      value={newStatus}
+                      onChange={(e) => setNewStatus(e.target.value as EmailStatus)}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Fetched">Fetched</option>
+                      <option value="Processed">Processed</option>
+                      <option value="Failed">Failed</option>
+                      <option value="Invalid">Invalid</option>
+                      <option value="NON_TRANSACTIONAL">Non-Transactional</option>
+                      <option value="REJECT">Reject</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Remarks
+                    </label>
+                    <textarea
+                      value={statusRemarks}
+                      onChange={(e) => setStatusRemarks(e.target.value)}
+                      rows={3}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter remarks or reason for status change..."
+                    />
+                  </div>
+                </div>
+
+                <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                  <button
+                    onClick={closeStatusModal}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleStatusUpdate}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                  >
+                    Update Status
                   </button>
                 </div>
               </div>
