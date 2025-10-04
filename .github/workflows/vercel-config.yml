@@ -1,0 +1,64 @@
+name: Configure Vercel Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: 'Vercel deployment URL (e.g., https://your-app.vercel.app)'
+        required: true
+        type: string
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Display Configuration Instructions
+        run: |
+          echo "========================================="
+          echo "Vercel Environment Variables Configuration"
+          echo "========================================="
+          echo ""
+          echo "Please configure the following environment variables in your Vercel project:"
+          echo "https://vercel.com/dheerajs-projects-74ed43fb/finance-buddy-1/settings/environment-variables"
+          echo ""
+          echo "Required Variables:"
+          echo "-------------------"
+          echo "1. NEXT_PUBLIC_SUPABASE_URL"
+          echo "   Value: (from your .env.local file)"
+          echo ""
+          echo "2. NEXT_PUBLIC_SUPABASE_ANON_KEY"
+          echo "   Value: (from your .env.local file)"
+          echo ""
+          echo "3. SUPABASE_SERVICE_ROLE_KEY"
+          echo "   Value: (from your .env.local file)"
+          echo ""
+          echo "4. GMAIL_CLIENT_ID"
+          echo "   Value: (from your .env.local file)"
+          echo ""
+          echo "5. GMAIL_CLIENT_SECRET"
+          echo "   Value: (from your .env.local file)"
+          echo ""
+          echo "6. NEXTAUTH_URL"
+          echo "   Value: ${{ inputs.deployment_url }}"
+          echo ""
+          echo "7. COOKIE_NAME"
+          echo "   Value: fbsession"
+          echo ""
+          echo "Optional Variables (for AI features):"
+          echo "--------------------------------------"
+          echo "8. OPENAI_API_KEY (optional)"
+          echo "9. ANTHROPIC_API_KEY (optional)"
+          echo "10. GOOGLE_AI_API_KEY (optional)"
+          echo ""
+          echo "========================================="
+          echo "After configuring these variables, trigger a new deployment."
+          echo "========================================="
+

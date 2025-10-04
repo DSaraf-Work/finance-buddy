@@ -1,0 +1,72 @@
+# Vercel Ignore File
+# Files and directories to exclude from Vercel deployment
+
+# Development files
+.env.local
+.env.*.local
+.env.development
+.env.test
+
+# Documentation
+docs/
+dev/
+*.md
+!README.md
+
+# Test files
+test/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+test-*.js
+
+# Scripts (not needed in production)
+scripts/
+
+# Build artifacts (will be rebuilt)
+# Note: .next/ should NOT be ignored - Vercel needs it to serve the app!
+dist/
+out/
+coverage/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Migration files (already applied to Supabase)
+infra/migrations/
+
+# OpenAPI specs (not needed at runtime)
+openapi/
+
+# Node modules (will be reinstalled)
+node_modules/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
