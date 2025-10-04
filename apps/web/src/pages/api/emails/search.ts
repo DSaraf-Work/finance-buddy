@@ -33,17 +33,22 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   try {
     const {
       google_user_id,
-      email_address = 'dheerajsaraf1996@gmail.com', // Default account filter
+      email_address,
       date_from,
       date_to,
-      sender = 'alerts@dcbbank.com', // Default sender filter
+      sender,
       status,
       q,
       page = 1,
       pageSize = 50,
       sort = 'desc', // Default to newest-to-oldest
-      db_only = false
-    }: EmailSearchRequest = req.body;
+      db_only = false,
+      ignore_defaults = false // New parameter to bypass default filters
+    }: EmailSearchRequest & { ignore_defaults?: boolean } = req.body;
+
+    // Apply default filters only if ignore_defaults is false and no specific filters are provided
+    const finalEmailAddress = ignore_defaults ? email_address : (email_address || 'dheerajsaraf1996@gmail.com');
+    const finalSender = ignore_defaults ? sender : (sender || 'alerts@dcbbank.com');
 
     // Validate page size
     if (pageSize > 100) {
@@ -56,11 +61,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         user_id: user.id,
         date_from,
         date_to,
-        sender,
-        email_address
+        sender: finalSender,
+        email_address: finalEmailAddress
       });
       try {
-        await syncEmailsFromGmail(user.id, date_from, date_to, sender);
+        await syncEmailsFromGmail(user.id, date_from, date_to, finalSender);
         console.log('✅ Gmail sync completed successfully');
       } catch (gmailError) {
         console.error('❌ Gmail sync error (continuing with DB-only search):', gmailError);
@@ -74,14 +79,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     console.log('🔍 Building database query with filters:', {
       user_id: user.id,
       google_user_id,
-      email_address,
+      email_address: finalEmailAddress,
       date_from,
       date_to,
-      sender,
+      sender: finalSender,
       status,
       q,
       page,
-      pageSize
+      pageSize,
+      ignore_defaults
     });
 
     let query = (supabaseAdmin as any)
@@ -112,8 +118,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       query = query.eq('google_user_id', google_user_id);
     }
 
-    if (email_address) {
-      query = query.eq('email_address', email_address);
+    if (finalEmailAddress) {
+      query = query.eq('email_address', finalEmailAddress);
     }
 
     if (date_from) {
@@ -124,8 +130,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       query = query.lte('internal_date', `${date_to}T23:59:59Z`);
     }
 
-    if (sender) {
-      query = query.ilike('from_address', `%${sender}%`);
+    if (finalSender) {
+      query = query.ilike('from_address', `%${finalSender}%`);
     }
 
     if (status) {

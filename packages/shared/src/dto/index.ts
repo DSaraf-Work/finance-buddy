@@ -181,6 +181,7 @@ export interface EmailSearchRequest {
   pageSize?: number;
   sort?: SortOrder;
   db_only?: boolean; // if true, fetch only from Supabase DB, not Gmail
+  ignore_defaults?: boolean; // if true, bypass default email_address and sender filters
 }
 
 export interface TransactionSearchRequest {

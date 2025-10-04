@@ -474,21 +474,21 @@ const EmailsPage: NextPage = () => {
 
       // Search each email address for FETCHED emails
       for (const emailAddress of emailAddresses) {
-        const searchRequest: EmailSearchRequest = {
-          ...filters,
+        const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
           email_address: emailAddress, // Use single email address for each request
           status: 'Fetched',
           page: 1,
           pageSize: 1000, // Get a large number to find all fetched emails
           sort: 'desc',
+          db_only: true, // Only search database, don't sync with Gmail
+          ignore_defaults: true, // Bypass default sender filters
         };
 
-        // Remove email_addresses array (use email_address instead)
-        delete (searchRequest as any).email_addresses;
+        // Clean up undefined values
         Object.keys(searchRequest).forEach(key => {
-          if (searchRequest[key as keyof EmailSearchRequest] === '' ||
-              searchRequest[key as keyof EmailSearchRequest] === undefined) {
-            delete searchRequest[key as keyof EmailSearchRequest];
+          if (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
+              searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === undefined) {
+            delete searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })];
           }
         });
 
