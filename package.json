@@ -13,7 +13,10 @@
     "start": "npm run start --workspace=apps/web",
     "lint": "npm run lint --workspaces",
     "type-check": "npm run type-check --workspaces",
-    "clean": "rm -rf node_modules && npm run clean --workspaces"
+    "clean": "rm -rf node_modules && npm run clean --workspaces",
+    "validate-deployment": "node scripts/validate-deployment.js",
+    "deploy": "npm run validate-deployment && vercel --prod",
+    "deploy:preview": "vercel"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
