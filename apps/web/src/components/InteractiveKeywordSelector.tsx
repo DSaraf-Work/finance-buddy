@@ -234,6 +234,7 @@ export default function InteractiveKeywordSelector({
               return keywordObj ? (
                 <button
                   key={suggestion}
+                  type="button"
                   onClick={() => toggleKeyword(keywordObj)}
                   className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full hover:bg-yellow-200 transition-colors"
                 >
@@ -284,6 +285,7 @@ export default function InteractiveKeywordSelector({
                   return (
                     <button
                       key={keyword.id}
+                      type="button"
                       onClick={() => toggleKeyword(keyword)}
                       className={`relative inline-flex items-center px-3 py-2 text-sm rounded-lg border transition-all ${
                         isSelected
@@ -313,6 +315,7 @@ export default function InteractiveKeywordSelector({
       <div className="border-t pt-4">
         {!showAddForm ? (
           <button
+            type="button"
             onClick={() => setShowAddForm(true)}
             className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
           >
