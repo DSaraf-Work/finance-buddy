@@ -568,7 +568,7 @@ const EmailsPage: NextPage = () => {
                                 👁️
                               </button>
 
-                              {(email.status === 'Fetched') && (
+                              {(email.status === 'Fetched' || (email.status as string) === 'FETCHED') && (
                                 <button
                                   onClick={() => handleProcessEmail(email)}
                                   className="text-green-600 hover:text-green-900"
@@ -746,7 +746,7 @@ const EmailsPage: NextPage = () => {
                 </div>
                 
                 <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
-                  {selectedEmail && (selectedEmail.status === 'Fetched') && (
+                  {selectedEmail && (selectedEmail.status === 'Fetched' || (selectedEmail.status as string) === 'FETCHED') && (
                     <button
                       onClick={() => {
                         handleProcessEmail(selectedEmail);

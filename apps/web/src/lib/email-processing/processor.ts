@@ -3,6 +3,7 @@
 import { supabaseAdmin } from '../supabase';
 import { TransactionExtractor } from './extractors/transaction-extractor';
 import { TransactionExtractionRequest, ExtractedTransaction } from '../ai/types';
+import { parseHTMLToCleanText } from '../gmail';
 import type { Database } from '@finance-buddy/shared';
 
 export interface EmailProcessingRequest {
@@ -112,12 +113,30 @@ export class EmailProcessor {
       date: email.internal_date,
     });
 
+    // Parse HTML content if needed
+    let plainBody = email.plain_body || '';
+
+    // Check if the content is HTML and parse it to clean text
+    if (plainBody.includes('<') && plainBody.includes('>')) {
+      console.log('📧 Detected HTML content, parsing to clean text...');
+      const parsedText = parseHTMLToCleanText(plainBody);
+      if (parsedText) {
+        plainBody = parsedText;
+        console.log('✅ HTML parsed successfully:', {
+          originalLength: email.plain_body?.length || 0,
+          parsedLength: plainBody.length
+        });
+      } else {
+        console.log('⚠️ HTML parsing failed, using original content');
+      }
+    }
+
     // Create extraction request
     const extractionRequest: TransactionExtractionRequest = {
       emailId: email.id,
       subject: email.subject || '',
       fromAddress: email.from_address || '',
-      plainBody: email.plain_body || '',
+      plainBody: plainBody,
       snippet: email.snippet,
       internalDate: email.internal_date ? new Date(email.internal_date) : undefined,
     };
