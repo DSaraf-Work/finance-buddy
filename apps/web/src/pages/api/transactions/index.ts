@@ -39,7 +39,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         .from('fb_extracted_transactions')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('txn_time', { ascending: false });
 
       if (error) {
         console.error('Error fetching transactions:', error);

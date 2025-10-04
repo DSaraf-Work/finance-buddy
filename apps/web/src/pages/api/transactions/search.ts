@@ -20,13 +20,22 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       direction,
       category,
       merchant,
+      status,
+      account_type,
       min_amount,
       max_amount,
       min_confidence,
       page = 1,
       pageSize = 50,
       sort = 'asc'
-    }: TransactionSearchRequest = req.body;
+    } = req.body;
+
+    console.log('🔍 Transaction search request:', {
+      user_id: user.id,
+      user_email: user.email,
+      request_body: req.body,
+      timestamp: new Date().toISOString(),
+    });
 
     // Validate page size
     if (pageSize > 100) {
@@ -51,8 +60,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         account_hint,
         reference_id,
         location,
+        account_type,
+        transaction_type,
+        ai_notes,
+        user_notes,
         confidence,
         extraction_version,
+        status,
         created_at,
         updated_at
       `, { count: 'exact' })
@@ -95,6 +109,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       query = query.gte('confidence', min_confidence);
     }
 
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    if (account_type) {
+      query = query.eq('account_type', account_type);
+    }
+
     // Apply pagination and sorting
     const offset = (page - 1) * pageSize;
     query = query
@@ -110,17 +132,24 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     const totalPages = Math.ceil((count || 0) / pageSize);
 
-    const response: PaginatedResponse<ExtractedTransactionPublic> = {
-      items: transactions as ExtractedTransactionPublic[],
+    console.log('✅ Transaction search results:', {
+      count,
+      transactions_found: transactions?.length || 0,
+      page,
+      totalPages,
+    });
+
+    // Return response in format expected by frontend
+    res.status(200).json({
+      success: true,
+      transactions: transactions || [],
       total: count || 0,
       page,
       pageSize,
       totalPages,
       hasNext: page < totalPages,
       hasPrev: page > 1,
-    };
-
-    res.status(200).json(response);
+    });
   } catch (error) {
     console.error('Transaction search error:', error);
     res.status(500).json({ error: 'Internal server error' });

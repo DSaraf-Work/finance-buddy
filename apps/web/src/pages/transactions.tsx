@@ -6,6 +6,8 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import TransactionRow from '@/components/TransactionRow';
 import TransactionModal from '@/components/TransactionModal';
 
+export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
+
 export interface Transaction {
   id: string;
   user_id: string;
@@ -28,9 +30,22 @@ export interface Transaction {
   user_notes: string | null;
   confidence: string;
   extraction_version: string;
+  status: TransactionStatus;
   created_at: string;
   updated_at: string;
 }
+
+// Helper function to get date 4 days ago
+const getDefaultStartDate = () => {
+  const date = new Date();
+  date.setDate(date.getDate() - 4);
+  return date.toISOString().split('T')[0];
+};
+
+// Helper function to get today's date
+const getDefaultEndDate = () => {
+  return new Date().toISOString().split('T')[0];
+};
 
 export default function TransactionsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -46,6 +61,24 @@ export default function TransactionsPage() {
     avgConfidence: 0,
   });
 
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 25,
+    total: 0,
+    totalPages: 0,
+  });
+
+  // Filter state
+  const [filters, setFilters] = useState({
+    date_from: getDefaultStartDate(),
+    date_to: getDefaultEndDate(),
+    status: '' as TransactionStatus | '',
+    direction: '' as 'debit' | 'credit' | '',
+    category: '',
+    merchant: '',
+  });
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth');
@@ -53,39 +86,107 @@ export default function TransactionsPage() {
     }
 
     if (user) {
-      fetchTransactions();
+      searchTransactions();
     }
   }, [user, authLoading, router]);
 
-  const fetchTransactions = async () => {
+  const searchTransactions = async (page: number = pagination.page) => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/transactions', {
-        method: 'GET',
-        credentials: 'include', // Include cookies for authentication
+      // Build search request
+      const searchRequest: any = {
+        page,
+        pageSize: pagination.pageSize,
+        sort: 'desc', // Newest first
+      };
+
+      // Add filters if they have values
+      if (filters.date_from) searchRequest.date_from = filters.date_from;
+      if (filters.date_to) searchRequest.date_to = filters.date_to;
+      if (filters.status) searchRequest.status = filters.status;
+      if (filters.direction) searchRequest.direction = filters.direction;
+      if (filters.category) searchRequest.category = filters.category;
+      if (filters.merchant) searchRequest.merchant = filters.merchant;
+
+      console.log('🔍 Searching transactions:', searchRequest);
+
+      const response = await fetch('/api/transactions/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(searchRequest),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch transactions');
+        throw new Error(errorData.error || 'Failed to search transactions');
       }
 
       const data = await response.json();
 
       if (data.success) {
-        setTransactions(data.transactions);
-        setStats(data.stats);
+        setTransactions(data.transactions || []);
+        setPagination({
+          page: data.page,
+          pageSize: data.pageSize,
+          total: data.total,
+          totalPages: data.totalPages,
+        });
+
+        // Calculate stats from current page
+        const totalAmount = data.transactions.reduce((sum: number, t: Transaction) =>
+          sum + parseFloat(t.amount || '0'), 0
+        );
+        const avgConfidence = data.transactions.length > 0
+          ? data.transactions.reduce((sum: number, t: Transaction) =>
+              sum + parseFloat(t.confidence || '0'), 0
+            ) / data.transactions.length
+          : 0;
+
+        setStats({
+          total: data.total,
+          totalAmount,
+          avgConfidence,
+        });
       } else {
-        throw new Error(data.error || 'Failed to fetch transactions');
+        throw new Error(data.error || 'Failed to search transactions');
       }
 
     } catch (err: any) {
-      console.error('Error fetching transactions:', err);
-      setError(err.message || 'Failed to fetch transactions');
+      console.error('Error searching transactions:', err);
+      setError(err.message || 'Failed to search transactions');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (transactionId: string, newStatus: TransactionStatus) => {
+    try {
+      const response = await fetch('/api/transactions/update-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ transactionId, status: newStatus }),
+      });
+
+      if (response.ok) {
+        console.log('✅ Status updated successfully');
+        // Refresh transactions to show updated status
+        await searchTransactions();
+      } else {
+        const error = await response.json();
+        console.error('❌ Status update failed:', error);
+        alert(`Status update failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('❌ Status update error:', error);
+      alert('Status update failed. Please try again.');
     }
   };
 
@@ -105,7 +206,7 @@ export default function TransactionsPage() {
         console.log('✅ Re-extraction successful:', result);
 
         // Refresh transactions to show updated data
-        await fetchTransactions();
+        await searchTransactions();
 
         // Show success message
         alert(`Re-extraction completed! Confidence: ${Math.round(result.extractionResult.confidence * 100)}%`);
@@ -155,13 +256,12 @@ export default function TransactionsPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Update local state
-        setTransactions(prev =>
-          prev.map(t => t.id === updatedTransaction.id ? data.transaction : t)
-        );
+        // Refresh transactions to show updated data
+        await searchTransactions();
 
         setIsModalOpen(false);
         setSelectedTransaction(null);
+        alert('Transaction updated successfully!');
       } else {
         throw new Error(data.error || 'Failed to update transaction');
       }
@@ -169,6 +269,41 @@ export default function TransactionsPage() {
       console.error('Error updating transaction:', err);
       setError(err.message || 'Failed to update transaction');
     }
+  };
+
+  // Pagination handlers
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+    searchTransactions(newPage);
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPagination(prev => ({ ...prev, pageSize: newPageSize, page: 1 }));
+    searchTransactions(1);
+  };
+
+  // Filter handlers
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleApplyFilters = () => {
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when filters change
+    searchTransactions(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      date_from: getDefaultStartDate(),
+      date_to: getDefaultEndDate(),
+      status: '',
+      direction: '',
+      category: '',
+      merchant: '',
+    });
+    setPagination(prev => ({ ...prev, page: 1 }));
+    // Manually trigger search after clearing filters
+    setTimeout(() => searchTransactions(1), 0);
   };
 
   const openTransactionModal = (transaction: Transaction) => {
@@ -194,7 +329,7 @@ export default function TransactionsPage() {
           <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
-            onClick={fetchTransactions}
+            onClick={() => searchTransactions()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Retry
@@ -228,7 +363,7 @@ export default function TransactionsPage() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
-                    onClick={fetchTransactions}
+                    onClick={() => searchTransactions()}
                     className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,6 +423,155 @@ export default function TransactionsPage() {
           </div>
         </div>
 
+        {/* Filters */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+            <button
+              onClick={handleClearFilters}
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Clear All
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {/* Date From */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+              <input
+                type="date"
+                value={filters.date_from}
+                onChange={(e) => handleFilterChange('date_from', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Date To */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+              <input
+                type="date"
+                value={filters.date_to}
+                onChange={(e) => handleFilterChange('date_to', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={filters.status}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Statuses</option>
+                <option value="REVIEW">Review</option>
+                <option value="APPROVED">Approved</option>
+                <option value="INVALID">Invalid</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
+
+            {/* Direction */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <select
+                value={filters.direction}
+                onChange={(e) => handleFilterChange('direction', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Types</option>
+                <option value="debit">Debit</option>
+                <option value="credit">Credit</option>
+              </select>
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <input
+                type="text"
+                value={filters.category}
+                onChange={(e) => handleFilterChange('category', e.target.value)}
+                placeholder="e.g., Food"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Merchant */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Merchant</label>
+              <input
+                type="text"
+                value={filters.merchant}
+                onChange={(e) => handleFilterChange('merchant', e.target.value)}
+                placeholder="e.g., Swiggy"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={handleApplyFilters}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+
+        {/* Pagination Controls - Top */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">
+                {pagination.total} total transactions
+              </span>
+              <span className="text-sm text-gray-600">
+                Page {pagination.page} of {pagination.totalPages}
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600">Page size:</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={pagination.pageSize}
+                  onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 25)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  max={pagination.totalPages}
+                  value={pagination.page}
+                  onChange={(e) => handlePageChange(parseInt(e.target.value) || 1)}
+                  className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page >= pagination.totalPages}
+                  className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Transactions List */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
@@ -315,7 +599,7 @@ export default function TransactionsPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-3">No transactions found</h3>
               <p className="text-gray-600 mb-6">Process some emails to see transactions here.</p>
               <button
-                onClick={fetchTransactions}
+                onClick={() => searchTransactions()}
                 className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
               >
                 Refresh Transactions
@@ -333,12 +617,66 @@ export default function TransactionsPage() {
                     transaction={transaction}
                     onEdit={() => openTransactionModal(transaction)}
                     onReExtract={handleReExtraction}
+                    onStatusUpdate={handleStatusUpdate}
                   />
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {/* Pagination Controls - Bottom */}
+        {transactions.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600">
+                  {pagination.total} total transactions
+                </span>
+                <span className="text-sm text-gray-600">
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600">Page size:</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={pagination.pageSize}
+                    onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 25)}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                    className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    max={pagination.totalPages}
+                    value={pagination.page}
+                    onChange={(e) => handlePageChange(parseInt(e.target.value) || 1)}
+                    className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page >= pagination.totalPages}
+                    className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Transaction Modal */}

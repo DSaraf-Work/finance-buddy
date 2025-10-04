@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { Transaction } from '@/pages/transactions';
+import { Transaction, TransactionStatus } from '@/pages/transactions';
 
 interface TransactionRowProps {
   transaction: Transaction;
   onEdit: () => void;
   onReExtract?: (transactionId: string) => void;
+  onStatusUpdate?: (transactionId: string, newStatus: TransactionStatus) => void;
 }
 
-export default function TransactionRow({ transaction, onEdit, onReExtract }: TransactionRowProps) {
+export default function TransactionRow({ transaction, onEdit, onReExtract, onStatusUpdate }: TransactionRowProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isReExtracting, setIsReExtracting] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   const handleReExtract = async () => {
     if (!onReExtract) return;
@@ -19,6 +21,37 @@ export default function TransactionRow({ transaction, onEdit, onReExtract }: Tra
       await onReExtract(transaction.id);
     } finally {
       setIsReExtracting(false);
+    }
+  };
+
+  const handleStatusUpdate = async (newStatus: TransactionStatus) => {
+    if (!onStatusUpdate) return;
+
+    setIsUpdatingStatus(true);
+    try {
+      await onStatusUpdate(transaction.id, newStatus);
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  const getStatusColor = (status: TransactionStatus) => {
+    switch (status) {
+      case 'REVIEW': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'APPROVED': return 'bg-green-100 text-green-800 border-green-200';
+      case 'INVALID': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'REJECTED': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusLabel = (status: TransactionStatus) => {
+    switch (status) {
+      case 'REVIEW': return 'Review';
+      case 'APPROVED': return 'Approved';
+      case 'INVALID': return 'Invalid';
+      case 'REJECTED': return 'Rejected';
+      default: return status;
     }
   };
 
@@ -96,6 +129,9 @@ export default function TransactionRow({ transaction, onEdit, onReExtract }: Tra
               </h3>
               <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${getDirectionColor(transaction.direction)}`}>
                 {transaction.direction || 'unknown'}
+              </span>
+              <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${getStatusColor(transaction.status)}`}>
+                {getStatusLabel(transaction.status)}
               </span>
             </div>
             <div className="flex items-center space-x-6 text-sm text-gray-600">
@@ -177,6 +213,80 @@ export default function TransactionRow({ transaction, onEdit, onReExtract }: Tra
                 </svg>
               )}
             </button>
+          )}
+
+          {/* Status Action Buttons */}
+          {onStatusUpdate && (
+            <>
+              {transaction.status !== 'APPROVED' && (
+                <button
+                  onClick={() => handleStatusUpdate('APPROVED')}
+                  disabled={isUpdatingStatus}
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                    isUpdatingStatus
+                      ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-green-600 hover:bg-green-100'
+                  }`}
+                  title="Approve transaction"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              )}
+
+              {transaction.status !== 'REJECTED' && (
+                <button
+                  onClick={() => handleStatusUpdate('REJECTED')}
+                  disabled={isUpdatingStatus}
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                    isUpdatingStatus
+                      ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-red-600 hover:bg-red-100'
+                  }`}
+                  title="Reject transaction"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+
+              {transaction.status !== 'INVALID' && (
+                <button
+                  onClick={() => handleStatusUpdate('INVALID')}
+                  disabled={isUpdatingStatus}
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                    isUpdatingStatus
+                      ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-200'
+                  }`}
+                  title="Mark as invalid"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </button>
+              )}
+
+              {transaction.status !== 'REVIEW' && (
+                <button
+                  onClick={() => handleStatusUpdate('REVIEW')}
+                  disabled={isUpdatingStatus}
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                    isUpdatingStatus
+                      ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-100'
+                  }`}
+                  title="Mark for review"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              )}
+            </>
           )}
 
           <button

@@ -32,14 +32,20 @@ const EmailsPage: NextPage = () => {
     return date.toISOString().split('T')[0];
   };
 
-  // Calculate default dates
-  const today = new Date();
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(today.getDate() - 7);
+  // Helper functions to get default dates (last 4 days)
+  const getDefaultStartDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() - 4);
+    return formatDateForInput(date);
+  };
+
+  const getDefaultEndDate = () => {
+    return formatDateForInput(new Date());
+  };
 
   const [filters, setFilters] = useState<EmailFilters>({
-    date_from: formatDateForInput(sevenDaysAgo),
-    date_to: formatDateForInput(today),
+    date_from: getDefaultStartDate(),
+    date_to: getDefaultEndDate(),
     email_addresses: [], // Will be populated with available connections
     sender: 'alerts@dcbbank.com,alerts@hdfcbank.net', // Multiple default senders
     status: undefined,
