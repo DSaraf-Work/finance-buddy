@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
-import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { EmailPublic, EmailSearchRequest, PaginatedResponse, EmailStatus } from '@finance-buddy/shared';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { Layout } from '@/components/Layout';
 
 interface EmailFilters {
   date_from?: string;
@@ -423,30 +423,26 @@ const EmailsPage: NextPage = () => {
 
   return (
     <ProtectedRoute>
-      <Head>
-        <title>Finance Buddy - Email Management</title>
-        <meta name="description" content="Manage and review Gmail emails" />
-      </Head>
-
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Email Management</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  Review and manage Gmail emails from connected accounts
-                </p>
-              </div>
-              <div className="text-sm text-gray-500">
-                {pagination.total} total emails
+      <Layout
+        title="Finance Buddy - Email Management"
+        description="Manage and review Gmail emails"
+      >
+        <div className="py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Email Management</h1>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Review and manage Gmail emails from connected accounts
+                  </p>
+                </div>
+                <div className="text-sm text-gray-500">
+                  {pagination.total} total emails
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Filters */}
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Filters</h2>
@@ -1055,7 +1051,8 @@ const EmailsPage: NextPage = () => {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </Layout>
     </ProtectedRoute>
   );
 };

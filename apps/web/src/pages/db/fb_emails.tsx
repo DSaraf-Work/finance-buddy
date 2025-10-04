@@ -269,17 +269,19 @@ const EmailWorkbenchPage: NextPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
-                    <select
+                    <input
+                      type="number"
+                      min="1"
                       value={pagination.page}
-                      onChange={(e) => handlePageChange(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        const newPage = parseInt(e.target.value) || 1;
+                        if (newPage >= 1) {
+                          handlePageChange(newPage);
+                        }
+                      }}
                       className="input-field"
-                    >
-                      {Array.from({ length: Math.min(pagination.totalPages, 50) }, (_, i) => i + 1).map(pageNum => (
-                        <option key={pageNum} value={pageNum}>
-                          Page {pageNum}
-                        </option>
-                      ))}
-                    </select>
+                      placeholder="1"
+                    />
                   </div>
 
                   <div>

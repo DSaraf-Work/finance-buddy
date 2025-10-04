@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { Layout } from '@/components/Layout';
 
 interface RejectedEmail {
   id: string;
@@ -119,13 +119,12 @@ export default function RejectedEmailsPage() {
 
   return (
     <ProtectedRoute>
-      <Head>
-        <title>Finance Buddy - Rejected Emails Management</title>
-        <meta name="description" content="Manage rejected emails" />
-      </Head>
-
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Layout
+        title="Finance Buddy - Rejected Emails Management"
+        description="Manage rejected emails"
+      >
+        <div className="py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Rejected Emails Management</h1>
             <p className="mt-2 text-gray-600">Review and manage rejected emails</p>
@@ -265,8 +264,9 @@ export default function RejectedEmailsPage() {
               </div>
             )}
           </div>
+          </div>
         </div>
-      </div>
+      </Layout>
     </ProtectedRoute>
   );
 }

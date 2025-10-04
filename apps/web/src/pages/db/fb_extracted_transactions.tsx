@@ -105,6 +105,22 @@ const TransactionWorkbenchPage: NextPage = () => {
     }));
   };
 
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPagination(prev => ({
+      ...prev,
+      pageSize: newPageSize,
+      page: 1, // Reset to first page when changing page size
+    }));
+  };
+
+  // Effect to trigger search when page size changes
+  useEffect(() => {
+    // Only trigger search if page size has been changed from initial load
+    if (transactions.length > 0) { // Only if we have loaded transactions before
+      searchTransactions(1); // Always go to page 1 when page size changes
+    }
+  }, [pagination.pageSize]);
+
   const handleSearch = () => {
     searchTransactions(1);
   };
@@ -277,6 +293,44 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                 </div>
+
+                {/* Pagination Controls */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={pagination.page}
+                      onChange={(e) => {
+                        const newPage = parseInt(e.target.value) || 1;
+                        if (newPage >= 1) {
+                          handlePageChange(newPage);
+                        }
+                      }}
+                      className="input-field"
+                      placeholder="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={pagination.pageSize}
+                      onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
+                      className="input-field"
+                      placeholder="50"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <div className="text-sm text-gray-500">
+                      {pagination.total} total transactions
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mt-4 flex justify-between">
                   <button
                     onClick={handleSearch}
@@ -285,9 +339,6 @@ const TransactionWorkbenchPage: NextPage = () => {
                   >
                     {loading ? 'Searching...' : 'Search'}
                   </button>
-                  <div className="text-sm text-gray-500">
-                    {pagination.total} total transactions
-                  </div>
                 </div>
               </div>
             </div>
