@@ -30,6 +30,8 @@ export interface AIRequest {
   metadata?: Record<string, any>;
 }
 
+
+
 export interface AIResponse {
   content: string;
   model: string;
@@ -39,6 +41,7 @@ export interface AIResponse {
     completionTokens: number;
     totalTokens: number;
   };
+  processingTime?: number;
   metadata?: Record<string, any>;
 }
 
@@ -86,9 +89,10 @@ export abstract class BaseAIModel {
 // Transaction Extraction Types
 export interface TransactionExtractionRequest {
   emailId: string;
-  subject: string;
-  fromAddress: string;
-  plainBody: string;
+  subject?: string;
+  fromAddress?: string;
+  plainBody?: string;
+  content?: string;
   snippet?: string;
   internalDate?: Date;
 }

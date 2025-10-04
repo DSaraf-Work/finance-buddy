@@ -1,14 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { 
-  listMessages, 
-  getMessage, 
+import {
+  listMessages,
+  getMessage,
+  getMessageRaw,
+  getEnhancedMessage,
   refreshAccessToken,
   extractEmailFromHeaders,
   extractSubjectFromHeaders,
   extractToAddressesFromHeaders,
-  extractPlainTextBody
+  extractPlainTextBody,
+  parseRawEmailContent,
+  validateEmailContent
 } from '@/lib/gmail';
 import { 
   ManualSyncRequest, 
@@ -132,22 +136,33 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     let fetchedCount = 0;
     let upsertCount = 0;
 
-    // Step 4: Fetch missing messages from Gmail
+    // Step 4: Fetch missing messages from Gmail using enhanced fetching
     for (const messageId of missingIds) {
       try {
-        const gmailMessage = await getMessage(accessToken, messageId);
+        console.log(`📧 Fetching message ${messageId} with enhanced method...`);
+
+        // Use enhanced message fetching for better content extraction
+        const enhancedResult = await getEnhancedMessage(accessToken, messageId);
         fetchedCount++;
 
-        // Extract email data
-        const headers = gmailMessage.payload?.headers || [];
+        // Extract email data from the enhanced result
+        const headers = enhancedResult.message.payload?.headers || [];
         const fromAddress = extractEmailFromHeaders(headers);
         const subject = extractSubjectFromHeaders(headers);
         const toAddresses = extractToAddressesFromHeaders(headers);
-        const plainBody = extractPlainTextBody(gmailMessage.payload);
+        const plainBody = enhancedResult.content;
+
+        console.log(`📊 Enhanced fetch results for ${messageId}:`, {
+          strategy: enhancedResult.strategy,
+          contentLength: enhancedResult.content?.length || 0,
+          isValid: enhancedResult.validation.isValid,
+          hasTransaction: enhancedResult.validation.hasTransaction,
+          issues: enhancedResult.validation.issues
+        });
 
         // Convert Gmail internalDate (ms) to UTC timestamp
-        const internalDate = gmailMessage.internalDate 
-          ? new Date(parseInt(gmailMessage.internalDate)).toISOString()
+        const internalDate = enhancedResult.message.internalDate
+          ? new Date(parseInt(enhancedResult.message.internalDate)).toISOString()
           : null;
 
         // Step 5: Upsert into fb_emails
@@ -159,11 +174,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
             connection_id: (connection as any).id,
             email_address: connection.email_address,
             message_id: messageId,
-            thread_id: gmailMessage.threadId || '',
+            thread_id: enhancedResult.message.threadId || '',
             from_address: fromAddress,
             to_addresses: toAddresses,
             subject,
-            snippet: gmailMessage.snippet,
+            snippet: enhancedResult.message.snippet,
             internal_date: internalDate,
             plain_body: plainBody,
             created_at: new Date().toISOString(),

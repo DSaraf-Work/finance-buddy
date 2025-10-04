@@ -1,10 +1,12 @@
 // AI Model Manager - Handles model selection, fallbacks, and retries
 
-import { BaseAIModel, AIRequest, AIResponse, AIError, AIManagerConfig, ModelSelectionStrategy } from './types';
+import { BaseAIModel, AIRequest, AIResponse, AIError, AIManagerConfig, ModelSelectionStrategy, TransactionExtractionRequest } from './types';
 import { OpenAIModel } from './models/openai';
 import { AnthropicModel } from './models/anthropic';
 import { GoogleModel } from './models/google';
 import { getAIManagerConfig } from './config';
+import { MockAIConfig } from '../config/mock-ai-config';
+import { MockAIResponses } from './mock-ai-responses';
 
 export class AIModelManager {
   private config: AIManagerConfig;
@@ -78,6 +80,24 @@ export class AIModelManager {
   async generateResponse(request: AIRequest): Promise<AIResponse> {
     const startTime = Date.now();
     let lastError: AIError | null = null;
+
+    // Check if mock AI is enabled
+    if (MockAIConfig.isEnabled()) {
+      console.log('🎭 Mock AI enabled true - using pattern-based extraction instead of real AI models');
+
+      // Convert AIRequest to TransactionExtractionRequest for mock processing
+      const mockRequest: TransactionExtractionRequest = {
+        emailId: request.metadata?.emailId || 'mock-email',
+        subject: request.metadata?.subject || '',
+        fromAddress: request.metadata?.fromAddress || '',
+        content: request.prompt || '',
+        snippet: request.metadata?.snippet || '',
+      };
+
+      return await MockAIResponses.generateMockResponse(mockRequest);
+    }
+    console.log('🎭 Mock AI enabled false - using ai extraction');
+
 
     // Check if any models are available
     if (this.models.size === 0) {

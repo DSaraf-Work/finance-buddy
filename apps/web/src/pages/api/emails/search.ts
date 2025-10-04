@@ -4,11 +4,13 @@ import { supabaseAdmin } from '@/lib/supabase';
 import {
   listMessages,
   getMessage,
+  getMessageRaw,
   refreshAccessToken,
   extractEmailFromHeaders,
   extractSubjectFromHeaders,
   extractToAddressesFromHeaders,
-  extractPlainTextBody
+  extractPlainTextBody,
+  parseRawEmailContent
 } from '@/lib/gmail';
 import {
   EmailSearchRequest,
@@ -311,7 +313,36 @@ async function syncEmailsFromGmail(
       const fromAddress = extractEmailFromHeaders(headers);
       const subject = extractSubjectFromHeaders(headers);
       const toAddresses = extractToAddressesFromHeaders(headers);
-      const plainBody = extractPlainTextBody(gmailMessage.payload);
+
+      // Try structured parsing first
+      let plainBody = extractPlainTextBody(gmailMessage.payload);
+
+      // If structured parsing fails or returns only short content (likely truncated),
+      // fall back to raw email parsing for complete content
+      if (!plainBody || plainBody.length < 500 || plainBody.includes('Email disclaimer')) {
+        console.log(`📧 Structured parsing incomplete for ${messageId}, using raw parsing...`);
+        try {
+          const rawMessage = await getMessageRaw(accessToken, messageId);
+          if (rawMessage.decodedRaw) {
+            const parsedContent = parseRawEmailContent(rawMessage.decodedRaw);
+            // Use the best available content: plain text, HTML, or any body content
+            plainBody = parsedContent.plainTextBody ||
+                       parsedContent.htmlBody ||
+                       parsedContent.allBodies.join('\n\n') ||
+                       plainBody; // fallback to original if all else fails
+
+            console.log(`✅ Raw parsing successful for ${messageId}:`, {
+              originalLength: extractPlainTextBody(gmailMessage.payload)?.length || 0,
+              rawLength: plainBody?.length || 0,
+              improvement: plainBody && extractPlainTextBody(gmailMessage.payload) ?
+                plainBody.length - (extractPlainTextBody(gmailMessage.payload)?.length || 0) : 0
+            });
+          }
+        } catch (rawError) {
+          console.error(`❌ Raw parsing failed for ${messageId}:`, rawError);
+          // Continue with structured parsing result
+        }
+      }
 
       // Convert Gmail internalDate (ms) to UTC timestamp
       const internalDate = gmailMessage.internalDate

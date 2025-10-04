@@ -116,7 +116,7 @@ export class TransactionExtractor {
         console.log('📂 Step 4: Classifying transaction category...');
         transaction.category = await this.classifyCategory(
           transaction.merchantName,
-          request.plainBody
+          request.plainBody || ''
         );
         console.log('✅ Category classified:', transaction.category);
       } else {
@@ -180,11 +180,17 @@ export class TransactionExtractor {
     try {
       console.log('🤖 Preparing AI extraction request:', {
         emailId: request.emailId,
-        emailType: this.detectEmailType(request.fromAddress),
+        emailType: this.detectEmailType(request.fromAddress || ''),
       });
 
       const systemPrompt = this.getSystemPrompt(request);
-      const userPrompt = TRANSACTION_EXTRACTION_USER_PROMPT(request);
+      const userPrompt = TRANSACTION_EXTRACTION_USER_PROMPT({
+        subject: request.subject || '',
+        fromAddress: request.fromAddress || '',
+        plainBody: request.plainBody || '',
+        snippet: request.snippet,
+        internalDate: request.internalDate
+      });
 
       console.log('📝 AI Prompts prepared:', {
         emailId: request.emailId,
@@ -280,7 +286,7 @@ export class TransactionExtractor {
   }
 
   private getSystemPrompt(request: TransactionExtractionRequest): string {
-    const fromAddress = request.fromAddress.toLowerCase();
+    const fromAddress = (request.fromAddress || '').toLowerCase();
     
     // Determine email type and use specialized prompt
     if (this.isBankEmail(fromAddress)) {

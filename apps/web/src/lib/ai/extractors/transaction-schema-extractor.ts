@@ -177,6 +177,18 @@ export class SchemaAwareTransactionExtractor {
   async extractTransaction(emailContent: string, emailMetadata?: any): Promise<any> {
     console.log('🧠 Schema-Aware AI Extraction Starting...');
 
+    // Log the input email content being analyzed
+    console.log('📧 EMAIL INPUT ANALYSIS:');
+    console.log('='.repeat(80));
+    console.log('Email ID:', emailMetadata?.emailId || 'unknown');
+    console.log('Subject:', emailMetadata?.subject || 'N/A');
+    console.log('From Address:', emailMetadata?.fromAddress || 'N/A');
+    console.log('Plain Body Length:', emailContent?.length || 0);
+    console.log('Plain Body Content:', emailContent || 'NULL/EMPTY');
+    console.log('Snippet:', emailMetadata?.snippet || 'N/A');
+    console.log('Internal Date:', emailMetadata?.internalDate || 'N/A');
+    console.log('='.repeat(80));
+
     // Create a comprehensive prompt that tells the AI about the schema
     const prompt = this.createSchemaAwarePrompt(emailContent, emailMetadata);
 
@@ -196,6 +208,11 @@ export class SchemaAwareTransactionExtractor {
         maxTokens: 1000,
         metadata: {
           ...emailMetadata,
+          emailId: emailMetadata?.emailId || 'unknown',
+          subject: emailMetadata?.subject || '',
+          fromAddress: emailMetadata?.fromAddress || '',
+          content: emailContent,
+          snippet: emailMetadata?.snippet || '',
           extractionType: 'schema-aware-transaction',
           schemaVersion: '2.0.0'
         }
