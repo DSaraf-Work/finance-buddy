@@ -21,6 +21,7 @@ const navigation: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: '🏠', description: 'Overview and quick actions' },
   { name: 'Admin', href: '/admin', icon: '⚙️', description: 'Gmail connections and system health' },
   { name: 'Emails', href: '/emails', icon: '📧', description: 'Email management and search' },
+  { name: 'Rejected', href: '/rejected-emails', icon: '🚫', description: 'Manage rejected emails' },
   { name: 'Transactions', href: '/transactions', icon: '💰', description: 'Transaction review and analysis' },
   { name: 'Reports', href: '/reports', icon: '📊', description: 'Analytics and insights' },
   { name: 'Settings', href: '/settings', icon: '⚙️', description: 'User preferences and account' },
@@ -55,6 +56,7 @@ export function Layout({ children, title, description }: LayoutProps) {
       let name = segment.charAt(0).toUpperCase() + segment.slice(1);
       if (segment === 'fb_emails') name = 'Email Workbench';
       if (segment === 'fb_extracted_transactions') name = 'Transaction Workbench';
+      if (segment === 'rejected-emails') name = 'Rejected Emails';
       if (segment === 'db') name = 'Database';
       
       breadcrumbs.push({ name, href: currentPath });

@@ -41,7 +41,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       q,
       page = 1,
       pageSize = 50,
-      sort = 'asc',
+      sort = 'desc', // Default to newest-to-oldest
       db_only = false
     }: EmailSearchRequest = req.body;
 

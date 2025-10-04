@@ -38,8 +38,8 @@ const EmailsPage: NextPage = () => {
   const [filters, setFilters] = useState<EmailFilters>({
     date_from: formatDateForInput(sevenDaysAgo),
     date_to: formatDateForInput(today),
-    email_address: '',
-    sender: '',
+    email_address: 'dheerajsaraf1996@gmail.com', // Default email address
+    sender: 'alerts@dcbbank.com', // Default sender
     status: undefined,
     q: '',
     db_only: true, // Default to database-only search
@@ -51,6 +51,8 @@ const EmailsPage: NextPage = () => {
   const [newStatus, setNewStatus] = useState<'REJECT' | 'UNREJECT'>('REJECT');
   const [statusRemarks, setStatusRemarks] = useState('');
   const [processingEmails, setProcessingEmails] = useState<Set<string>>(new Set());
+  const [batchProcessing, setBatchProcessing] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
 
   const searchEmails = async (page: number = 1) => {
     setLoading(true);
@@ -59,7 +61,7 @@ const EmailsPage: NextPage = () => {
         ...filters,
         page,
         pageSize: pagination.pageSize,
-        sort: 'asc',
+        sort: 'desc', // Default to newest-to-oldest
       };
 
       // Remove empty filters
@@ -151,7 +153,7 @@ const EmailsPage: NextPage = () => {
     setSelectedEmail(null);
   };
 
-  const handleProcessEmail = async (email: EmailPublic) => {
+  const handleProcessEmail = async (email: EmailPublic, silent: boolean = false) => {
     // Add email to processing set
     setProcessingEmails(prev => new Set(prev).add(email.id));
 
@@ -164,15 +166,28 @@ const EmailsPage: NextPage = () => {
       });
 
       if (response.ok) {
-        // Refresh the emails list
-        searchEmails(pagination.page);
-        alert('Email processed successfully!');
+        // Silently update the email status in the current list
+        setEmails(prevEmails =>
+          prevEmails.map(e =>
+            e.id === email.id
+              ? { ...e, status: 'Processed' as any }
+              : e
+          )
+        );
+
+        // Only show success alert if not silent
+        if (!silent) {
+          // For individual processing, refresh the list to get latest data
+          searchEmails(pagination.page);
+        }
       } else {
         const error = await response.json();
+        // Always show error alerts
         alert(`Failed to process email: ${error.error}`);
       }
     } catch (error) {
       console.error('Process email error:', error);
+      // Always show error alerts
       alert('Failed to process email');
     } finally {
       // Remove email from processing set
@@ -304,6 +319,105 @@ const EmailsPage: NextPage = () => {
       case 'PROCESSED': return 'bg-green-100 text-green-800';
       case 'REJECTED': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Batch processing functions
+  const handleGetAllFetched = async () => {
+    setBatchProcessing(true);
+    setBatchProgress({ current: 0, total: 0 });
+
+    try {
+      // Search for all FETCHED emails
+      const searchRequest: EmailSearchRequest = {
+        ...filters,
+        status: 'Fetched',
+        page: 1,
+        pageSize: 1000, // Get a large number to find all fetched emails
+        sort: 'desc',
+      };
+
+      const response = await fetch('/api/emails/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchRequest),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`🔍 Found ${data.emails.length} FETCHED emails to process`);
+
+        if (data.emails.length === 0) {
+          alert('No FETCHED emails found to process.');
+          return;
+        }
+
+        // Process in batches
+        const batchSize = pagination.pageSize;
+        const totalBatches = Math.ceil(data.emails.length / batchSize);
+        setBatchProgress({ current: 0, total: totalBatches });
+
+        for (let i = 0; i < totalBatches; i++) {
+          const batch = data.emails.slice(i * batchSize, (i + 1) * batchSize);
+          setBatchProgress({ current: i + 1, total: totalBatches });
+
+          console.log(`🔄 Processing batch ${i + 1} of ${totalBatches} (${batch.length} emails)`);
+
+          // Process each email in the batch sequentially
+          for (const email of batch) {
+            await handleProcessEmail(email, true); // Silent processing
+          }
+        }
+
+        // Refresh the email list
+        searchEmails(pagination.page);
+        alert(`Successfully processed ${data.emails.length} emails in ${totalBatches} batches!`);
+      } else {
+        const error = await response.json();
+        alert(`Failed to fetch emails: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Batch processing error:', error);
+      alert('Failed to process emails in batch');
+    } finally {
+      setBatchProcessing(false);
+      setBatchProgress({ current: 0, total: 0 });
+    }
+  };
+
+  const handleBulkProcess = async () => {
+    setBatchProcessing(true);
+    setBatchProgress({ current: 0, total: 0 });
+
+    try {
+      // Get all FETCHED emails from current table view
+      const fetchedEmails = emails.filter(email =>
+        email.status === 'Fetched' || (email.status as string) === 'FETCHED'
+      );
+
+      if (fetchedEmails.length === 0) {
+        alert('No FETCHED emails in current view to process.');
+        return;
+      }
+
+      console.log(`🔄 Bulk processing ${fetchedEmails.length} emails from current view`);
+      setBatchProgress({ current: 0, total: fetchedEmails.length });
+
+      // Process each email sequentially
+      for (let i = 0; i < fetchedEmails.length; i++) {
+        setBatchProgress({ current: i + 1, total: fetchedEmails.length });
+        await handleProcessEmail(fetchedEmails[i], true); // Silent processing
+      }
+
+      // Refresh the email list
+      searchEmails(pagination.page);
+      alert(`Successfully processed ${fetchedEmails.length} emails!`);
+    } catch (error) {
+      console.error('Bulk processing error:', error);
+      alert('Failed to process emails in bulk');
+    } finally {
+      setBatchProcessing(false);
+      setBatchProgress({ current: 0, total: 0 });
     }
   };
 
@@ -482,8 +596,8 @@ const EmailsPage: NextPage = () => {
                   setFilters({
                     date_from: formatDateForInput(sevenDaysAgo),
                     date_to: formatDateForInput(today),
-                    email_address: '',
-                    sender: '',
+                    email_address: 'dheerajsaraf1996@gmail.com', // Keep default email
+                    sender: 'alerts@dcbbank.com', // Keep default sender
                     status: undefined,
                     q: '',
                     db_only: true,
@@ -493,6 +607,36 @@ const EmailsPage: NextPage = () => {
                 className="btn-secondary"
               >
                 Clear Filters
+              </button>
+
+              <button
+                onClick={handleGetAllFetched}
+                disabled={batchProcessing || loading}
+                className={`px-4 py-2 rounded font-medium transition-colors ${
+                  batchProcessing || loading
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                {batchProcessing && batchProgress.total > 0
+                  ? `Processing Batch ${batchProgress.current} of ${batchProgress.total}...`
+                  : 'Get All Fetched'
+                }
+              </button>
+
+              <button
+                onClick={handleBulkProcess}
+                disabled={batchProcessing || loading}
+                className={`px-4 py-2 rounded font-medium transition-colors ${
+                  batchProcessing || loading
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-purple-600 text-white hover:bg-purple-700'
+                }`}
+              >
+                {batchProcessing && batchProgress.total > 0 && batchProgress.current <= emails.length
+                  ? `Processing ${batchProgress.current} of ${batchProgress.total}...`
+                  : 'Bulk Process'
+                }
               </button>
             </div>
           </div>
