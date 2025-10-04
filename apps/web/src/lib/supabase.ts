@@ -46,4 +46,4 @@ export const createSupabaseClient = (accessToken?: string) => {
   return client;
 };
 
-export { Database };
+export type { Database };

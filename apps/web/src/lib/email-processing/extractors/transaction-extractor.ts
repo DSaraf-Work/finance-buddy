@@ -244,6 +244,9 @@ export class TransactionExtractor {
         accountHint: extractedData.accountHint,
         referenceId: extractedData.referenceId,
         location: extractedData.location,
+        accountType: extractedData.accountType,
+        transactionType: extractedData.transactionType,
+        aiNotes: extractedData.aiNotes,
         confidence: extractedData.confidence || 0.5,
         extractionVersion: this.EXTRACTION_VERSION,
         rawExtraction: extractedData,
@@ -312,8 +315,22 @@ export class TransactionExtractor {
         prompt: MERCHANT_NORMALIZATION_PROMPT(merchantName),
         ...TASK_CONFIGS.merchant_normalization,
       });
-      
-      return response.content.trim();
+
+      // Handle case where mock AI returns JSON instead of plain text
+      let normalizedName = response.content.trim();
+
+      // If the response looks like JSON, try to extract the merchantNormalized field
+      if (normalizedName.startsWith('{') && normalizedName.includes('merchantNormalized')) {
+        try {
+          const parsed = JSON.parse(normalizedName);
+          normalizedName = parsed.merchantNormalized || parsed.merchantName || merchantName;
+        } catch (parseError) {
+          console.warn('Failed to parse JSON response, using original merchant name:', parseError);
+          normalizedName = merchantName;
+        }
+      }
+
+      return normalizedName;
     } catch (error) {
       console.warn('Merchant normalization failed, using original:', error);
       return merchantName;

@@ -20,6 +20,13 @@ FIELD DEFINITIONS:
 - accountHint: Last 4 digits or account identifier mentioned
 - referenceId: Transaction ID, reference number, or confirmation code
 - location: Physical location if mentioned
+- accountType: Classify account type from patterns like:
+  * "DCB_4277" for DCB Bank accounts ending in 4277
+  * "HDFC_SWIGGY_7712" for HDFC Swiggy card ending in 7712
+  * "HDFC_DEBIT" for HDFC debit cards
+  * Extract from account numbers, card names, or bank identifiers
+- transactionType: "Dr" for debit/outgoing money, "Cr" for credit/incoming money
+- aiNotes: 10 comma-separated keywords summarizing the transaction (e.g., "coffee, morning, downtown, card-payment, routine")
 - confidence: Overall confidence score (0.0 to 1.0)
 
 RESPONSE FORMAT:
@@ -34,6 +41,9 @@ RESPONSE FORMAT:
   "accountHint": "1234" or null,
   "referenceId": "TXN123456" or null,
   "location": "New York, NY" or null,
+  "accountType": "DCB_4277" or null,
+  "transactionType": "Dr" or null,
+  "aiNotes": "coffee, morning, downtown, card-payment, routine" or null,
   "confidence": 0.85
 }`;
 

@@ -45,7 +45,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Get connection with token refresh if needed
-    const { data: connection, error: connError } = await supabaseAdmin
+    const { data: connection, error: connError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('*')
       .eq('id', connection_id)
@@ -56,21 +56,21 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(404).json({ error: 'Connection not found' });
     }
 
-    let accessToken = connection.access_token;
+    let accessToken = (connection as any).access_token;
 
     // Check if token needs refresh
-    const tokenExpiry = new Date(connection.token_expiry);
+    const tokenExpiry = new Date((connection as any).token_expiry);
     const now = new Date();
     if (tokenExpiry <= now) {
       try {
-        const newTokens = await refreshAccessToken(connection.refresh_token);
+        const newTokens = await refreshAccessToken((connection as any).refresh_token);
         accessToken = newTokens.access_token!;
         
         // Update token in database
         const newExpiry = new Date();
         newExpiry.setSeconds(newExpiry.getSeconds() + (newTokens.expires_in || 3600));
         
-        await supabaseAdmin
+        await (supabaseAdmin as any)
           .from('fb_gmail_connections')
           .update({
             access_token: accessToken,
@@ -114,11 +114,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const pageIds = reversedIds.slice(startIndex, endIndex);
 
     // Step 3: Probe DB for existing messages
-    const { data: existingMessages, error: probeError } = await supabaseAdmin
+    const { data: existingMessages, error: probeError } = await (supabaseAdmin as any)
       .from('fb_emails')
       .select('message_id')
       .eq('user_id', user.id)
-      .eq('google_user_id', connection.google_user_id)
+      .eq('google_user_id', (connection as any).google_user_id)
       .in('message_id', pageIds);
 
     if (probeError) {
@@ -126,7 +126,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(500).json({ error: 'Database probe failed' });
     }
 
-    const existingMessageIds = new Set(existingMessages.map(m => m.message_id));
+    const existingMessageIds = new Set(existingMessages.map((m: any) => m.message_id));
     const missingIds = pageIds.filter(id => !existingMessageIds.has(id));
 
     let fetchedCount = 0;
@@ -151,12 +151,12 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           : null;
 
         // Step 5: Upsert into fb_emails
-        const { error: upsertError } = await supabaseAdmin
+        const { error: upsertError } = await (supabaseAdmin as any)
           .from('fb_emails')
           .upsert({
             user_id: user.id,
-            google_user_id: connection.google_user_id,
-            connection_id: connection.id,
+            google_user_id: (connection as any).google_user_id,
+            connection_id: (connection as any).id,
             email_address: connection.email_address,
             message_id: messageId,
             thread_id: gmailMessage.threadId || '',
@@ -166,7 +166,6 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
             snippet: gmailMessage.snippet,
             internal_date: internalDate,
             plain_body: plainBody,
-            status: 'Fetched',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           }, {
@@ -185,7 +184,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Update last sync time
-    await supabaseAdmin
+    await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .update({
         last_sync_at: new Date().toISOString(),
@@ -195,7 +194,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       .eq('id', connection_id);
 
     // Step 6: Return results with proper ordering
-    const { data: resultEmails, error: resultError } = await supabaseAdmin
+    const { data: resultEmails, error: resultError } = await (supabaseAdmin as any)
       .from('fb_emails')
       .select(`
         id,

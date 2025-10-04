@@ -3,11 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: ['@finance-buddy/shared'],
-  experimental: {
-    appDir: false, // Using pages router as per architecture
-  },
+  // Using pages router (default in Next.js 14)
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   },
 }
 

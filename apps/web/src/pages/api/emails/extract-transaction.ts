@@ -30,7 +30,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Fetch the email
-    const { data: email, error: emailError } = await supabaseAdmin
+    const { data: email, error: emailError } = await (supabaseAdmin as any)
       .from('fb_emails')
       .select('*')
       .eq('id', emailId)
@@ -38,26 +38,26 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       .single();
 
     if (emailError || !email) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'Email not found or access denied',
-        details: emailError?.message 
+        details: emailError?.message
       });
     }
 
     console.log('📧 Processing email:', {
-      id: email.id,
-      subject: email.subject,
-      from: email.from_address,
-      date: email.internal_date,
+      id: (email as any).id,
+      subject: (email as any).subject,
+      from: (email as any).from_address,
+      date: (email as any).internal_date,
     });
 
     // Create extraction request
     const extractionRequest: TransactionExtractionRequest = {
-      emailId: email.id,
-      subject: email.subject || '',
-      fromAddress: email.from_address || '',
-      plainBody: email.plain_body || '',
-      snippet: email.snippet,
+      emailId: (email as any).id,
+      subject: (email as any).subject || '',
+      fromAddress: (email as any).from_address || '',
+      plainBody: (email as any).plain_body || '',
+      snippet: (email as any).snippet,
       internalDate: email.internal_date ? new Date(email.internal_date) : undefined,
     };
 
@@ -108,7 +108,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           updated_at: new Date().toISOString(),
         };
 
-        const { data: saved, error: saveError } = await supabaseAdmin
+        const { data: saved, error: saveError } = await (supabaseAdmin as any)
           .from('fb_extracted_transactions')
           .upsert(transactionData, {
             onConflict: 'email_row_id',

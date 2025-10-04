@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             : 'No session cookie found',
         },
       },
-      recommendations: [],
+      recommendations: [] as string[],
     };
 
     // Add recommendations based on test results

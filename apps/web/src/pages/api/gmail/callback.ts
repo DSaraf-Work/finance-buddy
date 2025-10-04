@@ -205,7 +205,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // Store connection in database
-    const { error: dbError } = await supabaseAdmin
+    const { error: dbError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .upsert(connectionData, {
         onConflict: 'user_id,email_address',

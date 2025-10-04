@@ -17,7 +17,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Get the connection to revoke token
-    const { data: connection, error: fetchError } = await supabaseAdmin
+    const { data: connection, error: fetchError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('access_token, refresh_token')
       .eq('id', connection_id)
@@ -31,7 +31,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // Revoke token with Google if requested
     if (revoke) {
       try {
-        await revokeToken(connection.access_token);
+        await revokeToken((connection as any).access_token);
       } catch (revokeError) {
         console.error('Token revocation error:', revokeError);
         // Continue with deletion even if revocation fails
@@ -39,7 +39,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Hard delete the connection (per ADR-06)
-    const { error: deleteError } = await supabaseAdmin
+    const { error: deleteError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .delete()
       .eq('id', connection_id)

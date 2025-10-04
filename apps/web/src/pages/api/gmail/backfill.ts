@@ -25,7 +25,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Validate connection exists
-    const { data: connection, error: connError } = await supabaseAdmin
+    const { data: connection, error: connError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('id')
       .eq('id', connection_id)
@@ -78,7 +78,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     };
 
     // Insert job into database
-    const { data: job, error: jobError } = await supabaseAdmin
+    const { data: job, error: jobError } = await (supabaseAdmin as any)
       .from('fb_jobs')
       .insert({
         user_id: user.id,

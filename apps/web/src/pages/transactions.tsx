@@ -1,586 +1,352 @@
-import { NextPage } from 'next';
-import Head from 'next/head';
 import { useState, useEffect } from 'react';
-import {
-  ExtractedTransactionPublic,
-  TransactionSearchRequest,
-  PaginatedResponse,
-  TransactionDirection
-} from '@finance-buddy/shared';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { useRouter } from 'next/router';
+import { useAuth } from '@/contexts/AuthContext';
+import TransactionRow from '@/components/TransactionRow';
+import TransactionModal from '@/components/TransactionModal';
 
-interface TransactionFilters {
-  date_from?: string;
-  date_to?: string;
-  google_user_id?: string;
-  direction?: TransactionDirection;
-  category?: string;
-  merchant?: string;
-  min_amount?: number;
-  max_amount?: number;
-  min_confidence?: number;
+export interface Transaction {
+  id: string;
+  user_id: string;
+  google_user_id: string;
+  connection_id: string;
+  email_row_id: string;
+  txn_time: string | null;
+  amount: string;
+  currency: string | null;
+  direction: 'debit' | 'credit' | 'transfer' | null;
+  merchant_name: string | null;
+  merchant_normalized: string | null;
+  category: string | null;
+  account_hint: string | null;
+  reference_id: string | null;
+  location: string | null;
+  account_type: string | null;
+  transaction_type: 'Dr' | 'Cr' | null;
+  ai_notes: string | null;
+  user_notes: string | null;
+  confidence: string;
+  extraction_version: string;
+  created_at: string;
+  updated_at: string;
 }
 
-const TransactionsPage: NextPage = () => {
-  const [transactions, setTransactions] = useState<ExtractedTransactionPublic[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    pageSize: 25,
+export default function TransactionsPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [stats, setStats] = useState({
     total: 0,
-    totalPages: 0,
-    hasNext: false,
-    hasPrev: false,
+    totalAmount: 0,
+    avgConfidence: 0,
   });
-  const [filters, setFilters] = useState<TransactionFilters>({
-    date_from: '',
-    date_to: '',
-    google_user_id: '',
-    direction: undefined,
-    category: '',
-    merchant: '',
-    min_amount: undefined,
-    max_amount: undefined,
-    min_confidence: undefined,
-  });
-  const [selectedTransaction, setSelectedTransaction] = useState<ExtractedTransactionPublic | null>(null);
-  const [showDrawer, setShowDrawer] = useState(false);
 
-  const searchTransactions = async (page: number = 1) => {
-    setLoading(true);
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth');
+      return;
+    }
+
+    if (user) {
+      fetchTransactions();
+    }
+  }, [user, authLoading, router]);
+
+  const fetchTransactions = async () => {
     try {
-      const searchRequest: TransactionSearchRequest = {
-        ...filters,
-        page,
-        pageSize: pagination.pageSize,
-        sort: 'asc',
-      };
+      setLoading(true);
+      setError(null);
 
-      // Remove empty filters
-      Object.keys(searchRequest).forEach(key => {
-        const value = searchRequest[key as keyof TransactionSearchRequest];
-        if (value === '' || value === undefined || value === null) {
-          delete searchRequest[key as keyof TransactionSearchRequest];
-        }
+      const response = await fetch('/api/transactions', {
+        method: 'GET',
+        credentials: 'include', // Include cookies for authentication
       });
 
-      const response = await fetch('/api/transactions/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(searchRequest),
-      });
-
-      if (response.ok) {
-        const data: PaginatedResponse<ExtractedTransactionPublic> = await response.json();
-        setTransactions(data.items);
-        setPagination({
-          page: data.page,
-          pageSize: data.pageSize,
-          total: data.total,
-          totalPages: data.totalPages,
-          hasNext: data.hasNext,
-          hasPrev: data.hasPrev,
-        });
-      } else {
-        console.error('Search failed:', response.statusText);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch transactions');
       }
-    } catch (error) {
-      console.error('Search error:', error);
+
+      const data = await response.json();
+
+      if (data.success) {
+        setTransactions(data.transactions);
+        setStats(data.stats);
+      } else {
+        throw new Error(data.error || 'Failed to fetch transactions');
+      }
+
+    } catch (err: any) {
+      console.error('Error fetching transactions:', err);
+      setError(err.message || 'Failed to fetch transactions');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    searchTransactions();
-  }, []);
+  const handleReExtraction = async (transactionId: string) => {
+    try {
+      const response = await fetch('/api/transactions/re-extract', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ transactionId }),
+      });
 
-  const handleFilterChange = (key: keyof TransactionFilters, value: string | number) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value || undefined,
-    }));
-  };
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Re-extraction successful:', result);
 
-  const handleSearch = () => {
-    searchTransactions(1);
-  };
+        // Refresh transactions to show updated data
+        await fetchTransactions();
 
-  const handlePageChange = (newPage: number) => {
-    searchTransactions(newPage);
-  };
-
-  const openTransactionDrawer = (transaction: ExtractedTransactionPublic) => {
-    setSelectedTransaction(transaction);
-    setShowDrawer(true);
-  };
-
-  const closeTransactionDrawer = () => {
-    setShowDrawer(false);
-    setSelectedTransaction(null);
-  };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
-  };
-
-  const formatAmount = (amount?: number, currency?: string) => {
-    if (amount === undefined || amount === null) return 'N/A';
-    const formatted = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD',
-    }).format(amount);
-    return formatted;
-  };
-
-  const getDirectionColor = (direction?: TransactionDirection) => {
-    switch (direction) {
-      case 'debit': return 'bg-red-100 text-red-800';
-      case 'credit': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+        // Show success message
+        alert(`Re-extraction completed! Confidence: ${Math.round(result.extractionResult.confidence * 100)}%`);
+      } else {
+        const error = await response.json();
+        console.error('❌ Re-extraction failed:', error);
+        alert(`Re-extraction failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('❌ Re-extraction error:', error);
+      alert('Re-extraction failed. Please try again.');
     }
   };
 
-  const getConfidenceColor = (confidence?: number) => {
-    if (!confidence) return 'bg-gray-100 text-gray-800';
-    if (confidence >= 0.8) return 'bg-green-100 text-green-800';
-    if (confidence >= 0.6) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-red-100 text-red-800';
+  const handleTransactionUpdate = async (updatedTransaction: Transaction) => {
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication
+        body: JSON.stringify({
+          id: updatedTransaction.id,
+          txn_time: updatedTransaction.txn_time,
+          amount: updatedTransaction.amount,
+          currency: updatedTransaction.currency,
+          direction: updatedTransaction.direction,
+          merchant_name: updatedTransaction.merchant_name,
+          merchant_normalized: updatedTransaction.merchant_normalized,
+          category: updatedTransaction.category,
+          account_hint: updatedTransaction.account_hint,
+          reference_id: updatedTransaction.reference_id,
+          location: updatedTransaction.location,
+          account_type: updatedTransaction.account_type,
+          transaction_type: updatedTransaction.transaction_type,
+          user_notes: updatedTransaction.user_notes,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update transaction');
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update local state
+        setTransactions(prev =>
+          prev.map(t => t.id === updatedTransaction.id ? data.transaction : t)
+        );
+
+        setIsModalOpen(false);
+        setSelectedTransaction(null);
+      } else {
+        throw new Error(data.error || 'Failed to update transaction');
+      }
+    } catch (err: any) {
+      console.error('Error updating transaction:', err);
+      setError(err.message || 'Failed to update transaction');
+    }
   };
 
-  return (
-    <ProtectedRoute>
-      <Head>
-        <title>Finance Buddy - Transaction Management</title>
-        <meta name="description" content="Review and manage extracted financial transactions" />
-      </Head>
+  const openTransactionModal = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsModalOpen(true);
+  };
 
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading transactions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={fetchTransactions}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header */}
+      <div className="bg-white shadow-lg border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+                <p className="text-gray-600 mt-1">AI-extracted financial transactions with smart insights</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={fetchTransactions}
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Transaction Management</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  Review and manage extracted financial transactions from emails
-                </p>
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Transactions</p>
+                <p className="text-4xl font-bold text-gray-900 mt-2">{stats.total}</p>
+                <p className="text-sm text-gray-500 mt-1">Processed transactions</p>
               </div>
-              <div className="text-sm text-gray-500">
-                {pagination.total} total transactions
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Filters */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Filters</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
-                <input
-                  type="date"
-                  value={filters.date_from || ''}
-                  onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
-                <input
-                  type="date"
-                  value={filters.date_to || ''}
-                  onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Direction</label>
-                <select
-                  value={filters.direction || ''}
-                  onChange={(e) => handleFilterChange('direction', e.target.value)}
-                  className="input-field"
-                >
-                  <option value="">All Directions</option>
-                  <option value="debit">Debit</option>
-                  <option value="credit">Credit</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Min Confidence</label>
-                <select
-                  value={filters.min_confidence || ''}
-                  onChange={(e) => handleFilterChange('min_confidence', parseFloat(e.target.value))}
-                  className="input-field"
-                >
-                  <option value="">Any Confidence</option>
-                  <option value="0.8">High (≥80%)</option>
-                  <option value="0.6">Medium (≥60%)</option>
-                  <option value="0.4">Low (≥40%)</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <input
-                  type="text"
-                  value={filters.category || ''}
-                  onChange={(e) => handleFilterChange('category', e.target.value)}
-                  placeholder="e.g., food, transport"
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Merchant</label>
-                <input
-                  type="text"
-                  value={filters.merchant || ''}
-                  onChange={(e) => handleFilterChange('merchant', e.target.value)}
-                  placeholder="Search merchant name"
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Google User ID</label>
-                <input
-                  type="text"
-                  value={filters.google_user_id || ''}
-                  onChange={(e) => handleFilterChange('google_user_id', e.target.value)}
-                  placeholder="Filter by account"
-                  className="input-field"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Min Amount</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={filters.min_amount || ''}
-                  onChange={(e) => handleFilterChange('min_amount', parseFloat(e.target.value))}
-                  placeholder="0.00"
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Max Amount</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={filters.max_amount || ''}
-                  onChange={(e) => handleFilterChange('max_amount', parseFloat(e.target.value))}
-                  placeholder="1000.00"
-                  className="input-field"
-                />
-              </div>
-            </div>
-            
-            <div className="flex gap-2">
-              <button
-                onClick={handleSearch}
-                disabled={loading}
-                className="btn-primary"
-              >
-                {loading ? 'Searching...' : 'Search'}
-              </button>
-              
-              <button
-                onClick={() => {
-                  setFilters({});
-                  searchTransactions(1);
-                }}
-                className="btn-secondary"
-              >
-                Clear Filters
-              </button>
-            </div>
-          </div>
-
-          {/* Transaction Grid */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900">Transactions</h2>
-            </div>
-            
-            {loading ? (
-              <div className="px-6 py-8 text-center">
-                <div className="text-gray-500">Loading transactions...</div>
-              </div>
-            ) : transactions.length === 0 ? (
-              <div className="px-6 py-8 text-center">
-                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No transactions found</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  No extracted transactions match your current filters. This is normal for L1 implementation as transaction extraction is planned for L2+.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Date
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Amount
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Direction
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Merchant
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Category
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Confidence
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {transactions.map((transaction) => (
-                        <tr key={transaction.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {formatDate(transaction.txn_time)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                            {formatAmount(transaction.amount, transaction.currency)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getDirectionColor(transaction.direction)}`}>
-                              {transaction.direction || 'Unknown'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <div className="truncate max-w-xs" title={transaction.merchant_name || 'N/A'}>
-                              {transaction.merchant_name || 'N/A'}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {transaction.category || 'Uncategorized'}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getConfidenceColor(transaction.confidence)}`}>
-                              {transaction.confidence ? `${Math.round(transaction.confidence * 100)}%` : 'N/A'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => openTransactionDrawer(transaction)}
-                              className="text-blue-600 hover:text-blue-900 mr-3"
-                            >
-                              View
-                            </button>
-                            <button className="text-gray-600 hover:text-gray-900 mr-3">
-                              Edit
-                            </button>
-                            <button className="text-green-600 hover:text-green-900">
-                              Approve
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Pagination */}
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
-                    Showing {((pagination.page - 1) * pagination.pageSize) + 1} to{' '}
-                    {Math.min(pagination.page * pagination.pageSize, pagination.total)} of{' '}
-                    {pagination.total} results
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handlePageChange(pagination.page - 1)}
-                      disabled={!pagination.hasPrev}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    
-                    <span className="px-3 py-1 text-sm">
-                      Page {pagination.page} of {pagination.totalPages}
-                    </span>
-                    
-                    <button
-                      onClick={() => handlePageChange(pagination.page + 1)}
-                      disabled={!pagination.hasNext}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Transaction Detail Drawer */}
-        {showDrawer && selectedTransaction && (
-          <div className="fixed inset-0 z-50 overflow-hidden">
-            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={closeTransactionDrawer}></div>
-            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-xl">
-              <div className="flex flex-col h-full">
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                  <h2 className="text-lg font-medium text-gray-900">Transaction Details</h2>
-                  <button
-                    onClick={closeTransactionDrawer}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <span className="sr-only">Close</span>
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-6">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Transaction Information</h3>
-                      <dl className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Transaction ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedTransaction.id}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Email Row ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedTransaction.email_row_id}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Transaction Time</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedTransaction.txn_time)}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Amount</dt>
-                          <dd className="text-sm text-gray-900 font-semibold">
-                            {formatAmount(selectedTransaction.amount, selectedTransaction.currency)}
-                          </dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Direction</dt>
-                          <dd>
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getDirectionColor(selectedTransaction.direction)}`}>
-                              {selectedTransaction.direction || 'Unknown'}
-                            </span>
-                          </dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Confidence</dt>
-                          <dd>
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getConfidenceColor(selectedTransaction.confidence)}`}>
-                              {selectedTransaction.confidence ? `${Math.round(selectedTransaction.confidence * 100)}%` : 'N/A'}
-                            </span>
-                          </dd>
-                        </div>
-                      </dl>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Merchant Information</h3>
-                      <dl className="space-y-3">
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Merchant Name</dt>
-                          <dd className="text-sm text-gray-900">{selectedTransaction.merchant_name || 'N/A'}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Normalized Merchant</dt>
-                          <dd className="text-sm text-gray-900">{selectedTransaction.merchant_normalized || 'N/A'}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Category</dt>
-                          <dd className="text-sm text-gray-900">{selectedTransaction.category || 'Uncategorized'}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Location</dt>
-                          <dd className="text-sm text-gray-900">{selectedTransaction.location || 'N/A'}</dd>
-                        </div>
-                      </dl>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Additional Details</h3>
-                      <dl className="space-y-3">
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Account Hint</dt>
-                          <dd className="text-sm text-gray-900">{selectedTransaction.account_hint || 'N/A'}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Reference ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedTransaction.reference_id || 'N/A'}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Extraction Version</dt>
-                          <dd className="text-sm text-gray-900">{selectedTransaction.extraction_version || 'N/A'}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Google User ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedTransaction.google_user_id}</dd>
-                        </div>
-                      </dl>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Timestamps</h3>
-                      <dl className="space-y-2">
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedTransaction.created_at)}</dd>
-                        </div>
-                        <div>
-                          <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedTransaction.updated_at)}</dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
-                  <button className="btn-primary">Edit Transaction</button>
-                  <button className="btn-secondary">Re-Extract</button>
-                  <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                    Approve
-                  </button>
-                  <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                    Reject
-                  </button>
-                </div>
               </div>
             </div>
           </div>
-        )}
-      </div>
-    </ProtectedRoute>
-  );
-};
 
-export default TransactionsPage;
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Amount</p>
+                <p className="text-4xl font-bold text-gray-900 mt-2">₹{stats.totalAmount.toLocaleString()}</p>
+                <p className="text-sm text-gray-500 mt-1">Transaction value</p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Avg Confidence</p>
+                <p className="text-4xl font-bold text-gray-900 mt-2">{stats.avgConfidence}%</p>
+                <p className="text-sm text-gray-500 mt-1">AI accuracy</p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl">
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Transactions List */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
+                  <p className="text-sm text-gray-600">Click to expand details or edit transactions</p>
+                </div>
+              </div>
+              <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                {transactions.length} transactions
+              </div>
+            </div>
+          </div>
+
+          {transactions.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-gray-300 text-8xl mb-6">💳</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">No transactions found</h3>
+              <p className="text-gray-600 mb-6">Process some emails to see transactions here.</p>
+              <button
+                onClick={fetchTransactions}
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              >
+                Refresh Transactions
+              </button>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {transactions.map((transaction, index) => (
+                <div
+                  key={transaction.id}
+                  className="transition-all duration-200 hover:bg-gray-50"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <TransactionRow
+                    transaction={transaction}
+                    onEdit={() => openTransactionModal(transaction)}
+                    onReExtract={handleReExtraction}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Transaction Modal */}
+      {selectedTransaction && (
+        <TransactionModal
+          transaction={selectedTransaction}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedTransaction(null);
+          }}
+          onSave={handleTransactionUpdate}
+        />
+      )}
+    </div>
+  );
+}

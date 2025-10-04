@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       database: {
         connected: dbConnected,
         rls_active: error?.message.includes('permission denied') || false,
-        tables: ['fb_gmail_connections', 'fb_emails', 'fb_extracted_transactions', 'fb_jobs'],
+        tables: ['fb_gmail_connections', 'fb_emails', 'fb_extracted_transactions', 'fb_jobs', 'fb_rejected_emails'],
       },
       version: '1.0.0-L1',
     });

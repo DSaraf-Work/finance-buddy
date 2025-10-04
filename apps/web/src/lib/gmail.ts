@@ -87,7 +87,7 @@ export async function listMessages(
     pageToken: options.pageToken,
   });
   
-  return data;
+  return data as GmailListResponse;
 }
 
 export async function getMessage(

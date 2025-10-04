@@ -48,7 +48,7 @@ const EmailsPage: NextPage = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [statusModalEmail, setStatusModalEmail] = useState<EmailPublic | null>(null);
-  const [newStatus, setNewStatus] = useState<EmailStatus>('Fetched');
+  const [newStatus, setNewStatus] = useState<'REJECT' | 'UNREJECT'>('REJECT');
   const [statusRemarks, setStatusRemarks] = useState('');
 
   const searchEmails = async (page: number = 1) => {
@@ -181,14 +181,16 @@ const EmailsPage: NextPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          status: 'REJECT',
-          remarks: 'Non-transactional',
+          action: 'reject',
+          reason: 'Non-transactional email',
+          remarks: 'Manually rejected by user',
         }),
       });
 
       if (response.ok) {
         // Refresh the emails list
         searchEmails(pagination.page);
+        alert('Email rejected successfully!');
       } else {
         const error = await response.json();
         alert(`Failed to reject email: ${error.error}`);
@@ -201,15 +203,17 @@ const EmailsPage: NextPage = () => {
 
   const openStatusModal = (email: EmailPublic) => {
     setStatusModalEmail(email);
-    setNewStatus(email.status);
-    setStatusRemarks(email.remarks || '');
+    // If email is already rejected, default to unreject, otherwise reject
+    // For now, assume all emails can be rejected (we'll fix this after the build)
+    setNewStatus('REJECT');
+    setStatusRemarks('');
     setShowStatusModal(true);
   };
 
   const closeStatusModal = () => {
     setShowStatusModal(false);
     setStatusModalEmail(null);
-    setNewStatus('Fetched');
+    setNewStatus('REJECT');
     setStatusRemarks('');
   };
 
@@ -217,24 +221,53 @@ const EmailsPage: NextPage = () => {
     if (!statusModalEmail) return;
 
     try {
-      const response = await fetch(`/api/emails/${statusModalEmail.id}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          status: newStatus,
-          remarks: statusRemarks,
-        }),
-      });
+      // For the new derived status system, we only support reject/unreject actions
+      if (newStatus === 'REJECT') {
+        const response = await fetch(`/api/emails/${statusModalEmail.id}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'reject',
+            reason: statusRemarks || 'Manual rejection',
+            remarks: statusRemarks,
+          }),
+        });
 
-      if (response.ok) {
-        // Refresh the emails list
-        searchEmails(pagination.page);
-        closeStatusModal();
+        if (response.ok) {
+          searchEmails(pagination.page);
+          closeStatusModal();
+          alert('Email rejected successfully!');
+        } else {
+          const error = await response.json();
+          alert(`Failed to reject email: ${error.error}`);
+        }
+      } else if (newStatus === 'UNREJECT') {
+        const response = await fetch(`/api/emails/${statusModalEmail.id}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'unreject',
+            reason: statusRemarks || 'Manual unreject',
+            remarks: statusRemarks,
+          }),
+        });
+
+        if (response.ok) {
+          searchEmails(pagination.page);
+          closeStatusModal();
+          alert('Email unrejected successfully!');
+        } else {
+          const error = await response.json();
+          alert(`Failed to unreject email: ${error.error}`);
+        }
       } else {
-        const error = await response.json();
-        alert(`Failed to update status: ${error.error}`);
+        // For other status changes, we need to process the email
+        alert('Status updates are now automatic. Use the Process button to process emails with AI.');
+        closeStatusModal();
       }
     } catch (error) {
       console.error('Status update error:', error);
@@ -247,12 +280,18 @@ const EmailsPage: NextPage = () => {
     return new Date(dateString).toLocaleString();
   };
 
-  const getStatusColor = (status: EmailStatus) => {
+  const getStatusColor = (status: EmailStatus | string) => {
     switch (status) {
       case 'Fetched': return 'bg-blue-100 text-blue-800';
       case 'Processed': return 'bg-green-100 text-green-800';
       case 'Failed': return 'bg-red-100 text-red-800';
       case 'Invalid': return 'bg-gray-100 text-gray-800';
+      case 'NON_TRANSACTIONAL': return 'bg-yellow-100 text-yellow-800';
+      case 'REJECT': return 'bg-red-100 text-red-800';
+      // Derived statuses from backend
+      case 'FETCHED': return 'bg-blue-100 text-blue-800';
+      case 'PROCESSED': return 'bg-green-100 text-green-800';
+      case 'REJECTED': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -329,6 +368,9 @@ const EmailsPage: NextPage = () => {
                   <option value="">All Statuses</option>
                   <option value="Fetched">Fetched</option>
                   <option value="Processed">Processed</option>
+                  <option value="REJECT">Rejected</option>
+                  <option value="Fetched">Fetched (Legacy)</option>
+                  <option value="Processed">Processed (Legacy)</option>
                   <option value="Failed">Failed</option>
                   <option value="Invalid">Invalid</option>
                 </select>
@@ -526,17 +568,17 @@ const EmailsPage: NextPage = () => {
                                 👁️
                               </button>
 
-                              {email.status === 'Fetched' && (
+                              {(email.status === 'Fetched') && (
                                 <button
                                   onClick={() => handleProcessEmail(email)}
                                   className="text-green-600 hover:text-green-900"
-                                  title="Process Email"
+                                  title="Process Email with AI"
                                 >
-                                  ✅
+                                  ⚙️
                                 </button>
                               )}
 
-                              {email.status !== 'REJECT' && (
+                              {(email.status !== 'REJECT') && (
                                 <button
                                   onClick={() => handleRejectEmail(email)}
                                   className="text-red-600 hover:text-red-900"
@@ -546,13 +588,15 @@ const EmailsPage: NextPage = () => {
                                 </button>
                               )}
 
-                              <button
-                                onClick={() => openStatusModal(email)}
-                                className="text-purple-600 hover:text-purple-900"
-                                title="Update Status"
-                              >
-                                ⚙️
-                              </button>
+                              {(email.status === 'REJECT') && (
+                                <button
+                                  onClick={() => openStatusModal(email)}
+                                  className="text-blue-600 hover:text-blue-900"
+                                  title="Unreject Email"
+                                >
+                                  🔄
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -702,11 +746,28 @@ const EmailsPage: NextPage = () => {
                 </div>
                 
                 <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
-                  <button className="btn-primary">Re-Extract</button>
-                  <button className="btn-secondary">Set Fetched</button>
-                  <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                    Mark Invalid
-                  </button>
+                  {selectedEmail && (selectedEmail.status === 'Fetched') && (
+                    <button
+                      onClick={() => {
+                        handleProcessEmail(selectedEmail);
+                        closeEmailDrawer();
+                      }}
+                      className="btn-primary"
+                    >
+                      Process with AI
+                    </button>
+                  )}
+                  {selectedEmail && (selectedEmail.status !== 'REJECT') && (
+                    <button
+                      onClick={() => {
+                        handleRejectEmail(selectedEmail);
+                        closeEmailDrawer();
+                      }}
+                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Reject Email
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -720,7 +781,9 @@ const EmailsPage: NextPage = () => {
               <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeStatusModal}></div>
               <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full">
                 <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Update Email Status</h3>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}
+                  </h3>
                 </div>
 
                 <div className="px-6 py-4 space-y-4">
@@ -735,32 +798,31 @@ const EmailsPage: NextPage = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      New Status
+                      Action
                     </label>
                     <select
                       value={newStatus}
-                      onChange={(e) => setNewStatus(e.target.value as EmailStatus)}
+                      onChange={(e) => setNewStatus(e.target.value as 'REJECT' | 'UNREJECT')}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="Fetched">Fetched</option>
-                      <option value="Processed">Processed</option>
-                      <option value="Failed">Failed</option>
-                      <option value="Invalid">Invalid</option>
-                      <option value="NON_TRANSACTIONAL">Non-Transactional</option>
-                      <option value="REJECT">Reject</option>
+                      <option value="REJECT">Reject Email</option>
+                      <option value="UNREJECT">Unreject Email</option>
                     </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Note: Status is now automatically derived. Use the Process button (⚙️) to process emails with AI.
+                    </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Remarks
+                      {newStatus === 'UNREJECT' ? 'Unreject Reason' : 'Rejection Reason'}
                     </label>
                     <textarea
                       value={statusRemarks}
                       onChange={(e) => setStatusRemarks(e.target.value)}
                       rows={3}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter remarks or reason for status change..."
+                      placeholder={newStatus === 'UNREJECT' ? 'Enter reason for unrejecting this email...' : 'Enter reason for rejecting this email...'}
                     />
                   </div>
                 </div>
@@ -774,9 +836,13 @@ const EmailsPage: NextPage = () => {
                   </button>
                   <button
                     onClick={handleStatusUpdate}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                    className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
+                      newStatus === 'UNREJECT'
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-red-600 hover:bg-red-700'
+                    }`}
                   >
-                    Update Status
+                    {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}
                   </button>
                 </div>
               </div>

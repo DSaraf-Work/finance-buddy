@@ -3,6 +3,7 @@
 import { supabaseAdmin } from '../supabase';
 import { TransactionExtractor } from './extractors/transaction-extractor';
 import { TransactionExtractionRequest, ExtractedTransaction } from '../ai/types';
+import type { Database } from '@finance-buddy/shared';
 
 export interface EmailProcessingRequest {
   emailId?: string;
@@ -71,11 +72,11 @@ export class EmailProcessor {
             emailId: email.id,
             error: error.message || 'Unknown processing error',
           });
-          
+
           console.error(`❌ Failed to process email ${email.id}:`, error);
-          
-          // Update email status to error
-          await this.updateEmailStatus(email.id, 'error', error.message);
+
+          // Reject the email instead of updating status
+          await this.rejectEmail(email.id, error.message || 'Processing failed', 'processing_error', { error: error.message });
         }
       }
 
@@ -111,9 +112,6 @@ export class EmailProcessor {
       date: email.internal_date,
     });
 
-    // Mark email as processing
-    await this.updateEmailStatus(email.id, 'processing');
-
     // Create extraction request
     const extractionRequest: TransactionExtractionRequest = {
       emailId: email.id,
@@ -134,13 +132,13 @@ export class EmailProcessor {
     // Save extracted transaction
     await this.saveExtractedTransaction(email, extractionResult.transaction);
 
-    // Mark email as processed
-    await this.updateEmailStatus(email.id, 'processed');
+    // Email status will automatically become 'PROCESSED' due to the transaction being saved
+    console.log(`✅ Email ${email.id} processed successfully - status will be derived as PROCESSED`);
   }
 
   private async getEmailsToProcess(request: EmailProcessingRequest): Promise<any[]> {
-    let query = supabaseAdmin
-      .from('fb_emails')
+    let query = (supabaseAdmin as any)
+      .from('fb_emails_with_status')
       .select('*');
 
     // Filter by specific email ID
@@ -153,9 +151,9 @@ export class EmailProcessor {
       query = query.eq('user_id', request.userId);
     }
 
-    // Filter by processing status
+    // Filter by processing status - only process FETCHED emails (not PROCESSED or REJECTED)
     if (!request.forceReprocess) {
-      query = query.in('status', ['unprocessed', 'error']);
+      query = query.eq('status', 'FETCHED');
     }
 
     // Limit batch size
@@ -176,7 +174,7 @@ export class EmailProcessor {
   }
 
   private async saveExtractedTransaction(email: any, transaction: ExtractedTransaction): Promise<void> {
-    const transactionData = {
+    const transactionData: Database['public']['Tables']['fb_extracted_transactions']['Insert'] = {
       user_id: email.user_id,
       google_user_id: email.google_user_id,
       connection_id: email.connection_id,
@@ -191,6 +189,9 @@ export class EmailProcessor {
       account_hint: transaction.accountHint,
       reference_id: transaction.referenceId,
       location: transaction.location,
+      account_type: transaction.accountType,
+      transaction_type: transaction.transactionType,
+      ai_notes: transaction.aiNotes,
       confidence: transaction.confidence,
       extraction_version: transaction.extractionVersion,
       created_at: new Date().toISOString(),
@@ -204,7 +205,7 @@ export class EmailProcessor {
       confidence: transactionData.confidence,
     });
 
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from('fb_extracted_transactions')
       .upsert(transactionData, {
         onConflict: 'email_row_id',
@@ -215,27 +216,38 @@ export class EmailProcessor {
     }
   }
 
-  private async updateEmailStatus(emailId: string, status: string, errorReason?: string): Promise<void> {
-    const updateData: any = {
-      status,
-      updated_at: new Date().toISOString(),
-    };
-
-    if (status === 'processed') {
-      updateData.processed_at = new Date().toISOString();
-    }
-
-    if (errorReason) {
-      updateData.error_reason = errorReason;
-    }
-
-    const { error } = await supabaseAdmin
+  private async rejectEmail(emailId: string, reason: string, type: string = 'processing_error', errorDetails?: any): Promise<void> {
+    // Get email details for the rejection record
+    const { data: email, error: emailError } = await (supabaseAdmin as any)
       .from('fb_emails')
-      .update(updateData)
-      .eq('id', emailId);
+      .select('user_id, google_user_id, connection_id')
+      .eq('id', emailId)
+      .single();
+
+    if (emailError || !email) {
+      console.error(`Failed to get email details for rejection ${emailId}:`, emailError);
+      return;
+    }
+
+    const { error } = await (supabaseAdmin as any)
+      .from('fb_rejected_emails')
+      .upsert({
+        user_id: email.user_id,
+        google_user_id: email.google_user_id,
+        connection_id: email.connection_id,
+        email_row_id: emailId,
+        rejection_reason: reason,
+        rejection_type: type,
+        error_details: errorDetails ? JSON.stringify(errorDetails) : null,
+        rejected_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }, {
+        onConflict: 'email_row_id',
+      });
 
     if (error) {
-      console.error(`Failed to update email status for ${emailId}:`, error);
+      console.error(`Failed to reject email ${emailId}:`, error);
     }
   }
 
@@ -243,12 +255,11 @@ export class EmailProcessor {
   async getProcessingStats(userId?: string): Promise<{
     total: number;
     processed: number;
-    unprocessed: number;
-    errors: number;
-    processing: number;
+    fetched: number;
+    rejected: number;
   }> {
-    let query = supabaseAdmin
-      .from('fb_emails')
+    let query = (supabaseAdmin as any)
+      .from('fb_emails_with_status')
       .select('status');
 
     if (userId) {
@@ -264,24 +275,20 @@ export class EmailProcessor {
     const stats = {
       total: emails?.length || 0,
       processed: 0,
-      unprocessed: 0,
-      errors: 0,
-      processing: 0,
+      fetched: 0,
+      rejected: 0,
     };
 
-    emails?.forEach(email => {
+    emails?.forEach((email: any) => {
       switch (email.status) {
-        case 'processed':
+        case 'PROCESSED':
           stats.processed++;
           break;
-        case 'unprocessed':
-          stats.unprocessed++;
+        case 'FETCHED':
+          stats.fetched++;
           break;
-        case 'error':
-          stats.errors++;
-          break;
-        case 'processing':
-          stats.processing++;
+        case 'REJECTED':
+          stats.rejected++;
           break;
       }
     });

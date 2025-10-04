@@ -4,14 +4,19 @@ import { AIModelConfig, AIModelHierarchy, AIManagerConfig } from './types';
 
 // Environment-based model configurations
 export function getModelConfigs(): Record<string, AIModelConfig> {
+  console.log("🔍 Environment variables check:");
+  console.log("  - OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? `${process.env.OPENAI_API_KEY.substring(0, 10)}...` : 'NOT SET');
+  console.log("  - GOOGLE_AI_API_KEY:", process.env.GOOGLE_AI_API_KEY ? `${process.env.GOOGLE_AI_API_KEY.substring(0, 10)}...` : 'NOT SET');
+  console.log("  - ANTHROPIC_API_KEY:", process.env.ANTHROPIC_API_KEY ? `${process.env.ANTHROPIC_API_KEY.substring(0, 10)}...` : 'NOT SET');
+
   const configs: Record<string, AIModelConfig> = {};
 
   // Only add models if their API keys are available
   if (process.env.OPENAI_API_KEY) {
-    configs['gpt-4'] = {
-      name: 'GPT-4',
+    configs['gpt-4o-mini'] = {
+      name: 'GPT-4o Mini',
       provider: 'openai',
-      model: 'gpt-4',
+      model: 'gpt-4o-mini',
       apiKey: process.env.OPENAI_API_KEY,
       maxTokens: 4000,
       temperature: 0.1,
@@ -68,10 +73,10 @@ export function getModelConfigs(): Record<string, AIModelConfig> {
   }
 
   if (process.env.GOOGLE_AI_API_KEY) {
-    configs['gemini-pro'] = {
-      name: 'Gemini Pro',
+    configs['gemini-1.5-flash-latest'] = {
+      name: 'Gemini 1.5 Flash Latest',
       provider: 'google',
-      model: 'gemini-pro',
+      model: 'gemini-1.5-flash-latest',
       apiKey: process.env.GOOGLE_AI_API_KEY,
       maxTokens: 4000,
       temperature: 0.1,
@@ -83,20 +88,7 @@ export function getModelConfigs(): Record<string, AIModelConfig> {
     };
   }
 
-  // Always include mock model as fallback
-  configs['mock-ai'] = {
-    name: 'Mock AI (Testing)',
-    provider: 'mock',
-    model: 'mock-transaction-extractor',
-    apiKey: 'mock-key', // No real API key needed
-    maxTokens: 4000,
-    temperature: 0.1,
-    timeout: 5000,
-    rateLimit: {
-      requestsPerMinute: 1000,
-      requestsPerHour: 10000,
-    },
-  };
+  // No mock models - only real AI models with valid API keys
 
   return configs;
 }
@@ -111,8 +103,8 @@ export function getDefaultHierarchy(): AIModelHierarchy {
   // Build hierarchy based on available models
   const hierarchy: AIModelHierarchy = {} as AIModelHierarchy;
 
-  // Preferred order: GPT-4 > Claude Sonnet > GPT-3.5 > Claude Haiku > Gemini > Mock
-  const preferredOrder = ['gpt-4', 'claude-3-sonnet', 'gpt-3.5-turbo', 'claude-3-haiku', 'gemini-pro', 'mock-ai'];
+  // Preferred order: GPT-4o Mini > Claude Sonnet > GPT-3.5 > Claude Haiku > Gemini (only real AI models)
+  const preferredOrder = ['gpt-4o-mini', 'claude-3-sonnet', 'gpt-3.5-turbo', 'claude-3-haiku', 'gemini-1.5-flash-latest'];
   const availableInOrder = preferredOrder.filter(model => configs[model]);
 
   if (availableInOrder.length > 0) {
@@ -145,7 +137,7 @@ export function getAIManagerConfig(): AIManagerConfig {
     maxRetries: 3,
     retryDelay: 1000, // 1 second
     healthCheckInterval: 300000, // 5 minutes
-    enableFallback: true,
+    enableFallback: false, // No fallbacks - only real AI models
   };
 }
 

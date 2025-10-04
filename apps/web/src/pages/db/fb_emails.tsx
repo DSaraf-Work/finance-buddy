@@ -163,7 +163,7 @@ const EmailWorkbenchPage: NextPage = () => {
     alert(`${action} action would be performed on ${selectedEmails.size} emails`);
   };
 
-  const formatDate = (dateString?: string) => {
+  const formatDateString = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString();
   };
@@ -412,7 +412,7 @@ const EmailWorkbenchPage: NextPage = () => {
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {formatDate(email.internal_date)}
+                          {formatDateString(email.internal_date)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {email.from_address || 'N/A'}
@@ -506,7 +506,7 @@ const EmailWorkbenchPage: NextPage = () => {
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Internal Date</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedEmail.internal_date)}</dd>
+                          <dd className="text-sm text-gray-900">{formatDateString(selectedEmail.internal_date)}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -549,16 +549,16 @@ const EmailWorkbenchPage: NextPage = () => {
                       <dl className="grid grid-cols-1 gap-x-4 gap-y-3">
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedEmail.created_at)}</dd>
+                          <dd className="text-sm text-gray-900">{formatDateString(selectedEmail.created_at)}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                          <dd className="text-sm text-gray-900">{formatDate(selectedEmail.updated_at)}</dd>
+                          <dd className="text-sm text-gray-900">{formatDateString(selectedEmail.updated_at)}</dd>
                         </div>
                         {selectedEmail.processed_at && (
                           <div>
                             <dt className="text-sm font-medium text-gray-500">Processed At</dt>
-                            <dd className="text-sm text-gray-900">{formatDate(selectedEmail.processed_at)}</dd>
+                            <dd className="text-sm text-gray-900">{formatDateString(selectedEmail.processed_at)}</dd>
                           </div>
                         )}
                       </dl>

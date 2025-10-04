@@ -4,7 +4,6 @@ import { BaseAIModel, AIRequest, AIResponse, AIError, AIManagerConfig, ModelSele
 import { OpenAIModel } from './models/openai';
 import { AnthropicModel } from './models/anthropic';
 import { GoogleModel } from './models/google';
-import { MockAIModel } from './models/mock';
 import { getAIManagerConfig } from './config';
 
 export class AIModelManager {
@@ -71,8 +70,6 @@ export class AIModelManager {
         return new AnthropicModel(config);
       case 'google':
         return new GoogleModel(config);
-      case 'mock':
-        return new MockAIModel(config);
       default:
         throw new Error(`Unsupported AI provider: ${config.provider}`);
     }
@@ -95,8 +92,14 @@ export class AIModelManager {
     
     for (const modelKey of modelOrder) {
       const model = this.models.get(modelKey);
-      if (!model || !this.healthStatus.get(modelKey)) {
+      if (!model) {
         continue;
+      }
+
+      // Try model even if marked unhealthy - health checks can be stale
+      const isHealthy = this.healthStatus.get(modelKey);
+      if (!isHealthy) {
+        console.log(`⚠️ Trying ${modelKey} model despite health check failure (may be stale)`);
       }
       
       try {
@@ -119,8 +122,9 @@ export class AIModelManager {
           isRetryable: lastError.isRetryable,
         });
         
-        // If it's a rate limit error, mark model as temporarily unhealthy
+        // If it's a rate limit error, mark model as temporarily unhealthy and continue to next
         if (lastError.isRateLimit) {
+          console.log(`🚫 Rate limit hit for ${modelKey}, trying next model...`);
           this.healthStatus.set(modelKey, false);
           // Schedule health check after retry period
           if (lastError.retryAfter) {
@@ -128,10 +132,13 @@ export class AIModelManager {
               this.healthStatus.set(modelKey, true);
             }, lastError.retryAfter);
           }
+          // Always continue to next model for rate limits
+          continue;
         }
-        
-        // If not retryable and we have more models, continue to next
-        if (!lastError.isRetryable && this.config.enableFallback) {
+
+        // For other retryable errors, continue to next model if fallback is enabled
+        if (lastError.isRetryable && this.config.enableFallback) {
+          console.log(`🔄 Retryable error for ${modelKey}, trying next model...`);
           continue;
         }
         

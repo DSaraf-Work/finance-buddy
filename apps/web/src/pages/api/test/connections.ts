@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           'https://www.googleapis.com/auth/userinfo.email'
         ],
         last_sync_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        last_error: null,
+        last_error: undefined,
         created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week ago
         updated_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
       },
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           'https://www.googleapis.com/auth/userinfo.email'
         ],
         last_sync_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        last_error: null,
+        last_error: undefined,
         created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 2 weeks ago
         updated_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
       },

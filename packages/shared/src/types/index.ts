@@ -133,6 +133,10 @@ export interface Database {
           extraction_version: string | null;
           created_at: string;
           updated_at: string;
+          ai_notes: string | null;
+          user_notes: string | null;
+          account_type: string | null;
+          transaction_type: string | null;
         };
         Insert: {
           id?: string;
@@ -154,6 +158,10 @@ export interface Database {
           extraction_version?: string | null;
           created_at?: string;
           updated_at?: string;
+          ai_notes?: string | null;
+          user_notes?: string | null;
+          account_type?: string | null;
+          transaction_type?: string | null;
         };
         Update: {
           id?: string;
@@ -175,6 +183,10 @@ export interface Database {
           extraction_version?: string | null;
           created_at?: string;
           updated_at?: string;
+          ai_notes?: string | null;
+          user_notes?: string | null;
+          account_type?: string | null;
+          transaction_type?: string | null;
         };
       };
       fb_jobs: {

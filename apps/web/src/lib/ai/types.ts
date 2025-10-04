@@ -104,6 +104,9 @@ export interface ExtractedTransaction {
   accountHint?: string;
   referenceId?: string;
   location?: string;
+  accountType?: string; // Account type classification (DCB_4277, HDFC_SWIGGY_7712, etc.)
+  transactionType?: 'Dr' | 'Cr'; // Transaction type (Dr for debit, Cr for credit)
+  aiNotes?: string; // AI-generated comma-separated keywords
   confidence: number; // 0-1 confidence score
   extractionVersion: string;
   rawExtraction?: Record<string, any>; // Raw AI response for debugging

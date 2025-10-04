@@ -15,7 +15,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Get the email first
-    const { data: email, error: emailError } = await supabaseAdmin
+    const { data: email, error: emailError } = await (supabaseAdmin as any)
       .from('fb_emails')
       .select('*')
       .eq('id', id)
@@ -27,18 +27,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Get the Gmail connection for this user
-    const { data: connection, error: connectionError } = await supabaseAdmin
+    const { data: connection, error: connectionError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('id, google_user_id')
       .eq('user_id', user.id)
-      .eq('email_address', email.account)
+      .eq('email_address', (email as any).email_address)
       .single();
 
     if (connectionError || !connection) {
       console.warn('No Gmail connection found for user, using fallback values');
     }
 
-    if (email.status === 'Processed') {
+    if ((email as any).status === 'processed') {
       return res.status(400).json({ error: 'Email already processed' });
     }
 
@@ -46,15 +46,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // For now, we'll create a placeholder transaction
     const extractedTransaction = {
       user_id: user.id,
-      google_user_id: connection?.google_user_id || email.account || user.id, // Use connection data or fallback
+      google_user_id: connection?.google_user_id || (email as any).email_address || user.id, // Use connection data or fallback
       connection_id: connection?.id || null, // Use connection ID if available
-      email_row_id: email.id, // Correct field name
-      txn_time: email.internal_date || new Date().toISOString(), // Correct field name
+      email_row_id: (email as any).id, // Correct field name
+      txn_time: (email as any).internal_date || new Date().toISOString(), // Correct field name
       amount: 0, // TODO: Extract from email content
       currency: 'USD', // TODO: Extract from email content
       direction: 'debit', // TODO: Determine from email content
-      merchant_name: email.from_address || 'Unknown',
-      merchant_normalized: (email.from_address || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, ''),
+      merchant_name: (email as any).from_address || 'Unknown',
+      merchant_normalized: ((email as any).from_address || 'Unknown').toLowerCase().replace(/[^a-z0-9]/g, ''),
       category: 'Other', // TODO: Categorize based on content
       account_hint: null, // TODO: Extract from email content
       reference_id: null, // TODO: Extract from email content
@@ -66,7 +66,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     };
 
     // Insert the extracted transaction
-    const { data: transaction, error: transactionError } = await supabaseAdmin
+    const { data: transaction, error: transactionError } = await (supabaseAdmin as any)
       .from('fb_extracted_transactions')
       .insert(extractedTransaction)
       .select()
@@ -77,24 +77,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(500).json({ error: 'Failed to create transaction' });
     }
 
-    // Update email status to Processed
-    const { error: updateError } = await supabaseAdmin
-      .from('fb_emails')
-      .update({
-        status: 'Processed',
-        processed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id);
-
-    if (updateError) {
-      console.error('Email status update error:', updateError);
-      return res.status(500).json({ error: 'Failed to update email status' });
-    }
+    // Email status will automatically become 'PROCESSED' due to the transaction being saved
+    console.log(`✅ Email ${id} processed successfully - status will be derived as PROCESSED`);
 
     res.status(200).json({
       message: 'Email processed successfully',
       transaction,
+      status: 'PROCESSED', // This will be the derived status
     });
   } catch (error) {
     console.error('Email processing error:', error);

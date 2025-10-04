@@ -42,7 +42,7 @@ const HomePage: NextPage = () => {
       const connectionsResponse = await fetch('/api/gmail/connections');
       if (connectionsResponse.ok) {
         connectionsData = await connectionsResponse.json();
-        setConnections(connectionsData.connections);
+        setConnections(connectionsData?.connections || []);
       }
 
       // Load email stats
