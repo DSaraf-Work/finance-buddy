@@ -88,11 +88,14 @@ const EmailsPage: NextPage = () => {
     fetchConnections();
   }, []);
 
-  const searchEmails = async (page: number = 1) => {
+  const searchEmails = async (page: number = 1, customFilters?: typeof filters, ignoreDefaults: boolean = false) => {
     setLoading(true);
     try {
+      // Use custom filters if provided, otherwise use current filters
+      const activeFilters = customFilters || filters;
+
       // If multiple email addresses are selected, we need to search each one sequentially
-      const emailAddresses = filters.email_addresses || [];
+      const emailAddresses = activeFilters.email_addresses || [];
 
       if (emailAddresses.length === 0) {
         console.warn('No email addresses selected for search');
@@ -107,26 +110,28 @@ const EmailsPage: NextPage = () => {
       // Search each email address sequentially
       for (const emailAddress of emailAddresses) {
         // Handle multiple senders by splitting comma-separated values
-        const senders = filters.sender ? filters.sender.split(',').map(s => s.trim()) : [];
+        const senders = activeFilters.sender ? activeFilters.sender.split(',').map(s => s.trim()) : [];
 
         // If multiple senders, search each sender separately for this email address
         if (senders.length > 1) {
           for (const sender of senders) {
-            const searchRequest: EmailSearchRequest = {
-              ...filters,
+            const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
+              ...activeFilters,
               email_address: emailAddress, // Use single email address for each request
               sender: sender, // Use single sender for each request
               page,
               pageSize: pagination.pageSize,
               sort: 'desc', // Default to newest-to-oldest
+              ignore_defaults: ignoreDefaults, // Add ignore_defaults parameter
             };
 
             // Remove empty filters and email_addresses array (use email_address instead)
             delete (searchRequest as any).email_addresses;
             Object.keys(searchRequest).forEach(key => {
-              if (searchRequest[key as keyof EmailSearchRequest] === '' ||
-                  searchRequest[key as keyof EmailSearchRequest] === undefined) {
-                delete searchRequest[key as keyof EmailSearchRequest];
+              if (key !== 'ignore_defaults' &&
+                  (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
+                   searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === undefined)) {
+                delete searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })];
               }
             });
 
@@ -151,20 +156,22 @@ const EmailsPage: NextPage = () => {
           }
         } else {
           // Single sender or no sender filter
-          const searchRequest: EmailSearchRequest = {
-            ...filters,
+          const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
+            ...activeFilters,
             email_address: emailAddress, // Use single email address for each request
             page,
             pageSize: pagination.pageSize,
             sort: 'desc', // Default to newest-to-oldest
+            ignore_defaults: ignoreDefaults, // Add ignore_defaults parameter
           };
 
           // Remove empty filters and email_addresses array (use email_address instead)
           delete (searchRequest as any).email_addresses;
           Object.keys(searchRequest).forEach(key => {
-            if (searchRequest[key as keyof EmailSearchRequest] === '' ||
-                searchRequest[key as keyof EmailSearchRequest] === undefined) {
-              delete searchRequest[key as keyof EmailSearchRequest];
+            if (key !== 'ignore_defaults' &&
+                (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
+                 searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === undefined)) {
+              delete searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })];
             }
           });
 
@@ -457,11 +464,8 @@ const EmailsPage: NextPage = () => {
     }
   };
 
-  // Batch processing functions - Updated for multi-connection support
+  // Get All Fetched - Search and display FETCHED emails only (no processing)
   const handleGetAllFetched = async () => {
-    setBatchProcessing(true);
-    setBatchProgress({ current: 0, total: 0 });
-
     try {
       const emailAddresses = filters.email_addresses || [];
 
@@ -470,79 +474,36 @@ const EmailsPage: NextPage = () => {
         return;
       }
 
-      let allFetchedEmails: EmailPublic[] = [];
+      console.log(`🔍 Setting filters to show FETCHED emails across ${emailAddresses.length} account(s)`);
 
-      // Search each email address for FETCHED emails
-      for (const emailAddress of emailAddresses) {
-        const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
-          email_address: emailAddress, // Use single email address for each request
-          status: 'FETCHED', // Use all-caps status to match the fb_emails_with_status view
-          page: 1,
-          pageSize: 1000, // Get a large number to find all fetched emails
-          sort: 'desc',
-          db_only: true, // Only search database, don't sync with Gmail
-          ignore_defaults: true, // Bypass default sender filters
-        };
+      // Update filters to show FETCHED emails and clear sender restrictions
+      const updatedFilters = {
+        ...filters,
+        status: 'FETCHED', // Set status filter to FETCHED (all caps to match view)
+        sender: '', // Clear sender filter to bypass default restrictions
+        q: '', // Clear search query
+        date_from: '', // Clear date filters to show all FETCHED emails
+        date_to: '',
+      };
 
-        // Clean up undefined values (but preserve ignore_defaults)
-        Object.keys(searchRequest).forEach(key => {
-          if (key !== 'ignore_defaults' &&
-              (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
-               searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === undefined)) {
-            delete searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })];
-          }
-        });
+      // Update the filters state
+      setFilters(updatedFilters);
 
-        console.log(`🔍 Searching FETCHED emails for ${emailAddress}`);
+      // Reset to page 1 when applying new filters
+      const newPagination = {
+        ...pagination,
+        page: 1
+      };
+      setPagination(newPagination);
 
-        const response = await fetch('/api/emails/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(searchRequest),
-        });
+      // Trigger a search with the updated filters and ignore defaults
+      // This will use the existing searchEmails function which handles multiple accounts properly
+      console.log(`🔍 Searching for FETCHED emails with updated filters`);
+      await searchEmails(1, updatedFilters, true); // Search page 1 with new filters and ignore defaults
 
-        if (response.ok) {
-          const data: PaginatedResponse<EmailPublic> = await response.json();
-          allFetchedEmails.push(...data.items);
-          console.log(`✅ Found ${data.items.length} FETCHED emails for ${emailAddress}`);
-        } else {
-          console.error(`❌ Search failed for ${emailAddress}:`, response.statusText);
-        }
-      }
-
-      console.log(`🎯 Total FETCHED emails found: ${allFetchedEmails.length} across ${emailAddresses.length} connections`);
-
-      if (allFetchedEmails.length === 0) {
-        alert('No FETCHED emails found to process across all selected accounts.');
-        return;
-      }
-
-      // Process in batches
-      const batchSize = pagination.pageSize;
-      const totalBatches = Math.ceil(allFetchedEmails.length / batchSize);
-      setBatchProgress({ current: 0, total: totalBatches });
-
-      for (let i = 0; i < totalBatches; i++) {
-        const batch = allFetchedEmails.slice(i * batchSize, (i + 1) * batchSize);
-        setBatchProgress({ current: i + 1, total: totalBatches });
-
-        console.log(`🔄 Processing batch ${i + 1} of ${totalBatches} (${batch.length} emails)`);
-
-        // Process each email in the batch sequentially
-        for (const email of batch) {
-          await handleProcessEmail(email, true); // Silent processing
-        }
-      }
-
-      // Refresh the email list
-      searchEmails(pagination.page);
-      alert(`Successfully processed ${allFetchedEmails.length} emails in ${totalBatches} batches across ${emailAddresses.length} connections!`);
     } catch (error) {
-      console.error('Batch processing error:', error);
-      alert('Failed to process emails in batch');
-    } finally {
-      setBatchProcessing(false);
-      setBatchProgress({ current: 0, total: 0 });
+      console.error('Get All Fetched error:', error);
+      alert('Failed to search for FETCHED emails');
     }
   };
 
