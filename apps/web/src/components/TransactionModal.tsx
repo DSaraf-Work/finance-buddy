@@ -322,24 +322,15 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        AI Generated Keywords
+                        AI Generated Keywords (Editable)
                       </label>
-                      <div className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-100 text-gray-600 min-h-[40px] flex items-center">
-                        {formData.ai_notes ? (
-                          <div className="flex flex-wrap gap-1">
-                            {formData.ai_notes.split(',').map((note, index) => (
-                              <span
-                                key={index}
-                                className="inline-block px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-full"
-                              >
-                                {note.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-gray-400 italic">No AI notes available</span>
-                        )}
-                      </div>
+                      <textarea
+                        value={formData.ai_notes || ''}
+                        onChange={(e) => handleInputChange('ai_notes', e.target.value)}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                        placeholder="No AI notes available"
+                      />
                     </div>
 
                     <div>
