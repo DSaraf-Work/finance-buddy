@@ -59,8 +59,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     });
 
     // Validate page size
-    if (pageSize > 100) {
-      return res.status(400).json({ error: 'pageSize cannot exceed 100' });
+    if (pageSize > 1000) {
+      return res.status(400).json({ error: 'pageSize cannot exceed 1000' });
     }
 
     // If db_only is false, sync with Gmail API first
@@ -97,6 +97,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       pageSize,
       ignore_defaults
     });
+
+    console.log('🔧 About to build Supabase query...');
 
     let query = (supabaseAdmin as any)
       .from('fb_emails_with_status')
@@ -169,6 +171,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       count: count || 0,
       emails_found: emails?.length || 0,
       first_email_subject: (emails as any)?.[0]?.subject || 'N/A',
+      first_email_from: (emails as any)?.[0]?.from_address || 'N/A',
+      first_email_status: (emails as any)?.[0]?.status || 'N/A',
       page,
       pageSize
     });
