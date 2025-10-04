@@ -50,6 +50,7 @@ const EmailsPage: NextPage = () => {
   const [statusModalEmail, setStatusModalEmail] = useState<EmailPublic | null>(null);
   const [newStatus, setNewStatus] = useState<'REJECT' | 'UNREJECT'>('REJECT');
   const [statusRemarks, setStatusRemarks] = useState('');
+  const [processingEmails, setProcessingEmails] = useState<Set<string>>(new Set());
 
   const searchEmails = async (page: number = 1) => {
     setLoading(true);
@@ -151,6 +152,9 @@ const EmailsPage: NextPage = () => {
   };
 
   const handleProcessEmail = async (email: EmailPublic) => {
+    // Add email to processing set
+    setProcessingEmails(prev => new Set(prev).add(email.id));
+
     try {
       const response = await fetch(`/api/emails/${email.id}/process`, {
         method: 'POST',
@@ -170,6 +174,13 @@ const EmailsPage: NextPage = () => {
     } catch (error) {
       console.error('Process email error:', error);
       alert('Failed to process email');
+    } finally {
+      // Remove email from processing set
+      setProcessingEmails(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(email.id);
+        return newSet;
+      });
     }
   };
 
@@ -405,17 +416,19 @@ const EmailsPage: NextPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
-                <select
+                <input
+                  type="number"
+                  min="1"
                   value={pagination.page}
-                  onChange={(e) => handlePageChange(parseInt(e.target.value))}
+                  onChange={(e) => {
+                    const newPage = parseInt(e.target.value) || 1;
+                    if (newPage >= 1) {
+                      handlePageChange(newPage);
+                    }
+                  }}
                   className="input-field"
-                >
-                  {Array.from({ length: Math.min(pagination.totalPages, 50) }, (_, i) => i + 1).map(pageNum => (
-                    <option key={pageNum} value={pageNum}>
-                      Page {pageNum}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="1"
+                />
               </div>
 
               <div>
@@ -544,7 +557,12 @@ const EmailsPage: NextPage = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(email.status)}`}>
+                            <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(email.status)}`}>
+                              {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && (
+                                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
                               {email.status}
                             </span>
                           </td>
@@ -562,19 +580,37 @@ const EmailsPage: NextPage = () => {
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={() => openEmailDrawer(email)}
-                                className="text-blue-600 hover:text-blue-900"
+                                className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
                                 title="View Details"
                               >
-                                👁️
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
                               </button>
 
                               {(email.status === 'Fetched' || (email.status as string) === 'FETCHED') && (
                                 <button
                                   onClick={() => handleProcessEmail(email)}
-                                  className="text-green-600 hover:text-green-900"
-                                  title="Process Email with AI"
+                                  disabled={processingEmails.has(email.id)}
+                                  className={`${
+                                    processingEmails.has(email.id)
+                                      ? 'text-blue-500 cursor-not-allowed'
+                                      : 'text-green-600 hover:text-green-900'
+                                  } transition-colors duration-200`}
+                                  title={processingEmails.has(email.id) ? "Processing..." : "Process Email with AI"}
                                 >
-                                  ⚙️
+                                  {processingEmails.has(email.id) ? (
+                                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                  ) : (
+                                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                  )}
                                 </button>
                               )}
 
@@ -679,7 +715,12 @@ const EmailsPage: NextPage = () => {
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Status</dt>
                           <dd>
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedEmail.status)}`}>
+                            <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedEmail.status)}`}>
+                              {(selectedEmail.status === 'Processed' || (selectedEmail.status as string) === 'PROCESSED') && (
+                                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
                               {selectedEmail.status}
                             </span>
                           </dd>
@@ -752,9 +793,30 @@ const EmailsPage: NextPage = () => {
                         handleProcessEmail(selectedEmail);
                         closeEmailDrawer();
                       }}
-                      className="btn-primary"
+                      disabled={processingEmails.has(selectedEmail.id)}
+                      className={`btn-primary ${
+                        processingEmails.has(selectedEmail.id)
+                          ? 'opacity-50 cursor-not-allowed'
+                          : ''
+                      } flex items-center gap-2`}
                     >
-                      Process with AI
+                      {processingEmails.has(selectedEmail.id) ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          </svg>
+                          Process with AI
+                        </>
+                      )}
                     </button>
                   )}
                   {selectedEmail && (selectedEmail.status !== 'REJECT') && (
