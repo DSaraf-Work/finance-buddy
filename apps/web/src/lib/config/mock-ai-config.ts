@@ -4,7 +4,7 @@
  */
 
 // Global server-side flag - defaults to true for development
-let MOCK_AI_ENABLED = false;
+let MOCK_AI_ENABLED = true;
 
 export class MockAIConfig {
   /**
