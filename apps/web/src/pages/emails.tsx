@@ -1,13 +1,13 @@
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
-import { EmailPublic, EmailSearchRequest, PaginatedResponse, EmailStatus } from '@finance-buddy/shared';
+import { EmailPublic, EmailSearchRequest, PaginatedResponse, EmailStatus, GmailConnectionPublic } from '@finance-buddy/shared';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
 
 interface EmailFilters {
   date_from?: string;
   date_to?: string;
-  email_address?: string;
+  email_addresses?: string[]; // Changed to array for multi-select
   sender?: string;
   status?: EmailStatus;
   q?: string;
@@ -17,6 +17,8 @@ interface EmailFilters {
 const EmailsPage: NextPage = () => {
   const [emails, setEmails] = useState<EmailPublic[]>([]);
   const [loading, setLoading] = useState(false);
+  const [connections, setConnections] = useState<GmailConnectionPublic[]>([]);
+  const [loadingConnections, setLoadingConnections] = useState(true);
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 25,
@@ -38,8 +40,8 @@ const EmailsPage: NextPage = () => {
   const [filters, setFilters] = useState<EmailFilters>({
     date_from: formatDateForInput(sevenDaysAgo),
     date_to: formatDateForInput(today),
-    email_address: 'dheerajsaraf1996@gmail.com', // Default email address
-    sender: 'alerts@dcbbank.com', // Default sender
+    email_addresses: [], // Will be populated with available connections
+    sender: 'alerts@dcbbank.com,alerts@hdfcbank.net', // Multiple default senders
     status: undefined,
     q: '',
     db_only: true, // Default to database-only search
@@ -54,46 +56,163 @@ const EmailsPage: NextPage = () => {
   const [batchProcessing, setBatchProcessing] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
 
+  // Fetch Gmail connections
+  const fetchConnections = async () => {
+    setLoadingConnections(true);
+    try {
+      const response = await fetch('/api/gmail/connections');
+      if (response.ok) {
+        const data = await response.json();
+        setConnections(data.connections);
+
+        // Set default email addresses to all available connections
+        if (data.connections.length > 0) {
+          const allEmails = data.connections.map((conn: GmailConnectionPublic) => conn.email_address);
+          setFilters(prev => ({
+            ...prev,
+            email_addresses: allEmails // Default to all connections
+          }));
+        }
+      } else {
+        console.error('Failed to fetch connections');
+      }
+    } catch (error) {
+      console.error('Error fetching connections:', error);
+    } finally {
+      setLoadingConnections(false);
+    }
+  };
+
+  // Load connections on component mount
+  useEffect(() => {
+    fetchConnections();
+  }, []);
+
   const searchEmails = async (page: number = 1) => {
     setLoading(true);
     try {
-      const searchRequest: EmailSearchRequest = {
-        ...filters,
+      // If multiple email addresses are selected, we need to search each one sequentially
+      const emailAddresses = filters.email_addresses || [];
+
+      if (emailAddresses.length === 0) {
+        console.warn('No email addresses selected for search');
+        setEmails([]);
+        setPagination(prev => ({ ...prev, total: 0, totalPages: 0, hasNext: false, hasPrev: false }));
+        return;
+      }
+
+      let allEmails: EmailPublic[] = [];
+      let totalCount = 0;
+
+      // Search each email address sequentially
+      for (const emailAddress of emailAddresses) {
+        // Handle multiple senders by splitting comma-separated values
+        const senders = filters.sender ? filters.sender.split(',').map(s => s.trim()) : [];
+
+        // If multiple senders, search each sender separately for this email address
+        if (senders.length > 1) {
+          for (const sender of senders) {
+            const searchRequest: EmailSearchRequest = {
+              ...filters,
+              email_address: emailAddress, // Use single email address for each request
+              sender: sender, // Use single sender for each request
+              page,
+              pageSize: pagination.pageSize,
+              sort: 'desc', // Default to newest-to-oldest
+            };
+
+            // Remove empty filters and email_addresses array (use email_address instead)
+            delete (searchRequest as any).email_addresses;
+            Object.keys(searchRequest).forEach(key => {
+              if (searchRequest[key as keyof EmailSearchRequest] === '' ||
+                  searchRequest[key as keyof EmailSearchRequest] === undefined) {
+                delete searchRequest[key as keyof EmailSearchRequest];
+              }
+            });
+
+            console.log(`🔍 Searching emails for ${emailAddress} from ${sender}:`, searchRequest);
+
+            const response = await fetch('/api/emails/search', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(searchRequest),
+            });
+
+            if (response.ok) {
+              const data: PaginatedResponse<EmailPublic> = await response.json();
+              allEmails.push(...data.items);
+              totalCount += data.total;
+              console.log(`✅ Found ${data.items.length} emails for ${emailAddress} from ${sender} (total: ${data.total})`);
+            } else {
+              console.error(`❌ Search failed for ${emailAddress} from ${sender}:`, response.statusText);
+            }
+          }
+        } else {
+          // Single sender or no sender filter
+          const searchRequest: EmailSearchRequest = {
+            ...filters,
+            email_address: emailAddress, // Use single email address for each request
+            page,
+            pageSize: pagination.pageSize,
+            sort: 'desc', // Default to newest-to-oldest
+          };
+
+          // Remove empty filters and email_addresses array (use email_address instead)
+          delete (searchRequest as any).email_addresses;
+          Object.keys(searchRequest).forEach(key => {
+            if (searchRequest[key as keyof EmailSearchRequest] === '' ||
+                searchRequest[key as keyof EmailSearchRequest] === undefined) {
+              delete searchRequest[key as keyof EmailSearchRequest];
+            }
+          });
+
+          console.log(`🔍 Searching emails for ${emailAddress}:`, searchRequest);
+
+          const response = await fetch('/api/emails/search', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchRequest),
+          });
+
+          if (response.ok) {
+            const data: PaginatedResponse<EmailPublic> = await response.json();
+            allEmails.push(...data.items);
+            totalCount += data.total;
+            console.log(`✅ Found ${data.items.length} emails for ${emailAddress} (total: ${data.total})`);
+          } else {
+            console.error(`❌ Search failed for ${emailAddress}:`, response.statusText);
+          }
+        }
+      }
+
+      // Sort all emails by internal_date (newest first)
+      allEmails.sort((a, b) => {
+        const dateA = new Date(a.internal_date || 0).getTime();
+        const dateB = new Date(b.internal_date || 0).getTime();
+        return dateB - dateA; // Descending order (newest first)
+      });
+
+      // Apply pagination to the combined results
+      const startIndex = (page - 1) * pagination.pageSize;
+      const endIndex = startIndex + pagination.pageSize;
+      const paginatedEmails = allEmails.slice(startIndex, endIndex);
+
+      setEmails(paginatedEmails);
+      setPagination({
         page,
         pageSize: pagination.pageSize,
-        sort: 'desc', // Default to newest-to-oldest
-      };
-
-      // Remove empty filters
-      Object.keys(searchRequest).forEach(key => {
-        if (searchRequest[key as keyof EmailSearchRequest] === '' || 
-            searchRequest[key as keyof EmailSearchRequest] === undefined) {
-          delete searchRequest[key as keyof EmailSearchRequest];
-        }
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / pagination.pageSize),
+        hasNext: endIndex < allEmails.length,
+        hasPrev: page > 1,
       });
 
-      const response = await fetch('/api/emails/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(searchRequest),
-      });
+      console.log(`🎯 Final results: ${paginatedEmails.length} emails shown, ${totalCount} total across ${emailAddresses.length} connections`);
 
-      if (response.ok) {
-        const data: PaginatedResponse<EmailPublic> = await response.json();
-        setEmails(data.items);
-        setPagination({
-          page: data.page,
-          pageSize: data.pageSize,
-          total: data.total,
-          totalPages: data.totalPages,
-          hasNext: data.hasNext,
-          hasPrev: data.hasPrev,
-        });
-      } else {
-        console.error('Search failed:', response.statusText);
-      }
     } catch (error) {
       console.error('Search error:', error);
     } finally {
@@ -117,6 +236,22 @@ const EmailsPage: NextPage = () => {
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleEmailAddressChange = (emailAddress: string, isSelected: boolean) => {
+    setFilters(prev => {
+      const currentAddresses = prev.email_addresses || [];
+      if (isSelected) {
+        // Add email address if not already present
+        if (!currentAddresses.includes(emailAddress)) {
+          return { ...prev, email_addresses: [...currentAddresses, emailAddress] };
+        }
+      } else {
+        // Remove email address
+        return { ...prev, email_addresses: currentAddresses.filter(addr => addr !== emailAddress) };
+      }
+      return prev;
+    });
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
@@ -322,60 +457,85 @@ const EmailsPage: NextPage = () => {
     }
   };
 
-  // Batch processing functions
+  // Batch processing functions - Updated for multi-connection support
   const handleGetAllFetched = async () => {
     setBatchProcessing(true);
     setBatchProgress({ current: 0, total: 0 });
 
     try {
-      // Search for all FETCHED emails
-      const searchRequest: EmailSearchRequest = {
-        ...filters,
-        status: 'Fetched',
-        page: 1,
-        pageSize: 1000, // Get a large number to find all fetched emails
-        sort: 'desc',
-      };
+      const emailAddresses = filters.email_addresses || [];
 
-      const response = await fetch('/api/emails/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(searchRequest),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(`🔍 Found ${data.emails.length} FETCHED emails to process`);
-
-        if (data.emails.length === 0) {
-          alert('No FETCHED emails found to process.');
-          return;
-        }
-
-        // Process in batches
-        const batchSize = pagination.pageSize;
-        const totalBatches = Math.ceil(data.emails.length / batchSize);
-        setBatchProgress({ current: 0, total: totalBatches });
-
-        for (let i = 0; i < totalBatches; i++) {
-          const batch = data.emails.slice(i * batchSize, (i + 1) * batchSize);
-          setBatchProgress({ current: i + 1, total: totalBatches });
-
-          console.log(`🔄 Processing batch ${i + 1} of ${totalBatches} (${batch.length} emails)`);
-
-          // Process each email in the batch sequentially
-          for (const email of batch) {
-            await handleProcessEmail(email, true); // Silent processing
-          }
-        }
-
-        // Refresh the email list
-        searchEmails(pagination.page);
-        alert(`Successfully processed ${data.emails.length} emails in ${totalBatches} batches!`);
-      } else {
-        const error = await response.json();
-        alert(`Failed to fetch emails: ${error.error}`);
+      if (emailAddresses.length === 0) {
+        alert('Please select at least one account to search for FETCHED emails.');
+        return;
       }
+
+      let allFetchedEmails: EmailPublic[] = [];
+
+      // Search each email address for FETCHED emails
+      for (const emailAddress of emailAddresses) {
+        const searchRequest: EmailSearchRequest = {
+          ...filters,
+          email_address: emailAddress, // Use single email address for each request
+          status: 'Fetched',
+          page: 1,
+          pageSize: 1000, // Get a large number to find all fetched emails
+          sort: 'desc',
+        };
+
+        // Remove email_addresses array (use email_address instead)
+        delete (searchRequest as any).email_addresses;
+        Object.keys(searchRequest).forEach(key => {
+          if (searchRequest[key as keyof EmailSearchRequest] === '' ||
+              searchRequest[key as keyof EmailSearchRequest] === undefined) {
+            delete searchRequest[key as keyof EmailSearchRequest];
+          }
+        });
+
+        console.log(`🔍 Searching FETCHED emails for ${emailAddress}`);
+
+        const response = await fetch('/api/emails/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(searchRequest),
+        });
+
+        if (response.ok) {
+          const data: PaginatedResponse<EmailPublic> = await response.json();
+          allFetchedEmails.push(...data.items);
+          console.log(`✅ Found ${data.items.length} FETCHED emails for ${emailAddress}`);
+        } else {
+          console.error(`❌ Search failed for ${emailAddress}:`, response.statusText);
+        }
+      }
+
+      console.log(`🎯 Total FETCHED emails found: ${allFetchedEmails.length} across ${emailAddresses.length} connections`);
+
+      if (allFetchedEmails.length === 0) {
+        alert('No FETCHED emails found to process across all selected accounts.');
+        return;
+      }
+
+      // Process in batches
+      const batchSize = pagination.pageSize;
+      const totalBatches = Math.ceil(allFetchedEmails.length / batchSize);
+      setBatchProgress({ current: 0, total: totalBatches });
+
+      for (let i = 0; i < totalBatches; i++) {
+        const batch = allFetchedEmails.slice(i * batchSize, (i + 1) * batchSize);
+        setBatchProgress({ current: i + 1, total: totalBatches });
+
+        console.log(`🔄 Processing batch ${i + 1} of ${totalBatches} (${batch.length} emails)`);
+
+        // Process each email in the batch sequentially
+        for (const email of batch) {
+          await handleProcessEmail(email, true); // Silent processing
+        }
+      }
+
+      // Refresh the email list
+      searchEmails(pagination.page);
+      alert(`Successfully processed ${allFetchedEmails.length} emails in ${totalBatches} batches across ${emailAddresses.length} connections!`);
     } catch (error) {
       console.error('Batch processing error:', error);
       alert('Failed to process emails in batch');
@@ -390,7 +550,7 @@ const EmailsPage: NextPage = () => {
     setBatchProgress({ current: 0, total: 0 });
 
     try {
-      // Get all FETCHED emails from current table view
+      // Get all FETCHED emails from current table view (already aggregated from all selected connections)
       const fetchedEmails = emails.filter(email =>
         email.status === 'Fetched' || (email.status as string) === 'FETCHED'
       );
@@ -400,7 +560,8 @@ const EmailsPage: NextPage = () => {
         return;
       }
 
-      console.log(`🔄 Bulk processing ${fetchedEmails.length} emails from current view`);
+      const selectedAccounts = filters.email_addresses?.length || 0;
+      console.log(`🔄 Bulk processing ${fetchedEmails.length} emails from current view (across ${selectedAccounts} connections)`);
       setBatchProgress({ current: 0, total: fetchedEmails.length });
 
       // Process each email sequentially
@@ -411,7 +572,7 @@ const EmailsPage: NextPage = () => {
 
       // Refresh the email list
       searchEmails(pagination.page);
-      alert(`Successfully processed ${fetchedEmails.length} emails!`);
+      alert(`Successfully processed ${fetchedEmails.length} emails from ${selectedAccounts} connections!`);
     } catch (error) {
       console.error('Bulk processing error:', error);
       alert('Failed to process emails in bulk');
@@ -469,14 +630,36 @@ const EmailsPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Account</label>
-                <input
-                  type="email"
-                  value={filters.email_address || ''}
-                  onChange={(e) => handleFilterChange('email_address', e.target.value)}
-                  placeholder="user@gmail.com"
-                  className="input-field"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Accounts <span className="text-red-500">*</span>
+                  <span className="text-xs text-gray-500 ml-1">
+                    ({filters.email_addresses?.length || 0} selected)
+                  </span>
+                </label>
+                {loadingConnections ? (
+                  <div className="input-field bg-gray-50 text-gray-500">Loading connections...</div>
+                ) : connections.length === 0 ? (
+                  <div className="input-field bg-red-50 text-red-600">No Gmail connections found</div>
+                ) : (
+                  <div className="relative">
+                    <div className="input-field min-h-[2.5rem] max-h-24 overflow-y-auto">
+                      {connections.map((connection) => (
+                        <label key={connection.id} className="flex items-center space-x-2 py-1">
+                          <input
+                            type="checkbox"
+                            checked={filters.email_addresses?.includes(connection.email_address) || false}
+                            onChange={(e) => handleEmailAddressChange(connection.email_address, e.target.checked)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">{connection.email_address}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {filters.email_addresses?.length === 0 && (
+                      <div className="text-xs text-red-500 mt-1">Please select at least one account</div>
+                    )}
+                  </div>
+                )}
               </div>
               
               <div>
@@ -589,11 +772,14 @@ const EmailsPage: NextPage = () => {
                   const sevenDaysAgo = new Date();
                   sevenDaysAgo.setDate(today.getDate() - 7);
 
+                  // Reset to all available connections
+                  const allEmails = connections.map(conn => conn.email_address);
+
                   setFilters({
                     date_from: formatDateForInput(sevenDaysAgo),
                     date_to: formatDateForInput(today),
-                    email_address: 'dheerajsaraf1996@gmail.com', // Keep default email
-                    sender: 'alerts@dcbbank.com', // Keep default sender
+                    email_addresses: allEmails, // Reset to all connections
+                    sender: 'alerts@dcbbank.com,alerts@hdfcbank.net', // Multiple default senders
                     status: undefined,
                     q: '',
                     db_only: true,
