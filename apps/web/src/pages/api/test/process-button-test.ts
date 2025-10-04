@@ -1,26 +1,33 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { EmailProcessor } from '@/lib/email-processing/processor';
 
-export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
+/**
+ * Test endpoint to verify that the process button endpoint uses the standardized extractor
+ * This bypasses authentication for testing purposes
+ */
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { id } = req.query;
+    const { emailId } = req.body;
 
-    if (!id || typeof id !== 'string') {
-      return res.status(400).json({ error: 'Email ID is required' });
+    if (!emailId) {
+      return res.status(400).json({ error: 'emailId is required' });
     }
+
+    console.log('🧪 Testing process button endpoint with standardized extractor:', {
+      emailId,
+      timestamp: new Date().toISOString()
+    });
 
     // Get the email first
     const { data: email, error: emailError } = await (supabaseAdmin as any)
       .from('fb_emails')
       .select('*')
-      .eq('id', id)
-      .eq('user_id', user.id)
+      .eq('id', emailId)
       .single();
 
     if (emailError || !email) {
@@ -31,40 +38,40 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const { data: connection, error: connectionError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('id, google_user_id')
-      .eq('user_id', user.id)
-      .eq('email_address', (email as any).email_address)
+      .eq('user_id', email.user_id)
+      .eq('email_address', email.email_address)
       .single();
 
     if (connectionError || !connection) {
       console.warn('No Gmail connection found for user, using fallback values');
     }
 
-    if ((email as any).status === 'Processed') {
+    if (email.status === 'Processed') {
       return res.status(400).json({ error: 'Email already processed' });
     }
 
-    console.log(`🔄 Processing email ${id} using EmailProcessor:`, {
-      subject: (email as any).subject,
-      fromAddress: (email as any).from_address,
-      userId: user.id,
+    console.log(`🔄 Processing email ${emailId} using EmailProcessor:`, {
+      subject: email.subject,
+      fromAddress: email.from_address,
+      userId: email.user_id,
       timestamp: new Date().toISOString()
     });
 
     // Use the standardized EmailProcessor for actual AI extraction
     const processor = new EmailProcessor();
-
+    
     const result = await processor.processEmails({
-      emailId: id,
-      userId: user.id,
+      emailId: emailId,
+      userId: email.user_id,
       batchSize: 1,
       forceReprocess: true,
     });
 
     if (!result.success || result.errorCount > 0) {
-      console.error(`❌ Email processing failed for ${id}:`, result.errors);
-      return res.status(500).json({
+      console.error(`❌ Email processing failed for ${emailId}:`, result.errors);
+      return res.status(500).json({ 
         error: 'Email processing failed',
-        details: result.errors
+        details: result.errors 
       });
     }
 
@@ -72,7 +79,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const { data: transaction, error: transactionError } = await (supabaseAdmin as any)
       .from('fb_extracted_transactions')
       .select('*')
-      .eq('email_row_id', id)
+      .eq('email_row_id', emailId)
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
@@ -82,7 +89,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(500).json({ error: 'Failed to retrieve transaction' });
     }
 
-    console.log(`✅ Email ${id} processed successfully using EmailProcessor:`, {
+    console.log(`✅ Email ${emailId} processed successfully using EmailProcessor:`, {
       transactionId: transaction?.id,
       amount: transaction?.amount,
       currency: transaction?.currency,
@@ -97,8 +104,9 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       processingTime: result.processingTime,
       extractionVersion: transaction?.extraction_version || '2.0.0'
     });
+
   } catch (error) {
     console.error('Email processing error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+}

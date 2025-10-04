@@ -1,8 +1,7 @@
 // Main Email Processing Engine
 
 import { supabaseAdmin } from '../supabase';
-import { TransactionExtractor } from './extractors/transaction-extractor';
-import { TransactionExtractionRequest, ExtractedTransaction } from '../ai/types';
+import { SchemaAwareTransactionExtractor } from '../ai/extractors/transaction-schema-extractor';
 import { parseHTMLToCleanText } from '../gmail';
 import type { Database } from '@finance-buddy/shared';
 
@@ -26,7 +25,7 @@ export interface EmailProcessingResult {
 }
 
 export class EmailProcessor {
-  private transactionExtractor = new TransactionExtractor();
+  private transactionExtractor = new SchemaAwareTransactionExtractor();
 
   async processEmails(request: EmailProcessingRequest = {}): Promise<EmailProcessingResult> {
     const startTime = Date.now();
@@ -131,25 +130,32 @@ export class EmailProcessor {
       }
     }
 
-    // Create extraction request
-    const extractionRequest: TransactionExtractionRequest = {
+    // Prepare email content and metadata for the new schema-aware extractor
+    const emailContent = plainBody;
+    const emailMetadata = {
       emailId: email.id,
       subject: email.subject || '',
       fromAddress: email.from_address || '',
-      plainBody: plainBody,
       snippet: email.snippet,
-      internalDate: email.internal_date ? new Date(email.internal_date) : undefined,
+      internalDate: email.internal_date
     };
 
-    // Extract transaction information
-    const extractionResult = await this.transactionExtractor.extractTransaction(extractionRequest);
+    console.log('🧠 Using SchemaAwareTransactionExtractor for processing:', {
+      emailId: email.id,
+      contentLength: emailContent?.length || 0,
+      hasContent: !!emailContent,
+      metadata: emailMetadata
+    });
 
-    if (!extractionResult.success || !extractionResult.transaction) {
-      throw new Error(extractionResult.error || 'Transaction extraction failed');
+    // Extract transaction information using the new schema-aware extractor
+    const extractedTransaction = await this.transactionExtractor.extractTransaction(emailContent, emailMetadata);
+
+    if (!extractedTransaction) {
+      throw new Error('Transaction extraction failed - no result returned');
     }
 
     // Save extracted transaction
-    await this.saveExtractedTransaction(email, extractionResult.transaction);
+    await this.saveExtractedTransaction(email, extractedTransaction);
 
     // Email status will automatically become 'PROCESSED' due to the transaction being saved
     console.log(`✅ Email ${email.id} processed successfully - status will be derived as PROCESSED`);
@@ -192,27 +198,29 @@ export class EmailProcessor {
     return emails || [];
   }
 
-  private async saveExtractedTransaction(email: any, transaction: ExtractedTransaction): Promise<void> {
+  private async saveExtractedTransaction(email: any, transaction: any): Promise<void> {
+    // Handle both old and new transaction formats
     const transactionData: Database['public']['Tables']['fb_extracted_transactions']['Insert'] = {
       user_id: email.user_id,
       google_user_id: email.google_user_id,
       connection_id: email.connection_id,
       email_row_id: email.id,
-      txn_time: transaction.txnTime?.toISOString(),
-      amount: transaction.amount,
-      currency: transaction.currency,
+      // Handle both old format (txnTime) and new format (txn_time)
+      txn_time: transaction.txn_time || (transaction.txnTime ? transaction.txnTime.toISOString() : null),
+      amount: transaction.amount ? transaction.amount.toString() : null,
+      currency: transaction.currency || 'INR',
       direction: transaction.direction,
-      merchant_name: transaction.merchantName,
-      merchant_normalized: transaction.merchantNormalized,
+      merchant_name: transaction.merchant_name || transaction.merchantName,
+      merchant_normalized: transaction.merchant_normalized || transaction.merchantNormalized,
       category: transaction.category,
-      account_hint: transaction.accountHint,
-      reference_id: transaction.referenceId,
+      account_hint: transaction.account_hint || transaction.accountHint,
+      reference_id: transaction.reference_id || transaction.referenceId,
       location: transaction.location,
-      account_type: transaction.accountType,
-      transaction_type: transaction.transactionType,
-      ai_notes: transaction.aiNotes,
-      confidence: transaction.confidence,
-      extraction_version: transaction.extractionVersion,
+      account_type: transaction.account_type || transaction.accountType,
+      transaction_type: transaction.transaction_type || transaction.transactionType,
+      ai_notes: transaction.ai_notes || transaction.aiNotes,
+      confidence: transaction.confidence ? transaction.confidence.toString() : '0.5',
+      extraction_version: '2.0.0', // New schema-aware version
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
