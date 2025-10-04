@@ -476,7 +476,7 @@ const EmailsPage: NextPage = () => {
       for (const emailAddress of emailAddresses) {
         const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
           email_address: emailAddress, // Use single email address for each request
-          status: 'Fetched',
+          status: 'FETCHED', // Use all-caps status to match the fb_emails_with_status view
           page: 1,
           pageSize: 1000, // Get a large number to find all fetched emails
           sort: 'desc',

@@ -160,7 +160,27 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       .range(offset, offset + pageSize - 1);
 
     console.log('🔍 Executing database query...');
+    console.log('🔧 Final query filters applied:', {
+      user_id: user.id,
+      google_user_id: google_user_id || 'NOT_APPLIED',
+      email_address: finalEmailAddress || 'NOT_APPLIED',
+      date_from: date_from || 'NOT_APPLIED',
+      date_to: date_to || 'NOT_APPLIED',
+      sender: finalSender || 'NOT_APPLIED',
+      status: status || 'NOT_APPLIED',
+      search_query: q || 'NOT_APPLIED'
+    });
+
+    // Execute query and capture detailed results
     const { data: emails, error, count } = await query;
+
+    console.log('🔧 Raw query execution results:', {
+      error: error ? error.message : 'NO_ERROR',
+      data_type: Array.isArray(emails) ? 'array' : typeof emails,
+      data_length: emails ? emails.length : 'null',
+      count_value: count,
+      count_type: typeof count
+    });
 
     if (error) {
       console.error('❌ Email search error:', error);
