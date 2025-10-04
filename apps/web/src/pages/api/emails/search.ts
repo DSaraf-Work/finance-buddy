@@ -50,6 +50,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const finalEmailAddress = ignore_defaults ? email_address : (email_address || 'dheerajsaraf1996@gmail.com');
     const finalSender = ignore_defaults ? sender : (sender || 'alerts@dcbbank.com');
 
+    console.log('🔧 Filter processing debug:', {
+      ignore_defaults,
+      original_email_address: email_address,
+      original_sender: sender,
+      finalEmailAddress,
+      finalSender
+    });
+
     // Validate page size
     if (pageSize > 100) {
       return res.status(400).json({ error: 'pageSize cannot exceed 100' });

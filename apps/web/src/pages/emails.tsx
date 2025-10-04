@@ -484,10 +484,11 @@ const EmailsPage: NextPage = () => {
           ignore_defaults: true, // Bypass default sender filters
         };
 
-        // Clean up undefined values
+        // Clean up undefined values (but preserve ignore_defaults)
         Object.keys(searchRequest).forEach(key => {
-          if (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
-              searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === undefined) {
+          if (key !== 'ignore_defaults' &&
+              (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
+               searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === undefined)) {
             delete searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })];
           }
         });
