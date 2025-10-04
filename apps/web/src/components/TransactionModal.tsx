@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Transaction } from '@/pages/transactions';
+import InteractiveKeywordSelector from './InteractiveKeywordSelector';
 
 interface TransactionModalProps {
   transaction: Transaction;
@@ -321,16 +322,19 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        AI Generated Keywords (Editable)
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        Transaction Keywords
                       </label>
-                      <textarea
+                      <InteractiveKeywordSelector
                         value={formData.ai_notes || ''}
-                        onChange={(e) => handleInputChange('ai_notes', e.target.value)}
-                        rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-                        placeholder="No AI notes available"
+                        onChange={(value) => handleInputChange('ai_notes', value)}
+                        merchantName={formData.merchant_name || undefined}
+                        transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
+                        placeholder="Select keywords to categorize this transaction..."
                       />
+                      <p className="text-xs text-gray-500 mt-2">
+                        Select relevant keywords to help categorize and search for this transaction. Smart suggestions are provided based on the merchant.
+                      </p>
                     </div>
 
                     <div>

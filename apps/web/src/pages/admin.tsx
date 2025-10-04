@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { GmailConnectionPublic, ConnectionsResponse } from '@finance-buddy/shared';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
+import KeywordManager from '@/components/KeywordManager';
 
 interface SystemHealth {
   status: string;
@@ -398,6 +399,9 @@ const AdminPage: NextPage = () => {
                 </div>
               )}
             </div>
+
+            {/* Transaction Keywords Management */}
+            <KeywordManager className="mb-8" />
 
             {/* System Information */}
             {health && (

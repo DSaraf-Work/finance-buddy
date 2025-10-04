@@ -2,6 +2,35 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 
+// Helper function to update keyword usage counts
+async function updateKeywordUsage(userId: string, aiNotes: string) {
+  if (!aiNotes || !aiNotes.trim()) return;
+
+  const keywords = aiNotes.split(',').map(k => k.trim()).filter(k => k.length > 0);
+
+  for (const keywordText of keywords) {
+    try {
+      // Find the keyword by text and user
+      const { data: keywordData, error: findError } = await supabaseAdmin
+        .from('fb_transaction_keywords')
+        .select('id, usage_count')
+        .eq('user_id', userId)
+        .eq('keyword', keywordText)
+        .single();
+
+      if (!findError && keywordData) {
+        // Increment usage count
+        await supabaseAdmin
+          .from('fb_transaction_keywords')
+          .update({ usage_count: keywordData.usage_count + 1 })
+          .eq('id', keywordData.id);
+      }
+    } catch (error) {
+      console.error(`Error updating usage for keyword "${keywordText}":`, error);
+    }
+  }
+}
+
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method === 'GET') {
     try {
@@ -61,7 +90,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         location,
         account_type,
         transaction_type,
-        user_notes
+        user_notes,
+        ai_notes
       } = req.body;
 
       if (!id) {
@@ -85,6 +115,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           account_type,
           transaction_type,
           user_notes,
+          ai_notes,
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
@@ -94,10 +125,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       if (error) {
         console.error('Error updating transaction:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
           error: 'Failed to update transaction',
-          details: error.message 
+          details: error.message
         });
+      }
+
+      // Update keyword usage counts if ai_notes were provided
+      if (ai_notes) {
+        await updateKeywordUsage(user.id, ai_notes);
       }
 
       res.status(200).json({

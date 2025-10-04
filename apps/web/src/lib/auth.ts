@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from './supabase';
 
 const COOKIE_NAME = process.env.COOKIE_NAME || 'fb_session';
@@ -66,4 +67,26 @@ export function withAuth<T = any>(
       res.status(500).json({ error: 'Internal server error' });
     }
   };
+}
+
+export async function createUserSupabaseClient(req: NextApiRequest) {
+  const token = req.cookies[COOKIE_NAME];
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
+  // Create a client with the user's token for RLS
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  );
+
+  return supabase;
 }

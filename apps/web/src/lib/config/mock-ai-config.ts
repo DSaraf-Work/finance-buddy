@@ -3,7 +3,7 @@
  * Manages the USE_MOCK_AI flag as a server-side global variable
  */
 
-// Global server-side flag - defaults to true for development
+// Global server-side flag - defaults to false for real AI testing
 let MOCK_AI_ENABLED = true;
 
 export class MockAIConfig {

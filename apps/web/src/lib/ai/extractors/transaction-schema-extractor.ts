@@ -3,6 +3,7 @@
 
 import { getAIManager } from '../manager';
 import { AIRequest } from '../types';
+import { KeywordService } from '../../keywords/keyword-service';
 
 export interface TransactionSchema {
   txn_time: {
@@ -190,7 +191,7 @@ export class SchemaAwareTransactionExtractor {
     console.log('='.repeat(80));
 
     // Create a comprehensive prompt that tells the AI about the schema
-    const prompt = this.createSchemaAwarePrompt(emailContent, emailMetadata);
+    const prompt = await this.createSchemaAwarePrompt(emailContent, emailMetadata);
 
     console.log('📋 AI Prompt Preview:', prompt.substring(0, 200) + '...');
     console.log('📋 FULL AI PROMPT:');
@@ -276,6 +277,19 @@ export class SchemaAwareTransactionExtractor {
         provider: aiResponse.provider
       });
 
+      // Process AI-generated keywords for auto-addition
+      if (emailMetadata?.userId && extractedData.ai_notes) {
+        try {
+          const processedKeywords = await KeywordService.processAIKeywords(
+            emailMetadata.userId,
+            extractedData.ai_notes
+          );
+          console.log('🏷️ Processed keywords:', processedKeywords);
+        } catch (error) {
+          console.error('Error processing AI keywords:', error);
+        }
+      }
+
       return extractedData;
 
     } catch (error: any) {
@@ -293,10 +307,36 @@ export class SchemaAwareTransactionExtractor {
 
 
 
-  private createSchemaAwarePrompt(emailContent: string, emailMetadata?: any): string {
+  private async createSchemaAwarePrompt(emailContent: string, emailMetadata?: any): Promise<string> {
     const schemaDescription = this.generateSchemaDescription();
-    
+
+    // Get dynamic keywords for the user if available
+    let keywordSection = '';
+    if (emailMetadata?.userId) {
+      try {
+        const keywords = await KeywordService.getActiveKeywordsForAI(emailMetadata.userId);
+        if (keywords.length > 0) {
+          keywordSection = `
+PREFERRED KEYWORDS FOR AI_NOTES:
+Use these existing keywords when possible: ${keywords.join(', ')}
+
+KEYWORD INSTRUCTIONS:
+1. Prioritize using keywords from the preferred list above
+2. If none of the preferred keywords fit, generate new appropriate keywords
+3. Use 3-6 keywords maximum, comma-separated
+4. Keep keywords concise and relevant to the transaction
+5. Capitalize the first letter of each keyword
+
+`;
+        }
+      } catch (error) {
+        console.error('Error fetching keywords for AI prompt:', error);
+      }
+    }
+
     return `You are an AI transaction extractor. Your task is to extract transaction information from email content and return it as JSON matching the exact schema provided.
+
+${keywordSection}
 
 EMAIL CONTENT TO ANALYZE:
 """

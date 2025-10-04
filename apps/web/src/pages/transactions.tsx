@@ -143,6 +143,7 @@ export default function TransactionsPage() {
           account_type: updatedTransaction.account_type,
           transaction_type: updatedTransaction.transaction_type,
           user_notes: updatedTransaction.user_notes,
+          ai_notes: updatedTransaction.ai_notes,
         }),
       });
 
