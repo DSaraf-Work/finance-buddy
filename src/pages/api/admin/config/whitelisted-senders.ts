@@ -9,7 +9,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   try {
     if (req.method === 'GET') {
       // Get whitelisted senders
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await (supabaseAdmin as any)
         .from('fb_config')
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
@@ -19,7 +19,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         throw error;
       }
 
-      const senders = data?.config_value || [];
+      const senders = (data as any)?.config_value || [];
       return res.status(200).json({ senders });
     }
 
@@ -34,13 +34,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       const normalizedSender = sender.trim().toLowerCase();
 
       // Get current senders
-      const { data: currentData } = await supabaseAdmin
+      const { data: currentData } = await (supabaseAdmin as any)
         .from('fb_config')
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .single();
 
-      const currentSenders: string[] = currentData?.config_value || [];
+      const currentSenders: string[] = (currentData as any)?.config_value || [];
 
       if (currentSenders.includes(normalizedSender)) {
         return res.status(400).json({ error: 'Sender already whitelisted' });
@@ -49,7 +49,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       // Add new sender
       const updatedSenders = [...currentSenders, normalizedSender];
 
-      const { error } = await supabaseAdmin
+      const { error } = await (supabaseAdmin as any)
         .from('fb_config')
         .update({
           config_value: updatedSenders,
@@ -71,18 +71,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       }
 
       // Get current senders
-      const { data: currentData } = await supabaseAdmin
+      const { data: currentData } = await (supabaseAdmin as any)
         .from('fb_config')
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .single();
 
-      const currentSenders: string[] = currentData?.config_value || [];
+      const currentSenders: string[] = (currentData as any)?.config_value || [];
 
       // Remove sender
       const updatedSenders = currentSenders.filter(s => s !== sender);
 
-      const { error } = await supabaseAdmin
+      const { error } = await (supabaseAdmin as any)
         .from('fb_config')
         .update({
           config_value: updatedSenders,

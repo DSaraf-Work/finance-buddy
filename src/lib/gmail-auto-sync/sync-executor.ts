@@ -158,7 +158,7 @@ export class SyncExecutor {
    */
   private async calculateSyncWindow(userId: string): Promise<Date> {
     // Get the most recent processed email
-    const { data: lastProcessedEmail } = await supabaseAdmin
+    const { data: lastProcessedEmail } = await (supabaseAdmin as any)
       .from('fb_emails')
       .select('internal_date')
       .eq('user_id', userId)
@@ -167,9 +167,9 @@ export class SyncExecutor {
       .limit(1)
       .single();
 
-    if (lastProcessedEmail && lastProcessedEmail.internal_date) {
+    if (lastProcessedEmail && (lastProcessedEmail as any).internal_date) {
       // Subtract 10 minutes for safety buffer
-      const lastDate = new Date(lastProcessedEmail.internal_date);
+      const lastDate = new Date((lastProcessedEmail as any).internal_date);
       return new Date(lastDate.getTime() - 10 * 60 * 1000);
     }
 
@@ -201,17 +201,17 @@ export class SyncExecutor {
       try {
         // Process email with AI
         const result = await this.emailProcessor.processEmails({
-          emailId: email.id,
+          emailId: (email as any).id,
           userId: userId,
           batchSize: 1,
         });
 
         if (result.success && result.successCount > 0) {
           // Fetch the created transaction
-          const { data: transaction } = await supabaseAdmin
+          const { data: transaction } = await (supabaseAdmin as any)
             .from('fb_extracted_transactions')
             .select('*')
-            .eq('email_row_id', email.id)
+            .eq('email_row_id', (email as any).id)
             .order('created_at', { ascending: false })
             .limit(1)
             .single();
@@ -221,7 +221,7 @@ export class SyncExecutor {
           }
         }
       } catch (error: any) {
-        console.error(`Failed to process email ${email.id}:`, error);
+        console.error(`Failed to process email ${(email as any).id}:`, error);
       }
     }
 
