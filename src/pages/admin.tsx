@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
+import { useMockAI } from '@/contexts/MockAIContext';
 import KeywordManager from '@/components/KeywordManager';
 
 interface SystemHealth {
@@ -18,10 +19,10 @@ interface SystemHealth {
 }
 
 const AdminPage: NextPage = () => {
+  const { mockAIEnabled, toggleMockAI } = useMockAI();
   const [connections, setConnections] = useState<GmailConnectionPublic[]>([]);
   const [health, setHealth] = useState<SystemHealth | null>(null);
   const [loading, setLoading] = useState(false);
-  const [mockAIEnabled, setMockAIEnabled] = useState(false);
   const [stats, setStats] = useState({
     totalEmails: 0,
     totalTransactions: 0,
@@ -32,7 +33,6 @@ const AdminPage: NextPage = () => {
     fetchConnections();
     fetchHealth();
     fetchStats();
-    fetchMockAIStatus();
   }, []);
 
   const fetchConnections = async () => {
@@ -69,18 +69,6 @@ const AdminPage: NextPage = () => {
     });
   };
 
-  const fetchMockAIStatus = async () => {
-    try {
-      const response = await fetch('/api/admin/mock-ai');
-      if (response.ok) {
-        const data = await response.json();
-        setMockAIEnabled(data.mockAI.enabled);
-      }
-    } catch (error) {
-      console.error('Failed to fetch mock AI status:', error);
-    }
-  };
-
   const handleDisconnect = async (connectionId: string) => {
     if (!confirm('Are you sure you want to disconnect this Gmail account? This will revoke access tokens but preserve historical data.')) {
       return;
@@ -111,34 +99,6 @@ const AdminPage: NextPage = () => {
       alert('Failed to disconnect account');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleMockAIToggle = async () => {
-    try {
-      const response = await fetch('/api/admin/mock-ai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'toggle'
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMockAIEnabled(data.mockAI.enabled);
-
-        // Show success message
-        alert(data.message);
-      } else {
-        const error = await response.text();
-        alert(`Failed to toggle mock AI: ${error}`);
-      }
-    } catch (error) {
-      console.error('Mock AI toggle error:', error);
-      alert('Failed to toggle mock AI');
     }
   };
 
@@ -213,7 +173,7 @@ const AdminPage: NextPage = () => {
                       {mockAIEnabled ? 'Mock AI' : 'Real AI'}
                     </span>
                     <button
-                      onClick={handleMockAIToggle}
+                      onClick={toggleMockAI}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         mockAIEnabled ? 'bg-indigo-600' : 'bg-gray-200'
                       }`}

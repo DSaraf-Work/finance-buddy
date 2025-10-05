@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMockAI } from '@/contexts/MockAIContext';
 import NotificationBell from './NotificationBell';
 
 interface LayoutProps {
@@ -36,6 +37,7 @@ const dbNavigation: NavItem[] = [
 
 export function Layout({ children, title, description }: LayoutProps) {
   const { user, signOut } = useAuth();
+  const { mockAIEnabled, toggleMockAI, loading } = useMockAI();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -157,6 +159,21 @@ export function Layout({ children, title, description }: LayoutProps) {
               <div className="flex items-center space-x-4">
                 {user && (
                   <>
+                    {/* Mock AI Toggle */}
+                    <button
+                      onClick={toggleMockAI}
+                      disabled={loading}
+                      className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                        mockAIEnabled
+                          ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                          : 'bg-green-100 text-green-800 hover:bg-green-200'
+                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title={mockAIEnabled ? 'Mock AI: ON (Click to use Real AI)' : 'Mock AI: OFF (Click to use Mock AI)'}
+                    >
+                      <span className="mr-1">{mockAIEnabled ? '🤖' : '🧠'}</span>
+                      <span>{mockAIEnabled ? 'Mock' : 'Real'}</span>
+                    </button>
+
                     <NotificationBell />
                     <span className="text-sm text-gray-700">
                       {user.email}
