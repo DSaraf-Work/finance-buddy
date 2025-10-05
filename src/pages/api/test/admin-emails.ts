@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Get test user
-    const { data: users } = await supabaseAdmin
+    const { data: users } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('user_id')
       .limit(1)
@@ -18,11 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'No users found' });
     }
 
-    const userId = users.user_id;
+    const userId = (users as any).user_id;
 
     if (action === 'config') {
       // Test: Get whitelisted senders
-      const { data: configData } = await supabaseAdmin
+      const { data: configData } = await (supabaseAdmin as any)
         .from('fb_config')
         .select('config_value')
         .eq('config_key', 'WHITELISTED_SENDERS')
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (action === 'count-fetched') {
       // Test: Count fetched emails
-      const { count } = await supabaseAdmin
+      const { count } = await (supabaseAdmin as any)
         .from('fb_emails')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (action === 'process-one') {
       // Test: Process one email
-      const { data: emails } = await supabaseAdmin
+      const { data: emails } = await (supabaseAdmin as any)
         .from('fb_emails')
         .select('*')
         .eq('user_id', userId)
@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).json({ message: 'No fetched emails to process' });
       }
 
-      const email = emails[0];
+      const email = (emails as any[])[0];
       const processor = new EmailProcessor();
 
       try {
@@ -79,10 +79,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         // Update email status
-        // @ts-ignore
-        await supabaseAdmin
+        await (supabaseAdmin as any)
           .from('fb_emails')
-          .update({ 
+          .update({
             status: 'Processed',
             updated_at: new Date().toISOString(),
           })
@@ -104,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (action === 'list-emails') {
       // Test: List emails
-      const { data: emails } = await supabaseAdmin
+      const { data: emails } = await (supabaseAdmin as any)
         .from('fb_emails')
         .select('id, from_address, subject, status, internal_date')
         .eq('user_id', userId)
