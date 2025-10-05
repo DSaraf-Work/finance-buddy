@@ -1,7 +1,4 @@
 {
-  "typescript": {
-    "ignoreBuildErrors": true
-  },
   "headers": [
     {
       "source": "/api/(.*)",
