@@ -71,14 +71,14 @@ export class SyncExecutor {
       console.log(`📬 Found ${messageIds.length} emails`);
 
       // Step 5: Check which messages already exist
-      const { data: existingEmails } = await supabaseAdmin
+      const { data: existingEmails } = await (supabaseAdmin as any)
         .from('fb_emails')
         .select('message_id')
         .eq('user_id', connection.user_id)
         .eq('google_user_id', connection.google_user_id)
         .in('message_id', messageIds);
 
-      const existingIds = new Set(existingEmails?.map(e => e.message_id) || []);
+      const existingIds = new Set(existingEmails?.map((e: any) => e.message_id) || []);
       const newMessageIds = messageIds.filter(id => !existingIds.has(id));
 
       console.log(`🆕 ${newMessageIds.length} new emails to sync`);
