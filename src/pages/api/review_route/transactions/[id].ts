@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withAuth } from '@/lib/withAuth';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { withAuth } from '@/lib/auth/middleware';
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * PATCH /api/review_route/transactions/[id]
