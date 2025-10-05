@@ -60,7 +60,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     } = req.body;
 
     // Build update object with only provided fields
-    const updateData: any = {
+    const updateData: Record<string, any> = {
       updated_at: new Date().toISOString(),
     };
 
