@@ -47,15 +47,22 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }: EmailSearchRequest & { ignore_defaults?: boolean } = req.body;
 
     // Apply default filters only if ignore_defaults is false and no specific filters are provided
-    const finalEmailAddress = ignore_defaults ? email_address : (email_address || 'dheerajsaraf1996@gmail.com');
-    const finalSender = ignore_defaults ? sender : (sender || 'alerts@dcbbank.com');
+    // When ignore_defaults is true, use the provided values as-is (including undefined/empty)
+    const finalEmailAddress = ignore_defaults
+      ? email_address
+      : (email_address || 'dheerajsaraf1996@gmail.com');
+
+    const finalSender = ignore_defaults
+      ? sender
+      : (sender || 'alerts@dcbbank.com');
 
     console.log('🔧 Filter processing debug:', {
       ignore_defaults,
       original_email_address: email_address,
       original_sender: sender,
       finalEmailAddress,
-      finalSender
+      finalSender,
+      willApplySenderFilter: !!finalSender
     });
 
     // Validate page size
@@ -147,8 +154,12 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       query = query.ilike('from_address', `%${finalSender}%`);
     }
 
+    // Apply status filter (case-insensitive)
+    // The view returns uppercase status (FETCHED, PROCESSED, REJECTED)
+    // but the frontend sends title case (Fetched, Processed, etc.)
     if (status) {
-      query = query.eq('status', status);
+      const upperStatus = status.toUpperCase();
+      query = query.eq('status', upperStatus);
     }
 
     if (q) {
