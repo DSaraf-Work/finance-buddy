@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { EmailProcessor } from '@/lib/email-processor';
+import { EmailProcessor } from '@/lib/email-processing/processor';
 
 const BATCH_SIZE = 10;
 
