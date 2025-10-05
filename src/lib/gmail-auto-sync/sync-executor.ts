@@ -35,12 +35,13 @@ export class SyncExecutor {
         accessToken = newTokens.access_token!;
         
         // Update token in database
+        // @ts-ignore - Supabase types are too strict for dynamic updates
         await supabaseAdmin
           .from('fb_gmail_connections')
           .update({
             access_token: accessToken,
             token_expiry: new Date(Date.now() + 3600000).toISOString(),
-          } as any)
+          })
           .eq('id', connection.id);
       }
 
