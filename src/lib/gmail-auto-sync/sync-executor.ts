@@ -35,8 +35,7 @@ export class SyncExecutor {
         accessToken = newTokens.access_token!;
         
         // Update token in database
-        // @ts-ignore - Supabase types are too strict for dynamic updates
-        await supabaseAdmin
+        await (supabaseAdmin as any)
           .from('fb_gmail_connections')
           .update({
             access_token: accessToken,
