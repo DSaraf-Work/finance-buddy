@@ -35,14 +35,12 @@ export class SyncExecutor {
         accessToken = newTokens.access_token!;
         
         // Update token in database
-        const updateData: Record<string, any> = {
-          access_token: accessToken,
-          token_expiry: new Date(Date.now() + 3600000).toISOString(),
-        };
-
         await supabaseAdmin
           .from('fb_gmail_connections')
-          .update(updateData)
+          .update({
+            access_token: accessToken,
+            token_expiry: new Date(Date.now() + 3600000).toISOString(),
+          } as any)
           .eq('id', connection.id);
       }
 
