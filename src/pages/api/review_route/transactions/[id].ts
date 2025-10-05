@@ -79,7 +79,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (user_notes !== undefined) updateData.user_notes = user_notes;
 
     // Update the transaction
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (supabaseAdmin as any)
       .from('fb_extracted_transactions')
       .update(updateData)
       .eq('id', id)
