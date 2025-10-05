@@ -12,7 +12,7 @@ export class NotificationManager {
    * Create a new notification
    */
   async create(params: CreateNotificationParams): Promise<Notification> {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (supabaseAdmin as any)
       .from('fb_notifications')
       .insert({
         user_id: params.userId,
@@ -50,7 +50,7 @@ export class NotificationManager {
     userId: string,
     filters: NotificationFilters = {}
   ): Promise<{ notifications: Notification[]; total: number }> {
-    let query = supabaseAdmin
+    let query = (supabaseAdmin as any)
       .from('fb_notifications')
       .select('*', { count: 'exact' })
       .eq('user_id', userId);
@@ -88,7 +88,7 @@ export class NotificationManager {
    * Get unread notification count
    */
   async getUnreadCount(userId: string): Promise<number> {
-    const { count, error } = await supabaseAdmin
+    const { count, error } = await (supabaseAdmin as any)
       .from('fb_notifications')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
@@ -106,7 +106,7 @@ export class NotificationManager {
    * Mark notification as read
    */
   async markAsRead(notificationId: string, userId: string): Promise<void> {
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from('fb_notifications')
       .update({
         read: true,
@@ -126,7 +126,7 @@ export class NotificationManager {
    * Mark all notifications as read
    */
   async markAllAsRead(userId: string): Promise<void> {
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from('fb_notifications')
       .update({
         read: true,
@@ -146,7 +146,7 @@ export class NotificationManager {
    * Delete a notification
    */
   async delete(notificationId: string, userId: string): Promise<void> {
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from('fb_notifications')
       .delete()
       .eq('id', notificationId)
@@ -162,7 +162,7 @@ export class NotificationManager {
    * Delete all read notifications
    */
   async deleteAllRead(userId: string): Promise<void> {
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from('fb_notifications')
       .delete()
       .eq('user_id', userId)
