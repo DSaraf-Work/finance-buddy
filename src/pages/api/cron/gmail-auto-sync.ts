@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Find all connections with auto-sync enabled
-    const { data: connections, error: connError } = await supabaseAdmin
+    const { data: connections, error: connError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('*')
       .eq('auto_sync_enabled', true);
@@ -46,10 +46,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const results = [];
 
     // Process each connection
-    for (const connection of connections) {
+    for (const connection of (connections as any[])) {
       try {
         // Check if sync is due
-        const lastSync = connection.last_auto_sync_at 
+        const lastSync = connection.last_auto_sync_at
           ? new Date(connection.last_auto_sync_at)
           : new Date(0);
         const now = new Date();
@@ -77,7 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         // Update last sync time
-        await supabaseAdmin
+        await (supabaseAdmin as any)
           .from('fb_gmail_connections')
           .update({
             last_auto_sync_at: new Date().toISOString(),
