@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Route - Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Transaction Review</h1>
+            <p class="text-gray-600 mt-2">Review and manage your extracted transactions</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Date Range Presets -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Today</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">7 Days</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-600 text-white">30 Days</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">This Month</button>
+                        <button class="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Custom</button>
+                    </div>
+                </div>
+
+                <!-- Sort Order -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="desc">Newest → Oldest</option>
+                        <option value="asc">Oldest → Newest</option>
+                    </select>
+                </div>
+
+                <!-- Search -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                    <input type="text" placeholder="Merchant, category, notes..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <!-- Fetch Button -->
+            <div class="mt-4 flex justify-end">
+                <button class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Fetch Transactions
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop Table -->
+        <div class="hidden md:block bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Merchant</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Row 1: Amazon -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">05 Oct 2025, 10:30</td>
+                            <td class="px-6 py-4 text-sm">
+                                <div class="font-medium text-gray-900">Amazon</div>
+                                <div class="text-xs text-gray-500 mt-0.5">AMZ123456 • Online</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">shopping</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="text-gray-700">HDFC 1234 • Credit Card</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">95%</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <span class="font-semibold text-red-600">- ₹1,250.00</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-blue-600 hover:text-blue-700 font-medium transition-colors">Edit</button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 2: Uber -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">04 Oct 2025, 14:15</td>
+                            <td class="px-6 py-4 text-sm">
+                                <div class="font-medium text-gray-900">Uber</div>
+                                <div class="text-xs text-gray-500 mt-0.5">UBR789012 • Bangalore</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">transport</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="text-gray-700">ICICI 5678 • Debit Card</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">98%</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <span class="font-semibold text-red-600">- ₹450.00</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-blue-600 hover:text-blue-700 font-medium transition-colors">Edit</button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 3: Salary -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">03 Oct 2025, 09:00</td>
+                            <td class="px-6 py-4 text-sm">
+                                <div class="font-medium text-gray-900">Salary</div>
+                                <div class="text-xs text-gray-500 mt-0.5">SAL202510</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">income</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="text-gray-700">SBI 9012 • Savings</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">100%</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <span class="font-semibold text-green-600">+ ₹5,000.00</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-blue-600 hover:text-blue-700 font-medium transition-colors">Edit</button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 4: Zomato -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">02 Oct 2025, 18:45</td>
+                            <td class="px-6 py-4 text-sm">
+                                <div class="font-medium text-gray-900">Zomato</div>
+                                <div class="text-xs text-gray-500 mt-0.5">ZOM345678 • Bangalore</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">food</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="text-gray-700">HDFC 1234 • Credit Card</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">92%</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <span class="font-semibold text-red-600">- ₹850.00</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-blue-600 hover:text-blue-700 font-medium transition-colors">Edit</button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 5: Flipkart -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">01 Oct 2025, 12:20</td>
+                            <td class="px-6 py-4 text-sm">
+                                <div class="font-medium text-gray-900">Flipkart</div>
+                                <div class="text-xs text-gray-500 mt-0.5">FLP901234 • Online</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">shopping</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="text-gray-700">ICICI 5678 • Debit Card</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">97%</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <span class="font-semibold text-red-600">- ₹2,500.00</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-blue-600 hover:text-blue-700 font-medium transition-colors">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mobile Cards (visible on small screens) -->
+        <div class="md:hidden space-y-4">
+            <!-- Card 1: Amazon -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex-1 min-w-0 mr-3">
+                        <div class="font-medium text-gray-900 truncate">Amazon</div>
+                        <div class="mt-1">
+                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">shopping</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-semibold text-red-600">- ₹1,250.00</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                    <div class="flex items-center space-x-2">
+                        <span>05 Oct 2025, 10:30</span>
+                        <span>•</span>
+                        <span>HDFC 1234</span>
+                    </div>
+                    <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">95%</span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <div>AMZ123456 • Online</div>
+                    <button class="ml-2 px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors">Edit</button>
+                </div>
+            </div>
+
+            <!-- Card 2: Salary -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex-1 min-w-0 mr-3">
+                        <div class="font-medium text-gray-900 truncate">Salary</div>
+                        <div class="mt-1">
+                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #EAF4FF; color: #3B82F6; border: 1px solid #D2E4FF;">income</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-semibold text-green-600">+ ₹5,000.00</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                    <div class="flex items-center space-x-2">
+                        <span>03 Oct 2025, 09:00</span>
+                        <span>•</span>
+                        <span>SBI 9012</span>
+                    </div>
+                    <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full" style="background-color: #F4FBEB; color: #2CA02C; border: 1px solid #D6ECB5;">100%</span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <div>SAL202510</div>
+                    <button class="ml-2 px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
