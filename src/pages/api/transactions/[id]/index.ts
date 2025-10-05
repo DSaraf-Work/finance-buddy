@@ -83,7 +83,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       filteredUpdates.updated_at = new Date().toISOString();
 
       // Update transaction
-      const { data: updated, error: updateError } = await supabaseAdmin
+      const { data: updated, error: updateError } = await (supabaseAdmin as any)
         .from('fb_extracted_transactions')
         .update(filteredUpdates)
         .eq('id', id)
