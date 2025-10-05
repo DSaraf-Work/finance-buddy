@@ -1,0 +1,20 @@
+{
+  "TransactionRow": {
+    "id": "string (uuid)",
+    "txnTime": "ISO string",
+    "amount": "number",
+    "currency": "string",
+    "direction": "'debit' | 'credit'",
+    "merchantName": "string | null",
+    "merchantNormalized": "string | null",
+    "category": "string | null",
+    "accountHint": "string | null",
+    "accountType": "string | null",
+    "referenceId": "string | null",
+    "location": "string | null",
+    "confidence": "number | null (0\u20131)",
+    "aiNotes": "string | null",
+    "userNotes": "string | null",
+    "onEdit": "(id) => void"
+  }
+}
