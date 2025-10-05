@@ -25,20 +25,20 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     };
 
     // Get whitelisted senders
-    const { data: configData } = await supabaseAdmin
+    const { data: configData } = await (supabaseAdmin as any)
       .from('fb_config')
       .select('config_value')
       .eq('config_key', 'WHITELISTED_SENDERS')
       .single();
 
-    const whitelistedSenders: string[] = configData?.config_value || [];
+    const whitelistedSenders: string[] = (configData as any)?.config_value || [];
 
     if (whitelistedSenders.length === 0) {
       return res.status(400).json({ error: 'No whitelisted senders configured' });
     }
 
     // Get all Gmail connections for the user
-    const { data: connections, error: connectionsError } = await supabaseAdmin
+    const { data: connections, error: connectionsError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('*')
       .eq('user_id', user.id);
@@ -61,8 +61,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           accessToken = refreshed.access_token;
 
           // Update token in database
-          // @ts-ignore - Supabase types are too strict
-          await supabaseAdmin
+          await (supabaseAdmin as any)
             .from('fb_gmail_connections')
             .update({
               access_token: accessToken,
@@ -72,7 +71,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         }
 
         // Get last refresh timestamp
-        const { data: lastEmail } = await supabaseAdmin
+        const { data: lastEmail } = await (supabaseAdmin as any)
           .from('fb_emails')
           .select('internal_date')
           .eq('user_id', user.id)
@@ -140,7 +139,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
               const internalDate = new Date(parseInt(fullMessage.internalDate || '0'));
 
               // Check if email already exists
-              const { data: existingEmail } = await supabaseAdmin
+              const { data: existingEmail } = await (supabaseAdmin as any)
                 .from('fb_emails')
                 .select('id')
                 .eq('user_id', user.id)
@@ -150,8 +149,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
               if (existingEmail) {
                 // Update existing email
-                // @ts-ignore
-                await supabaseAdmin
+                await (supabaseAdmin as any)
                   .from('fb_emails')
                   .update({
                     from_address: from,
@@ -165,8 +163,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
                   .eq('id', existingEmail.id);
 
                 // Mark related transactions as REFRESHED
-                // @ts-ignore
-                await supabaseAdmin
+                await (supabaseAdmin as any)
                   .from('fb_extracted_transactions')
                   .update({ status: 'REFRESHED' })
                   .eq('email_id', existingEmail.id);
@@ -174,8 +171,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
                 stats.updatedEmails++;
               } else {
                 // Insert new email
-                // @ts-ignore
-                await supabaseAdmin
+                await (supabaseAdmin as any)
                   .from('fb_emails')
                   .insert({
                     user_id: user.id,
