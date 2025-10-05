@@ -154,10 +154,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
                 await supabaseAdmin
                   .from('fb_emails')
                   .update({
-                    from_email: from,
-                    to_email: to,
+                    from_address: from,
+                    to_address: to,
                     subject: subject,
-                    body: body,
+                    plain_body: body,
                     internal_date: internalDate.toISOString(),
                     email_date: date,
                     updated_at: new Date().toISOString(),
@@ -182,10 +182,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
                     connection_id: connection.id,
                     google_user_id: connection.google_user_id,
                     message_id: msg.id,
-                    from_email: from,
-                    to_email: to,
+                    from_address: from,
+                    to_address: to,
                     subject: subject,
-                    body: body,
+                    plain_body: body,
                     internal_date: internalDate.toISOString(),
                     email_date: date,
                     status: 'Fetched',
