@@ -91,6 +91,8 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
             email_date: email.email_date,
             internal_date: email.internal_date,
             user_id: userId,
+            google_user_id: email.google_user_id,
+            connection_id: email.connection_id,
           });
 
           // Update email status to Processed
