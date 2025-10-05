@@ -21,6 +21,12 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/gmail-auto-sync",
+      "schedule": "*/15 * * * *"
+    }
   ]
 }
 

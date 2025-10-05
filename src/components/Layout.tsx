@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import NotificationBell from './NotificationBell';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -156,6 +157,7 @@ export function Layout({ children, title, description }: LayoutProps) {
               <div className="flex items-center space-x-4">
                 {user && (
                   <>
+                    <NotificationBell />
                     <span className="text-sm text-gray-700">
                       {user.email}
                     </span>
@@ -167,7 +169,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                     </button>
                   </>
                 )}
-                
+
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
