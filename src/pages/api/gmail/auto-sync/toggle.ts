@@ -19,7 +19,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Verify connection ownership
-    const { data: connection, error: connError } = await supabaseAdmin
+    const { data: connection, error: connError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('id')
       .eq('id', connection_id)
@@ -31,7 +31,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Update auto-sync settings
-    const { data: updated, error: updateError } = await supabaseAdmin
+    const { data: updated, error: updateError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .update({
         auto_sync_enabled: enabled,
