@@ -17,7 +17,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Fetch connection with auto-sync settings
-    const { data: connection, error: connError } = await supabaseAdmin
+    const { data: connection, error: connError } = await (supabaseAdmin as any)
       .from('fb_gmail_connections')
       .select('id, auto_sync_enabled, auto_sync_interval_minutes, last_auto_sync_at')
       .eq('id', connection_id)
@@ -28,10 +28,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(404).json({ error: 'Connection not found' });
     }
 
-    return res.status(200).json({ 
-      auto_sync_enabled: connection.auto_sync_enabled,
-      interval_minutes: connection.auto_sync_interval_minutes,
-      last_sync_at: connection.last_auto_sync_at,
+    return res.status(200).json({
+      auto_sync_enabled: (connection as any).auto_sync_enabled,
+      interval_minutes: (connection as any).auto_sync_interval_minutes,
+      last_sync_at: (connection as any).last_auto_sync_at,
     });
   } catch (error: any) {
     console.error('Failed to get auto-sync status:', error);
