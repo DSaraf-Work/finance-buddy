@@ -55,7 +55,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
   while (hasMore) {
     try {
       // Fetch batch of fetched emails
-      const { data: emails, error } = await supabaseAdmin
+      const { data: emails, error } = await (supabaseAdmin as any)
         .from('fb_emails')
         .select('*')
         .eq('user_id', userId)
@@ -74,7 +74,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
       }
 
       // Process each email sequentially
-      for (const email of emails) {
+      for (const email of (emails as any[])) {
         try {
           console.log(`Processing email ${email.id} (${processedCount + 1}/${totalEmails})`);
 
@@ -96,8 +96,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
           });
 
           // Update email status to Processed
-          // @ts-ignore
-          await supabaseAdmin
+          await (supabaseAdmin as any)
             .from('fb_emails')
             .update({
               status: 'Processed',
@@ -113,10 +112,9 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
           
           // Mark as failed
           try {
-            // @ts-ignore
-            await supabaseAdmin
+            await (supabaseAdmin as any)
               .from('fb_emails')
-              .update({ 
+              .update({
                 status: 'Failed',
                 updated_at: new Date().toISOString(),
               })
@@ -128,7 +126,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
       }
 
       // Check if there are more emails to process
-      const { count } = await supabaseAdmin
+      const { count } = await (supabaseAdmin as any)
         .from('fb_emails')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
