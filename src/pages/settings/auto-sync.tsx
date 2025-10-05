@@ -242,7 +242,7 @@ export default function AutoSyncSettingsPage() {
             </p>
             <p>
               <span className="font-medium">Cron Expression:</span>{' '}
-              <code className="bg-white px-2 py-1 rounded">*/15 * * * *</code>
+              <code className="bg-white px-2 py-1 rounded">0 23 * * *</code>
             </p>
             <p>
               <span className="font-medium">Timezone:</span> UTC
