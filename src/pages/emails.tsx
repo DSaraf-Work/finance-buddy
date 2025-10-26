@@ -299,22 +299,20 @@ const EmailsPage: NextPage = () => {
       pageSize: newPageSize,
       page: 1, // Reset to first page when changing page size
     }));
+    // Don't automatically trigger search - user must click Search button
   };
-
-  // Use useEffect to trigger search when page size changes
-  useEffect(() => {
-    // Only trigger search if page size has been changed from initial load
-    if (emails.length > 0) { // Only if we have loaded emails before
-      searchEmails(1); // Always go to page 1 when page size changes
-    }
-  }, [pagination.pageSize]);
 
   const handleSearch = () => {
     searchEmails(1);
   };
 
   const handlePageChange = (newPage: number) => {
-    searchEmails(newPage);
+    // Just update the page number, don't trigger search
+    setPagination(prev => ({
+      ...prev,
+      page: newPage,
+    }));
+    // Don't automatically trigger search - user must click Search button
   };
 
   const openEmailDrawer = (email: EmailPublic) => {
