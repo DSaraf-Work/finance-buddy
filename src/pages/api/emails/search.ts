@@ -83,8 +83,20 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         await syncEmailsFromGmail(user.id, date_from, date_to, finalSender);
         console.log('✅ Gmail sync completed successfully');
       } catch (gmailError) {
+        const errorMessage = gmailError instanceof Error ? gmailError.message : String(gmailError);
+
+        // If it's a re-auth required error, return it to the user
+        if (errorMessage.includes('GMAIL_REAUTH_REQUIRED')) {
+          console.error('🔒 Gmail re-authentication required');
+          return res.status(401).json({
+            error: 'Gmail connection expired',
+            message: 'Your Gmail connection has expired. Please reconnect your Gmail account in Settings.',
+            requiresReauth: true
+          });
+        }
+
         console.error('❌ Gmail sync error (continuing with DB-only search):', gmailError);
-        // Continue with database search even if Gmail sync fails
+        // Continue with database search for other errors
       }
     } else {
       console.log('🗄️ Skipping Gmail sync - using database only:', { db_only, date_from, date_to });
@@ -313,7 +325,26 @@ async function syncEmailsFromGmail(
       console.log('✅ Token updated in database');
     } catch (refreshError) {
       console.error('❌ Token refresh failed:', refreshError);
-      throw new Error(`Failed to refresh Gmail access token: ${refreshError instanceof Error ? refreshError.message : 'Unknown error'}`);
+
+      // Check if it's an invalid_grant error (expired/revoked refresh token)
+      const errorMessage = refreshError instanceof Error ? refreshError.message : String(refreshError);
+      if (errorMessage.includes('invalid_grant')) {
+        console.log('🔒 Refresh token is invalid/expired. Marking connection for re-authentication...');
+
+        // Mark the connection as needing re-authentication
+        await (supabaseAdmin as any)
+          .from('fb_gmail_connections')
+          .update({
+            access_token: null,
+            token_expiry: null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', connection.id);
+
+        throw new Error('GMAIL_REAUTH_REQUIRED: Your Gmail connection has expired. Please reconnect your Gmail account in Settings.');
+      }
+
+      throw new Error(`Failed to refresh Gmail access token: ${errorMessage}`);
     }
   }
 

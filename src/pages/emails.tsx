@@ -222,6 +222,15 @@ const EmailsPage: NextPage = () => {
             allEmails.push(...data.items);
             totalCount += data.total;
             console.log(`✅ Found ${data.items.length} emails for ${emailAddress} (total: ${data.total})`);
+          } else if (response.status === 401) {
+            // Handle re-authentication required
+            const errorData = await response.json();
+            if (errorData.requiresReauth) {
+              alert(`⚠️ ${errorData.message}\n\nPlease go to Settings to reconnect your Gmail account.`);
+              setLoading(false);
+              return;
+            }
+            console.error(`❌ Search failed for ${emailAddress}:`, response.statusText);
           } else {
             console.error(`❌ Search failed for ${emailAddress}:`, response.statusText);
           }
