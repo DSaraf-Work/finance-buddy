@@ -41,11 +41,32 @@ export async function exchangeCodeForTokens(code: string): Promise<OAuthTokens> 
 }
 
 export async function refreshAccessToken(refreshToken: string): Promise<OAuthTokens> {
-  const oauth2Client = createOAuth2Client();
-  oauth2Client.setCredentials({ refresh_token: refreshToken });
-  
-  const { credentials } = await oauth2Client.refreshAccessToken();
-  return credentials as OAuthTokens;
+  try {
+    console.log('🔑 Attempting to refresh access token...');
+
+    if (!refreshToken) {
+      throw new Error('Refresh token is required');
+    }
+
+    const oauth2Client = createOAuth2Client();
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+    const { credentials } = await oauth2Client.refreshAccessToken();
+
+    console.log('✅ Access token refreshed successfully', {
+      has_access_token: !!credentials.access_token,
+      expires_in: (credentials as any).expires_in,
+      token_type: credentials.token_type
+    });
+
+    return credentials as OAuthTokens;
+  } catch (error) {
+    console.error('❌ Failed to refresh access token:', error);
+    if (error instanceof Error) {
+      throw new Error(`Token refresh failed: ${error.message}`);
+    }
+    throw error;
+  }
 }
 
 export async function revokeToken(token: string): Promise<void> {

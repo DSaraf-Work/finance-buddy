@@ -281,22 +281,39 @@ async function syncEmailsFromGmail(
   let accessToken = connection.access_token;
   if (connection.token_expiry && new Date(connection.token_expiry) <= new Date()) {
     try {
+      console.log('🔑 Token expired, attempting refresh...', {
+        connection_id: connection.id,
+        token_expiry: connection.token_expiry,
+        has_refresh_token: !!connection.refresh_token
+      });
+
+      if (!connection.refresh_token) {
+        throw new Error('No refresh token available for this connection');
+      }
+
       const refreshedTokens = await refreshAccessToken(connection.refresh_token);
       accessToken = refreshedTokens.access_token!;
+
+      console.log('✅ Token refreshed successfully');
+
+      // Calculate new expiry time
+      const newExpiry = new Date();
+      newExpiry.setSeconds(newExpiry.getSeconds() + (refreshedTokens.expires_in || 3600));
 
       // Update the connection with new tokens
       await (supabaseAdmin as any)
         .from('fb_gmail_connections')
         .update({
           access_token: accessToken,
-          token_expiry: (refreshedTokens as any).expiry_date
-            ? new Date((refreshedTokens as any).expiry_date).toISOString()
-            : null,
+          token_expiry: newExpiry.toISOString(),
           updated_at: new Date().toISOString(),
         })
         .eq('id', connection.id);
+
+      console.log('✅ Token updated in database');
     } catch (refreshError) {
-      throw new Error('Failed to refresh Gmail access token');
+      console.error('❌ Token refresh failed:', refreshError);
+      throw new Error(`Failed to refresh Gmail access token: ${refreshError instanceof Error ? refreshError.message : 'Unknown error'}`);
     }
   }
 
