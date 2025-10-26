@@ -24,17 +24,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       errors: [],
     };
 
-    // Get whitelisted senders
+    // Get user's bank account types
     const { data: configData } = await (supabaseAdmin as any)
       .from('fb_config')
       .select('config_value')
-      .eq('config_key', 'WHITELISTED_SENDERS')
+      .eq('config_key', 'BANK_ACCOUNT_TYPES')
+      .eq('user_id', user.id)
       .single();
 
-    const whitelistedSenders: string[] = (configData as any)?.config_value || [];
+    const bankAccountTypes: string[] = (configData as any)?.config_value || [];
 
-    if (whitelistedSenders.length === 0) {
-      return res.status(400).json({ error: 'No whitelisted senders configured' });
+    if (bankAccountTypes.length === 0) {
+      return res.status(400).json({ error: 'No bank account types configured. Please add bank account email addresses in the admin settings.' });
     }
 
     // Get all Gmail connections for the user
@@ -92,11 +93,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         const batches = createDateBatches(startDate, endDate);
 
         for (const batch of batches) {
-          // Build Gmail query for whitelisted senders
-          const senderQueries = whitelistedSenders.map(sender => `from:${sender}`).join(' OR ');
+          // Build Gmail query for bank account types
+          const senderQueries = bankAccountTypes.map(sender => `from:${sender}`).join(' OR ');
           const afterTimestamp = Math.floor(batch.start.getTime() / 1000);
           const beforeTimestamp = Math.floor(batch.end.getTime() / 1000);
-          
+
           const gmailQuery = `(${senderQueries}) after:${afterTimestamp} before:${beforeTimestamp}`;
 
           // Fetch emails from Gmail

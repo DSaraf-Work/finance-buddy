@@ -137,11 +137,13 @@ export class EmailProcessor {
       subject: email.subject || '',
       fromAddress: email.from_address || '',
       snippet: email.snippet,
-      internalDate: email.internal_date
+      internalDate: email.internal_date,
+      userId: email.user_id // Pass user_id for user-specific account type classification
     };
 
     console.log('🧠 Using SchemaAwareTransactionExtractor for processing:', {
       emailId: email.id,
+      userId: email.user_id,
       contentLength: emailContent?.length || 0,
       hasContent: !!emailContent,
       metadata: emailMetadata

@@ -4,6 +4,7 @@
 import { getAIManager } from '../manager';
 import { AIRequest } from '../types';
 import { KeywordService } from '../../keywords/keyword-service';
+import { getUserBankAccountConfig } from '../../config/bank-account-types';
 
 export interface TransactionSchema {
   txn_time: {
@@ -89,6 +90,7 @@ export interface TransactionSchema {
 export class SchemaAwareTransactionExtractor {
   private aiManager: any;
   private schema: TransactionSchema;
+  private userAccountTypeEnums: string[] = [];
 
   constructor() {
     this.aiManager = getAIManager();
@@ -178,6 +180,19 @@ export class SchemaAwareTransactionExtractor {
   async extractTransaction(emailContent: string, emailMetadata?: any): Promise<any> {
     console.log('🧠 Schema-Aware AI Extraction Starting...');
 
+    // Fetch user-specific bank account types if userId is provided
+    if (emailMetadata?.userId) {
+      console.log('🏦 Fetching user-specific bank account types for user:', emailMetadata.userId);
+      const bankAccountConfig = await getUserBankAccountConfig(emailMetadata.userId);
+      this.userAccountTypeEnums = bankAccountConfig.accountTypeEnums;
+      console.log('✅ Loaded user account type enums:', this.userAccountTypeEnums);
+
+      // Update the schema with user-specific account types
+      this.schema.account_type.enum = this.userAccountTypeEnums as any;
+    } else {
+      console.log('⚠️ No userId provided, using default account type enums');
+    }
+
     // Log the input email content being analyzed
     console.log('📧 EMAIL INPUT ANALYSIS:');
     console.log('='.repeat(80));
@@ -188,6 +203,8 @@ export class SchemaAwareTransactionExtractor {
     console.log('Plain Body Content:', emailContent || 'NULL/EMPTY');
     console.log('Snippet:', emailMetadata?.snippet || 'N/A');
     console.log('Internal Date:', emailMetadata?.internalDate || 'N/A');
+    console.log('User ID:', emailMetadata?.userId || 'N/A');
+    console.log('Account Type Enums:', this.userAccountTypeEnums.length > 0 ? this.userAccountTypeEnums : 'Using defaults');
     console.log('='.repeat(80));
 
     // Create a comprehensive prompt that tells the AI about the schema

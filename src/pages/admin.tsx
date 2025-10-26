@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
 import { useMockAI } from '@/contexts/MockAIContext';
 import KeywordManager from '@/components/KeywordManager';
+import BankAccountTypesManager from '@/components/BankAccountTypesManager';
 
 interface SystemHealth {
   status: string;
@@ -359,6 +360,9 @@ const AdminPage: NextPage = () => {
                 </div>
               )}
             </div>
+
+            {/* Bank Account Types Management */}
+            <BankAccountTypesManager className="mb-8" />
 
             {/* Transaction Keywords Management */}
             <KeywordManager className="mb-8" />

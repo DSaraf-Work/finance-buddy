@@ -4,6 +4,7 @@
  */
 
 import { AIResponse, TransactionExtractionRequest } from './types';
+import { getUserBankAccountConfig, matchAccountTypeFromEmail } from '../config/bank-account-types';
 
 interface MockTransactionData {
   txn_time: string | null;
@@ -98,15 +99,15 @@ export class MockAIResponses {
   /**
    * Generate mock AI response based on email content analysis
    */
-  static async generateMockResponse(request: TransactionExtractionRequest): Promise<AIResponse> {
+  static async generateMockResponse(request: TransactionExtractionRequest, userId?: string): Promise<AIResponse> {
     console.log('🎭 Mock AI: Analyzing email content for pattern-based extraction...');
-    
+
     // Simulate realistic processing time
     const processingTime = Math.random() * 2000 + 1000; // 1-3 seconds
     await new Promise(resolve => setTimeout(resolve, processingTime));
 
     const content = this.extractEmailContent(request);
-    const mockData = this.extractTransactionData(content, request);
+    const mockData = await this.extractTransactionData(content, request, userId);
     
     const response: AIResponse = {
       content: JSON.stringify(mockData),
@@ -150,13 +151,13 @@ export class MockAIResponses {
     return content;
   }
 
-  private static extractTransactionData(content: string, request: TransactionExtractionRequest): MockTransactionData {
+  private static async extractTransactionData(content: string, request: TransactionExtractionRequest, userId?: string): Promise<MockTransactionData> {
     const amount = this.extractAmount(content);
     const merchant = this.extractMerchant(content);
     const direction = this.extractDirection(content);
     const accountHint = this.extractAccountHint(content);
     const referenceId = this.extractReferenceId(content);
-    const accountType = this.extractAccountType(content, request.fromAddress);
+    const accountType = await this.extractAccountType(content, request.fromAddress, userId);
     const category = this.extractCategory(content, merchant);
     const txnTime = this.extractDateTime(content);
     
@@ -275,15 +276,34 @@ export class MockAIResponses {
     return `${prefix}${number}`;
   }
 
-  private static extractAccountType(content: string, fromAddress?: string): string | null {
+  private static async extractAccountType(content: string, fromAddress?: string, userId?: string): Promise<string | null> {
     const email = (fromAddress || '').toLowerCase();
-    
+
+    // If userId is provided, use user-specific account types
+    if (userId) {
+      try {
+        const bankAccountConfig = await getUserBankAccountConfig(userId);
+        if (bankAccountConfig.accountTypeEnums.length > 0) {
+          const matchedType = matchAccountTypeFromEmail(email, bankAccountConfig.accountTypeEnums);
+          console.log('🏦 Mock AI: Matched user-specific account type:', {
+            fromAddress,
+            matchedType,
+            availableEnums: bankAccountConfig.accountTypeEnums
+          });
+          return matchedType;
+        }
+      } catch (error) {
+        console.error('Error fetching user bank account types:', error);
+      }
+    }
+
+    // Fallback to hardcoded mapping if no userId or user config not found
     for (const [bank, accountType] of Object.entries(this.BANK_ACCOUNT_MAPPING)) {
       if (email.includes(bank) || content.includes(bank)) {
         return accountType;
       }
     }
-    
+
     return 'OTHER';
   }
 

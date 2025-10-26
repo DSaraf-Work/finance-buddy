@@ -19,6 +19,7 @@ const EmailsPage: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [connections, setConnections] = useState<GmailConnectionPublic[]>([]);
   const [loadingConnections, setLoadingConnections] = useState(true);
+  const [bankAccountTypes, setBankAccountTypes] = useState<string[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 25,
@@ -47,7 +48,7 @@ const EmailsPage: NextPage = () => {
     date_from: getDefaultStartDate(),
     date_to: getDefaultEndDate(),
     email_addresses: [], // Will be populated with available connections
-    sender: 'alerts@dcbbank.com,alerts@hdfcbank.net', // Multiple default senders
+    sender: '', // Will be populated with user's bank account types
     status: undefined,
     q: '',
     db_only: false, // Default to database-only search
@@ -61,6 +62,30 @@ const EmailsPage: NextPage = () => {
   const [processingEmails, setProcessingEmails] = useState<Set<string>>(new Set());
   const [batchProcessing, setBatchProcessing] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
+
+  // Fetch bank account types
+  const fetchBankAccountTypes = async () => {
+    try {
+      const response = await fetch('/api/admin/config/bank-account-types');
+      if (response.ok) {
+        const data = await response.json();
+        const accountTypes = data.accountTypes || [];
+        setBankAccountTypes(accountTypes);
+
+        // Set default sender filter to user's bank account types
+        if (accountTypes.length > 0) {
+          setFilters(prev => ({
+            ...prev,
+            sender: accountTypes.join(',')
+          }));
+        }
+      } else {
+        console.error('Failed to fetch bank account types');
+      }
+    } catch (error) {
+      console.error('Error fetching bank account types:', error);
+    }
+  };
 
   // Fetch Gmail connections
   const fetchConnections = async () => {
@@ -89,9 +114,10 @@ const EmailsPage: NextPage = () => {
     }
   };
 
-  // Load connections on component mount
+  // Load connections and bank account types on component mount
   useEffect(() => {
     fetchConnections();
+    fetchBankAccountTypes();
   }, []);
 
   const searchEmails = async (page: number = 1, customFilters?: typeof filters, ignoreDefaults: boolean = false) => {

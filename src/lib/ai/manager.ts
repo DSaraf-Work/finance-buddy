@@ -94,7 +94,9 @@ export class AIModelManager {
         snippet: request.metadata?.snippet || '',
       };
 
-      return await MockAIResponses.generateMockResponse(mockRequest);
+      // Extract userId from metadata for user-specific account type classification
+      const userId = request.metadata?.userId;
+      return await MockAIResponses.generateMockResponse(mockRequest, userId);
     }
     console.log('🎭 Mock AI enabled false - using ai extraction');
 
