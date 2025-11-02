@@ -14,6 +14,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [isLoading, setIsLoading] = useState(false);
   const [emailBody, setEmailBody] = useState<string | null>(null);
   const [loadingEmail, setLoadingEmail] = useState(false);
+  const [isReExtracting, setIsReExtracting] = useState(false);
 
   useEffect(() => {
     setFormData(transaction);
@@ -59,6 +60,54 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
     }));
   };
 
+  const handleReExtract = async () => {
+    if (!transaction.id) {
+      alert('Transaction ID is missing');
+      return;
+    }
+
+    if (!confirm('Re-extract this transaction with AI? This will overwrite the current data with fresh AI extraction.')) {
+      return;
+    }
+
+    setIsReExtracting(true);
+
+    try {
+      const response = await fetch('/api/transactions/re-extract', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ transactionId: transaction.id }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Re-extraction successful:', result);
+
+        // Update form data with re-extracted values
+        setFormData(prev => ({
+          ...prev,
+          ...result.extractionResult,
+          confidence: result.extractionResult.confidence,
+        }));
+
+        // Show success message
+        alert(`Re-extraction completed! Confidence: ${Math.round(result.extractionResult.confidence * 100)}%`);
+      } else {
+        const error = await response.json();
+        console.error('❌ Re-extraction failed:', error);
+        alert(`Re-extraction failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error re-extracting transaction:', error);
+      alert('Failed to re-extract transaction. Please try again.');
+    } finally {
+      setIsReExtracting(false);
+    }
+  };
+
   const categories = [
     'food', 'transport', 'shopping', 'bills', 'entertainment',
     'health', 'education', 'travel', 'finance', 'other'
@@ -100,16 +149,44 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                   Update transaction details and add your notes
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                <span className="sr-only">Close</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <div className="flex items-center space-x-3">
+                {/* Re-extract with AI Button */}
+                <button
+                  type="button"
+                  onClick={handleReExtract}
+                  disabled={isReExtracting}
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  title="Re-extract transaction data using AI"
+                >
+                  {isReExtracting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Re-extracting...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      Re-extract with AI
+                    </>
+                  )}
+                </button>
+                {/* Close Button */}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  <span className="sr-only">Close</span>
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
