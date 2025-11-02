@@ -37,10 +37,11 @@ export async function getUserBankAccountTypes(userId: string): Promise<string[]>
 /**
  * Generate account type enums based on user's bank account types
  * This creates specific account type identifiers from email addresses
- * 
+ *
  * Example:
  * - alerts@hdfcbank.net -> HDFC_BANK
  * - alerts@dcbbank.com -> DCB_BANK
+ * - alerts@yes.bank.in -> YES_BANK
  * - alerts@icicibank.com -> ICICI_BANK
  */
 export function generateAccountTypeEnums(bankAccountTypes: string[]): string[] {

@@ -67,7 +67,7 @@ async function testAIEmailProcessing() {
           total: searchData.total,
           items: searchData.items_count,
           defaultFilters: {
-            sender: 'alerts@dcbbank.com',
+            sender: 'alerts@dcbbank.com,alerts@yes.bank.in',
             account: 'dheerajsaraf1996@gmail.com'
           }
         });

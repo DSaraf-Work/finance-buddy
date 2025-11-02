@@ -20,7 +20,7 @@ async function testDirectAIProcessing() {
       .from('fb_emails')
       .select('*')
       .eq('user_id', '19ebbae0-475b-4043-85f9-438cd07c3677')
-      .eq('from_address', 'alerts@dcbbank.com')
+      .in('from_address', ['alerts@dcbbank.com', 'alerts@yes.bank.in'])
       .eq('status', 'Fetched')
       .order('internal_date', { ascending: false })
       .limit(3);

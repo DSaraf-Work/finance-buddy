@@ -4,7 +4,7 @@
 
 ### 1. **Database Configuration** ✅
 - ✅ Created `fb_config` table for application configuration
-- ✅ Added whitelisted senders: `alerts@dcbbank.com`, `alerts@hdfcbank.net`
+- ✅ Added whitelisted senders: `alerts@dcbbank.com`, `alerts@hdfcbank.net`, `alerts@yes.bank.in`
 - ✅ Set up RLS policies for secure access
 
 ### 2. **Admin UI Page** ✅
@@ -53,7 +53,7 @@
 ### Test 1: Configuration ✅
 ```bash
 GET /api/test/admin-emails?action=config
-Response: {"whitelistedSenders":["alerts@dcbbank.com","alerts@hdfcbank.net"]}
+Response: {"whitelistedSenders":["alerts@dcbbank.com","alerts@hdfcbank.net","alerts@yes.bank.in"]}
 ```
 
 ### Test 2: Count Fetched Emails ✅
@@ -98,7 +98,7 @@ CREATE TABLE fb_config (
 ```json
 {
   "config_key": "WHITELISTED_SENDERS",
-  "config_value": ["alerts@dcbbank.com", "alerts@hdfcbank.net"]
+  "config_value": ["alerts@dcbbank.com", "alerts@hdfcbank.net", "alerts@yes.bank.in"]
 }
 ```
 
@@ -139,7 +139,7 @@ http://localhost:3000/admin/emails
 **Response:**
 ```json
 {
-  "senders": ["alerts@dcbbank.com", "alerts@hdfcbank.net"]
+  "senders": ["alerts@dcbbank.com", "alerts@hdfcbank.net", "alerts@yes.bank.in"]
 }
 ```
 
@@ -156,7 +156,7 @@ http://localhost:3000/admin/emails
 **Response:**
 ```json
 {
-  "senders": ["alerts@dcbbank.com", "alerts@hdfcbank.net", "alerts@newbank.com"]
+  "senders": ["alerts@dcbbank.com", "alerts@hdfcbank.net", "alerts@yes.bank.in", "alerts@newbank.com"]
 }
 ```
 
@@ -262,7 +262,7 @@ http://localhost:3000/admin/emails
 **Everything is working!**
 
 - ✅ Database configured
-- ✅ Whitelisted senders: alerts@dcbbank.com, alerts@hdfcbank.net
+- ✅ Whitelisted senders: alerts@dcbbank.com, alerts@hdfcbank.net, alerts@yes.bank.in
 - ✅ Admin UI page created
 - ✅ Refresh emails API working
 - ✅ Process emails API working

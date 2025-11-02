@@ -54,7 +54,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     const finalSender = ignore_defaults
       ? sender
-      : (sender || 'alerts@dcbbank.com');
+      : (sender || 'alerts@dcbbank.com,alerts@yes.bank.in');
 
     console.log('🔧 Filter processing debug:', {
       ignore_defaults,
