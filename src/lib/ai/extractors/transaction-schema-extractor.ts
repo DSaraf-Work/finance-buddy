@@ -62,12 +62,9 @@ export interface TransactionSchema {
   };
   account_type: {
     type: 'text';
-    description: 'Type of account based on bank and card details';
-    enum: [
-      'DCB_4277', 'HDFC_SWIGGY_7712', 'KIWI_YES_0421', 'HDFC_DEBIT', 'HDFC_CREDIT',
-      'ICICI_DEBIT', 'ICICI_CREDIT', 'SBI_DEBIT', 'SBI_CREDIT', 'YES_DEBIT', 'YES_CREDIT', 'OTHER'
-    ];
-    example: 'HDFC_SWIGGY_7712';
+    description: 'Type of account based on bank and card details. Will be populated dynamically from user config.';
+    enum: string[]; // Populated dynamically from getUserBankAccountConfig
+    example: 'KIWI_YES_0421';
   };
   transaction_type: {
     type: 'text';
@@ -151,12 +148,9 @@ export class SchemaAwareTransactionExtractor {
       },
       account_type: {
         type: 'text',
-        description: 'Type of account based on bank and card details',
-        enum: [
-          'DCB_4277', 'HDFC_SWIGGY_7712', 'KIWI_YES_0421', 'HDFC_DEBIT', 'HDFC_CREDIT',
-          'ICICI_DEBIT', 'ICICI_CREDIT', 'SBI_DEBIT', 'SBI_CREDIT', 'YES_DEBIT', 'YES_CREDIT', 'OTHER'
-        ],
-        example: 'HDFC_SWIGGY_7712'
+        description: 'Type of account based on bank and card details. Will be populated dynamically from user config.',
+        enum: [] as string[], // Populated dynamically from getUserBankAccountConfig
+        example: 'KIWI_YES_0421'
       },
       transaction_type: {
         type: 'text',

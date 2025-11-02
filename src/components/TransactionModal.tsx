@@ -15,6 +15,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [emailBody, setEmailBody] = useState<string | null>(null);
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [isReExtracting, setIsReExtracting] = useState(false);
+  const [accountTypes, setAccountTypes] = useState<string[]>(['OTHER']); // Default fallback, will be populated from DB
 
   useEffect(() => {
     setFormData(transaction);
@@ -59,6 +60,65 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       [field]: value,
     }));
   };
+
+  // Fetch user's account types on mount
+  useEffect(() => {
+    const fetchAccountTypes = async () => {
+      try {
+        const response = await fetch('/api/admin/config/bank-account-types', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ Fetched account types:', data);
+
+          // Generate account type enums from the fetched data
+          const enums: string[] = [];
+
+          // Generate account type enums from email addresses
+          for (const email of data.accountTypes || []) {
+            const match = email.match(/@([^.]+)/);
+            if (match) {
+              const bankName = match[1].toUpperCase();
+              enums.push(`${bankName}_DEBIT`);
+              enums.push(`${bankName}_CREDIT`);
+              enums.push(`${bankName}_BANK`);
+              enums.push(bankName);
+            }
+          }
+
+          // Fetch and add custom account types from database
+          const customResponse = await fetch('/api/admin/config/custom-account-types', {
+            method: 'GET',
+            credentials: 'include',
+          });
+
+          if (customResponse.ok) {
+            const customData = await customResponse.json();
+            console.log('✅ Fetched custom account types:', customData);
+            enums.push(...(customData.customAccountTypes || []));
+          }
+
+          // Add OTHER as fallback
+          enums.push('OTHER');
+
+          // Remove duplicates and set
+          const uniqueEnums = Array.from(new Set(enums));
+          console.log('✅ Final account type enums:', uniqueEnums);
+          setAccountTypes(uniqueEnums);
+        }
+      } catch (error) {
+        console.error('Error fetching account types:', error);
+        // Keep default account types on error
+      }
+    };
+
+    if (isOpen) {
+      fetchAccountTypes();
+    }
+  }, [isOpen]);
 
   const handleReExtract = async () => {
     if (!transaction.id) {
@@ -114,10 +174,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   ];
 
   const directions = ['debit', 'credit', 'transfer'];
-
-  const accountTypes = [
-    'DCB_4277', 'HDFC_SWIGGY_7712', 'HDFC_DEBIT',
-  ];
 
   const transactionTypes = ['Dr', 'Cr'];
 

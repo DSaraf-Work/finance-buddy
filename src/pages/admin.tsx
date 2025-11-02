@@ -6,6 +6,7 @@ import { Layout } from '@/components/Layout';
 import { useMockAI } from '@/contexts/MockAIContext';
 import KeywordManager from '@/components/KeywordManager';
 import BankAccountTypesManager from '@/components/BankAccountTypesManager';
+import CustomAccountTypesManager from '@/components/CustomAccountTypesManager';
 
 interface SystemHealth {
   status: string;
@@ -363,6 +364,9 @@ const AdminPage: NextPage = () => {
 
             {/* Bank Account Types Management */}
             <BankAccountTypesManager className="mb-8" />
+
+            {/* Custom Account Types Management */}
+            <CustomAccountTypesManager className="mb-8" />
 
             {/* Transaction Keywords Management */}
             <KeywordManager className="mb-8" />
