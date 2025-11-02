@@ -213,6 +213,31 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(500).json({ error: 'Failed to search emails' });
     }
 
+    // Fetch transaction IDs for emails
+    if (emails && emails.length > 0) {
+      const emailIds = emails.map((e: any) => e.id);
+      const { data: transactions } = await supabaseAdmin
+        .from('fb_extracted_transactions')
+        .select('id, email_row_id')
+        .in('email_row_id', emailIds);
+
+      // Map transaction IDs to emails
+      if (transactions) {
+        const transactionMap = new Map<string, any[]>();
+        transactions.forEach((t: any) => {
+          if (!transactionMap.has(t.email_row_id)) {
+            transactionMap.set(t.email_row_id, []);
+          }
+          transactionMap.get(t.email_row_id)!.push({ id: t.id });
+        });
+
+        // Add transaction IDs to emails
+        (emails as any[]).forEach((email: any) => {
+          email.fb_extracted_transactions = transactionMap.get(email.id) || null;
+        });
+      }
+    }
+
     console.log('📊 Database query results:', {
       count: count || 0,
       emails_found: emails?.length || 0,

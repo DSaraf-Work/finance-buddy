@@ -75,6 +75,7 @@ export interface EmailPublic {
   remarks?: string;
   created_at: string;
   updated_at: string;
+  fb_extracted_transactions?: { id: UUID }[] | null; // Transaction ID from join
 }
 
 // Transaction DTOs

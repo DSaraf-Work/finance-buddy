@@ -884,14 +884,31 @@ const EmailsPage: NextPage = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(email.status)}`}>
-                              {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && (
+                            {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && email.fb_extracted_transactions && email.fb_extracted_transactions.length > 0 ? (
+                              <button
+                                onClick={() => {
+                                  const txnId = email.fb_extracted_transactions![0].id;
+                                  navigator.clipboard.writeText(txnId);
+                                  alert(`Transaction ID copied: ${txnId}`);
+                                }}
+                                className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(email.status)}`}
+                                title="Click to copy transaction ID"
+                              >
                                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
-                              )}
-                              {email.status}
-                            </span>
+                                {email.status}
+                              </button>
+                            ) : (
+                              <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(email.status)}`}>
+                                {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && (
+                                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                                {email.status}
+                              </span>
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div className="truncate max-w-xs" title={email.email_address}>
