@@ -177,8 +177,12 @@ export default function TransactionsPage() {
 
       if (response.ok) {
         console.log('✅ Status updated successfully');
-        // Refresh transactions to show updated status
-        await searchTransactions();
+        // Update the transaction status in local state without reloading
+        setTransactions(prevTransactions =>
+          prevTransactions.map(t =>
+            t.id === transactionId ? { ...t, status: newStatus } : t
+          )
+        );
       } else {
         const error = await response.json();
         console.error('❌ Status update failed:', error);
@@ -256,8 +260,31 @@ export default function TransactionsPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Refresh transactions to show updated data
-        await searchTransactions();
+        // Update the transaction in the local state without reloading the page
+        setTransactions(prevTransactions =>
+          prevTransactions.map(t =>
+            t.id === updatedTransaction.id ? { ...t, ...updatedTransaction } : t
+          )
+        );
+
+        // Recalculate stats with updated transaction
+        const updatedTransactions = transactions.map(t =>
+          t.id === updatedTransaction.id ? { ...t, ...updatedTransaction } : t
+        );
+        const totalAmount = updatedTransactions.reduce((sum: number, t: Transaction) =>
+          sum + parseFloat(t.amount || '0'), 0
+        );
+        const avgConfidence = updatedTransactions.length > 0
+          ? updatedTransactions.reduce((sum: number, t: Transaction) =>
+              sum + parseFloat(t.confidence || '0'), 0
+            ) / updatedTransactions.length
+          : 0;
+
+        setStats({
+          total: pagination.total,
+          totalAmount,
+          avgConfidence,
+        });
 
         setIsModalOpen(false);
         setSelectedTransaction(null);

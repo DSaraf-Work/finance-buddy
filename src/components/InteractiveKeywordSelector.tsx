@@ -209,6 +209,7 @@ export default function InteractiveKeywordSelector({
               >
                 {keyword}
                 <button
+                  type="button"
                   onClick={() => {
                     const newSelected = selectedKeywords.filter(k => k !== keyword);
                     onChange(newSelected.join(', '));
