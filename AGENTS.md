@@ -220,6 +220,325 @@ finance-buddy/
 
 ---
 
+## README Version Control Protocol
+
+### Overview
+
+The Finance Buddy project maintains **version-controlled documentation** in `README.md` with metadata tracked in `README-version.md`. This ensures documentation stays synchronized with codebase changes while preventing unnecessary updates.
+
+### Critical Rules
+
+**⚠️ NEVER auto-update README.md during regular development**
+
+README.md should **ONLY** be updated when the user **explicitly requests**:
+- "update README"
+- "refresh README documentation"
+- "sync README with latest changes"
+- "update README version"
+- "regenerate README"
+
+**DO NOT update README.md when**:
+- Implementing new features
+- Fixing bugs
+- Updating dependencies
+- Changing configuration
+- Refactoring code
+- Making any code changes
+
+### Version Control Files
+
+1. **README.md**: Main documentation (no version metadata inside)
+2. **README-version.md**: Version control metadata and history
+
+### Update Process
+
+When user requests README update, follow this **mandatory** process:
+
+#### Step 1: Retrieve Current Version Info
+
+```bash
+# Get current commit SHA from README-version.md
+current_sha=$(grep "Commit SHA" README-version.md | head -1 | awk '{print $NF}')
+
+# Get current version
+current_version=$(grep "Current Version" README-version.md | head -1 | awk '{print $NF}')
+
+# Get latest commit SHA
+latest_sha=$(git rev-parse --short=7 HEAD)
+```
+
+#### Step 2: Analyze Codebase Changes
+
+```bash
+# Get all changes since last README update
+git diff $current_sha $latest_sha --name-status
+
+# Get detailed statistics
+git diff $current_sha $latest_sha --stat
+
+# Get commit messages
+git log $current_sha..$latest_sha --oneline
+```
+
+**Categorize changes**:
+- ✨ **New Features**: New files, components, API endpoints, features
+- 🗑️ **Removed Features**: Deleted files, deprecated endpoints, removed functionality
+- 🔧 **API Changes**: Modified endpoints, new parameters, changed responses
+- ⚙️ **Configuration Changes**: New env vars, updated configs, settings
+- 📦 **Dependency Updates**: package.json changes, version bumps
+- 🗂️ **Structural Changes**: New directories, reorganized files, renamed folders
+- 📝 **Documentation**: New docs, updated guides, README changes
+- 🐛 **Bug Fixes**: Fixed issues, resolved bugs
+- ♻️ **Refactoring**: Code improvements, optimizations
+
+#### Step 3: Show Summary to User
+
+**ALWAYS** confirm with user before updating:
+
+```
+📋 README Update Summary
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Current Version: v1.0.0
+Current Commit: f38b051
+Latest Commit: abc1234
+
+Commits Since Last Update: 15
+Files Changed: 23
+  - Added: 8 files
+  - Modified: 12 files
+  - Deleted: 3 files
+
+Detected Changes:
+  ✨ New Features: 3
+     - Auto-sync system (src/lib/gmail-auto-sync/)
+     - Notification system (src/lib/notifications/)
+     - Keyword management (src/lib/keywords/)
+
+  🔧 API Changes: 5
+     - Added: POST /api/notifications
+     - Added: GET /api/keywords
+     - Modified: POST /api/transactions/search (added keywords param)
+     - Added: POST /api/cron/gmail-auto-sync
+     - Added: GET /api/notifications/unread-count
+
+  📦 Dependencies: 2
+     - Added: @anthropic-ai/sdk@0.65.0
+     - Updated: next@14.0.0 → next@15.0.0
+
+  🗂️ Structure: 1
+     - Added: src/lib/notifications/ directory
+
+  📝 Documentation: 4
+     - Added: docs/AUTO_SYNC_*.md
+     - Updated: docs/Finance-Buddy-PRD-Tech.md
+
+Suggested Version: v1.1.0 (Minor - New features added)
+
+Sections Requiring Updates:
+  ✅ Key Features (add 3 new features)
+  ✅ API Endpoints (add 5 new endpoints)
+  ✅ Tech Stack (update Next.js version)
+  ✅ Project Structure (add notifications directory)
+  ✅ Features Deep Dive (add auto-sync, notifications, keywords)
+  ✅ Dependencies (update versions)
+  ✅ Changelog (add v1.1.0 entry)
+  ✅ Roadmap (move features from planned to completed)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Proceed with README update? (y/n)
+```
+
+#### Step 4: Update README Sections
+
+Based on user confirmation, update relevant sections:
+
+**For New Features**:
+1. Add to "Key Features" section
+2. Add to "Features Deep Dive" section
+3. Update "Roadmap" (move from planned to completed)
+4. Add to "Changelog"
+
+**For API Changes**:
+1. Update "API Endpoints" section
+2. Update request/response examples
+3. Add new endpoints with full documentation
+4. Add deprecation notices if endpoints removed
+
+**For Configuration Changes**:
+1. Update "Configuration" section
+2. Update "Environment Variables" table
+3. Update "Setup & Installation" if needed
+
+**For Dependency Updates**:
+1. Update "Tech Stack" section
+2. Update version numbers
+3. Update "Setup & Installation" if breaking changes
+4. Add migration notes if needed
+
+**For Structural Changes**:
+1. Update "Project Structure" section
+2. Update file/folder tree
+3. Update path references
+
+**For Removed Features**:
+1. Remove from all relevant sections
+2. Add to "Deprecated Features" section
+3. Update "Changelog" with removal notice
+4. Add migration guide if breaking change
+
+#### Step 5: Determine Version Increment
+
+**Major Version (X.0.0)** - Breaking Changes:
+- API endpoint removals
+- Database schema breaking changes
+- Major feature overhauls
+- Incompatible dependency updates
+- Removed core functionality
+
+**Minor Version (1.X.0)** - New Features:
+- New API endpoints
+- New features added
+- New dependencies
+- Enhanced functionality
+- Non-breaking improvements
+
+**Patch Version (1.0.X)** - Fixes & Docs:
+- Documentation improvements
+- Bug fixes
+- Minor tweaks
+- Typo corrections
+- Small enhancements
+
+#### Step 6: Update README-version.md
+
+Update version metadata:
+
+```markdown
+<!-- README Version Metadata -->
+**Current Version**: v1.1.0
+**Last Updated**: 2025-11-03T10:00:00Z
+**Commit SHA**: abc1234
+**Updated By**: AI Agent
+<!-- End Version Metadata -->
+```
+
+Add version history entry:
+
+```markdown
+### v1.1.0 (2025-11-03)
+**Commit SHA**: abc1234
+**Type**: Minor Release
+
+**Changes**:
+- ✨ Added auto-sync feature with 15-minute polling
+- ✨ Added notification system with real-time alerts
+- ✨ Added keyword management system
+- 🔧 Updated transaction search API with keyword filtering
+- 📦 Upgraded Next.js from v14 to v15
+- 📝 Enhanced auto-sync documentation
+
+**Files Changed**: 23
+**Commits**: 15
+
+**Sections Updated**:
+- Key Features
+- API Endpoints
+- Tech Stack
+- Project Structure
+- Features Deep Dive
+- Changelog
+- Roadmap
+```
+
+#### Step 7: Validation Checklist
+
+Before finalizing, verify:
+
+- [ ] All new features documented in relevant sections
+- [ ] All removed features cleaned up from all sections
+- [ ] API documentation matches current implementation
+- [ ] Configuration section reflects current .env variables
+- [ ] Project structure matches actual file system
+- [ ] No duplicate information across sections
+- [ ] All outdated references removed
+- [ ] Version number increment is appropriate
+- [ ] Changelog entry added with details
+- [ ] README-version.md updated with new metadata
+- [ ] User confirmed all changes
+- [ ] No information loss from previous version
+
+### Example User Commands
+
+Users should use these commands to trigger README updates:
+
+```bash
+# Standard update
+"update README"
+
+# Explicit refresh
+"refresh README documentation"
+
+# Sync with latest changes
+"sync README with latest changes"
+
+# Version-specific update
+"update README to version 1.2.0"
+
+# Regenerate from scratch
+"regenerate README documentation"
+```
+
+### What NOT to Do
+
+❌ **NEVER** update README.md when:
+- User asks to "implement feature X"
+- User asks to "fix bug Y"
+- User asks to "add API endpoint Z"
+- User asks to "update dependencies"
+- User asks to "refactor code"
+- Making any code changes
+- Committing code changes
+- Deploying to production
+
+✅ **ONLY** update README.md when:
+- User explicitly says "update README"
+- User explicitly says "refresh README"
+- User explicitly says "sync README"
+
+### Version Control Best Practices
+
+1. **Always analyze git diff** before updating
+2. **Always confirm with user** before making changes
+3. **Always update README-version.md** with new metadata
+4. **Always add changelog entry** for new version
+5. **Always validate** all sections are consistent
+6. **Never skip** the confirmation step
+7. **Never auto-update** without explicit request
+8. **Never lose information** from previous version
+
+### Troubleshooting
+
+**If user asks "why isn't README updated?"**
+- Explain that README only updates on explicit request
+- Show them the correct command: "update README"
+- Explain the version control system
+
+**If changes seem missing from README**:
+- Check README-version.md for last update date
+- Run git diff to see what changed since then
+- Suggest user run "update README"
+
+**If version number seems wrong**:
+- Review the changes with user
+- Discuss whether it's major/minor/patch
+- Adjust version number accordingly
+
+---
+
+---
+
 ## Gmail Integration Specifics
 
 ### OAuth Flow
