@@ -2,7 +2,7 @@
 
 export interface AIModelConfig {
   name: string;
-  provider: 'openai' | 'anthropic' | 'google' | 'custom';
+  provider: 'openai' | 'anthropic' | 'google' | 'perplexity' | 'custom';
   model: string;
   apiKey: string;
   baseUrl?: string;

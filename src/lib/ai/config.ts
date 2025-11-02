@@ -8,6 +8,7 @@ export function getModelConfigs(): Record<string, AIModelConfig> {
   console.log("  - OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? `${process.env.OPENAI_API_KEY.substring(0, 10)}...` : 'NOT SET');
   console.log("  - GOOGLE_AI_API_KEY:", process.env.GOOGLE_AI_API_KEY ? `${process.env.GOOGLE_AI_API_KEY.substring(0, 10)}...` : 'NOT SET');
   console.log("  - ANTHROPIC_API_KEY:", process.env.ANTHROPIC_API_KEY ? `${process.env.ANTHROPIC_API_KEY.substring(0, 10)}...` : 'NOT SET');
+  console.log("  - PERPLEXITY_API_KEY:", process.env.PERPLEXITY_API_KEY ? `${process.env.PERPLEXITY_API_KEY.substring(0, 10)}...` : 'NOT SET');
 
   const configs: Record<string, AIModelConfig> = {};
 
@@ -88,6 +89,38 @@ export function getModelConfigs(): Record<string, AIModelConfig> {
     };
   }
 
+  if (process.env.PERPLEXITY_API_KEY) {
+    configs['sonar'] = {
+      name: 'Perplexity Sonar',
+      provider: 'perplexity',
+      model: 'sonar',
+      apiKey: process.env.PERPLEXITY_API_KEY,
+      baseUrl: 'https://api.perplexity.ai',
+      maxTokens: 4000,
+      temperature: 0.1,
+      timeout: 30000,
+      rateLimit: {
+        requestsPerMinute: 50,
+        requestsPerHour: 5000,
+      },
+    };
+
+    configs['sonar-pro'] = {
+      name: 'Perplexity Sonar Pro',
+      provider: 'perplexity',
+      model: 'sonar-pro',
+      apiKey: process.env.PERPLEXITY_API_KEY,
+      baseUrl: 'https://api.perplexity.ai',
+      maxTokens: 4000,
+      temperature: 0.1,
+      timeout: 30000,
+      rateLimit: {
+        requestsPerMinute: 50,
+        requestsPerHour: 5000,
+      },
+    };
+  }
+
   // No mock models - only real AI models with valid API keys
 
   return configs;
@@ -103,8 +136,8 @@ export function getDefaultHierarchy(): AIModelHierarchy {
   // Build hierarchy based on available models
   const hierarchy: AIModelHierarchy = {} as AIModelHierarchy;
 
-  // Preferred order: GPT-4o Mini > Claude Sonnet > GPT-3.5 > Claude Haiku > Gemini (only real AI models)
-  const preferredOrder = ['gpt-4o-mini', 'claude-3-sonnet', 'gpt-3.5-turbo', 'claude-3-haiku', 'gemini-1.5-flash-latest'];
+  // Preferred order: GPT-4o Mini > Perplexity Sonar > Claude Sonnet > GPT-3.5 > Claude Haiku > Gemini (only real AI models)
+  const preferredOrder = ['gpt-4o-mini', 'sonar', 'claude-3-sonnet', 'gpt-3.5-turbo', 'claude-3-haiku', 'gemini-1.5-flash-latest'];
   const availableInOrder = preferredOrder.filter(model => configs[model]);
 
   if (availableInOrder.length > 0) {
@@ -134,10 +167,10 @@ export function getAIManagerConfig(): AIManagerConfig {
   return {
     hierarchy: getDefaultHierarchy(),
     strategy: 'hierarchy',
-    maxRetries: 3,
+    maxRetries: 1, // No retries - immediately fallback to next model
     retryDelay: 1000, // 1 second
     healthCheckInterval: 300000, // 5 minutes
-    enableFallback: false, // No fallbacks - only real AI models
+    enableFallback: true, // Enable fallbacks to secondary and tertiary models
   };
 }
 

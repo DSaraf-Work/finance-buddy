@@ -304,7 +304,20 @@ export class SchemaAwareTransactionExtractor {
       // Parse the AI response
       let extractedData;
       try {
-        extractedData = JSON.parse(aiResponse.content);
+        // Clean the response to handle markdown code blocks
+        let cleanedContent = aiResponse.content.trim();
+
+        // Remove markdown code blocks if present (```json ... ``` or ``` ... ```)
+        if (cleanedContent.startsWith('```')) {
+          console.log('🧹 Detected markdown code blocks, cleaning...');
+          // Remove opening ```json or ```
+          cleanedContent = cleanedContent.replace(/^```(?:json)?\s*\n?/i, '');
+          // Remove closing ```
+          cleanedContent = cleanedContent.replace(/\n?```\s*$/i, '');
+          console.log('✅ Cleaned content (first 200 chars):', cleanedContent.substring(0, 200));
+        }
+
+        extractedData = JSON.parse(cleanedContent);
         console.log('📊 PARSED AI RESPONSE:');
         console.log('='.repeat(80));
         console.log(JSON.stringify(extractedData, null, 2));

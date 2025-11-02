@@ -4,6 +4,7 @@ import { BaseAIModel, AIRequest, AIResponse, AIError, AIManagerConfig, ModelSele
 import { OpenAIModel } from './models/openai';
 import { AnthropicModel } from './models/anthropic';
 import { GoogleModel } from './models/google';
+import { PerplexityModel } from './models/perplexity';
 import { getAIManagerConfig } from './config';
 import { MockAIConfig } from '../config/mock-ai-config';
 import { MockAIResponses } from './mock-ai-responses';
@@ -72,6 +73,8 @@ export class AIModelManager {
         return new AnthropicModel(config);
       case 'google':
         return new GoogleModel(config);
+      case 'perplexity':
+        return new PerplexityModel(config);
       default:
         throw new Error(`Unsupported AI provider: ${config.provider}`);
     }
@@ -127,26 +130,29 @@ export class AIModelManager {
       try {
         console.log(`🤖 Attempting AI request with ${modelKey} model`);
         const response = await this.executeWithRetry(model, request);
-        
+
         console.log(`✅ AI request successful with ${modelKey} model`, {
           processingTime: Date.now() - startTime,
           model: response.model,
           usage: response.usage,
         });
-        
+
         return response;
       } catch (error: any) {
         lastError = error as AIError;
-        
+
         console.warn(`⚠️ AI request failed with ${modelKey} model:`, {
           error: lastError.message,
           isRateLimit: lastError.isRateLimit,
           isRetryable: lastError.isRetryable,
         });
-        
-        // If it's a rate limit error, mark model as temporarily unhealthy and continue to next
+
+        // Check if this is the last model in the hierarchy
+        const isLastModel = modelKey === modelOrder[modelOrder.length - 1];
+
+        // If it's a rate limit error, mark model as temporarily unhealthy
         if (lastError.isRateLimit) {
-          console.log(`🚫 Rate limit hit for ${modelKey}, trying next model...`);
+          console.log(`🚫 Rate limit hit for ${modelKey}${isLastModel ? ' (last model)' : ', trying next model...'}`);
           this.healthStatus.set(modelKey, false);
           // Schedule health check after retry period
           if (lastError.retryAfter) {
@@ -154,20 +160,19 @@ export class AIModelManager {
               this.healthStatus.set(modelKey, true);
             }, lastError.retryAfter);
           }
-          // Always continue to next model for rate limits
+        }
+
+        // If fallback is enabled and this is not the last model, try next model
+        if (this.config.enableFallback && !isLastModel) {
+          const nextModelIndex = modelOrder.indexOf(modelKey) + 1;
+          const nextModel = modelOrder[nextModelIndex];
+          console.log(`🔄 Falling back to ${nextModel} model...`);
           continue;
         }
 
-        // For other retryable errors, continue to next model if fallback is enabled
-        if (lastError.isRetryable && this.config.enableFallback) {
-          console.log(`🔄 Retryable error for ${modelKey}, trying next model...`);
-          continue;
-        }
-        
         // If this is the last model or fallback is disabled, throw error
-        if (modelKey === modelOrder[modelOrder.length - 1] || !this.config.enableFallback) {
-          throw lastError;
-        }
+        console.error(`❌ All models failed or fallback disabled. Last error from ${modelKey}:`, lastError.message);
+        throw lastError;
       }
     }
     
