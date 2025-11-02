@@ -780,7 +780,7 @@ const EmailsPage: NextPage = () => {
                     date_from: formatDateForInput(sevenDaysAgo),
                     date_to: formatDateForInput(today),
                     email_addresses: allEmails, // Reset to all connections
-                    sender: 'alerts@dcbbank.com,alerts@hdfcbank.net', // Multiple default senders
+                    sender: 'alerts@dcbbank.com,alerts@hdfcbank.net,alerts@yes.bank.in', // Multiple default senders
                     status: undefined,
                     q: '',
                     db_only: false,
