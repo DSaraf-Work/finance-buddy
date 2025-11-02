@@ -80,7 +80,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         email_address: finalEmailAddress
       });
       try {
-        await syncEmailsFromGmail(user.id, date_from, date_to, finalSender);
+        await syncEmailsFromGmail(user.id, date_from, date_to, finalSender, finalEmailAddress);
         console.log('✅ Gmail sync completed successfully');
       } catch (gmailError) {
         const errorMessage = gmailError instanceof Error ? gmailError.message : String(gmailError);
@@ -254,24 +254,36 @@ async function syncEmailsFromGmail(
   userId: string,
   dateFrom: string,
   dateTo: string,
-  sender?: string
+  sender?: string,
+  emailAddress?: string
 ): Promise<void> {
-  console.log('🔄 syncEmailsFromGmail started:', { userId, dateFrom, dateTo, sender });
+  console.log('🔄 syncEmailsFromGmail started:', { userId, dateFrom, dateTo, sender, emailAddress });
 
   // Get the user's Gmail connections
-  const { data: connections, error: connError } = await (supabaseAdmin as any)
+  let query = (supabaseAdmin as any)
     .from('fb_gmail_connections')
     .select('*')
     .eq('user_id', userId);
 
+  // If emailAddress is provided, filter by that specific email address
+  if (emailAddress) {
+    query = query.eq('email_address', emailAddress);
+  }
+
+  const { data: connections, error: connError } = await query;
+
   console.log('📧 Gmail connections query result:', {
     connections_count: connections?.length || 0,
     error: connError,
+    email_address_filter: emailAddress,
     connections: connections?.map((c: any) => ({ id: c.id, email_address: c.email_address, has_token: !!c.access_token }))
   });
 
   if (connError || !connections || connections.length === 0) {
-    throw new Error('No Gmail connections found');
+    const errorMsg = emailAddress
+      ? `No Gmail connection found for email address: ${emailAddress}`
+      : 'No Gmail connections found';
+    throw new Error(errorMsg);
   }
 
   // Find connection with valid token or use the first one
