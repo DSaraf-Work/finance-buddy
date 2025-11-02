@@ -64,8 +64,8 @@ export interface TransactionSchema {
     type: 'text';
     description: 'Type of account based on bank and card details';
     enum: [
-      'DCB_4277', 'HDFC_SWIGGY_7712', 'HDFC_DEBIT', 'HDFC_CREDIT',
-      'ICICI_DEBIT', 'ICICI_CREDIT', 'SBI_DEBIT', 'SBI_CREDIT', 'OTHER'
+      'DCB_4277', 'HDFC_SWIGGY_7712', 'KIWI_YES_0421', 'HDFC_DEBIT', 'HDFC_CREDIT',
+      'ICICI_DEBIT', 'ICICI_CREDIT', 'SBI_DEBIT', 'SBI_CREDIT', 'YES_DEBIT', 'YES_CREDIT', 'OTHER'
     ];
     example: 'HDFC_SWIGGY_7712';
   };
@@ -153,8 +153,8 @@ export class SchemaAwareTransactionExtractor {
         type: 'text',
         description: 'Type of account based on bank and card details',
         enum: [
-          'DCB_4277', 'HDFC_SWIGGY_7712', 'HDFC_DEBIT', 'HDFC_CREDIT',
-          'ICICI_DEBIT', 'ICICI_CREDIT', 'SBI_DEBIT', 'SBI_CREDIT', 'OTHER'
+          'DCB_4277', 'HDFC_SWIGGY_7712', 'KIWI_YES_0421', 'HDFC_DEBIT', 'HDFC_CREDIT',
+          'ICICI_DEBIT', 'ICICI_CREDIT', 'SBI_DEBIT', 'SBI_CREDIT', 'YES_DEBIT', 'YES_CREDIT', 'OTHER'
         ],
         example: 'HDFC_SWIGGY_7712'
       },

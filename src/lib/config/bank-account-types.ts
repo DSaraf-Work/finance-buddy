@@ -6,6 +6,7 @@ const CONFIG_KEY = 'BANK_ACCOUNT_TYPES';
 export interface BankAccountTypeConfig {
   accountTypes: string[];
   accountTypeEnums: string[];
+  customAccountTypes?: string[]; // Custom account type identifiers (e.g., KIWI_YES_0421)
 }
 
 /**
@@ -35,6 +36,32 @@ export async function getUserBankAccountTypes(userId: string): Promise<string[]>
 }
 
 /**
+ * Fetch user's custom account type identifiers from the database
+ */
+export async function getUserCustomAccountTypes(userId: string): Promise<string[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('fb_config')
+      .select('config_value')
+      .eq('config_key', 'CUSTOM_ACCOUNT_TYPES')
+      .eq('user_id', userId)
+      .maybeSingle<{ config_value: string[] }>();
+
+    if (error) {
+      console.error('Error fetching custom account types:', error);
+      return [];
+    }
+
+    const customTypes = data?.config_value || [];
+    console.log(`🏷️ Fetched ${customTypes.length} custom account types for user ${userId}:`, customTypes);
+    return customTypes;
+  } catch (error) {
+    console.error('Failed to fetch custom account types:', error);
+    return [];
+  }
+}
+
+/**
  * Generate account type enums based on user's bank account types
  * This creates specific account type identifiers from email addresses
  *
@@ -44,7 +71,7 @@ export async function getUserBankAccountTypes(userId: string): Promise<string[]>
  * - alerts@yes.bank.in -> YES_BANK
  * - alerts@icicibank.com -> ICICI_BANK
  */
-export function generateAccountTypeEnums(bankAccountTypes: string[]): string[] {
+export function generateAccountTypeEnums(bankAccountTypes: string[], customAccountTypes: string[] = []): string[] {
   const enums: string[] = [];
 
   for (const email of bankAccountTypes) {
@@ -53,17 +80,20 @@ export function generateAccountTypeEnums(bankAccountTypes: string[]): string[] {
     const match = email.match(/@([^.]+)/);
     if (match) {
       const bankName = match[1].toUpperCase();
-      
+
       // Create enum variations
       enums.push(`${bankName}_DEBIT`);
       enums.push(`${bankName}_CREDIT`);
       enums.push(`${bankName}_BANK`);
-      
+
       // Also add specific card identifiers if they exist in common patterns
       // This allows for more specific classification like HDFC_SWIGGY_7712
       enums.push(bankName);
     }
   }
+
+  // Add custom account types (e.g., KIWI_YES_0421, HDFC_SWIGGY_7712)
+  enums.push(...customAccountTypes);
 
   // Always include OTHER as a fallback
   enums.push('OTHER');
@@ -77,17 +107,20 @@ export function generateAccountTypeEnums(bankAccountTypes: string[]): string[] {
  */
 export async function getUserBankAccountConfig(userId: string): Promise<BankAccountTypeConfig> {
   const accountTypes = await getUserBankAccountTypes(userId);
-  const accountTypeEnums = generateAccountTypeEnums(accountTypes);
+  const customAccountTypes = await getUserCustomAccountTypes(userId);
+  const accountTypeEnums = generateAccountTypeEnums(accountTypes, customAccountTypes);
 
   console.log('🏦 User bank account config:', {
     userId,
     accountTypes,
+    customAccountTypes,
     accountTypeEnums,
   });
 
   return {
     accountTypes,
     accountTypeEnums,
+    customAccountTypes,
   };
 }
 
