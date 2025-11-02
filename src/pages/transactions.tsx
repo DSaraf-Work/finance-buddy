@@ -572,27 +572,8 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        {/* Transactions List */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
-                  <p className="text-sm text-gray-600">Click to expand details or edit transactions</p>
-                </div>
-              </div>
-              <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                {transactions.length} transactions
-              </div>
-            </div>
-          </div>
-
+        {/* Transactions Table */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           {transactions.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-gray-300 text-8xl mb-6">💳</div>
@@ -600,27 +581,132 @@ export default function TransactionsPage() {
               <p className="text-gray-600 mb-6">Process some emails to see transactions here.</p>
               <button
                 onClick={() => searchTransactions()}
-                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Refresh Transactions
               </button>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
-              {transactions.map((transaction, index) => (
-                <div
-                  key={transaction.id}
-                  className="transition-all duration-200 hover:bg-gray-50"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <TransactionRow
-                    transaction={transaction}
-                    onEdit={() => openTransactionModal(transaction)}
-                    onReExtract={handleReExtraction}
-                    onStatusUpdate={handleStatusUpdate}
-                  />
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Merchant
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {transactions.map((transaction) => {
+                    const formatDate = (dateString?: string | null) => {
+                      if (!dateString) return 'N/A';
+                      return new Date(dateString).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      });
+                    };
+
+                    const formatAmount = (amount?: string | null, currency?: string | null, direction?: string | null) => {
+                      if (!amount) return 'N/A';
+                      const numAmount = parseFloat(amount);
+                      const formatted = new Intl.NumberFormat('en-IN', {
+                        style: 'currency',
+                        currency: currency || 'INR',
+                      }).format(numAmount);
+
+                      return direction === 'debit' ? `-${formatted}` : formatted;
+                    };
+
+                    const getStatusBadge = (status: TransactionStatus) => {
+                      const styles = {
+                        'REVIEW': 'bg-yellow-100 text-yellow-800',
+                        'APPROVED': 'bg-green-100 text-green-800',
+                        'REJECTED': 'bg-red-100 text-red-800',
+                        'INVALID': 'bg-gray-100 text-gray-800',
+                      };
+                      return styles[status] || styles['REVIEW'];
+                    };
+
+                    return (
+                      <tr key={transaction.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatDate(transaction.txn_time)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {transaction.merchant_name || 'Unknown Merchant'}
+                          </div>
+                          {transaction.account_hint && (
+                            <div className="text-sm text-gray-500">
+                              {transaction.account_hint}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 capitalize">
+                            {transaction.category || 'Uncategorized'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className={`text-sm font-medium ${
+                            transaction.direction === 'debit' ? 'text-red-600' : 'text-green-600'
+                          }`}>
+                            {formatAmount(transaction.amount, transaction.currency, transaction.direction)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {transaction.confidence ? `${Math.round(parseFloat(transaction.confidence) * 100)}% confidence` : ''}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(transaction.status)}`}>
+                            {transaction.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                          <button
+                            onClick={() => openTransactionModal(transaction)}
+                            className="text-blue-600 hover:text-blue-900 mr-3"
+                          >
+                            Edit
+                          </button>
+                          {transaction.status !== 'APPROVED' && (
+                            <button
+                              onClick={() => handleStatusUpdate(transaction.id, 'APPROVED')}
+                              className="text-green-600 hover:text-green-900 mr-3"
+                            >
+                              Approve
+                            </button>
+                          )}
+                          {transaction.status !== 'REJECTED' && (
+                            <button
+                              onClick={() => handleStatusUpdate(transaction.id, 'REJECTED')}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Reject
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
