@@ -1,13 +1,8 @@
 // Keyword Management Service
 // Handles dynamic keyword management, auto-generation, and AI integration
 
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { TransactionKeyword } from '@/pages/api/keywords';
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export interface KeywordUsageStats {
   frequent: TransactionKeyword[];
@@ -21,7 +16,7 @@ export class KeywordService {
    */
   static async getUserKeywords(userId: string): Promise<TransactionKeyword[]> {
     try {
-      const { data: rawKeywords, error } = await supabaseAdmin
+      const { data: rawKeywords, error } = await (supabaseAdmin as any)
         .from('fb_transaction_keywords')
         .select('*')
         .eq('user_id', userId)
@@ -34,7 +29,7 @@ export class KeywordService {
       }
 
       // Add usage_category to each keyword
-      const keywords = rawKeywords?.map(keyword => ({
+      const keywords = (rawKeywords as any[])?.map((keyword: any) => ({
         ...keyword,
         usage_category: keyword.usage_count > 10 ? 'frequent' :
                        keyword.usage_count > 3 ? 'common' : 'rare'
@@ -102,11 +97,11 @@ export class KeywordService {
       if (!existingKeywordSet.has(keyword.toLowerCase())) {
         try {
           // Auto-add new keyword
-          await supabaseAdmin.rpc('add_auto_generated_keyword', {
+          await (supabaseAdmin as any).rpc('add_auto_generated_keyword', {
             target_user_id: userId,
             new_keyword: keyword
           });
-          
+
           console.log(`✨ Auto-added new keyword: ${keyword} for user ${userId}`);
         } catch (error) {
           console.error(`Error auto-adding keyword ${keyword}:`, error);
@@ -114,7 +109,7 @@ export class KeywordService {
       } else {
         try {
           // Increment usage count for existing keyword
-          await supabaseAdmin.rpc('increment_keyword_usage', {
+          await (supabaseAdmin as any).rpc('increment_keyword_usage', {
             target_user_id: userId,
             keyword_text: keyword
           });
@@ -132,7 +127,7 @@ export class KeywordService {
    */
   static async initializeDefaultKeywords(userId: string): Promise<void> {
     try {
-      const { error } = await supabaseAdmin.rpc('initialize_default_keywords', {
+      const { error } = await (supabaseAdmin as any).rpc('initialize_default_keywords', {
         target_user_id: userId
       });
 
@@ -192,7 +187,7 @@ KEYWORD INSTRUCTIONS:
   static async updateKeywordUsage(userId: string, keywords: string[]): Promise<void> {
     try {
       for (const keyword of keywords) {
-        await supabaseAdmin.rpc('increment_keyword_usage', {
+        await (supabaseAdmin as any).rpc('increment_keyword_usage', {
           target_user_id: userId,
           keyword_text: keyword
         });
