@@ -103,6 +103,7 @@ export default function InteractiveKeywordSelector({
       newSelectedKeywords = [...selectedKeywords, keyword.keyword];
     }
 
+    // Call onChange to update parent state (but don't save to database yet)
     onChange(newSelectedKeywords.join(', '));
   };
 
