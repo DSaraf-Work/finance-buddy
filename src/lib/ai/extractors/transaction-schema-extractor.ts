@@ -5,6 +5,39 @@ import { getAIManager } from '../manager';
 import { AIRequest } from '../types';
 import { KeywordService } from '../../keywords/keyword-service';
 import { getUserBankAccountConfig } from '../../config/bank-account-types';
+import { supabaseAdmin } from '../../supabase';
+
+/**
+ * Fetch user-specific transaction categories from the database
+ */
+async function getUserCategories(userId: string): Promise<string[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('fb_config')
+      .select('config_value')
+      .eq('config_key', 'TRANSACTION_CATEGORIES')
+      .eq('user_id', userId)
+      .maybeSingle<{ config_value: string[] }>();
+
+    if (error) {
+      console.error('Error fetching user categories:', error);
+      return ['food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 'travel', 'finance', 'other'];
+    }
+
+    const categories = data?.config_value || [];
+
+    // If no categories configured, return defaults
+    if (categories.length === 0) {
+      console.log('⚠️ No categories configured for user, using defaults');
+      return ['food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 'travel', 'finance', 'other'];
+    }
+
+    return categories;
+  } catch (error) {
+    console.error('Failed to fetch user categories:', error);
+    return ['food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 'travel', 'finance', 'other'];
+  }
+}
 
 export interface TransactionSchema {
   txn_time: {
@@ -41,8 +74,8 @@ export interface TransactionSchema {
   };
   category: {
     type: 'text';
-    description: 'Transaction category';
-    enum: ['food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 'travel', 'finance', 'other'];
+    description: 'Transaction category. Will be populated dynamically from user config.';
+    enum: string[]; // Populated dynamically from getUserCategories
     example: 'food';
   };
   account_hint: {
@@ -127,8 +160,8 @@ export class SchemaAwareTransactionExtractor {
       },
       category: {
         type: 'text',
-        description: 'Transaction category',
-        enum: ['food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 'travel', 'finance', 'other'],
+        description: 'Transaction category. Will be populated dynamically from user config.',
+        enum: [] as string[], // Populated dynamically from getUserCategories
         example: 'food'
       },
       account_hint: {
@@ -174,7 +207,7 @@ export class SchemaAwareTransactionExtractor {
   async extractTransaction(emailContent: string, emailMetadata?: any): Promise<any> {
     console.log('🧠 Schema-Aware AI Extraction Starting...');
 
-    // Fetch user-specific bank account types if userId is provided
+    // Fetch user-specific bank account types and categories if userId is provided
     if (emailMetadata?.userId) {
       console.log('🏦 Fetching user-specific bank account types for user:', emailMetadata.userId);
       const bankAccountConfig = await getUserBankAccountConfig(emailMetadata.userId);
@@ -183,8 +216,16 @@ export class SchemaAwareTransactionExtractor {
 
       // Update the schema with user-specific account types
       this.schema.account_type.enum = this.userAccountTypeEnums as any;
+
+      // Fetch user-specific categories
+      console.log('🏷️ Fetching user-specific categories for user:', emailMetadata.userId);
+      const userCategories = await getUserCategories(emailMetadata.userId);
+      console.log('✅ Loaded user categories:', userCategories);
+
+      // Update the schema with user-specific categories
+      this.schema.category.enum = userCategories as any;
     } else {
-      console.log('⚠️ No userId provided, using default account type enums');
+      console.log('⚠️ No userId provided, using default account type enums and categories');
     }
 
     // Log the input email content being analyzed

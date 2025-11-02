@@ -168,10 +168,28 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
     }
   };
 
-  const categories = [
+  const [categories, setCategories] = useState<string[]>([
     'food', 'transport', 'shopping', 'bills', 'entertainment',
     'health', 'education', 'travel', 'finance', 'other'
-  ];
+  ]);
+
+  // Load categories from database
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await fetch('/api/admin/config/categories');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.categories && data.categories.length > 0) {
+            setCategories(data.categories);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+      }
+    };
+    loadCategories();
+  }, []);
 
   const directions = ['debit', 'credit', 'transfer'];
 

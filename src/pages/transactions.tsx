@@ -55,6 +55,7 @@ export default function TransactionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
   const [stats, setStats] = useState({
     total: 0,
     totalAmount: 0,
@@ -87,8 +88,23 @@ export default function TransactionsPage() {
 
     if (user) {
       searchTransactions();
+      loadCategories();
     }
   }, [user, authLoading, router]);
+
+  const loadCategories = async () => {
+    try {
+      const res = await fetch('/api/admin/config/categories');
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data.categories || []);
+      }
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+      // Use default categories if fetch fails
+      setCategories(['food', 'transport', 'shopping', 'bills', 'entertainment', 'health', 'education', 'travel', 'finance', 'other']);
+    }
+  };
 
   const searchTransactions = async (page: number = pagination.page) => {
     try {
