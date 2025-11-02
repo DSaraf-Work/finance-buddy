@@ -13,7 +13,7 @@ import { supabaseAdmin } from '@/lib/supabase';
  * - Layer 3: RLS policies as defense-in-depth
  */
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
-  if (req.method !== 'PATCH') {
+  if (req.method !== 'PATCH' && req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -57,6 +57,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       location,
       confidence,
       user_notes,
+      status,
     } = req.body;
 
     // Build update object with only provided fields
@@ -77,6 +78,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (location !== undefined) updateData.location = location;
     if (confidence !== undefined) updateData.confidence = confidence;
     if (user_notes !== undefined) updateData.user_notes = user_notes;
+    if (status !== undefined) updateData.status = status;
 
     // Update the transaction
     const { data, error } = await (supabaseAdmin as any)

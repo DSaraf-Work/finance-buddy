@@ -28,6 +28,7 @@ export interface ReviewTransaction {
   ai_notes: string | null;
   user_notes: string | null;
   extraction_version: string | null;
+  status: 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
   created_at: string;
   updated_at: string;
 }
@@ -128,6 +129,32 @@ export default function ReviewRoutePage() {
   const handleEdit = (transaction: ReviewTransaction) => {
     setSelectedTransaction(transaction);
     setIsModalOpen(true);
+  };
+
+  const handleReject = async (transaction: ReviewTransaction, notes: string) => {
+    try {
+      const response = await fetch(`/api/review_route/transactions/${transaction.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          status: 'REJECTED',
+          user_notes: notes,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reject transaction');
+      }
+
+      // Refresh transactions
+      await fetchTransactions();
+    } catch (error) {
+      console.error('Error rejecting transaction:', error);
+      setError('Failed to reject transaction. Please try again.');
+    }
   };
 
   const handleSave = async (updatedTransaction: ReviewTransaction) => {
@@ -232,6 +259,9 @@ export default function ReviewRoutePage() {
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Amount
                     </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
@@ -240,7 +270,7 @@ export default function ReviewRoutePage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {transactions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                      <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                         No transactions found. Try adjusting your filters.
                       </td>
                     </tr>
@@ -250,6 +280,7 @@ export default function ReviewRoutePage() {
                         key={transaction.id}
                         transaction={transaction}
                         onEdit={handleEdit}
+                        onReject={handleReject}
                       />
                     ))
                   )}
@@ -270,6 +301,7 @@ export default function ReviewRoutePage() {
                   key={transaction.id}
                   transaction={transaction}
                   onEdit={handleEdit}
+                  onReject={handleReject}
                   isMobile
                 />
               ))
