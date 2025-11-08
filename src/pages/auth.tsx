@@ -202,7 +202,7 @@ const AuthPage: NextPage = () => {
                 <div className="text-center">
                   <a
                     href="/auth/forgot-password"
-                    className="text-sm text-blue-600 hover:text-blue-500"
+                    className="text-sm text-purple-600 hover:text-purple-500"
                   >
                     Forgot your password?
                   </a>
@@ -215,10 +215,10 @@ const AuthPage: NextPage = () => {
                 <button
                   type="button"
                   onClick={toggleMode}
-                  className="text-sm text-blue-600 hover:text-blue-500"
+                  className="text-sm text-purple-600 hover:text-purple-500"
                 >
-                  {isSignUp 
-                    ? 'Already have an account? Sign in' 
+                  {isSignUp
+                    ? 'Already have an account? Sign in'
                     : "Don't have an account? Sign up"
                   }
                 </button>
@@ -226,8 +226,8 @@ const AuthPage: NextPage = () => {
             </div>
 
             {isSignUp && (
-              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-md p-4">
-                <div className="text-sm text-blue-700">
+              <div className="mt-6 bg-purple-50 border border-purple-200 rounded-md p-4">
+                <div className="text-sm text-purple-700">
                   <p className="font-medium mb-2">After creating your account, you'll be able to:</p>
                   <ul className="list-disc list-inside space-y-1">
                     <li>Connect multiple Gmail accounts via OAuth</li>

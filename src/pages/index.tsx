@@ -161,24 +161,24 @@ const HomePage: NextPage = () => {
                   href="/auth"
                   style={{
                     padding: '0.75rem 2rem',
-                    backgroundColor: '#2563eb',
+                    backgroundColor: '#9333ea',
                     color: 'white',
                     textDecoration: 'none',
                     borderRadius: '0.5rem',
                     fontWeight: '600',
                     fontSize: '1.1rem',
                     transition: 'all 0.2s',
-                    boxShadow: '0 4px 6px rgba(37, 99, 235, 0.25)'
+                    boxShadow: '0 4px 6px rgba(147, 51, 234, 0.25)'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#1d4ed8';
+                    e.currentTarget.style.backgroundColor = '#7e22ce';
                     e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 6px 12px rgba(37, 99, 235, 0.35)';
+                    e.currentTarget.style.boxShadow = '0 6px 12px rgba(147, 51, 234, 0.35)';
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = '#2563eb';
+                    e.currentTarget.style.backgroundColor = '#9333ea';
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(37, 99, 235, 0.25)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(147, 51, 234, 0.25)';
                   }}
                 >
                   Sign In
@@ -189,22 +189,22 @@ const HomePage: NextPage = () => {
                   style={{
                     padding: '0.75rem 2rem',
                     backgroundColor: 'white',
-                    color: '#2563eb',
+                    color: '#9333ea',
                     textDecoration: 'none',
                     borderRadius: '0.5rem',
                     fontWeight: '600',
                     fontSize: '1.1rem',
-                    border: '2px solid #2563eb',
+                    border: '2px solid #9333ea',
                     transition: 'all 0.2s'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#2563eb';
+                    e.currentTarget.style.backgroundColor = '#9333ea';
                     e.currentTarget.style.color = 'white';
                     e.currentTarget.style.transform = 'translateY(-1px)';
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.backgroundColor = 'white';
-                    e.currentTarget.style.color = '#2563eb';
+                    e.currentTarget.style.color = '#9333ea';
                     e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >

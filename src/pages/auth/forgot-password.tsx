@@ -170,8 +170,8 @@ const ForgotPasswordPage: NextPage = () => {
                   We've sent a password reset link to <strong>{email}</strong>
                 </p>
                 
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
-                  <div className="text-sm text-blue-700">
+                <div className="bg-purple-50 border border-purple-200 rounded-md p-4 mb-6">
+                  <div className="text-sm text-purple-700">
                     <p className="font-medium mb-2">Next steps:</p>
                     <ol className="list-decimal list-inside space-y-1">
                       <li>Check your email inbox (and spam folder)</li>
@@ -181,7 +181,7 @@ const ForgotPasswordPage: NextPage = () => {
                     </ol>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <button
                     onClick={() => {
@@ -193,10 +193,10 @@ const ForgotPasswordPage: NextPage = () => {
                   >
                     Send to a different email
                   </button>
-                  
+
                   <a
                     href="/auth"
-                    className="block w-full text-center text-sm text-blue-600 hover:text-blue-500"
+                    className="block w-full text-center text-sm text-purple-600 hover:text-purple-500"
                   >
                     Back to sign in
                   </a>
