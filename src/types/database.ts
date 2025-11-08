@@ -18,6 +18,15 @@ export interface Database {
           last_error: string | null;
           created_at: string;
           updated_at: string;
+          // Gmail Watch fields
+          last_history_id: string | null;
+          watch_enabled: boolean;
+          watch_setup_at: string | null;
+          last_watch_error: string | null;
+          // Auto-sync fields
+          auto_sync_enabled: boolean;
+          auto_sync_interval_minutes: number | null;
+          last_auto_sync_at: string | null;
         };
         Insert: {
           id?: string;
@@ -33,6 +42,15 @@ export interface Database {
           last_error?: string | null;
           created_at?: string;
           updated_at?: string;
+          // Gmail Watch fields
+          last_history_id?: string | null;
+          watch_enabled?: boolean;
+          watch_setup_at?: string | null;
+          last_watch_error?: string | null;
+          // Auto-sync fields
+          auto_sync_enabled?: boolean;
+          auto_sync_interval_minutes?: number | null;
+          last_auto_sync_at?: string | null;
         };
         Update: {
           id?: string;
@@ -48,6 +66,15 @@ export interface Database {
           last_error?: string | null;
           created_at?: string;
           updated_at?: string;
+          // Gmail Watch fields
+          last_history_id?: string | null;
+          watch_enabled?: boolean;
+          watch_setup_at?: string | null;
+          last_watch_error?: string | null;
+          // Auto-sync fields
+          auto_sync_enabled?: boolean;
+          auto_sync_interval_minutes?: number | null;
+          last_auto_sync_at?: string | null;
         };
       };
       fb_emails: {
@@ -224,6 +251,82 @@ export interface Database {
           updated_at?: string;
         };
       };
+      fb_gmail_watch_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          connection_id: string;
+          history_id: string;
+          expiration: string;
+          status: 'active' | 'expired' | 'failed' | 'renewing';
+          last_renewed_at: string | null;
+          renewal_attempts: number;
+          last_error: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          connection_id: string;
+          history_id: string;
+          expiration: string;
+          status?: 'active' | 'expired' | 'failed' | 'renewing';
+          last_renewed_at?: string | null;
+          renewal_attempts?: number;
+          last_error?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          connection_id?: string;
+          history_id?: string;
+          expiration?: string;
+          status?: 'active' | 'expired' | 'failed' | 'renewing';
+          last_renewed_at?: string | null;
+          renewal_attempts?: number;
+          last_error?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      fb_webhook_logs: {
+        Row: {
+          id: string;
+          email_address: string;
+          history_id: string;
+          received_at: string;
+          processed_at: string | null;
+          success: boolean;
+          new_messages: number;
+          error_message: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email_address: string;
+          history_id: string;
+          received_at: string;
+          processed_at?: string | null;
+          success: boolean;
+          new_messages?: number;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email_address?: string;
+          history_id?: string;
+          received_at?: string;
+          processed_at?: string | null;
+          success?: boolean;
+          new_messages?: number;
+          error_message?: string | null;
+          created_at?: string;
+        };
+      };
     };
   };
 }
@@ -285,5 +388,32 @@ export interface OAuthUserInfo {
   family_name?: string;
   picture?: string;
   locale?: string;
+}
+
+// Gmail Watch types
+export interface GmailWatchSubscription {
+  id: string;
+  user_id: string;
+  connection_id: string;
+  history_id: string;
+  expiration: string;
+  status: 'active' | 'expired' | 'failed' | 'renewing';
+  last_renewed_at: string | null;
+  renewal_attempts: number;
+  last_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WebhookLog {
+  id: string;
+  email_address: string;
+  history_id: string;
+  received_at: string;
+  processed_at: string | null;
+  success: boolean;
+  new_messages: number;
+  error_message: string | null;
+  created_at: string;
 }
 
