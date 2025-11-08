@@ -33,15 +33,20 @@ const EmailsPage: NextPage = () => {
     return date.toISOString().split('T')[0];
   };
 
-  // Helper functions to get default dates (last 4 days)
+  // Helper functions to get default dates (entire current month)
   const getDefaultStartDate = () => {
     const date = new Date();
-    date.setDate(date.getDate() - 4);
+    // Set to first day of current month
+    date.setDate(1);
     return formatDateForInput(date);
   };
 
   const getDefaultEndDate = () => {
-    return formatDateForInput(new Date());
+    const date = new Date();
+    // Set to last day of current month
+    date.setMonth(date.getMonth() + 1);
+    date.setDate(0);
+    return formatDateForInput(date);
   };
 
   const [filters, setFilters] = useState<EmailFilters>({
