@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
+import PushNotificationSettings from '@/components/PushNotificationSettings';
 
 const SettingsPage: NextPage = () => {
   const { user, updatePassword } = useAuth();
@@ -272,6 +273,16 @@ const SettingsPage: NextPage = () => {
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Push Notifications */}
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-lg font-medium text-gray-900">Push Notifications</h3>
+                </div>
+                <div className="px-6 py-4">
+                  <PushNotificationSettings />
                 </div>
               </div>
 
