@@ -23,8 +23,9 @@ export default function NotificationBell() {
   // Fetch unread count
   useEffect(() => {
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
-    return () => clearInterval(interval);
+    // Disable Notification auto fetch for now
+    // const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
+    // return () => clearInterval(interval);
   }, []);
 
   // Fetch recent notifications when dropdown opens
