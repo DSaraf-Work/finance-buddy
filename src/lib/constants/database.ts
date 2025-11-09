@@ -29,11 +29,6 @@ export const TABLE_EMAILS_PROCESSED = 'fb_emails_processed' as const;
 export const TABLE_GMAIL_CONNECTIONS = 'fb_gmail_connections' as const;
 
 /**
- * User notifications
- */
-export const TABLE_NOTIFICATIONS = 'fb_notifications' as const;
-
-/**
  * System configuration key-value store
  */
 export const TABLE_CONFIG = 'fb_config' as const;
@@ -90,7 +85,6 @@ export const ACTIVE_TABLES = [
   TABLE_EMAILS_FETCHED,
   TABLE_EMAILS_PROCESSED,
   TABLE_GMAIL_CONNECTIONS,
-  TABLE_NOTIFICATIONS,
   TABLE_CONFIG,
   TABLE_TRANSACTION_KEYWORDS,
   TABLE_REJECTED_EMAILS,

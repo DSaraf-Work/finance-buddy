@@ -75,7 +75,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           emails_found: result.emails_found,
           emails_synced: result.emails_synced,
           transactions_processed: result.transactions_processed,
-          notifications_created: result.notifications_created,
           errors: result.errors,
         });
 
@@ -90,7 +89,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log(`✅ Sync completed for ${connection.email_address}:`, {
           emails_synced: result.emails_synced,
           transactions: result.transactions_processed,
-          notifications: result.notifications_created,
         });
 
       } catch (error: any) {

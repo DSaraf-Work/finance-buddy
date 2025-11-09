@@ -3,8 +3,6 @@
 import { supabaseAdmin } from '../supabase';
 import { listMessages, refreshAccessToken } from '../gmail';
 import { EmailProcessor } from '../email-processing/processor';
-import { NotificationManager } from '../notifications/notification-manager';
-import { NotificationBuilder } from '../notifications/notification-builder';
 import { SyncResult, GmailConnection } from './types';
 import {
   TABLE_EMAILS_FETCHED,
@@ -14,7 +12,6 @@ import {
 
 export class SyncExecutor {
   private emailProcessor = new EmailProcessor();
-  private notificationManager = new NotificationManager();
 
   /**
    * Execute auto-sync for a connection
@@ -25,7 +22,6 @@ export class SyncExecutor {
       emails_found: 0,
       emails_synced: 0,
       transactions_processed: 0,
-      notifications_created: 0,
       errors: [],
     };
 
@@ -124,35 +120,12 @@ export class SyncExecutor {
       result.transactions_processed = processedTransactions.length;
       console.log(`✅ Processed ${result.transactions_processed} transactions`);
 
-      // Step 8: Create notifications for processed transactions
-      console.log(`🔔 Creating notifications...`);
-      const notificationCount = await this.createNotificationsForTransactions(
-        processedTransactions,
-        connection.user_id
-      );
-
-      result.notifications_created = notificationCount;
-      console.log(`✅ Created ${notificationCount} notifications`);
-
       result.success = true;
       return result;
 
     } catch (error: any) {
       console.error(`❌ Auto-sync failed for connection ${connection.id}:`, error);
       result.errors.push(error.message);
-      
-      // Create error notification if sync fails
-      try {
-        await this.notificationManager.create(
-          NotificationBuilder.forSyncError(
-            connection.user_id,
-            connection.id,
-            error.message
-          )
-        );
-      } catch (notifError) {
-        console.error('Failed to create error notification:', notifError);
-      }
 
       return result;
     }
@@ -231,43 +204,6 @@ export class SyncExecutor {
     }
 
     return processedTransactions;
-  }
-
-  /**
-   * Create notifications for processed transactions
-   */
-  private async createNotificationsForTransactions(
-    transactions: any[],
-    userId: string
-  ): Promise<number> {
-    let notificationCount = 0;
-
-    for (const transaction of transactions) {
-      try {
-        // Fetch related email
-        const { data: email } = await supabaseAdmin
-          .from(TABLE_EMAILS_FETCHED)
-          .select('*')
-          .eq('id', transaction.email_row_id)
-          .single();
-
-        if (email) {
-          // Build and create notification
-          const notificationParams = NotificationBuilder.forTransaction(
-            userId,
-            transaction,
-            email
-          );
-
-          await this.notificationManager.create(notificationParams);
-          notificationCount++;
-        }
-      } catch (error: any) {
-        console.error(`Failed to create notification for transaction ${transaction.id}:`, error);
-      }
-    }
-
-    return notificationCount;
   }
 }
 

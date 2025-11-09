@@ -35,7 +35,6 @@ export interface SyncResult {
   emails_found: number;
   emails_synced: number;
   transactions_processed: number;
-  notifications_created: number;
   errors: string[];
 }
 

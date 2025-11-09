@@ -240,54 +240,6 @@ export type Database = {
         }
         Relationships: []
       }
-      fb_notifications: {
-        Row: {
-          action_label: string | null
-          action_url: string | null
-          created_at: string
-          email_id: string | null
-          id: string
-          message: string
-          read: boolean
-          read_at: string | null
-          title: string
-          transaction_id: string | null
-          type: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          action_label?: string | null
-          action_url?: string | null
-          created_at?: string
-          email_id?: string | null
-          id?: string
-          message: string
-          read?: boolean
-          read_at?: string | null
-          title: string
-          transaction_id?: string | null
-          type: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          action_label?: string | null
-          action_url?: string | null
-          created_at?: string
-          email_id?: string | null
-          id?: string
-          message?: string
-          read?: boolean
-          read_at?: string | null
-          title?: string
-          transaction_id?: string | null
-          type?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       fb_rejected_emails: {
         Row: {
           connection_id: string
