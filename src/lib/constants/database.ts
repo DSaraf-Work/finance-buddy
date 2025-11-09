@@ -84,12 +84,6 @@ export const TABLE_EMAILS_ARCHIVED = 'fb_emails' as const;
  */
 export const TABLE_TRANSACTIONS_ARCHIVED = 'fb_extracted_transactions' as const;
 
-/**
- * @deprecated Pub/Sub removed from system
- * Gmail webhook audit logs - archived
- */
-export const TABLE_WEBHOOK_AUDIT_ARCHIVED = 'fb_gmail_webhook_audit' as const;
-
 // ============================================================================
 // TABLE NAME COLLECTIONS
 // ============================================================================
@@ -122,7 +116,6 @@ export const VIEWS = [
 export const ARCHIVED_TABLES = [
   TABLE_EMAILS_ARCHIVED,
   TABLE_TRANSACTIONS_ARCHIVED,
-  TABLE_WEBHOOK_AUDIT_ARCHIVED,
 ] as const;
 
 // ============================================================================
