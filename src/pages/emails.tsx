@@ -363,8 +363,8 @@ const EmailsPage: NextPage = () => {
 
         // Only show success alert if not silent
         if (!silent) {
-          // For individual processing, refresh the list to get latest data
-          searchEmails(pagination.page);
+          // Show success message without refreshing the entire list
+          console.log(`✅ Email processed successfully: ${email.id}`);
         }
       } else {
         const error = await response.json();
