@@ -49,7 +49,7 @@ export const TABLE_REJECTED_EMAILS = 'fb_rejected_emails' as const;
 
 /**
  * View combining emails with their processing status
- * Note: Currently queries OLD tables - needs migration
+ * Joins fb_emails_fetched with fb_emails_processed and fb_rejected_emails
  */
 export const VIEW_EMAILS_WITH_STATUS = 'fb_emails_with_status' as const;
 
@@ -57,22 +57,6 @@ export const VIEW_EMAILS_WITH_STATUS = 'fb_emails_with_status' as const;
  * View of user's active keywords
  */
 export const VIEW_USER_ACTIVE_KEYWORDS = 'fb_user_active_keywords' as const;
-
-// ============================================================================
-// ARCHIVED TABLES (Not Used in Code - Kept for Data Archive)
-// ============================================================================
-
-/**
- * @deprecated Use TABLE_EMAILS_FETCHED instead
- * Old emails table - archived but still in database
- */
-export const TABLE_EMAILS_ARCHIVED = 'fb_emails' as const;
-
-/**
- * @deprecated Use TABLE_EMAILS_PROCESSED instead
- * Old transactions table - archived but still in database
- */
-export const TABLE_TRANSACTIONS_ARCHIVED = 'fb_extracted_transactions' as const;
 
 // ============================================================================
 // TABLE NAME COLLECTIONS
@@ -98,14 +82,6 @@ export const VIEWS = [
   VIEW_USER_ACTIVE_KEYWORDS,
 ] as const;
 
-/**
- * Archived table names (not used in code)
- */
-export const ARCHIVED_TABLES = [
-  TABLE_EMAILS_ARCHIVED,
-  TABLE_TRANSACTIONS_ARCHIVED,
-] as const;
-
 // ============================================================================
 // TYPE EXPORTS
 // ============================================================================
@@ -121,14 +97,9 @@ export type ActiveTableName = typeof ACTIVE_TABLES[number];
 export type ViewName = typeof VIEWS[number];
 
 /**
- * Union type of all archived table names
- */
-export type ArchivedTableName = typeof ARCHIVED_TABLES[number];
-
-/**
  * Union type of all table and view names
  */
-export type DatabaseObjectName = ActiveTableName | ViewName | ArchivedTableName;
+export type DatabaseObjectName = ActiveTableName | ViewName;
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -139,13 +110,6 @@ export type DatabaseObjectName = ActiveTableName | ViewName | ArchivedTableName;
  */
 export function isActiveTable(tableName: string): tableName is ActiveTableName {
   return ACTIVE_TABLES.includes(tableName as ActiveTableName);
-}
-
-/**
- * Check if a table name is archived (not used in code)
- */
-export function isArchivedTable(tableName: string): tableName is ArchivedTableName {
-  return ARCHIVED_TABLES.includes(tableName as ArchivedTableName);
 }
 
 /**
