@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96" height="96" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="96" height="96" fill="#3b82f6" rx="14.399999999999999"/>
+  
+  <!-- Dollar sign icon -->
+  <g transform="translate(48, 48)">
+    <!-- Vertical line -->
+    <rect x="-3.84" y="-33.599999999999994" width="7.68" height="67.19999999999999" fill="white" rx="1.92"/>
+    
+    <!-- Top curve -->
+    <path d="M -14.399999999999999 -14.399999999999999 Q -14.399999999999999 -24 0 -24 Q 14.399999999999999 -24 14.399999999999999 -14.399999999999999 Q 14.399999999999999 -4.800000000000001 0 -4.800000000000001" 
+          fill="none" stroke="white" stroke-width="7.68" stroke-linecap="round"/>
+    
+    <!-- Bottom curve -->
+    <path d="M 14.399999999999999 14.399999999999999 Q 14.399999999999999 24 0 24 Q -14.399999999999999 24 -14.399999999999999 14.399999999999999 Q -14.399999999999999 4.800000000000001 0 4.800000000000001" 
+          fill="none" stroke="white" stroke-width="7.68" stroke-linecap="round"/>
+  </g>
+</svg>
