@@ -26,10 +26,6 @@
     {
       "path": "/api/cron/gmail-auto-sync",
       "schedule": "0 23 * * *"
-    },
-    {
-      "path": "/api/cron/gmail-watch-renewal",
-      "schedule": "0 12 * * *"
     }
   ]
 }

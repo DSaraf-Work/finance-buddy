@@ -22,7 +22,6 @@ interface NavItem {
 const navigation: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: '🏠', description: 'Overview and quick actions' },
   { name: 'Admin', href: '/admin', icon: '⚙️', description: 'Gmail connections and system health' },
-  { name: 'Gmail Pub/Sub', href: '/admin/gmail-pub-sub', icon: '🔔', description: 'Real-time notifications dashboard' },
   { name: 'Emails', href: '/emails', icon: '📧', description: 'Email management and search' },
   { name: 'Rejected', href: '/rejected-emails', icon: '🚫', description: 'Manage rejected emails' },
   { name: 'Transactions', href: '/transactions', icon: '💰', description: 'Transaction review and analysis' },
