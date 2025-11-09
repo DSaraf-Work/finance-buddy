@@ -6,8 +6,7 @@ import { parseHTMLToCleanText } from '../gmail';
 import {
   TABLE_EMAILS_FETCHED,
   TABLE_EMAILS_PROCESSED,
-  TABLE_REJECTED_EMAILS,
-  VIEW_EMAILS_WITH_STATUS
+  TABLE_REJECTED_EMAILS
 } from '@/lib/constants/database';
 import type { Database } from '@/types';
 
@@ -173,7 +172,7 @@ export class EmailProcessor {
 
   private async getEmailsToProcess(request: EmailProcessingRequest): Promise<any[]> {
     let query = (supabaseAdmin as any)
-      .from(VIEW_EMAILS_WITH_STATUS)
+      .from(TABLE_EMAILS_FETCHED)
       .select('*');
 
     // Filter by specific email ID
@@ -188,7 +187,7 @@ export class EmailProcessor {
 
     // Filter by processing status - only process FETCHED emails (not PROCESSED or REJECTED)
     if (!request.forceReprocess) {
-      query = query.eq('status', 'FETCHED');
+      query = query.eq('status', 'Fetched');
     }
 
     // Limit batch size
@@ -300,7 +299,7 @@ export class EmailProcessor {
     rejected: number;
   }> {
     let query = (supabaseAdmin as any)
-      .from(VIEW_EMAILS_WITH_STATUS)
+      .from(TABLE_EMAILS_FETCHED)
       .select('status');
 
     if (userId) {
@@ -322,13 +321,13 @@ export class EmailProcessor {
 
     emails?.forEach((email: any) => {
       switch (email.status) {
-        case 'PROCESSED':
+        case 'Processed':
           stats.processed++;
           break;
-        case 'FETCHED':
+        case 'Fetched':
           stats.fetched++;
           break;
-        case 'REJECTED':
+        case 'Rejected':
           stats.rejected++;
           break;
       }

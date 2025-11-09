@@ -20,8 +20,7 @@ import {
 import {
   TABLE_EMAILS_FETCHED,
   TABLE_EMAILS_PROCESSED,
-  TABLE_GMAIL_CONNECTIONS,
-  VIEW_EMAILS_WITH_STATUS
+  TABLE_GMAIL_CONNECTIONS
 } from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
@@ -129,7 +128,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // Authorization enforced by withAuth() + explicit user_id filter
     // RLS policies remain as defense-in-depth layer
     let query = supabaseAdmin
-      .from(VIEW_EMAILS_WITH_STATUS)
+      .from(TABLE_EMAILS_FETCHED)
       .select(`
         id,
         google_user_id,

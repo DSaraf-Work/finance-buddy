@@ -48,12 +48,6 @@ export const TABLE_REJECTED_EMAILS = 'fb_rejected_emails' as const;
 // ============================================================================
 
 /**
- * View combining emails with their processing status
- * Joins fb_emails_fetched with fb_emails_processed and fb_rejected_emails
- */
-export const VIEW_EMAILS_WITH_STATUS = 'fb_emails_with_status' as const;
-
-/**
  * View of user's active keywords
  */
 export const VIEW_USER_ACTIVE_KEYWORDS = 'fb_user_active_keywords' as const;
@@ -78,7 +72,6 @@ export const ACTIVE_TABLES = [
  * All view names
  */
 export const VIEWS = [
-  VIEW_EMAILS_WITH_STATUS,
   VIEW_USER_ACTIVE_KEYWORDS,
 ] as const;
 

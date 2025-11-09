@@ -4,8 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
 import {
   TABLE_EMAILS_FETCHED,
-  TABLE_REJECTED_EMAILS,
-  VIEW_EMAILS_WITH_STATUS
+  TABLE_REJECTED_EMAILS
 } from '@/lib/constants/database';
 
 interface EmailActionRequest {
@@ -87,9 +86,9 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       }
     }
 
-    // Get the updated email with derived status
+    // Get the updated email
     const { data: updatedEmail, error: fetchError } = await (supabaseAdmin as any)
-      .from(VIEW_EMAILS_WITH_STATUS)
+      .from(TABLE_EMAILS_FETCHED)
       .select('*')
       .eq('id', id)
       .eq('user_id', user.id)

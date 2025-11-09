@@ -5,8 +5,8 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { SchemaAwareTransactionExtractor } from '../../../lib/ai/extractors/transaction-schema-extractor';
 import { TransactionExtractionRequest } from '../../../lib/ai/types';
 import {
-  TABLE_EMAILS_PROCESSED,
-  VIEW_EMAILS_WITH_STATUS
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED
 } from '@/lib/constants/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -28,17 +28,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (emailId) {
       // Fetch email from database
       console.log('📧 Fetching email from database:', emailId);
-      
+
       const { data: fetchedEmail, error: emailError } = await (supabaseAdmin as any)
-        .from(VIEW_EMAILS_WITH_STATUS)
+        .from(TABLE_EMAILS_FETCHED)
         .select('*')
         .eq('id', emailId)
         .single();
 
       if (emailError || !fetchedEmail) {
-        return res.status(404).json({ 
+        return res.status(404).json({
           error: 'Email not found',
-          details: emailError?.message 
+          details: emailError?.message
         });
       }
 
