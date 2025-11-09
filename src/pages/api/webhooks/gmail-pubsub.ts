@@ -156,14 +156,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         success: syncResult.success,
         errorMessage: syncResult.error || undefined,
         newMessagesCount: syncResult.newMessages || 0,
-        transactionsExtracted: syncResult.processedTransactions || 0,
+        transactionsExtracted: 0, // Transaction processing disabled
         historyEndId: notification.historyId,
         gmailApiDurationMs: syncDuration,
         emailIds: syncResult.emailIds || [],
-        transactionIds: syncResult.transactionIds || [],
+        transactionIds: [], // No transactions extracted (processing disabled)
         metadata: {
           syncResult,
           notification,
+          note: 'Transaction processing temporarily disabled',
         },
       });
     }
@@ -183,11 +184,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     console.log('✅ Webhook processed:', syncResult);
+    console.log('⚠️ Transaction processing is currently disabled');
 
     return res.status(200).json({
       success: syncResult.success,
       newMessages: syncResult.newMessages,
-      processedTransactions: syncResult.processedTransactions,
+      processedTransactions: 0, // Transaction processing disabled
+      emailIds: syncResult.emailIds || [],
+      note: 'Emails stored successfully. Transaction processing is temporarily disabled.',
     });
   } catch (error: any) {
     console.error('❌ Webhook processing failed:', error);

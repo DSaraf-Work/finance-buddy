@@ -271,11 +271,14 @@ export class HistorySync {
           const emailId = (email as any).id;
           emailIds.push(emailId);
 
-          // Process for transactions
-          const extractedTransactionIds = await this.emailProcessor.processEmail(emailId);
-          if (extractedTransactionIds && extractedTransactionIds.length > 0) {
-            transactionIds.push(...extractedTransactionIds);
-          }
+          // TODO: TRANSACTION PROCESSING TEMPORARILY DISABLED
+          // Process for transactions - COMMENTED OUT FOR NOW
+          // const extractedTransactionIds = await this.emailProcessor.processEmail(emailId);
+          // if (extractedTransactionIds && extractedTransactionIds.length > 0) {
+          //   transactionIds.push(...extractedTransactionIds);
+          // }
+
+          console.log(`📧 Email stored (ID: ${emailId}) - Transaction processing disabled`);
           processedCount++;
         }
       } catch (error: any) {
@@ -285,8 +288,8 @@ export class HistorySync {
 
     const stats = batchProcessor.getStats(results);
     console.log(`📊 Batch stats: ${stats.successful}/${stats.total} fetched (${stats.successRate}%)`);
-    console.log(`💾 Stored and processed: ${processedCount} messages`);
-    console.log(`📧 Email IDs: ${emailIds.length}, Transaction IDs: ${transactionIds.length}`);
+    console.log(`💾 Stored: ${processedCount} messages (transaction processing disabled)`);
+    console.log(`📧 Email IDs: ${emailIds.length}, Transaction IDs: ${transactionIds.length} (no transactions extracted)`);
 
     return { processedCount, emailIds, transactionIds };
   }
