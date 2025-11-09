@@ -38,6 +38,13 @@ export class WebhookValidator {
   parseMessage(body: PubSubMessage): GmailNotification {
     try {
       const dataStr = Buffer.from(body.message.data, 'base64').toString('utf-8');
+
+      // Check if this is a test message from GCP Console
+      if (dataStr.includes('test') || dataStr.includes('Test') || dataStr.includes('TEST')) {
+        console.log('📨 Detected test message from GCP Console:', dataStr);
+        throw new Error(`Test message detected: "${dataStr}". This is not a Gmail notification.`);
+      }
+
       const data = JSON.parse(dataStr);
 
       if (!data.emailAddress || !data.historyId) {
