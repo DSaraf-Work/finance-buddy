@@ -10,7 +10,10 @@ export interface PubSubMessage {
 
 export interface GmailNotification {
   emailAddress: string;
-  historyId: string;
+  messageId: string;
+  subject?: string;
+  from?: string;
+  historyId?: string;
 }
 
 export class WebhookValidator {
@@ -34,9 +37,29 @@ export class WebhookValidator {
 
   /**
    * Parse Pub/Sub message data
+   * Supports both new format (attributes) and old format (base64 data)
    */
   parseMessage(body: PubSubMessage): GmailNotification {
     try {
+      // NEW FORMAT: Check if attributes exist (Gmail Apps Script format)
+      if (body.message.attributes) {
+        const attrs = body.message.attributes as any;
+
+        if (!attrs.emailAddress || !attrs.messageId) {
+          throw new Error('Missing emailAddress or messageId in attributes');
+        }
+
+        console.log('📨 Using new message format (attributes)');
+        return {
+          emailAddress: attrs.emailAddress,
+          messageId: attrs.messageId,
+          subject: attrs.subject,
+          from: attrs.from,
+          historyId: attrs.historyId,
+        };
+      }
+
+      // OLD FORMAT: Fallback to base64 data
       const dataStr = Buffer.from(body.message.data, 'base64').toString('utf-8');
 
       // Check if this is a test message from GCP Console
@@ -47,12 +70,14 @@ export class WebhookValidator {
 
       const data = JSON.parse(dataStr);
 
-      if (!data.emailAddress || !data.historyId) {
-        throw new Error('Missing emailAddress or historyId in notification');
+      if (!data.emailAddress) {
+        throw new Error('Missing emailAddress in notification');
       }
 
+      console.log('📨 Using old message format (base64 data)');
       return {
         emailAddress: data.emailAddress,
+        messageId: data.messageId || '',
         historyId: data.historyId,
       };
     } catch (error: any) {

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { WebhookValidator } from '@/lib/gmail-watch/webhook-validator';
-import { HistorySync } from '@/lib/gmail-watch/history-sync';
+import { MessageFetcher } from '@/lib/gmail-watch/message-fetcher';
 import { AuditLogger } from '@/lib/gmail-watch/audit-logger';
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const validator = new WebhookValidator();
-    const historySync = new HistorySync();
+    const messageFetcher = new MessageFetcher();
 
     // Step 1: Validate webhook token (optional)
     const token = req.headers['x-webhook-token'] as string;
@@ -35,31 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Invalid message format' });
     }
 
-    // Step 3: Decode and log the message data
-    if (req.body?.message?.data) {
-      try {
-        const decodedData = Buffer.from(req.body.message.data, 'base64').toString('utf-8');
-        console.log('🔓 DECODED MESSAGE DATA (base64 → utf-8):');
-        console.log(decodedData);
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-        // Try to parse as JSON for better readability
-        try {
-          const parsedData = JSON.parse(decodedData);
-          console.log('📋 PARSED MESSAGE DATA (JSON):');
-          console.log(JSON.stringify(parsedData, null, 2));
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        } catch {
-          console.log('⚠️ Message data is not valid JSON (plain text):');
-          console.log(decodedData);
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        }
-      } catch (decodeError) {
-        console.error('❌ Failed to decode message data:', decodeError);
-      }
-    }
-
-    // Step 4: Parse notification
+    // Step 3: Parse notification (supports both old and new formats)
     let notification;
     try {
       notification = validator.parseMessage(req.body);
@@ -74,13 +50,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).json({
           success: true,
           message: 'Test message received',
-          note: 'This was a test message from GCP Console, not a real Gmail notification'
+          note: 'This was a test message from GCP Console'
         });
       }
       throw error; // Re-throw if it's a real error
     }
 
-    // Step 5: Find connection for this email
+    // Step 4: Find connection for this email
     const { data: connection } = await supabaseAdmin
       .from('fb_gmail_connections')
       .select('*')
@@ -88,159 +64,70 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('watch_enabled', true)
       .single();
 
-    // Step 6: Create audit log
-    auditLogId = await AuditLogger.logWebhookReceived(req, {
-      messageId: req.body?.message?.messageId || `msg_${Date.now()}`,
-      subscriptionName: req.body?.subscription,
-      publishTime: req.body?.message?.publishTime,
-      emailAddress: notification.emailAddress,
-      historyId: notification.historyId,
-      connectionId: (connection as any)?.id,
-      userId: (connection as any)?.user_id,
-      requestHeaders: req.headers as any,
-      requestBody: req.body,
-    });
-
-    // Step 7: Log webhook receipt (legacy table for backward compatibility)
-    const { data: webhookLog } = await supabaseAdmin
-      .from('fb_webhook_logs')
-      // @ts-ignore - Supabase type inference issue
-      .insert({
-        email_address: notification.emailAddress,
-        history_id: notification.historyId,
-        received_at: new Date().toISOString(),
-        success: false, // Will update after processing
-        new_messages: 0,
-      })
-      .select()
-      .single();
-
     if (!connection) {
       console.warn(`⚠️ No active watch found for ${notification.emailAddress}`);
-
-      // Update audit log
-      if (auditLogId) {
-        await AuditLogger.updateAuditLog(auditLogId, {
-          status: 'failed',
-          success: false,
-          errorMessage: 'No active watch found',
-          errorCode: 'NO_WATCH',
-        });
-      }
-
-      // Update webhook log
-      if (webhookLog) {
-        await supabaseAdmin
-          .from('fb_webhook_logs')
-          // @ts-ignore - Supabase type inference issue
-          .update({
-            processed_at: new Date().toISOString(),
-            success: false,
-            error_message: 'No active watch found',
-          })
-          .eq('id', (webhookLog as any).id);
-      }
-
       return res.status(200).json({
         success: false,
         message: 'No active watch found'
       });
     }
 
-    // Step 8: Get last known history ID
-    const lastHistoryId = (connection as any).last_history_id;
+    // Step 5: Create audit log
+    auditLogId = await AuditLogger.logWebhookReceived(req, {
+      messageId: notification.messageId || req.body?.message?.messageId || `msg_${Date.now()}`,
+      subscriptionName: req.body?.subscription,
+      publishTime: req.body?.message?.publishTime,
+      emailAddress: notification.emailAddress,
+      historyId: notification.historyId || '',
+      connectionId: (connection as any).id,
+      userId: (connection as any).user_id,
+      requestHeaders: req.headers as any,
+      requestBody: req.body,
+    });
 
-    if (!lastHistoryId) {
-      console.warn('⚠️ No last history ID found, skipping sync');
-
-      // Update audit log
-      if (auditLogId) {
-        await AuditLogger.updateAuditLog(auditLogId, {
-          status: 'skipped',
-          success: false,
-          errorMessage: 'No last history ID',
-          errorCode: 'NO_HISTORY_ID',
-        });
-      }
-
-      // Update webhook log
-      if (webhookLog) {
-        await supabaseAdmin
-          .from('fb_webhook_logs')
-          // @ts-ignore - Supabase type inference issue
-          .update({
-            processed_at: new Date().toISOString(),
-            success: false,
-            error_message: 'No last history ID',
-          })
-          .eq('id', (webhookLog as any).id);
-      }
-
-      return res.status(200).json({
-        success: false,
-        message: 'No last history ID'
-      });
-    }
-
-    // Step 9: Update audit log - processing started
+    // Step 6: Update audit log - processing started
     if (auditLogId) {
       await AuditLogger.updateAuditLog(auditLogId, {
         status: 'processing',
-        historyStartId: lastHistoryId,
       });
     }
 
-    // Step 10: Sync emails from history
-    const syncStartTime = Date.now();
-    const syncResult = await historySync.syncFromHistory(
+    // Step 7: Fetch and store message
+    console.log(`📧 Fetching message: ${notification.messageId}`);
+    const fetchStartTime = Date.now();
+    const result = await messageFetcher.fetchAndStoreMessage(
       (connection as any).id,
-      lastHistoryId
+      notification.messageId
     );
-    const syncDuration = Date.now() - syncStartTime;
+    const fetchDuration = Date.now() - fetchStartTime;
 
-    // Step 11: Update audit log with results
+    // Step 8: Update audit log with results
     if (auditLogId) {
       await AuditLogger.updateAuditLog(auditLogId, {
-        status: syncResult.success ? 'success' : 'failed',
-        success: syncResult.success,
-        errorMessage: syncResult.error || undefined,
-        newMessagesCount: syncResult.newMessages || 0,
+        status: result.success ? 'success' : 'failed',
+        success: result.success,
+        errorMessage: result.error || undefined,
+        newMessagesCount: result.success ? 1 : 0,
         transactionsExtracted: 0, // Transaction processing disabled
-        historyEndId: notification.historyId,
-        gmailApiDurationMs: syncDuration,
-        emailIds: syncResult.emailIds || [],
+        gmailApiDurationMs: fetchDuration,
+        emailIds: result.emailId ? [result.emailId] : [],
         transactionIds: [], // No transactions extracted (processing disabled)
         metadata: {
-          syncResult,
+          result,
           notification,
           note: 'Transaction processing temporarily disabled',
         },
       });
     }
 
-    // Step 12: Update webhook log (legacy)
-    if (webhookLog) {
-      await supabaseAdmin
-        .from('fb_webhook_logs')
-        // @ts-ignore - Supabase type inference issue
-        .update({
-          processed_at: new Date().toISOString(),
-          success: syncResult.success,
-          new_messages: syncResult.newMessages,
-          error_message: syncResult.error || null,
-        })
-        .eq('id', (webhookLog as any).id);
-    }
-
-    console.log('✅ Webhook processed:', syncResult);
+    console.log('✅ Webhook processed:', result);
     console.log('⚠️ Transaction processing is currently disabled');
 
     return res.status(200).json({
-      success: syncResult.success,
-      newMessages: syncResult.newMessages,
+      success: result.success,
+      emailId: result.emailId,
       processedTransactions: 0, // Transaction processing disabled
-      emailIds: syncResult.emailIds || [],
-      note: 'Emails stored successfully. Transaction processing is temporarily disabled.',
+      note: 'Email stored successfully. Transaction processing is temporarily disabled.',
     });
   } catch (error: any) {
     console.error('❌ Webhook processing failed:', error);
