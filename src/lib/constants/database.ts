@@ -39,11 +39,6 @@ export const TABLE_NOTIFICATIONS = 'fb_notifications' as const;
 export const TABLE_CONFIG = 'fb_config' as const;
 
 /**
- * Email sync filters
- */
-export const TABLE_SYNC_FILTERS = 'fb_sync_filters' as const;
-
-/**
  * Transaction keywords for categorization
  */
 export const TABLE_TRANSACTION_KEYWORDS = 'fb_transaction_keywords' as const;
@@ -97,7 +92,6 @@ export const ACTIVE_TABLES = [
   TABLE_GMAIL_CONNECTIONS,
   TABLE_NOTIFICATIONS,
   TABLE_CONFIG,
-  TABLE_SYNC_FILTERS,
   TABLE_TRANSACTION_KEYWORDS,
   TABLE_REJECTED_EMAILS,
 ] as const;

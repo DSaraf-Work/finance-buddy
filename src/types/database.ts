@@ -333,54 +333,6 @@ export type Database = {
         }
         Relationships: []
       }
-      fb_sync_filters: {
-        Row: {
-          connection_id: string
-          created_at: string
-          enabled: boolean
-          filter_name: string
-          filter_type: string
-          filter_value: string
-          gmail_query: string
-          id: string
-          last_error: string | null
-          last_sync_at: string | null
-          sync_count: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          connection_id: string
-          created_at?: string
-          enabled?: boolean
-          filter_name: string
-          filter_type: string
-          filter_value: string
-          gmail_query: string
-          id?: string
-          last_error?: string | null
-          last_sync_at?: string | null
-          sync_count?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          connection_id?: string
-          created_at?: string
-          enabled?: boolean
-          filter_name?: string
-          filter_type?: string
-          filter_value?: string
-          gmail_query?: string
-          id?: string
-          last_error?: string | null
-          last_sync_at?: string | null
-          sync_count?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       fb_transaction_keywords: {
         Row: {
           auto_generated: boolean
