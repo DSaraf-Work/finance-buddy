@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth/middleware';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 /**
  * GET /api/review_route/transactions
@@ -34,7 +37,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Build query
     let query = supabaseAdmin
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .select('*')
       .eq('user_id', user.id); // Explicit authorization
 

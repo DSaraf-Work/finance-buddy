@@ -1,10 +1,13 @@
 // Notification Manager - CRUD operations for notifications
 
 import { supabaseAdmin } from '../supabase';
-import { 
-  Notification, 
-  CreateNotificationParams, 
-  NotificationFilters 
+import {
+  TABLE_NOTIFICATIONS
+} from '@/lib/constants/database';
+import {
+  Notification,
+  CreateNotificationParams,
+  NotificationFilters
 } from './types';
 
 export class NotificationManager {
@@ -13,7 +16,7 @@ export class NotificationManager {
    */
   async create(params: CreateNotificationParams): Promise<Notification> {
     const { data, error } = await (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .insert({
         user_id: params.userId,
         type: params.type,
@@ -51,7 +54,7 @@ export class NotificationManager {
     filters: NotificationFilters = {}
   ): Promise<{ notifications: Notification[]; total: number }> {
     let query = (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .select('*', { count: 'exact' })
       .eq('user_id', userId);
 
@@ -89,7 +92,7 @@ export class NotificationManager {
    */
   async getUnreadCount(userId: string): Promise<number> {
     const { count, error } = await (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .eq('read', false);
@@ -107,7 +110,7 @@ export class NotificationManager {
    */
   async markAsRead(notificationId: string, userId: string): Promise<void> {
     const { error } = await (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .update({
         read: true,
         read_at: new Date().toISOString(),
@@ -127,7 +130,7 @@ export class NotificationManager {
    */
   async markAllAsRead(userId: string): Promise<void> {
     const { error } = await (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .update({
         read: true,
         read_at: new Date().toISOString(),
@@ -147,7 +150,7 @@ export class NotificationManager {
    */
   async delete(notificationId: string, userId: string): Promise<void> {
     const { error } = await (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .delete()
       .eq('id', notificationId)
       .eq('user_id', userId);
@@ -163,7 +166,7 @@ export class NotificationManager {
    */
   async deleteAllRead(userId: string): Promise<void> {
     const { error } = await (supabaseAdmin as any)
-      .from('fb_notifications')
+      .from(TABLE_NOTIFICATIONS)
       .delete()
       .eq('user_id', userId)
       .eq('read', true);

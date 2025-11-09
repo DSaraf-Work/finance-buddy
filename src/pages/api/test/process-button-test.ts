@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { EmailProcessor } from '@/lib/email-processing/processor';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 /**
  * Test endpoint to verify that the process button endpoint uses the standardized extractor
@@ -25,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Get the email first
     const { data: email, error: emailError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('*')
       .eq('id', emailId)
       .single();
@@ -36,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Get the Gmail connection for this user
     const { data: connection, error: connectionError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('id, google_user_id')
       .eq('user_id', email.user_id)
       .eq('email_address', email.email_address)
@@ -77,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Get the created transaction
     const { data: transaction, error: transactionError } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .select('*')
       .eq('email_row_id', emailId)
       .order('created_at', { ascending: false })

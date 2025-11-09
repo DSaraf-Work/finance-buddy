@@ -5,6 +5,10 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMockAI } from '@/contexts/MockAIContext';
 import NotificationBell from './NotificationBell';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -60,8 +64,8 @@ export function Layout({ children, title, description }: LayoutProps) {
       
       // Convert segment to readable name
       let name = segment.charAt(0).toUpperCase() + segment.slice(1);
-      if (segment === 'fb_emails') name = 'Email Workbench';
-      if (segment === 'fb_extracted_transactions') name = 'Transaction Workbench';
+      if (segment === TABLE_EMAILS_FETCHED) name = 'Email Workbench';
+      if (segment === TABLE_EMAILS_PROCESSED) name = 'Transaction Workbench';
       if (segment === 'rejected-emails') name = 'Rejected Emails';
       if (segment === 'db') name = 'Database';
       

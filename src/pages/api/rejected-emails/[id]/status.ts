@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_REJECTED_EMAILS
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'PATCH') {
@@ -26,7 +29,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (action === 'delete') {
       // Delete the rejected email record
       const { error: deleteError } = await (supabaseAdmin as any)
-        .from('fb_rejected_emails')
+        .from(TABLE_REJECTED_EMAILS)
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);
@@ -49,7 +52,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Update the rejected email status
     const { data: updatedEmail, error } = await (supabaseAdmin as any)
-      .from('fb_rejected_emails')
+      .from(TABLE_REJECTED_EMAILS)
       .update({
         status,
         updated_at: new Date().toISOString()

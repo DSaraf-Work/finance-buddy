@@ -2,6 +2,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { EmailProcessor } from '@/lib/email-processing/processor';
+import {
+  TABLE_CONFIG,
+  TABLE_EMAILS_FETCHED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { action } = req.query;
@@ -9,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     // Get test user
     const { data: users } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('user_id')
       .limit(1)
       .single();
@@ -23,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (action === 'config') {
       // Test: Get whitelisted senders
       const { data: configData } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', 'WHITELISTED_SENDERS')
         .single();
@@ -36,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (action === 'count-fetched') {
       // Test: Count fetched emails
       const { count } = await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
         .eq('status', 'Fetched');
@@ -50,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (action === 'process-one') {
       // Test: Process one email
       const { data: emails } = await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .select('*')
         .eq('user_id', userId)
         .eq('status', 'Fetched')
@@ -80,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Update email status
         await (supabaseAdmin as any)
-          .from('fb_emails')
+          .from(TABLE_EMAILS_FETCHED)
           .update({
             status: 'Processed',
             updated_at: new Date().toISOString(),
@@ -104,7 +109,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (action === 'list-emails') {
       // Test: List emails
       const { data: emails } = await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .select('id, from_address, subject, status, internal_date')
         .eq('user_id', userId)
         .order('internal_date', { ascending: false })

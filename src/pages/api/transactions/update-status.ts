@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -36,7 +39,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Update the transaction status
     const { data: updatedTransaction, error } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .update({
         status,
         updated_at: new Date().toISOString(),

@@ -3,6 +3,12 @@
 import { supabaseAdmin } from '../supabase';
 import { SchemaAwareTransactionExtractor } from '../ai/extractors/transaction-schema-extractor';
 import { parseHTMLToCleanText } from '../gmail';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_REJECTED_EMAILS,
+  VIEW_EMAILS_WITH_STATUS
+} from '@/lib/constants/database';
 import type { Database } from '@/types';
 
 export interface EmailProcessingRequest {
@@ -167,7 +173,7 @@ export class EmailProcessor {
 
   private async getEmailsToProcess(request: EmailProcessingRequest): Promise<any[]> {
     let query = (supabaseAdmin as any)
-      .from('fb_emails_with_status')
+      .from(VIEW_EMAILS_WITH_STATUS)
       .select('*');
 
     // Filter by specific email ID
@@ -204,7 +210,7 @@ export class EmailProcessor {
 
   private async saveExtractedTransaction(email: any, transaction: any): Promise<string | null> {
     // Handle both old and new transaction formats
-    const transactionData: Database['public']['Tables']['fb_extracted_transactions']['Insert'] = {
+    const transactionData: Database['public']['Tables']['fb_emails_processed']['Insert'] = {
       user_id: email.user_id,
       google_user_id: email.google_user_id,
       connection_id: email.connection_id,
@@ -237,7 +243,7 @@ export class EmailProcessor {
     });
 
     const { data, error } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .upsert(transactionData, {
         onConflict: 'email_row_id',
       })
@@ -254,7 +260,7 @@ export class EmailProcessor {
   private async rejectEmail(emailId: string, reason: string, type: string = 'processing_error', errorDetails?: any): Promise<void> {
     // Get email details for the rejection record
     const { data: email, error: emailError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('user_id, google_user_id, connection_id')
       .eq('id', emailId)
       .single();
@@ -265,7 +271,7 @@ export class EmailProcessor {
     }
 
     const { error } = await (supabaseAdmin as any)
-      .from('fb_rejected_emails')
+      .from(TABLE_REJECTED_EMAILS)
       .upsert({
         user_id: email.user_id,
         google_user_id: email.google_user_id,
@@ -294,7 +300,7 @@ export class EmailProcessor {
     rejected: number;
   }> {
     let query = (supabaseAdmin as any)
-      .from('fb_emails_with_status')
+      .from(VIEW_EMAILS_WITH_STATUS)
       .select('status');
 
     if (userId) {

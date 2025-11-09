@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
-import { 
-  getEnhancedMessage, 
-  refreshAccessToken, 
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
+import {
+  getEnhancedMessage,
+  refreshAccessToken,
   validateEmailContent,
   parseRawEmailContentEnhanced
 } from '@/lib/gmail';
@@ -30,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Build query to find emails that need re-processing
     let query = (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('*');
 
     if (emailId) {
@@ -89,7 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Get the Gmail connection
         const { data: connection, error: connectionError } = await (supabaseAdmin as any)
-          .from('fb_gmail_connections')
+          .from(TABLE_GMAIL_CONNECTIONS)
           .select('*')
           .eq('id', email.connection_id)
           .single();
@@ -113,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           
           // Update the connection with new tokens
           await (supabaseAdmin as any)
-            .from('fb_gmail_connections')
+            .from(TABLE_GMAIL_CONNECTIONS)
             .update({
               access_token: refreshedTokens.access_token,
               expires_at: (refreshedTokens as any).expiry_date ? new Date((refreshedTokens as any).expiry_date).toISOString() : null,
@@ -139,7 +143,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Update the email if we have better content
         if (improvement.hasImprovement || enhancedResult.validation.isValid) {
           const { error: updateError } = await (supabaseAdmin as any)
-            .from('fb_emails')
+            .from(TABLE_EMAILS_FETCHED)
             .update({
               plain_body: enhancedResult.content,
               updated_at: new Date().toISOString()

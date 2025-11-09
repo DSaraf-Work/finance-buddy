@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { BackfillRequest, BackfillResponse } from '@/types';
+import {
+  TABLE_GMAIL_CONNECTIONS,
+  TABLE_JOBS
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -26,7 +30,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Validate connection exists
     const { data: connection, error: connError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('id')
       .eq('id', connection_id)
       .eq('user_id', user.id)
@@ -79,7 +83,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Insert job into database
     const { data: job, error: jobError } = await (supabaseAdmin as any)
-      .from('fb_jobs')
+      .from(TABLE_JOBS)
       .insert({
         user_id: user.id,
         type: 'backfill',

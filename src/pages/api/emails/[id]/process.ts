@@ -2,6 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { EmailProcessor } from '@/lib/email-processing/processor';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -17,7 +22,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get the email first
     const { data: email, error: emailError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('*')
       .eq('id', id)
       .eq('user_id', user.id)
@@ -29,7 +34,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get the Gmail connection for this user
     const { data: connection, error: connectionError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('id, google_user_id')
       .eq('user_id', user.id)
       .eq('email_address', (email as any).email_address)
@@ -70,7 +75,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get the created transaction
     const { data: transaction, error: transactionError } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .select('*')
       .eq('email_row_id', id)
       .order('created_at', { ascending: false })

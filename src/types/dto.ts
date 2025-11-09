@@ -7,6 +7,33 @@ export type TransactionDirection = 'debit' | 'credit';
 export type JobStatus = 'queued' | 'running' | 'completed' | 'failed';
 export type SortOrder = 'asc' | 'desc';
 
+// Gmail API types
+export interface GmailMessage {
+  id: string;
+  threadId: string;
+  labelIds?: string[];
+  snippet?: string;
+  payload?: any;
+  sizeEstimate?: number;
+  historyId?: string;
+  internalDate?: string;
+}
+
+export interface GmailListResponse {
+  messages?: Array<{ id: string; threadId: string }>;
+  nextPageToken?: string;
+  resultSizeEstimate?: number;
+}
+
+export interface OAuthTokens {
+  access_token: string;
+  refresh_token?: string;
+  scope: string;
+  token_type: string;
+  expiry_date: number;
+  expires_in?: number;
+}
+
 // Gmail Connection DTOs
 export interface GmailConnection {
   id: UUID;

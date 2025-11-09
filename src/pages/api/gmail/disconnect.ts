@@ -3,6 +3,9 @@ import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { revokeToken } from '@/lib/gmail';
 import { DisconnectRequest } from '@/types';
+import {
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -18,7 +21,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get the connection to revoke token
     const { data: connection, error: fetchError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('access_token, refresh_token')
       .eq('id', connection_id)
       .eq('user_id', user.id)
@@ -40,7 +43,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Hard delete the connection (per ADR-06)
     const { error: deleteError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .delete()
       .eq('id', connection_id)
       .eq('user_id', user.id);

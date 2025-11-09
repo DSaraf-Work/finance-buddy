@@ -1,5 +1,8 @@
 // Helper functions for managing user-specific bank account types
 import { supabaseAdmin } from '../supabase';
+import {
+  TABLE_CONFIG
+} from '@/lib/constants/database';
 
 const CONFIG_KEY = 'BANK_ACCOUNT_TYPES';
 
@@ -15,7 +18,7 @@ export interface BankAccountTypeConfig {
 export async function getUserBankAccountTypes(userId: string): Promise<string[]> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('fb_config')
+      .from(TABLE_CONFIG)
       .select('config_value')
       .eq('config_key', CONFIG_KEY)
       .eq('user_id', userId)
@@ -41,7 +44,7 @@ export async function getUserBankAccountTypes(userId: string): Promise<string[]>
 export async function getUserCustomAccountTypes(userId: string): Promise<string[]> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('fb_config')
+      .from(TABLE_CONFIG)
       .select('config_value')
       .eq('config_key', 'CUSTOM_ACCOUNT_TYPES')
       .eq('user_id', userId)

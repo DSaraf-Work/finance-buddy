@@ -3,6 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { EmailProcessor } from '@/lib/email-processing/processor';
+import {
+  TABLE_EMAILS_FETCHED
+} from '@/lib/constants/database';
 
 const BATCH_SIZE = 10;
 
@@ -14,7 +17,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   try {
     // Count total fetched emails
     const { count } = await supabaseAdmin
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
       .eq('status', 'Fetched');
@@ -56,7 +59,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
     try {
       // Fetch batch of fetched emails
       const { data: emails, error } = await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .select('*')
         .eq('user_id', userId)
         .eq('status', 'Fetched')
@@ -97,7 +100,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
 
           // Update email status to Processed
           await (supabaseAdmin as any)
-            .from('fb_emails')
+            .from(TABLE_EMAILS_FETCHED)
             .update({
               status: 'Processed',
               updated_at: new Date().toISOString(),
@@ -113,7 +116,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
           // Mark as failed
           try {
             await (supabaseAdmin as any)
-              .from('fb_emails')
+              .from(TABLE_EMAILS_FETCHED)
               .update({
                 status: 'Failed',
                 updated_at: new Date().toISOString(),
@@ -127,7 +130,7 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
 
       // Check if there are more emails to process
       const { count } = await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
         .eq('status', 'Fetched');

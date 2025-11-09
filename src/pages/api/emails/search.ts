@@ -17,6 +17,12 @@ import {
   PaginatedResponse,
   EmailPublic
 } from '@/types';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_GMAIL_CONNECTIONS,
+  VIEW_EMAILS_WITH_STATUS
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -123,7 +129,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // Authorization enforced by withAuth() + explicit user_id filter
     // RLS policies remain as defense-in-depth layer
     let query = supabaseAdmin
-      .from('fb_emails_with_status')
+      .from(VIEW_EMAILS_WITH_STATUS)
       .select(`
         id,
         google_user_id,
@@ -217,7 +223,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (emails && emails.length > 0) {
       const emailIds = emails.map((e: any) => e.id);
       const { data: transactions } = await supabaseAdmin
-        .from('fb_extracted_transactions')
+        .from(TABLE_EMAILS_PROCESSED)
         .select('id, email_row_id')
         .in('email_row_id', emailIds);
 
@@ -286,7 +292,7 @@ async function syncEmailsFromGmail(
 
   // Get the user's Gmail connections
   let query = (supabaseAdmin as any)
-    .from('fb_gmail_connections')
+    .from(TABLE_GMAIL_CONNECTIONS)
     .select('*')
     .eq('user_id', userId);
 
@@ -351,7 +357,7 @@ async function syncEmailsFromGmail(
 
       // Update the connection with new tokens
       await (supabaseAdmin as any)
-        .from('fb_gmail_connections')
+        .from(TABLE_GMAIL_CONNECTIONS)
         .update({
           access_token: accessToken,
           token_expiry: newExpiry.toISOString(),
@@ -370,7 +376,7 @@ async function syncEmailsFromGmail(
 
         // Mark the connection as needing re-authentication
         await (supabaseAdmin as any)
-          .from('fb_gmail_connections')
+          .from(TABLE_GMAIL_CONNECTIONS)
           .update({
             access_token: null,
             token_expiry: null,
@@ -422,7 +428,7 @@ async function syncEmailsFromGmail(
 
   // Check which messages already exist in the database
   const { data: existingMessages } = await (supabaseAdmin as any)
-    .from('fb_emails')
+    .from(TABLE_EMAILS_FETCHED)
     .select('message_id')
     .eq('user_id', userId)
     .eq('google_user_id', (connection as any).google_user_id)
@@ -486,9 +492,9 @@ async function syncEmailsFromGmail(
         ? new Date(parseInt(gmailMessage.internalDate)).toISOString()
         : null;
 
-      // Insert into fb_emails (status is now derived)
+      // Insert into fb_emails_fetched (status is now derived)
       await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .upsert({
           user_id: userId,
           google_user_id: (connection as any).google_user_id,

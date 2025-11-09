@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_GMAIL_CONNECTIONS,
+  TABLE_JOBS,
+  TABLE_REJECTED_EMAILS
+} from '@/lib/constants/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -33,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       database: {
         connected: dbConnected,
         rls_active: error?.message.includes('permission denied') || false,
-        tables: ['fb_gmail_connections', 'fb_emails', 'fb_extracted_transactions', 'fb_jobs', 'fb_rejected_emails'],
+        tables: [TABLE_GMAIL_CONNECTIONS, TABLE_EMAILS_FETCHED, TABLE_EMAILS_PROCESSED, TABLE_JOBS, TABLE_REJECTED_EMAILS],
       },
       version: '1.0.0-L1',
     });

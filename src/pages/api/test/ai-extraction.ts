@@ -4,6 +4,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { SchemaAwareTransactionExtractor } from '../../../lib/ai/extractors/transaction-schema-extractor';
 import { TransactionExtractionRequest } from '../../../lib/ai/types';
+import {
+  TABLE_EMAILS_PROCESSED,
+  VIEW_EMAILS_WITH_STATUS
+} from '@/lib/constants/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -26,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log('📧 Fetching email from database:', emailId);
       
       const { data: fetchedEmail, error: emailError } = await (supabaseAdmin as any)
-        .from('fb_emails_with_status')
+        .from(VIEW_EMAILS_WITH_STATUS)
         .select('*')
         .eq('id', emailId)
         .single();
@@ -137,7 +141,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         };
 
         const { data: saved, error: saveError } = await (supabaseAdmin as any)
-          .from('fb_extracted_transactions')
+          .from(TABLE_EMAILS_PROCESSED)
           .upsert(transactionData, {
             onConflict: 'email_row_id',
           })

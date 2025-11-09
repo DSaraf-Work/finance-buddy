@@ -5,6 +5,10 @@ import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { TransactionExtractor } from '@/lib/email-processing/extractors/transaction-extractor';
 import { TransactionExtractionRequest } from '@/lib/ai/types';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 interface ExtractTransactionRequest {
   emailId: string;
@@ -31,7 +35,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Fetch the email
     const { data: email, error: emailError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('*')
       .eq('id', emailId)
       .eq('user_id', user.id) // Ensure user owns the email
@@ -109,7 +113,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         };
 
         const { data: saved, error: saveError } = await (supabaseAdmin as any)
-          .from('fb_extracted_transactions')
+          .from(TABLE_EMAILS_PROCESSED)
           .upsert(transactionData, {
             onConflict: 'email_row_id',
           })

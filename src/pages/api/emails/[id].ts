@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth/middleware';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_FETCHED
+} from '@/lib/constants/database';
 
 /**
  * GET /api/emails/[id]
@@ -31,7 +34,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Fetch email with explicit user_id filter for authorization
     const { data, error } = await supabaseAdmin
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('id, plain_body, subject, from_address, internal_date')
       .eq('id', id)
       .eq('user_id', user.id) // Explicit authorization

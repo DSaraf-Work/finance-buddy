@@ -3,6 +3,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'GET') {
@@ -18,7 +21,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Fetch connection with auto-sync settings
     const { data: connection, error: connError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('id, auto_sync_enabled, auto_sync_interval_minutes, last_auto_sync_at')
       .eq('id', connection_id)
       .eq('user_id', user.id)

@@ -6,6 +6,11 @@ import { EmailProcessor } from '../email-processing/processor';
 import { NotificationManager } from '../notifications/notification-manager';
 import { NotificationBuilder } from '../notifications/notification-builder';
 import { SyncResult, GmailConnection } from './types';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export class SyncExecutor {
   private emailProcessor = new EmailProcessor();
@@ -36,7 +41,7 @@ export class SyncExecutor {
         
         // Update token in database
         await (supabaseAdmin as any)
-          .from('fb_gmail_connections')
+          .from(TABLE_GMAIL_CONNECTIONS)
           .update({
             access_token: accessToken,
             token_expiry: new Date(Date.now() + 3600000).toISOString(),
@@ -59,7 +64,7 @@ export class SyncExecutor {
         maxResults: 50, // Limit to prevent timeout
       });
 
-      const messageIds = gmailResponse.messages?.map(m => m.id) || [];
+      const messageIds: string[] = gmailResponse.messages?.map((m: any) => m.id as string) || [];
       result.emails_found = messageIds.length;
 
       if (messageIds.length === 0) {
@@ -72,7 +77,7 @@ export class SyncExecutor {
 
       // Step 5: Check which messages already exist
       const { data: existingEmails } = await (supabaseAdmin as any)
-        .from('fb_emails')
+        .from(TABLE_EMAILS_FETCHED)
         .select('message_id')
         .eq('user_id', connection.user_id)
         .eq('google_user_id', connection.google_user_id)
@@ -159,7 +164,7 @@ export class SyncExecutor {
   private async calculateSyncWindow(userId: string): Promise<Date> {
     // Get the most recent processed email
     const { data: lastProcessedEmail } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('internal_date')
       .eq('user_id', userId)
       .eq('status', 'Processed')
@@ -188,7 +193,7 @@ export class SyncExecutor {
 
     // Get email row IDs from message IDs
     const { data: emails } = await supabaseAdmin
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('id, message_id')
       .eq('user_id', userId)
       .in('message_id', emailIds);
@@ -209,7 +214,7 @@ export class SyncExecutor {
         if (result.success && result.successCount > 0) {
           // Fetch the created transaction
           const { data: transaction } = await (supabaseAdmin as any)
-            .from('fb_extracted_transactions')
+            .from(TABLE_EMAILS_PROCESSED)
             .select('*')
             .eq('email_row_id', (email as any).id)
             .order('created_at', { ascending: false })
@@ -241,7 +246,7 @@ export class SyncExecutor {
       try {
         // Fetch related email
         const { data: email } = await supabaseAdmin
-          .from('fb_emails')
+          .from(TABLE_EMAILS_FETCHED)
           .select('*')
           .eq('id', transaction.email_row_id)
           .single();

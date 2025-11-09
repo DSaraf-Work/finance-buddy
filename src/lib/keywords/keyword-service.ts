@@ -3,6 +3,9 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { TransactionKeyword } from '@/pages/api/keywords';
+import {
+  TABLE_TRANSACTION_KEYWORDS
+} from '@/lib/constants/database';
 
 export interface KeywordUsageStats {
   frequent: TransactionKeyword[];
@@ -17,7 +20,7 @@ export class KeywordService {
   static async getUserKeywords(userId: string): Promise<TransactionKeyword[]> {
     try {
       const { data: rawKeywords, error } = await (supabaseAdmin as any)
-        .from('fb_transaction_keywords')
+        .from(TABLE_TRANSACTION_KEYWORDS)
         .select('*')
         .eq('user_id', userId)
         .eq('is_active', true)

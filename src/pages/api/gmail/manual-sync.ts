@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
+import {
   listMessages,
   getMessage,
   getMessageRaw,
@@ -50,7 +54,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get connection with token refresh if needed
     const { data: connection, error: connError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('*')
       .eq('id', connection_id)
       .eq('user_id', user.id)
@@ -75,7 +79,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         newExpiry.setSeconds(newExpiry.getSeconds() + (newTokens.expires_in || 3600));
         
         await (supabaseAdmin as any)
-          .from('fb_gmail_connections')
+          .from(TABLE_GMAIL_CONNECTIONS)
           .update({
             access_token: accessToken,
             token_expiry: newExpiry.toISOString(),
@@ -119,7 +123,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Step 3: Probe DB for existing messages
     const { data: existingMessages, error: probeError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('message_id')
       .eq('user_id', user.id)
       .eq('google_user_id', (connection as any).google_user_id)
@@ -167,7 +171,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
         // Step 5: Upsert into fb_emails
         const { error: upsertError } = await (supabaseAdmin as any)
-          .from('fb_emails')
+          .from(TABLE_EMAILS_FETCHED)
           .upsert({
             user_id: user.id,
             google_user_id: (connection as any).google_user_id,
@@ -200,7 +204,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Update last sync time
     await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .update({
         last_sync_at: new Date().toISOString(),
         last_error: null,
@@ -210,7 +214,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Step 6: Return results with proper ordering
     const { data: resultEmails, error: resultError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select(`
         id,
         google_user_id,

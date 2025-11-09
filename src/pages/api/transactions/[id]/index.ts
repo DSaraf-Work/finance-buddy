@@ -3,6 +3,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   const { id } = req.query;
@@ -15,7 +18,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     try {
       // Fetch transaction with related email
       const { data: transaction, error: txnError } = await supabaseAdmin
-        .from('fb_extracted_transactions')
+        .from(TABLE_EMAILS_PROCESSED)
         .select(`
           *,
           email:fb_emails!email_row_id (
@@ -84,7 +87,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Update transaction
       const { data: updated, error: updateError } = await (supabaseAdmin as any)
-        .from('fb_extracted_transactions')
+        .from(TABLE_EMAILS_PROCESSED)
         .update(filteredUpdates)
         .eq('id', id)
         .eq('user_id', user.id)
@@ -111,7 +114,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'DELETE') {
     try {
       const { error: deleteError } = await supabaseAdmin
-        .from('fb_extracted_transactions')
+        .from(TABLE_EMAILS_PROCESSED)
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);

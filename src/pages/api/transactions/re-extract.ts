@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { SchemaAwareTransactionExtractor } from '../../../lib/ai/extractors/transaction-schema-extractor';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUser) => {
   if (req.method !== 'POST') {
@@ -26,7 +30,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUs
 
     // Get the transaction with email_row_id
     const { data: transaction, error: transactionError } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .select('id, email_row_id, user_id')
       .eq('id', transactionId)
       .eq('user_id', userId)
@@ -38,7 +42,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUs
 
     // Get the original email
     const { data: email, error: emailError } = await (supabaseAdmin as any)
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('*')
       .eq('id', (transaction as any).email_row_id)
       .single();
@@ -139,7 +143,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUs
     };
 
     const { data: updatedTransaction, error: updateError } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .update(updatedData)
       .eq('id', transactionId)
       .eq('user_id', userId)

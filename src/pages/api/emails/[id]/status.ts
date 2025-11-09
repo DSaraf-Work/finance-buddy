@@ -2,6 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
+import {
+  TABLE_EMAILS_FETCHED,
+  TABLE_REJECTED_EMAILS,
+  VIEW_EMAILS_WITH_STATUS
+} from '@/lib/constants/database';
 
 interface EmailActionRequest {
   action: 'reject' | 'unreject';
@@ -34,7 +39,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get email details first
     const { data: email, error: emailError } = await supabaseAdmin
-      .from('fb_emails')
+      .from(TABLE_EMAILS_FETCHED)
       .select('user_id, google_user_id, connection_id')
       .eq('id', id)
       .eq('user_id', user.id)
@@ -48,7 +53,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       // Add to rejected emails using service role (bypassing RLS)
       const emailData = email as any;
       const { error: rejectError } = await supabaseAdmin
-        .from('fb_rejected_emails')
+        .from(TABLE_REJECTED_EMAILS)
         .upsert({
           user_id: emailData.user_id,
           google_user_id: emailData.google_user_id,
@@ -71,7 +76,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     } else if (action === 'unreject') {
       // Remove from rejected emails using service role (bypassing RLS)
       const { error: unrejectError } = await supabaseAdmin
-        .from('fb_rejected_emails')
+        .from(TABLE_REJECTED_EMAILS)
         .delete()
         .eq('email_row_id', id)
         .eq('user_id', user.id);
@@ -84,7 +89,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get the updated email with derived status
     const { data: updatedEmail, error: fetchError } = await (supabaseAdmin as any)
-      .from('fb_emails_with_status')
+      .from(VIEW_EMAILS_WITH_STATUS)
       .select('*')
       .eq('id', id)
       .eq('user_id', user.id)

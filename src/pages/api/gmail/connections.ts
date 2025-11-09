@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { ConnectionsResponse, GmailConnectionPublic } from '@/types';
+import {
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 /**
  * Get Gmail connections for the authenticated user
@@ -31,7 +34,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // Use supabaseAdmin for server-side operations
     // Authorization is enforced by withAuth() + explicit user_id filter
     const { data: connections, error } = await supabaseAdmin
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select(`
         id,
         email_address,

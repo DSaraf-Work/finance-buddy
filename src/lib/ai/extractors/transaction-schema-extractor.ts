@@ -6,6 +6,9 @@ import { AIRequest } from '../types';
 import { KeywordService } from '../../keywords/keyword-service';
 import { getUserBankAccountConfig } from '../../config/bank-account-types';
 import { supabaseAdmin } from '../../supabase';
+import {
+  TABLE_CONFIG
+} from '@/lib/constants/database';
 
 /**
  * Fetch user-specific transaction categories from the database
@@ -13,7 +16,7 @@ import { supabaseAdmin } from '../../supabase';
 async function getUserCategories(userId: string): Promise<string[]> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('fb_config')
+      .from(TABLE_CONFIG)
       .select('config_value')
       .eq('config_key', 'TRANSACTION_CATEGORIES')
       .eq('user_id', userId)

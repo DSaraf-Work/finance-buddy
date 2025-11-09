@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_PROCESSED,
+  TABLE_TRANSACTION_KEYWORDS
+} from '@/lib/constants/database';
 
 // Helper function to update keyword usage counts
 async function updateKeywordUsage(userId: string, aiNotes: string) {
@@ -12,7 +16,7 @@ async function updateKeywordUsage(userId: string, aiNotes: string) {
     try {
       // Find the keyword by text and user
       const { data: keywordData, error: findError } = await (supabaseAdmin as any)
-        .from('fb_transaction_keywords')
+        .from(TABLE_TRANSACTION_KEYWORDS)
         .select('id, usage_count')
         .eq('user_id', userId)
         .eq('keyword', keywordText)
@@ -22,7 +26,7 @@ async function updateKeywordUsage(userId: string, aiNotes: string) {
         // Increment usage count
         const newUsageCount = ((keywordData as any).usage_count || 0) + 1;
         await (supabaseAdmin as any)
-          .from('fb_transaction_keywords')
+          .from(TABLE_TRANSACTION_KEYWORDS)
           .update({ usage_count: newUsageCount })
           .eq('id', (keywordData as any).id);
       }
@@ -37,7 +41,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     try {
       // Fetch transactions for the authenticated user
       const { data: transactions, error } = await (supabaseAdmin as any)
-        .from('fb_extracted_transactions')
+        .from(TABLE_EMAILS_PROCESSED)
         .select('*')
         .eq('user_id', user.id)
         .order('txn_time', { ascending: false });
@@ -101,7 +105,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Update the transaction with all editable fields
       const { data: updatedTransaction, error } = await (supabaseAdmin as any)
-        .from('fb_extracted_transactions')
+        .from(TABLE_EMAILS_PROCESSED)
         .update({
           txn_time: txn_time ? new Date(txn_time).toISOString() : null,
           amount: amount ? parseFloat(amount) : null,

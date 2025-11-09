@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import {
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
+import {
   TransactionSearchRequest,
   PaginatedResponse,
   ExtractedTransactionPublic
@@ -46,7 +49,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // Authorization enforced by withAuth() + explicit user_id filter
     // RLS policies remain as defense-in-depth layer
     let query = supabaseAdmin
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .select(`
         id,
         google_user_id,

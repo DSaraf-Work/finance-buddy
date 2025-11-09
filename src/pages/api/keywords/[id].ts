@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser, createUserClient } from '@/lib/auth';
+import {
+  TABLE_TRANSACTION_KEYWORDS
+} from '@/lib/constants/database';
 
 export interface KeywordUpdateRequest {
   keyword?: string;
@@ -43,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 async function handleGetKeyword(req: NextApiRequest, res: NextApiResponse, userId: string, keywordId: string, supabase: any) {
   try {
     const { data: keyword, error } = await supabase
-      .from('fb_transaction_keywords')
+      .from(TABLE_TRANSACTION_KEYWORDS)
       .select('*')
       .eq('id', keywordId)
       .single();
@@ -95,7 +98,7 @@ async function handleUpdateKeyword(req: NextApiRequest, res: NextApiResponse, us
 
   try {
     const { data: updatedKeyword, error } = await supabase
-      .from('fb_transaction_keywords')
+      .from(TABLE_TRANSACTION_KEYWORDS)
       .update(updates)
       .eq('id', keywordId)
       .select()
@@ -122,7 +125,7 @@ async function handleUpdateKeyword(req: NextApiRequest, res: NextApiResponse, us
 async function handleDeleteKeyword(req: NextApiRequest, res: NextApiResponse, userId: string, keywordId: string, supabase: any) {
   try {
     const { error } = await supabase
-      .from('fb_transaction_keywords')
+      .from(TABLE_TRANSACTION_KEYWORDS)
       .delete()
       .eq('id', keywordId);
 

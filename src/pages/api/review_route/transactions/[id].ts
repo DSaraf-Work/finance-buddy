@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth/middleware';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_EMAILS_PROCESSED
+} from '@/lib/constants/database';
 
 /**
  * PATCH /api/review_route/transactions/[id]
@@ -31,7 +34,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // First, verify the transaction belongs to the user
     const { data: existingTransaction, error: fetchError } = await supabaseAdmin
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .select('id, user_id')
       .eq('id', id)
       .eq('user_id', user.id) // Explicit authorization
@@ -82,7 +85,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Update the transaction
     const { data, error } = await (supabaseAdmin as any)
-      .from('fb_extracted_transactions')
+      .from(TABLE_EMAILS_PROCESSED)
       .update(updateData)
       .eq('id', id)
       .eq('user_id', user.id) // Explicit authorization

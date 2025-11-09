@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getAuthUser } from '@/lib/auth';
 import { exchangeCodeForTokens, getUserInfo } from '@/lib/gmail';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log('📞 Gmail OAuth Callback received:', {
@@ -206,7 +209,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Store connection in database
     const { error: dbError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .upsert(connectionData, {
         onConflict: 'user_id,email_address',
       });

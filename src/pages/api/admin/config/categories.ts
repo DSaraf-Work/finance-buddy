@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_CONFIG
+} from '@/lib/constants/database';
 
 const CONFIG_KEY = 'TRANSACTION_CATEGORIES';
 
@@ -12,7 +15,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (req.method === 'GET') {
       // Get user's transaction categories using service role (bypasses RLS)
       const { data, error } = await supabaseAdmin
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .eq('user_id', user.id)
@@ -40,7 +43,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Get current categories
       const { data: currentData, error: fetchError } = await supabaseAdmin
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .eq('user_id', user.id)
@@ -64,7 +67,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       if (currentData) {
         // Update existing config
         const { error } = await (supabaseAdmin as any)
-          .from('fb_config')
+          .from(TABLE_CONFIG)
           .update({
             config_value: updatedCategories,
             updated_at: new Date().toISOString(),
@@ -76,7 +79,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       } else {
         // Create new config
         const { error } = await (supabaseAdmin as any)
-          .from('fb_config')
+          .from(TABLE_CONFIG)
           .insert({
             user_id: user.id,
             config_key: CONFIG_KEY,
@@ -99,7 +102,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Get current categories
       const { data: currentData, error: fetchError } = await supabaseAdmin
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .eq('user_id', user.id)
@@ -118,7 +121,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Update config
       const { error } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .update({
           config_value: updatedCategories,
           updated_at: new Date().toISOString(),

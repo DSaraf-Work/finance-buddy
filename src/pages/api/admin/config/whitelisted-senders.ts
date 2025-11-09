@@ -2,6 +2,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import {
+  TABLE_CONFIG
+} from '@/lib/constants/database';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   const CONFIG_KEY = 'WHITELISTED_SENDERS';
@@ -10,7 +13,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (req.method === 'GET') {
       // Get whitelisted senders
       const { data, error } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .single();
@@ -35,7 +38,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Get current senders
       const { data: currentData } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .single();
@@ -50,7 +53,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       const updatedSenders = [...currentSenders, normalizedSender];
 
       const { error } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .update({
           config_value: updatedSenders,
           updated_at: new Date().toISOString(),
@@ -72,7 +75,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Get current senders
       const { data: currentData } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .select('config_value')
         .eq('config_key', CONFIG_KEY)
         .single();
@@ -83,7 +86,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       const updatedSenders = currentSenders.filter(s => s !== sender);
 
       const { error } = await (supabaseAdmin as any)
-        .from('fb_config')
+        .from(TABLE_CONFIG)
         .update({
           config_value: updatedSenders,
           updated_at: new Date().toISOString(),

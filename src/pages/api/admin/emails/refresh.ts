@@ -3,6 +3,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { refreshAccessToken, listMessages, getMessage } from '@/lib/gmail';
+import {
+  TABLE_CONFIG,
+  TABLE_EMAILS_FETCHED,
+  TABLE_EMAILS_PROCESSED,
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 interface RefreshStats {
   totalFetched: number;
@@ -26,7 +32,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get user's bank account types
     const { data: configData } = await (supabaseAdmin as any)
-      .from('fb_config')
+      .from(TABLE_CONFIG)
       .select('config_value')
       .eq('config_key', 'BANK_ACCOUNT_TYPES')
       .eq('user_id', user.id)
@@ -40,7 +46,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Get all Gmail connections for the user
     const { data: connections, error: connectionsError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('*')
       .eq('user_id', user.id);
 
@@ -63,7 +69,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
           // Update token in database
           await (supabaseAdmin as any)
-            .from('fb_gmail_connections')
+            .from(TABLE_GMAIL_CONNECTIONS)
             .update({
               access_token: accessToken,
               token_expiry: new Date(Date.now() + 3600000).toISOString(),
@@ -73,7 +79,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
         // Get last refresh timestamp
         const { data: lastEmail } = await (supabaseAdmin as any)
-          .from('fb_emails')
+          .from(TABLE_EMAILS_FETCHED)
           .select('internal_date')
           .eq('user_id', user.id)
           .eq('connection_id', connection.id)
@@ -116,8 +122,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
               // Extract email data
               const headers = fullMessage.payload?.headers || [];
-              const getHeader = (name: string) => 
-                headers.find(h => h.name.toLowerCase() === name.toLowerCase())?.value || '';
+              const getHeader = (name: string) =>
+                headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
 
               const from = getHeader('from');
               const to = getHeader('to');
@@ -130,7 +136,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
                 body = Buffer.from(fullMessage.payload.body.data, 'base64').toString('utf-8');
               } else if (fullMessage.payload?.parts) {
                 const textPart = fullMessage.payload.parts.find(
-                  part => part.mimeType === 'text/plain' || part.mimeType === 'text/html'
+                  (part: any) => part.mimeType === 'text/plain' || part.mimeType === 'text/html'
                 );
                 if (textPart?.body?.data) {
                   body = Buffer.from(textPart.body.data, 'base64').toString('utf-8');
@@ -141,7 +147,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
               // Check if email already exists
               const { data: existingEmail } = await (supabaseAdmin as any)
-                .from('fb_emails')
+                .from(TABLE_EMAILS_FETCHED)
                 .select('id')
                 .eq('user_id', user.id)
                 .eq('google_user_id', connection.google_user_id)
@@ -151,7 +157,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
               if (existingEmail) {
                 // Update existing email
                 await (supabaseAdmin as any)
-                  .from('fb_emails')
+                  .from(TABLE_EMAILS_FETCHED)
                   .update({
                     from_address: from,
                     to_address: to,
@@ -165,7 +171,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
                 // Mark related transactions as REFRESHED
                 await (supabaseAdmin as any)
-                  .from('fb_extracted_transactions')
+                  .from(TABLE_EMAILS_PROCESSED)
                   .update({ status: 'REFRESHED' })
                   .eq('email_id', existingEmail.id);
 
@@ -173,7 +179,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
               } else {
                 // Insert new email
                 await (supabaseAdmin as any)
-                  .from('fb_emails')
+                  .from(TABLE_EMAILS_FETCHED)
                   .insert({
                     user_id: user.id,
                     connection_id: connection.id,

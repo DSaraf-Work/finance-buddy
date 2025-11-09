@@ -4,6 +4,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { SyncExecutor } from '@/lib/gmail-auto-sync/sync-executor';
+import {
+  TABLE_GMAIL_CONNECTIONS
+} from '@/lib/constants/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -24,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     // Find all connections with auto-sync enabled
     const { data: connections, error: connError } = await (supabaseAdmin as any)
-      .from('fb_gmail_connections')
+      .from(TABLE_GMAIL_CONNECTIONS)
       .select('*')
       .eq('auto_sync_enabled', true);
 
@@ -78,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Update last sync time
         await (supabaseAdmin as any)
-          .from('fb_gmail_connections')
+          .from(TABLE_GMAIL_CONNECTIONS)
           .update({
             last_auto_sync_at: new Date().toISOString(),
           })
