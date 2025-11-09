@@ -10,6 +10,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   console.log('🔔 Received Gmail Pub/Sub notification');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('📨 REQUEST HEADERS:');
+  console.log(JSON.stringify(req.headers, null, 2));
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('📦 REQUEST BODY:');
+  console.log(JSON.stringify(req.body, null, 2));
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
   let auditLogId: string | null = null;
 
   try {
@@ -27,11 +35,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Invalid message format' });
     }
 
-    // Step 3: Parse notification
-    const notification = validator.parseMessage(req.body);
-    console.log('📧 Notification:', notification);
+    // Step 3: Decode and log the message data
+    if (req.body?.message?.data) {
+      try {
+        const decodedData = Buffer.from(req.body.message.data, 'base64').toString('utf-8');
+        console.log('🔓 DECODED MESSAGE DATA (base64 → utf-8):');
+        console.log(decodedData);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-    // Step 4: Find connection for this email
+        // Try to parse as JSON for better readability
+        try {
+          const parsedData = JSON.parse(decodedData);
+          console.log('📋 PARSED MESSAGE DATA (JSON):');
+          console.log(JSON.stringify(parsedData, null, 2));
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        } catch {
+          console.log('⚠️ Message data is not valid JSON (plain text):');
+          console.log(decodedData);
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        }
+      } catch (decodeError) {
+        console.error('❌ Failed to decode message data:', decodeError);
+      }
+    }
+
+    // Step 4: Parse notification
+    let notification;
+    try {
+      notification = validator.parseMessage(req.body);
+      console.log('📧 PARSED NOTIFICATION:');
+      console.log(JSON.stringify(notification, null, 2));
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    } catch (error: any) {
+      // Check if this is a test message
+      if (error.message.includes('Test message detected')) {
+        console.log('✅ Test message received successfully');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        return res.status(200).json({
+          success: true,
+          message: 'Test message received',
+          note: 'This was a test message from GCP Console, not a real Gmail notification'
+        });
+      }
+      throw error; // Re-throw if it's a real error
+    }
+
+    // Step 5: Find connection for this email
     const { data: connection } = await supabaseAdmin
       .from('fb_gmail_connections')
       .select('*')
@@ -39,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('watch_enabled', true)
       .single();
 
-    // Step 5: Create audit log
+    // Step 6: Create audit log
     auditLogId = await AuditLogger.logWebhookReceived(req, {
       messageId: req.body?.message?.messageId || `msg_${Date.now()}`,
       subscriptionName: req.body?.subscription,
@@ -52,7 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       requestBody: req.body,
     });
 
-    // Step 6: Log webhook receipt (legacy table for backward compatibility)
+    // Step 7: Log webhook receipt (legacy table for backward compatibility)
     const { data: webhookLog } = await supabaseAdmin
       .from('fb_webhook_logs')
       // @ts-ignore - Supabase type inference issue
@@ -98,7 +147,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Step 7: Get last known history ID
+    // Step 8: Get last known history ID
     const lastHistoryId = (connection as any).last_history_id;
 
     if (!lastHistoryId) {
@@ -133,7 +182,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Step 8: Update audit log - processing started
+    // Step 9: Update audit log - processing started
     if (auditLogId) {
       await AuditLogger.updateAuditLog(auditLogId, {
         status: 'processing',
@@ -141,7 +190,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Step 9: Sync emails from history
+    // Step 10: Sync emails from history
     const syncStartTime = Date.now();
     const syncResult = await historySync.syncFromHistory(
       (connection as any).id,
@@ -149,7 +198,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
     const syncDuration = Date.now() - syncStartTime;
 
-    // Step 10: Update audit log with results
+    // Step 11: Update audit log with results
     if (auditLogId) {
       await AuditLogger.updateAuditLog(auditLogId, {
         status: syncResult.success ? 'success' : 'failed',
@@ -169,7 +218,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Step 11: Update webhook log (legacy)
+    // Step 12: Update webhook log (legacy)
     if (webhookLog) {
       await supabaseAdmin
         .from('fb_webhook_logs')
