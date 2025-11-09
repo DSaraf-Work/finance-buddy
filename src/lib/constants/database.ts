@@ -49,11 +49,6 @@ export const TABLE_SYNC_FILTERS = 'fb_sync_filters' as const;
 export const TABLE_TRANSACTION_KEYWORDS = 'fb_transaction_keywords' as const;
 
 /**
- * Background jobs queue
- */
-export const TABLE_JOBS = 'fb_jobs' as const;
-
-/**
  * Rejected emails (non-transactional)
  */
 export const TABLE_REJECTED_EMAILS = 'fb_rejected_emails' as const;
@@ -110,7 +105,6 @@ export const ACTIVE_TABLES = [
   TABLE_CONFIG,
   TABLE_SYNC_FILTERS,
   TABLE_TRANSACTION_KEYWORDS,
-  TABLE_JOBS,
   TABLE_REJECTED_EMAILS,
 ] as const;
 

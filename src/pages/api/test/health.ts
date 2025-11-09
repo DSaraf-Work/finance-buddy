@@ -4,7 +4,6 @@ import {
   TABLE_EMAILS_FETCHED,
   TABLE_EMAILS_PROCESSED,
   TABLE_GMAIL_CONNECTIONS,
-  TABLE_JOBS,
   TABLE_REJECTED_EMAILS
 } from '@/lib/constants/database';
 
@@ -40,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       database: {
         connected: dbConnected,
         rls_active: error?.message.includes('permission denied') || false,
-        tables: [TABLE_GMAIL_CONNECTIONS, TABLE_EMAILS_FETCHED, TABLE_EMAILS_PROCESSED, TABLE_JOBS, TABLE_REJECTED_EMAILS],
+        tables: [TABLE_GMAIL_CONNECTIONS, TABLE_EMAILS_FETCHED, TABLE_EMAILS_PROCESSED, TABLE_REJECTED_EMAILS],
       },
       version: '1.0.0-L1',
     });

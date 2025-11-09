@@ -420,42 +420,6 @@ export type Database = {
         }
         Relationships: []
       }
-      fb_jobs: {
-        Row: {
-          attempts: number
-          created_at: string
-          id: string
-          last_error: string | null
-          payload: Json
-          status: string
-          type: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          attempts?: number
-          created_at?: string
-          id?: string
-          last_error?: string | null
-          payload: Json
-          status?: string
-          type: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          attempts?: number
-          created_at?: string
-          id?: string
-          last_error?: string | null
-          payload?: Json
-          status?: string
-          type?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       fb_user_active_keywords: {
