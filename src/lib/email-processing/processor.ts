@@ -105,7 +105,7 @@ export class EmailProcessor {
     }
   }
 
-  async processEmail(email: any): Promise<void> {
+  async processEmail(email: any): Promise<string[]> {
     console.log(`🔄 Processing email ${email.id}:`, {
       subject: email.subject,
       from: email.from_address,
@@ -156,11 +156,13 @@ export class EmailProcessor {
       throw new Error('Transaction extraction failed - no result returned');
     }
 
-    // Save extracted transaction
-    await this.saveExtractedTransaction(email, extractedTransaction);
+    // Save extracted transaction and get the ID
+    const transactionId = await this.saveExtractedTransaction(email, extractedTransaction);
 
     // Email status will automatically become 'PROCESSED' due to the transaction being saved
     console.log(`✅ Email ${email.id} processed successfully - status will be derived as PROCESSED`);
+
+    return transactionId ? [transactionId] : [];
   }
 
   private async getEmailsToProcess(request: EmailProcessingRequest): Promise<any[]> {
@@ -200,7 +202,7 @@ export class EmailProcessor {
     return emails || [];
   }
 
-  private async saveExtractedTransaction(email: any, transaction: any): Promise<void> {
+  private async saveExtractedTransaction(email: any, transaction: any): Promise<string | null> {
     // Handle both old and new transaction formats
     const transactionData: Database['public']['Tables']['fb_extracted_transactions']['Insert'] = {
       user_id: email.user_id,
@@ -234,15 +236,19 @@ export class EmailProcessor {
       confidence: transactionData.confidence,
     });
 
-    const { error } = await (supabaseAdmin as any)
+    const { data, error } = await (supabaseAdmin as any)
       .from('fb_extracted_transactions')
       .upsert(transactionData, {
         onConflict: 'email_row_id',
-      });
+      })
+      .select('id')
+      .single();
 
     if (error) {
       throw new Error(`Failed to save transaction: ${error.message}`);
     }
+
+    return data?.id || null;
   }
 
   private async rejectEmail(emailId: string, reason: string, type: string = 'processing_error', errorDetails?: any): Promise<void> {

@@ -12,7 +12,7 @@ if (!supabaseServiceKey) {
   throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable');
 }
 
-// Service role client for server-side operations
+// Service role client for server-side operations (bypasses RLS)
 export const supabaseAdmin = createClient<Database>(
   supabaseUrl,
   supabaseServiceKey,
@@ -20,6 +20,9 @@ export const supabaseAdmin = createClient<Database>(
     auth: {
       autoRefreshToken: false,
       persistSession: false,
+    },
+    db: {
+      schema: 'public',
     },
   }
 );
