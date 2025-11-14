@@ -5,6 +5,11 @@ import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import TransactionRow from '@/components/TransactionRow';
 import TransactionModal from '@/components/TransactionModal';
+import TransactionStats from '@/components/TransactionStats';
+import TransactionFilters from '@/components/TransactionFilters';
+import TransactionCard from '@/components/TransactionCard';
+import { TransactionListSkeleton } from '@/components/TransactionSkeleton';
+import TransactionEmptyState from '@/components/TransactionEmptyState';
 
 export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
 
@@ -419,150 +424,21 @@ export default function TransactionsPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Transactions</p>
-                <p className="text-4xl font-bold text-gray-900 mt-2">{stats.total}</p>
-                <p className="text-sm text-gray-500 mt-1">Processed transactions</p>
-              </div>
-              <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-            </div>
-          </div>
+            <TransactionStats
+              total={stats.total}
+              totalAmount={stats.totalAmount}
+              avgConfidence={stats.avgConfidence}
+              loading={loading}
+            />
 
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Amount</p>
-                <p className="text-4xl font-bold text-gray-900 mt-2">₹{stats.totalAmount.toLocaleString()}</p>
-                <p className="text-sm text-gray-500 mt-1">Transaction value</p>
-              </div>
-              <div className="p-4 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Avg Confidence</p>
-                <p className="text-4xl font-bold text-gray-900 mt-2">{stats.avgConfidence}%</p>
-                <p className="text-sm text-gray-500 mt-1">AI accuracy</p>
-              </div>
-              <div className="p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl">
-                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
-            <button
-              onClick={handleClearFilters}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Clear All
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {/* Date From */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-              <input
-                type="date"
-                value={filters.date_from}
-                onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Date To */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-              <input
-                type="date"
-                value={filters.date_to}
-                onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                value={filters.status}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">All Statuses</option>
-                <option value="REVIEW">Review</option>
-                <option value="APPROVED">Approved</option>
-                <option value="INVALID">Invalid</option>
-                <option value="REJECTED">Rejected</option>
-              </select>
-            </div>
-
-            {/* Direction */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-              <select
-                value={filters.direction}
-                onChange={(e) => handleFilterChange('direction', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">All Types</option>
-                <option value="debit">Debit</option>
-                <option value="credit">Credit</option>
-              </select>
-            </div>
-
-            {/* Category */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-              <input
-                type="text"
-                value={filters.category}
-                onChange={(e) => handleFilterChange('category', e.target.value)}
-                placeholder="e.g., Food"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Merchant */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Merchant</label>
-              <input
-                type="text"
-                value={filters.merchant}
-                onChange={(e) => handleFilterChange('merchant', e.target.value)}
-                placeholder="e.g., Swiggy"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={handleApplyFilters}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Apply Filters
-            </button>
-          </div>
-        </div>
+            {/* Filters */}
+            <TransactionFilters
+              filters={filters}
+              categories={categories}
+              onFilterChange={setFilters}
+              onSearch={handleApplyFilters}
+              onReset={handleClearFilters}
+            />
 
         {/* Pagination Controls - Top */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mb-6">
@@ -615,155 +491,23 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        {/* Transactions Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          {transactions.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="text-gray-300 text-8xl mb-6">💳</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">No transactions found</h3>
-              <p className="text-gray-600 mb-6">Process some emails to see transactions here.</p>
-              <button
-                onClick={() => searchTransactions()}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Refresh Transactions
-              </button>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Merchant
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Account Type
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Amount
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {transactions.map((transaction) => {
-                    const formatDate = (dateString?: string | null) => {
-                      if (!dateString) return 'N/A';
-                      return new Date(dateString).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      });
-                    };
-
-                    const formatAmount = (amount?: string | null, currency?: string | null, direction?: string | null) => {
-                      if (!amount) return 'N/A';
-                      const numAmount = parseFloat(amount);
-                      const formatted = new Intl.NumberFormat('en-IN', {
-                        style: 'currency',
-                        currency: currency || 'INR',
-                      }).format(numAmount);
-
-                      return direction === 'debit' ? `-${formatted}` : formatted;
-                    };
-
-                    const getStatusBadge = (status: TransactionStatus) => {
-                      const styles = {
-                        'REVIEW': 'bg-yellow-100 text-yellow-800',
-                        'APPROVED': 'bg-green-100 text-green-800',
-                        'REJECTED': 'bg-red-100 text-red-800',
-                        'INVALID': 'bg-gray-100 text-gray-800',
-                      };
-                      return styles[status] || styles['REVIEW'];
-                    };
-
-                    return (
-                      <tr key={transaction.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {formatDate(transaction.txn_time)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {transaction.merchant_name || 'Unknown Merchant'}
-                          </div>
-                          {transaction.account_hint && (
-                            <div className="text-sm text-gray-500">
-                              {transaction.account_hint}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 capitalize">
-                            {transaction.category || 'Uncategorized'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <span className="text-xl mr-2">💳</span>
-                            <span className="text-sm font-medium text-gray-900">
-                              {transaction.account_type || 'N/A'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <div className={`text-sm font-medium ${
-                            transaction.direction === 'debit' ? 'text-red-600' : 'text-green-600'
-                          }`}>
-                            {formatAmount(transaction.amount, transaction.currency, transaction.direction)}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {transaction.confidence ? `${Math.round(parseFloat(transaction.confidence) * 100)}% confidence` : ''}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(transaction.status)}`}>
-                            {transaction.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                          <button
-                            onClick={() => openTransactionModal(transaction)}
-                            className="text-blue-600 hover:text-blue-900 mr-3"
-                          >
-                            Edit
-                          </button>
-                          {transaction.status !== 'APPROVED' && (
-                            <button
-                              onClick={() => handleStatusUpdate(transaction.id, 'APPROVED')}
-                              className="text-green-600 hover:text-green-900 mr-3"
-                            >
-                              Approve
-                            </button>
-                          )}
-                          {transaction.status !== 'REJECTED' && (
-                            <button
-                              onClick={() => handleStatusUpdate(transaction.id, 'REJECTED')}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Reject
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+            {/* Transactions List */}
+            {loading ? (
+              <TransactionListSkeleton count={10} />
+            ) : transactions.length === 0 ? (
+              <TransactionEmptyState onRefresh={() => searchTransactions()} />
+            ) : (
+              <div className="space-y-4">
+                {transactions.map((transaction) => (
+                  <TransactionCard
+                    key={transaction.id}
+                    transaction={transaction}
+                    onQuickEdit={() => openTransactionModal(transaction)}
+                    onStatusUpdate={(status) => handleStatusUpdate(transaction.id, status)}
+                  />
+                ))}
+              </div>
+            )}
 
         {/* Pagination Controls - Bottom */}
         {transactions.length > 0 && (
