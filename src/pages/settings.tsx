@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
+import { PushNotificationPrompt } from '@/components/PushNotificationPrompt';
 
 const SettingsPage: NextPage = () => {
   const { user, updatePassword } = useAuth();
@@ -208,6 +209,19 @@ const SettingsPage: NextPage = () => {
                       {passwordLoading ? 'Updating...' : 'Update Password'}
                     </button>
                   </form>
+                </div>
+              </div>
+
+              {/* Push Notifications */}
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-lg font-medium text-gray-900">Push Notifications</h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Get notified when new transactions are extracted
+                  </p>
+                </div>
+                <div className="px-6 py-4">
+                  <PushNotificationPrompt />
                 </div>
               </div>
 

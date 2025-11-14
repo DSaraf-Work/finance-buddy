@@ -240,6 +240,36 @@ export type Database = {
         }
         Relationships: []
       }
+      fb_push_subscriptions: {
+        Row: {
+          created_at: string
+          endpoint: string
+          expiration_time: number | null
+          id: string
+          keys: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          expiration_time?: number | null
+          id?: string
+          keys: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          expiration_time?: number | null
+          id?: string
+          keys?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       fb_rejected_emails: {
         Row: {
           connection_id: string

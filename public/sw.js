@@ -126,3 +126,90 @@ self.addEventListener('message', (event) => {
   }
 });
 
+// ============================================================================
+// PUSH NOTIFICATION HANDLERS
+// ============================================================================
+
+// Handle push events
+self.addEventListener('push', (event) => {
+  console.log('[SW] Push received:', event);
+
+  let data = {
+    title: 'Finance Buddy',
+    body: 'You have a new notification',
+    icon: '/icons/icon-192x192.png',
+    badge: '/icons/icon-72x72.png',
+    url: '/',
+  };
+
+  // Parse push payload
+  if (event.data) {
+    try {
+      data = { ...data, ...event.data.json() };
+    } catch (error) {
+      console.error('[SW] Failed to parse push data:', error);
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon,
+    badge: data.badge,
+    vibrate: [200, 100, 200],
+    tag: 'finance-buddy-notification',
+    requireInteraction: false,
+    data: {
+      url: data.url,
+      dateOfArrival: Date.now(),
+    },
+    actions: data.url ? [
+      {
+        action: 'open',
+        title: 'View',
+      },
+      {
+        action: 'close',
+        title: 'Dismiss',
+      },
+    ] : [],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] Notification clicked:', event.notification);
+
+  event.notification.close();
+
+  if (event.action === 'close') {
+    return;
+  }
+
+  const urlToOpen = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Check if there's already a window open
+        for (const client of clientList) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // If no window is open, open a new one
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      })
+  );
+});
+
+// Handle notification close
+self.addEventListener('notificationclose', (event) => {
+  console.log('[SW] Notification closed:', event.notification);
+  // Optional: Track notification dismissals
+});
