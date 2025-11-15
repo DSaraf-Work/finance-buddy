@@ -22,14 +22,29 @@ export function MockAIProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       const response = await fetch('/api/admin/mock-ai');
+
+      // Handle unauthenticated state (401)
+      if (response.status === 401) {
+        // User not logged in - default to false (real AI)
+        setMockAIEnabled(false);
+        setLoading(false);
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         const serverEnabled = data.mockAI.enabled;
         setMockAIEnabled(serverEnabled);
         console.log(`[MockAI] Loaded user preference from database: ${serverEnabled}`);
+      } else {
+        // Other errors - default to false (real AI)
+        console.error(`[MockAI] Failed to fetch status: ${response.status}`);
+        setMockAIEnabled(false);
       }
     } catch (error) {
-      console.error('Failed to fetch mock AI status:', error);
+      console.error('[MockAI] Failed to fetch mock AI status:', error);
+      // Default to false (real AI) on error
+      setMockAIEnabled(false);
     } finally {
       setLoading(false);
     }
