@@ -9,8 +9,8 @@ interface MockAIContextType {
 const MockAIContext = createContext<MockAIContextType | undefined>(undefined);
 
 export function MockAIProvider({ children }: { children: ReactNode }) {
-  // Initialize from server (database) - no localStorage needed
-  const [mockAIEnabled, setMockAIEnabled] = useState(false);
+  // Initialize from server (database) - default to true (mock AI enabled)
+  const [mockAIEnabled, setMockAIEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
 
   // Fetch user's mock AI preference from server on mount
@@ -25,8 +25,8 @@ export function MockAIProvider({ children }: { children: ReactNode }) {
 
       // Handle unauthenticated state (401)
       if (response.status === 401) {
-        // User not logged in - default to false (real AI)
-        setMockAIEnabled(false);
+        // User not logged in - default to true (mock AI enabled)
+        setMockAIEnabled(true);
         setLoading(false);
         return;
       }
@@ -37,14 +37,14 @@ export function MockAIProvider({ children }: { children: ReactNode }) {
         setMockAIEnabled(serverEnabled);
         console.log(`[MockAI] Loaded user preference from database: ${serverEnabled}`);
       } else {
-        // Other errors - default to false (real AI)
+        // Other errors - default to true (mock AI enabled)
         console.error(`[MockAI] Failed to fetch status: ${response.status}`);
-        setMockAIEnabled(false);
+        setMockAIEnabled(true);
       }
     } catch (error) {
       console.error('[MockAI] Failed to fetch mock AI status:', error);
-      // Default to false (real AI) on error
-      setMockAIEnabled(false);
+      // Default to true (mock AI enabled) on error
+      setMockAIEnabled(true);
     } finally {
       setLoading(false);
     }

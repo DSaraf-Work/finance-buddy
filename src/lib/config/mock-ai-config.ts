@@ -18,16 +18,17 @@ export class MockAIConfig {
 
       if (error || !user) {
         console.error('Error fetching user for mock AI check:', error);
-        return false; // Default to real AI on error
+        return true; // Default to mock AI on error
       }
 
       // Check raw_user_meta_data for mock_ai_enabled flag
-      const mockAIEnabled = user.user.user_metadata?.mock_ai_enabled === true;
+      // Default to true if not explicitly set to false
+      const mockAIEnabled = user.user.user_metadata?.mock_ai_enabled !== false;
 
       return mockAIEnabled;
     } catch (error) {
       console.error('Error checking mock AI status for user:', error);
-      return false; // Default to real AI on error
+      return true; // Default to mock AI on error
     }
   }
 
@@ -123,7 +124,7 @@ export class MockAIConfig {
       enabled,
       source: 'user-database',
       description: enabled
-        ? 'Using mock AI responses for development/testing'
+        ? 'Using mock AI responses for development/testing (default: enabled)'
         : 'Using real AI models (OpenAI, Anthropic, Google)'
     };
   }

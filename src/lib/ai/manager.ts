@@ -108,7 +108,18 @@ export class AIModelManager {
 
       console.log(`🧠 Mock AI disabled for user ${userId} - using real AI extraction`);
     } else {
-      console.log('⚠️ No userId in request metadata - defaulting to real AI extraction');
+      // No userId - default to mock AI for safety
+      console.log('⚠️ No userId in request metadata - defaulting to mock AI extraction');
+
+      const mockRequest: TransactionExtractionRequest = {
+        emailId: request.metadata?.emailId || 'mock-email',
+        subject: request.metadata?.subject || '',
+        fromAddress: request.metadata?.fromAddress || '',
+        content: request.prompt || '',
+        snippet: request.metadata?.snippet || '',
+      };
+
+      return await MockAIResponses.generateMockResponse(mockRequest, undefined);
     }
 
 

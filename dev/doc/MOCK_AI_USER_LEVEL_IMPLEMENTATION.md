@@ -14,7 +14,8 @@ Mock AI preference is now stored at the **user level** in Supabase `auth.users.r
 **Table**: `auth.users`
 **Column**: `raw_user_meta_data` (JSONB)
 **Key**: `mock_ai_enabled` (boolean)
-**Default**: `false` (Real AI)
+**Default**: `true` (Mock AI enabled)
+**Fallback**: On any error, defaults to `true` (Mock AI enabled)
 
 ### Why `raw_user_meta_data`?
 
@@ -153,7 +154,9 @@ Since we're using `auth.users.raw_user_meta_data`, no schema changes are needed.
 
 ### Existing Users
 
-All existing users will default to `mock_ai_enabled: false` (Real AI) until they explicitly enable it.
+All existing users will default to `mock_ai_enabled: true` (Mock AI) unless they explicitly disable it.
+
+**Error Handling**: If there's any error fetching user preferences (database error, network error, authentication error), the system defaults to Mock AI for safety and cost savings.
 
 ---
 
