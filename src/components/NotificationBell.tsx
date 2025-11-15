@@ -37,40 +37,19 @@ export default function NotificationBell() {
   }, [isOpen]);
 
   const fetchUnreadCount = async () => {
-    try {
-      const res = await fetch('/api/notifications/unread-count');
-      const data = await res.json();
-      setUnreadCount(data.count);
-    } catch (error) {
-      console.error('Failed to fetch unread count:', error);
-    }
+    // DISABLED: Notification API calls disabled
+    return;
   };
 
   const fetchRecentNotifications = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/notifications?limit=5');
-      const data = await res.json();
-      setNotifications(data.notifications);
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error);
-    } finally {
-      setLoading(false);
-    }
+    // DISABLED: Notification API calls disabled
+    setLoading(false);
+    return;
   };
 
   const markAsRead = async (id: string) => {
-    try {
-      await fetch(`/api/notifications/${id}/mark-read`, {
-        method: 'PATCH',
-      });
-      setUnreadCount(prev => Math.max(0, prev - 1));
-      setNotifications(prev =>
-        prev.map(n => (n.id === id ? { ...n, read: true } : n))
-      );
-    } catch (error) {
-      console.error('Failed to mark as read:', error);
-    }
+    // DISABLED: Notification API calls disabled
+    return;
   };
 
   const formatTimeAgo = (dateString: string) => {

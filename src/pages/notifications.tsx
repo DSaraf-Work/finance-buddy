@@ -28,26 +28,9 @@ export default function NotificationsPage() {
   }, [filter, page]);
 
   const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        limit: pageSize.toString(),
-        offset: ((page - 1) * pageSize).toString(),
-      });
-
-      if (filter !== 'all') {
-        params.append('read', filter === 'read' ? 'true' : 'false');
-      }
-
-      const res = await fetch(`/api/notifications?${params}`);
-      const data = await res.json();
-      setNotifications(data.notifications);
-      setTotal(data.total);
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error);
-    } finally {
-      setLoading(false);
-    }
+    // DISABLED: Notification API calls disabled
+    setLoading(false);
+    return;
   };
 
   const markAsRead = async (id: string) => {
