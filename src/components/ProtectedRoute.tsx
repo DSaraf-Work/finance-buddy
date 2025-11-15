@@ -20,15 +20,9 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   }, [user, loading, router]);
 
   // Show loading state while checking authentication
+  // BUT: Don't show the loading UI, just render nothing to prevent flash
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
-        </div>
-      </div>
-    );
+    return null; // Return null instead of loading UI to prevent flash
   }
 
   // Show fallback or redirect if not authenticated
@@ -36,24 +30,9 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     if (fallback) {
       return <>{fallback}</>;
     }
-    
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Authentication Required</h2>
-          <p className="text-gray-600 mb-6">Please sign in to access this page.</p>
-          <button
-            onClick={() => {
-              const redirectTo = encodeURIComponent(router.asPath);
-              router.push(`/auth?redirectTo=${redirectTo}`);
-            }}
-            className="btn-primary"
-          >
-            Sign In
-          </button>
-        </div>
-      </div>
-    );
+
+    // This will only show briefly before the redirect happens
+    return null;
   }
 
   // User is authenticated, render the protected content

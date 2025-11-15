@@ -14,7 +14,29 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  // Initialize with session check to prevent flash
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    // Try to get session synchronously from localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const storedSession = localStorage.getItem('supabase.auth.token');
+        if (storedSession) {
+          const parsed = JSON.parse(storedSession);
+          if (parsed?.currentSession?.user) {
+            return {
+              id: parsed.currentSession.user.id,
+              email: parsed.currentSession.user.email,
+              email_confirmed_at: parsed.currentSession.user.email_confirmed_at,
+              created_at: parsed.currentSession.user.created_at,
+            };
+          }
+        }
+      } catch (e) {
+        // Ignore errors, will check properly in useEffect
+      }
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
