@@ -34,32 +34,36 @@ export default function NotificationsPage() {
   };
 
   const markAsRead = async (id: string) => {
-    try {
-      await fetch(`/api/notifications/${id}/mark-read`, {
-        method: 'PATCH',
-      });
-      setNotifications(prev =>
-        prev.map(n => (n.id === id ? { ...n, read: true } : n))
-      );
-    } catch (error) {
-      console.error('Failed to mark as read:', error);
-    }
+    // DISABLED: Notification API calls disabled
+    return;
+    // try {
+    //   await fetch(`/api/notifications/${id}/mark-read`, {
+    //     method: 'PATCH',
+    //   });
+    //   setNotifications(prev =>
+    //     prev.map(n => (n.id === id ? { ...n, read: true } : n))
+    //   );
+    // } catch (error) {
+    //   console.error('Failed to mark as read:', error);
+    // }
   };
 
   const deleteNotification = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this notification?')) {
-      return;
-    }
+    // DISABLED: Notification API calls disabled
+    return;
+    // if (!confirm('Are you sure you want to delete this notification?')) {
+    //   return;
+    // }
 
-    try {
-      await fetch(`/api/notifications/${id}`, {
-        method: 'DELETE',
-      });
-      setNotifications(prev => prev.filter(n => n.id !== id));
-      setTotal(prev => prev - 1);
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-    }
+    // try {
+    //   await fetch(`/api/notifications/${id}`, {
+    //     method: 'DELETE',
+    //   });
+    //   setNotifications(prev => prev.filter(n => n.id !== id));
+    //   setTotal(prev => prev - 1);
+    // } catch (error) {
+    //   console.error('Failed to delete notification:', error);
+    // }
   };
 
   const formatDate = (dateString: string) => {
@@ -128,9 +132,10 @@ export default function NotificationsPage() {
           {filter === 'unread' && notifications.length > 0 && (
             <button
               onClick={async () => {
-                await fetch('/api/notifications/mark-all-read', {
-                  method: 'PATCH',
-                });
+                // DISABLED: Notification API calls disabled
+                // await fetch('/api/notifications/mark-all-read', {
+                //   method: 'PATCH',
+                // });
                 fetchNotifications();
               }}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"

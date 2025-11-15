@@ -113,9 +113,10 @@ export default function NotificationBell() {
                 {unreadCount > 0 && (
                   <button
                     onClick={async () => {
-                      await fetch('/api/notifications/mark-all-read', {
-                        method: 'PATCH',
-                      });
+                      // DISABLED: Notification API calls disabled
+                      // await fetch('/api/notifications/mark-all-read', {
+                      //   method: 'PATCH',
+                      // });
                       setUnreadCount(0);
                       fetchRecentNotifications();
                     }}
