@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMockAI } from '@/contexts/MockAIContext';
 import NotificationBell from './NotificationBell';
+import NotificationPermissionPrompt from './NotificationPermissionPrompt';
+import { useNotifications } from '@/hooks/useNotifications';
 import {
   TABLE_EMAILS_FETCHED,
   TABLE_EMAILS_PROCESSED
@@ -46,6 +48,13 @@ export function Layout({ children, title, description }: LayoutProps) {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Initialize push notifications
+  const { permissionGranted } = useNotifications();
+
+  useEffect(() => {
+    console.log('[Layout] Push notifications initialized. Permission:', permissionGranted);
+  }, [permissionGranted]);
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -266,6 +275,9 @@ export function Layout({ children, title, description }: LayoutProps) {
         <main className="flex-1">
           {children}
         </main>
+
+        {/* Notification Permission Prompt */}
+        {user && <NotificationPermissionPrompt />}
       </div>
     </>
   );

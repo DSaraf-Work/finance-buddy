@@ -22,11 +22,15 @@ export function useNotifications() {
   // Request notification permission on mount
   useEffect(() => {
     const initNotifications = async () => {
+      console.log('[useNotifications] Initializing notifications...');
       const permission = await requestNotificationPermission();
+      console.log('[useNotifications] Permission status:', permission);
       setPermissionGranted(permission === 'granted');
-      
+
       if (permission === 'granted') {
-        await registerServiceWorker();
+        console.log('[useNotifications] Registering service worker...');
+        const registration = await registerServiceWorker();
+        console.log('[useNotifications] Service worker registered:', !!registration);
       }
     };
 
@@ -61,37 +65,53 @@ export function useNotifications() {
 
   // Check for new notifications
   const checkForNewNotifications = useCallback(async () => {
+    console.log('[useNotifications] Checking for new notifications...');
+    console.log('[useNotifications] Last checked:', lastChecked);
+    console.log('[useNotifications] Permission granted:', permissionGranted);
+
     try {
       const res = await fetch(`/api/notifications?limit=10`);
       if (res.ok) {
         const data: Notification[] = await res.json();
-        
+        console.log('[useNotifications] Fetched notifications:', data.length);
+
         // Find new notifications since last check
         const newNotifications = data.filter(
           n => new Date(n.created_at) > lastChecked && !n.read
         );
 
-        if (newNotifications.length > 0 && permissionGranted) {
-          // Show browser push notification for each new notification
-          for (const notification of newNotifications) {
-            await showBrowserNotification(notification.title, {
-              body: notification.subtitle || notification.body,
-              tag: notification.id,
-              data: {
-                url: notification.url,
-                notificationId: notification.id,
-              },
-              requireInteraction: true,
-            });
+        console.log('[useNotifications] New notifications found:', newNotifications.length);
+        console.log('[useNotifications] New notifications:', newNotifications);
+
+        if (newNotifications.length > 0) {
+          if (!permissionGranted) {
+            console.warn('[useNotifications] Permission not granted, cannot show push notifications');
+          } else {
+            console.log('[useNotifications] Showing browser push notifications...');
+            // Show browser push notification for each new notification
+            for (const notification of newNotifications) {
+              console.log('[useNotifications] Showing push for:', notification.title);
+              await showBrowserNotification(notification.title, {
+                body: notification.subtitle || notification.body,
+                tag: notification.id,
+                data: {
+                  url: notification.url,
+                  notificationId: notification.id,
+                },
+                requireInteraction: true,
+              });
+            }
           }
         }
 
         setNotifications(data);
         setLastChecked(new Date());
         await fetchUnreadCount();
+      } else {
+        console.error('[useNotifications] Failed to fetch notifications:', res.status);
       }
     } catch (error) {
-      console.error('Error checking for new notifications:', error);
+      console.error('[useNotifications] Error checking for new notifications:', error);
     }
   }, [lastChecked, permissionGranted, fetchUnreadCount]);
 

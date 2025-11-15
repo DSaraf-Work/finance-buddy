@@ -47,16 +47,22 @@ export async function showBrowserNotification(
     requireInteraction?: boolean;
   } = {}
 ): Promise<void> {
+  console.log('[Push] Showing browser notification:', title);
+  console.log('[Push] Options:', options);
+
   const permission = await requestNotificationPermission();
+  console.log('[Push] Permission:', permission);
 
   if (permission !== 'granted') {
-    console.warn('Notification permission not granted');
+    console.warn('[Push] Notification permission not granted');
     return;
   }
 
   const registration = await registerServiceWorker();
+  console.log('[Push] Service worker registration:', !!registration);
 
   if (!registration) {
+    console.log('[Push] Using fallback browser notification');
     // Fallback to browser notification if service worker fails
     if ('Notification' in window && Notification.permission === 'granted') {
       const notification = new Notification(title, {
@@ -69,16 +75,20 @@ export async function showBrowserNotification(
       });
 
       notification.onclick = () => {
+        console.log('[Push] Notification clicked (fallback)');
         if (options.data?.url) {
           window.open(options.data.url, '_blank');
         }
         notification.close();
       };
+
+      console.log('[Push] Fallback notification shown');
     }
     return;
   }
 
   // Use service worker to show notification
+  console.log('[Push] Showing notification via service worker');
   await registration.showNotification(title, {
     body: options.body,
     icon: options.icon || '/icon-192x192.png',
@@ -88,6 +98,7 @@ export async function showBrowserNotification(
     requireInteraction: options.requireInteraction !== false,
     vibrate: [200, 100, 200],
   });
+  console.log('[Push] Notification shown successfully');
 }
 
 export function isNotificationSupported(): boolean {
