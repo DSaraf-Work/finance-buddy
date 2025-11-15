@@ -10,7 +10,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       // Get query parameters
       const { limit = '50', unread_only = 'false' } = req.query;
 
-      // Build query
+      // Build query - use supabaseAdmin with type casting
+      // @ts-ignore - fb_notifications table exists but not in types yet
       let query = (supabaseAdmin as any)
         .from('fb_notifications')
         .select('*')
@@ -32,10 +33,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       return res.status(200).json(data);
     } else if (req.method === 'POST') {
-      // Mark all notifications as read
+      // Mark all notifications as read - use supabaseAdmin with type casting
+      // @ts-ignore - fb_notifications table exists but not in types yet
       const { error } = await (supabaseAdmin as any)
         .from('fb_notifications')
-        .update({ read: true, read_at: new Date().toISOString() })
+        .update({
+          read: true,
+          read_at: new Date().toISOString(),
+        })
         .eq('user_id', userId)
         .eq('read', false);
 

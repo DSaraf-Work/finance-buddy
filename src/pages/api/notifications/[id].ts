@@ -13,9 +13,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   try {
     if (req.method === 'PATCH') {
       // Mark notification as read
+      // @ts-ignore - fb_notifications table exists but not in types yet
       const { error } = await (supabaseAdmin as any)
         .from('fb_notifications')
-        .update({ read: true, read_at: new Date().toISOString() })
+        .update({
+          read: true,
+          read_at: new Date().toISOString(),
+        })
         .eq('id', id)
         .eq('user_id', userId);
 
@@ -27,6 +31,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(200).json({ success: true });
     } else if (req.method === 'DELETE') {
       // Delete notification
+      // @ts-ignore - fb_notifications table exists but not in types yet
       const { error } = await (supabaseAdmin as any)
         .from('fb_notifications')
         .delete()

@@ -7,6 +7,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   try {
     if (req.method === 'GET') {
+      // @ts-ignore - fb_notifications table exists but not in types yet
       const { count, error } = await (supabaseAdmin as any)
         .from('fb_notifications')
         .select('*', { count: 'exact', head: true })
