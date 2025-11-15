@@ -298,7 +298,7 @@ async function processSingleEmail(
       subject: subject,
       snippet: gmailMessage.snippet,
       internal_date: new Date(parseInt(gmailMessage.internalDate || '0')).toISOString(),
-      status: 'fetched',
+      // Note: status is auto-maintained by database triggers, don't set it manually
     };
 
     const { data: insertedEmail, error: insertError } = await (supabaseAdmin as any)
