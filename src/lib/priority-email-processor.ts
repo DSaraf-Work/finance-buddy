@@ -278,8 +278,17 @@ async function processSingleEmail(
 
     // Mark as read and skip processing
     if (shouldMarkAsRead) {
-      await markAsRead(accessToken, messageId);
-      console.log(`✅ [PriorityEmailProcessor] Marked duplicate email as read: ${messageId}`);
+      try {
+        await markAsRead(accessToken, messageId);
+        console.log(`✅ [PriorityEmailProcessor] Marked duplicate email as read: ${messageId}`);
+      } catch (error: any) {
+        console.warn(`⚠️ [PriorityEmailProcessor] Could not mark email as read (insufficient permissions):`, {
+          messageId,
+          error: error.message,
+        });
+        // Continue - this is not a critical error
+        // Gmail OAuth scope 'gmail.readonly' doesn't allow modifying emails
+      }
     }
 
     return;
@@ -340,8 +349,18 @@ async function processSingleEmail(
 
   // Mark email as read in Gmail (only if requested)
   if (shouldMarkAsRead) {
-    await markAsRead(accessToken, messageId);
-    console.log(`✅ [PriorityEmailProcessor] Marked email as read: ${messageId}`);
+    try {
+      await markAsRead(accessToken, messageId);
+      console.log(`✅ [PriorityEmailProcessor] Marked email as read: ${messageId}`);
+    } catch (error: any) {
+      console.warn(`⚠️ [PriorityEmailProcessor] Could not mark email as read (insufficient permissions):`, {
+        messageId,
+        error: error.message,
+      });
+      // Continue - this is not a critical error
+      // Gmail OAuth scope 'gmail.readonly' doesn't allow modifying emails
+      // The email has been processed and stored successfully
+    }
   } else {
     console.log(`ℹ️ [PriorityEmailProcessor] Skipped marking email as read (shouldMarkAsRead=false): ${messageId}`);
   }
