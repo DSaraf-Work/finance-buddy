@@ -134,12 +134,20 @@ export class PushManager {
       keys: subscription.keys,
     };
 
+    // Push options for better delivery, especially on iOS
+    const options = {
+      TTL: 86400, // 24 hours - keep notification for delivery even if device is offline
+      urgency: 'high', // High priority for immediate delivery
+      topic: 'finance-buddy-transactions', // Topic for iOS APNs
+    };
+
     try {
       await webpush.sendNotification(
         pushSubscription,
-        JSON.stringify(payload)
+        JSON.stringify(payload),
+        options
       );
-      console.log('✅ Push sent to:', subscription.endpoint.substring(0, 50));
+      console.log('✅ Push sent to:', subscription.endpoint.substring(0, 50), 'with options:', options);
     } catch (error: any) {
       // Handle expired/invalid subscriptions
       if (error.statusCode === 410 || error.statusCode === 404) {
