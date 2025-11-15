@@ -26,6 +26,8 @@ const HomePage: NextPage = () => {
   });
   const [connections, setConnections] = useState<GmailConnectionPublic[]>([]);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [checkingPriorityEmails, setCheckingPriorityEmails] = useState(false);
+  const [priorityEmailResult, setPriorityEmailResult] = useState<any>(null);
 
   // Load dashboard data for authenticated users
   useEffect(() => {
@@ -95,6 +97,38 @@ const HomePage: NextPage = () => {
       console.error('Failed to load dashboard data:', error);
     } finally {
       setLoadingStats(false);
+    }
+  };
+
+  const handleCheckPriorityEmails = async () => {
+    setCheckingPriorityEmails(true);
+    setPriorityEmailResult(null);
+
+    try {
+      const response = await fetch('/api/priority-emails/trigger', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPriorityEmailResult(data);
+        // Reload dashboard data to show new transactions
+        await loadDashboardData();
+      } else {
+        setPriorityEmailResult({
+          success: false,
+          error: data.error || 'Failed to check priority emails',
+        });
+      }
+    } catch (error: any) {
+      console.error('Failed to check priority emails:', error);
+      setPriorityEmailResult({
+        success: false,
+        error: error.message || 'Failed to check priority emails',
+      });
+    } finally {
+      setCheckingPriorityEmails(false);
     }
   };
 
@@ -396,7 +430,53 @@ const HomePage: NextPage = () => {
                   <span className="mr-2">💰</span>
                   Review Transactions
                 </a>
+                <button
+                  onClick={handleCheckPriorityEmails}
+                  disabled={checkingPriorityEmails}
+                  className="w-full btn-secondary text-left flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="mr-2">🚀</span>
+                  {checkingPriorityEmails ? 'Checking Priority Emails...' : 'Check Priority Emails'}
+                </button>
               </div>
+
+              {/* Priority Email Result */}
+              {priorityEmailResult && (
+                <div className={`mt-4 p-4 rounded-lg ${
+                  priorityEmailResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    <span className="text-xl mr-2">
+                      {priorityEmailResult.success ? '✅' : '❌'}
+                    </span>
+                    <div className="flex-1">
+                      <h4 className={`font-medium ${
+                        priorityEmailResult.success ? 'text-green-900' : 'text-red-900'
+                      }`}>
+                        {priorityEmailResult.success ? 'Priority Email Check Complete' : 'Priority Email Check Failed'}
+                      </h4>
+                      {priorityEmailResult.success && priorityEmailResult.result && (
+                        <div className="mt-2 text-sm text-gray-700">
+                          <p>📧 Emails Found: {priorityEmailResult.result.emailsFound}</p>
+                          <p>✅ Emails Processed: {priorityEmailResult.result.emailsProcessed}</p>
+                          <p>📖 Emails Marked Read: {priorityEmailResult.result.emailsMarkedRead}</p>
+                          <p>🔗 Connections Checked: {priorityEmailResult.result.connectionsProcessed}</p>
+                          {priorityEmailResult.result.errors.length > 0 && (
+                            <p className="text-red-600 mt-1">
+                              ⚠️ Errors: {priorityEmailResult.result.errors.length}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      {priorityEmailResult.error && (
+                        <p className="mt-2 text-sm text-red-700">
+                          {priorityEmailResult.error}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="bg-white shadow rounded-lg p-6">

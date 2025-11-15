@@ -19,7 +19,7 @@ export function createOAuth2Client() {
 
 export function getAuthUrl(state: string) {
   const oauth2Client = createOAuth2Client();
-  
+
   return oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: [
@@ -35,7 +35,7 @@ export function getAuthUrl(state: string) {
 
 export async function exchangeCodeForTokens(code: string): Promise<OAuthTokens> {
   const oauth2Client = createOAuth2Client();
-  
+
   const { tokens } = await oauth2Client.getToken(code);
   return tokens as OAuthTokens;
 }
@@ -77,17 +77,17 @@ export async function revokeToken(token: string): Promise<void> {
 export function createGmailClient(accessToken: string) {
   const oauth2Client = createOAuth2Client();
   oauth2Client.setCredentials({ access_token: accessToken });
-  
+
   return google.gmail({ version: 'v1', auth: oauth2Client });
 }
 
 export async function getUserInfo(accessToken: string) {
   const oauth2Client = createOAuth2Client();
   oauth2Client.setCredentials({ access_token: accessToken });
-  
+
   const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
   const { data } = await oauth2.userinfo.get();
-  
+
   return data;
 }
 
@@ -100,14 +100,14 @@ export async function listMessages(
   } = {}
 ): Promise<GmailListResponse> {
   const gmail = createGmailClient(accessToken);
-  
+
   const { data } = await gmail.users.messages.list({
     userId: 'me',
     q: options.q,
     maxResults: options.maxResults,
     pageToken: options.pageToken,
   });
-  
+
   return data as GmailListResponse;
 }
 
@@ -838,7 +838,7 @@ function extractFromBase64Blocks(rawEmail: string): string | null {
 export function extractEmailFromHeaders(headers: any[]): string | null {
   const fromHeader = headers.find(h => h.name.toLowerCase() === 'from');
   if (!fromHeader) return null;
-  
+
   // Extract email from "Name <email@domain.com>" format
   const match = fromHeader.value.match(/<([^>]+)>/);
   return match ? match[1] : fromHeader.value;
@@ -852,7 +852,7 @@ export function extractSubjectFromHeaders(headers: any[]): string | null {
 export function extractToAddressesFromHeaders(headers: any[]): string[] {
   const toHeader = headers.find(h => h.name.toLowerCase() === 'to');
   if (!toHeader) return [];
-  
+
   // Simple extraction - could be enhanced for complex cases
   return toHeader.value.split(',').map((email: string) => {
     const match = email.trim().match(/<([^>]+)>/);
@@ -1309,4 +1309,45 @@ async function fetchViaRecursiveParts(accessToken: string, messageId: string): P
   }
 
   return null;
+}
+
+
+/**
+ * Mark an email as read by removing the UNREAD label
+ */
+export async function markAsRead(
+  accessToken: string,
+  messageId: string
+): Promise<void> {
+  const gmail = createGmailClient(accessToken);
+
+  await gmail.users.messages.modify({
+    userId: 'me',
+    id: messageId,
+    requestBody: {
+      removeLabelIds: ['UNREAD'],
+    },
+  });
+
+  console.log(`✅ Marked message ${messageId} as read`);
+}
+
+/**
+ * Mark an email as unread by adding the UNREAD label
+ */
+export async function markAsUnread(
+  accessToken: string,
+  messageId: string
+): Promise<void> {
+  const gmail = createGmailClient(accessToken);
+
+  await gmail.users.messages.modify({
+    userId: 'me',
+    id: messageId,
+    requestBody: {
+      addLabelIds: ['UNREAD'],
+    },
+  });
+
+  console.log(`✅ Marked message ${messageId} as unread`);
 }
