@@ -281,7 +281,7 @@ export class EmailProcessor {
       // Find the notification created by the trigger
       const { data: notification, error } = await (supabaseAdmin as any)
         .from('fb_notifications')
-        .select('id')
+        .select('id, user_id, title, subtitle, body, url')
         .eq('metadata->>transaction_id', transactionId)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -292,9 +292,28 @@ export class EmailProcessor {
         return;
       }
 
-      // Send push notification via internal API
-      const { sendPushInBackground } = await import('@/lib/notifications/send-push-helper');
-      sendPushInBackground(notification.id);
+      // Send push notification directly using PushManager (no HTTP call)
+      const { PushManager } = await import('@/lib/push/push-manager');
+
+      const payload = {
+        title: notification.title,
+        body: notification.subtitle || notification.body || '',
+        icon: '/icon-192x192.png',
+        badge: '/badge-72x72.png',
+        data: {
+          url: notification.url || '/',
+          notificationId: notification.id,
+        },
+      };
+
+      const result = await PushManager.sendToUser(notification.user_id, payload);
+
+      console.log('[sendPushNotificationForTransaction] ✅ Push sent:', {
+        notificationId: notification.id,
+        userId: notification.user_id,
+        successCount: result.successCount,
+        failureCount: result.failureCount,
+      });
     } catch (error) {
       console.error('[sendPushNotificationForTransaction] ❌ Error:', error);
     }
