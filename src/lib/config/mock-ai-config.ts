@@ -1,127 +1,130 @@
 /**
  * Mock AI Configuration Utility
- * Manages the USE_MOCK_AI flag by reading from the global header config
+ * Manages user-level Mock AI preferences stored in Supabase auth.users.raw_user_meta_data
  */
+
+import { supabaseAdmin } from '../supabase';
 
 export class MockAIConfig {
   /**
-   * Check if mock AI is enabled by reading from the global config API
-   * This ensures consistency across all requests
+   * Check if mock AI is enabled for a specific user (async - reads from database)
+   * @param userId - User ID to check mock AI preference for
+   * @returns Promise<boolean> - true if mock AI is enabled for this user
    */
-  static async isEnabledAsync(): Promise<boolean> {
+  static async isEnabledForUser(userId: string): Promise<boolean> {
     try {
-      // In server-side context, we can't make HTTP requests to ourselves
-      // So we'll use a simple in-memory cache that persists across requests
-      return this.getInMemoryState();
+      // Fetch user's metadata from Supabase
+      const { data: user, error } = await supabaseAdmin.auth.admin.getUserById(userId);
+
+      if (error || !user) {
+        console.error('Error fetching user for mock AI check:', error);
+        return false; // Default to real AI on error
+      }
+
+      // Check raw_user_meta_data for mock_ai_enabled flag
+      const mockAIEnabled = user.user.user_metadata?.mock_ai_enabled === true;
+
+      return mockAIEnabled;
     } catch (error) {
-      console.error('Error checking mock AI status:', error);
-      // Default to false (use real AI) on error
+      console.error('Error checking mock AI status for user:', error);
+      return false; // Default to real AI on error
+    }
+  }
+
+  /**
+   * Enable mock AI for a specific user
+   * @param userId - User ID to enable mock AI for
+   */
+  static async enableForUser(userId: string): Promise<void> {
+    try {
+      const { data: user, error: fetchError } = await supabaseAdmin.auth.admin.getUserById(userId);
+
+      if (fetchError || !user) {
+        throw new Error(`Failed to fetch user: ${fetchError?.message}`);
+      }
+
+      // Update user metadata
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        user_metadata: {
+          ...user.user.user_metadata,
+          mock_ai_enabled: true,
+        },
+      });
+
+      if (updateError) {
+        throw new Error(`Failed to enable mock AI: ${updateError.message}`);
+      }
+
+      console.log(`🤖 Mock AI enabled for user ${userId}`);
+    } catch (error) {
+      console.error('Error enabling mock AI for user:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Disable mock AI for a specific user (use real AI)
+   * @param userId - User ID to disable mock AI for
+   */
+  static async disableForUser(userId: string): Promise<void> {
+    try {
+      const { data: user, error: fetchError } = await supabaseAdmin.auth.admin.getUserById(userId);
+
+      if (fetchError || !user) {
+        throw new Error(`Failed to fetch user: ${fetchError?.message}`);
+      }
+
+      // Update user metadata
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        user_metadata: {
+          ...user.user.user_metadata,
+          mock_ai_enabled: false,
+        },
+      });
+
+      if (updateError) {
+        throw new Error(`Failed to disable mock AI: ${updateError.message}`);
+      }
+
+      console.log(`🧠 Mock AI disabled for user ${userId} - will use real AI`);
+    } catch (error) {
+      console.error('Error disabling mock AI for user:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Toggle mock AI state for a specific user
+   * @param userId - User ID to toggle mock AI for
+   */
+  static async toggleForUser(userId: string): Promise<boolean> {
+    const currentState = await this.isEnabledForUser(userId);
+
+    if (currentState) {
+      await this.disableForUser(userId);
       return false;
-    }
-  }
-
-  /**
-   * Synchronous version - reads from in-memory state
-   * Use this for backward compatibility
-   */
-  static isEnabled(): boolean {
-    return this.getInMemoryState();
-  }
-
-  /**
-   * Get in-memory state
-   * This is shared across all API routes in the same process
-   */
-  private static getInMemoryState(): boolean {
-    // Check if we're in a browser environment
-    if (typeof window !== 'undefined') {
-      return false; // Client-side always uses real AI
-    }
-
-    // Server-side: use global state
-    const globalState = (global as any).__MOCK_AI_ENABLED__;
-    return globalState !== undefined ? globalState : false; // Default to false (real AI)
-  }
-
-  /**
-   * Set in-memory state
-   */
-  private static setInMemoryState(enabled: boolean): void {
-    if (typeof window === 'undefined') {
-      (global as any).__MOCK_AI_ENABLED__ = enabled;
-    }
-  }
-
-  /**
-   * Enable mock AI responses
-   */
-  static enable(): void {
-    this.setInMemoryState(true);
-    console.log('🤖 Mock AI enabled - system will use mock responses for development');
-  }
-
-  /**
-   * Disable mock AI responses (use real AI)
-   */
-  static disable(): void {
-    this.setInMemoryState(false);
-    console.log('🧠 Mock AI disabled - system will use real AI responses');
-  }
-
-  /**
-   * Toggle mock AI state
-   */
-  static toggle(): void {
-    if (this.isEnabled()) {
-      this.disable();
     } else {
-      this.enable();
+      await this.enableForUser(userId);
+      return true;
     }
   }
 
   /**
-   * Get current status with details
+   * Get current status with details for a specific user
+   * @param userId - User ID to get status for
    */
-  static getStatus(): {
+  static async getStatusForUser(userId: string): Promise<{
     enabled: boolean;
     source: string;
     description: string;
-  } {
-    const enabled = this.isEnabled();
+  }> {
+    const enabled = await this.isEnabledForUser(userId);
     return {
       enabled,
-      source: 'server-global',
+      source: 'user-database',
       description: enabled
         ? 'Using mock AI responses for development/testing'
         : 'Using real AI models (OpenAI, Anthropic, Google)'
     };
   }
-
-  /**
-   * Initialize mock AI config on app startup
-   */
-  static initialize(): void {
-    const status = this.getStatus();
-    console.log(`🤖 Mock AI Config: ${status.description}`);
-
-    // Add global helper functions for development (client-side only)
-    if (typeof window !== 'undefined') {
-      (window as any).mockAI = {
-        enable: () => this.enable(),
-        disable: () => this.disable(),
-        toggle: () => this.toggle(),
-        status: () => this.getStatus(),
-        isEnabled: () => this.isEnabled()
-      };
-
-      if (status.enabled) {
-        console.log('💡 Development tip: Use mockAI.disable() in console to switch to real AI');
-      } else {
-        console.log('💡 Development tip: Use mockAI.enable() in console to switch to mock AI');
-      }
-    }
-  }
 }
-
-// Auto-initialize when module is loaded
-MockAIConfig.initialize();

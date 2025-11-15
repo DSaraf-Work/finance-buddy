@@ -84,24 +84,32 @@ export class AIModelManager {
     const startTime = Date.now();
     let lastError: AIError | null = null;
 
-    // Check if mock AI is enabled
-    if (MockAIConfig.isEnabled()) {
-      console.log('🎭 Mock AI enabled true - using pattern-based extraction instead of real AI models');
+    // Extract userId from metadata for user-specific mock AI check
+    const userId = request.metadata?.userId;
 
-      // Convert AIRequest to TransactionExtractionRequest for mock processing
-      const mockRequest: TransactionExtractionRequest = {
-        emailId: request.metadata?.emailId || 'mock-email',
-        subject: request.metadata?.subject || '',
-        fromAddress: request.metadata?.fromAddress || '',
-        content: request.prompt || '',
-        snippet: request.metadata?.snippet || '',
-      };
+    // Check if mock AI is enabled for this user
+    if (userId) {
+      const mockAIEnabled = await MockAIConfig.isEnabledForUser(userId);
 
-      // Extract userId from metadata for user-specific account type classification
-      const userId = request.metadata?.userId;
-      return await MockAIResponses.generateMockResponse(mockRequest, userId);
+      if (mockAIEnabled) {
+        console.log(`🎭 Mock AI enabled for user ${userId} - using pattern-based extraction instead of real AI models`);
+
+        // Convert AIRequest to TransactionExtractionRequest for mock processing
+        const mockRequest: TransactionExtractionRequest = {
+          emailId: request.metadata?.emailId || 'mock-email',
+          subject: request.metadata?.subject || '',
+          fromAddress: request.metadata?.fromAddress || '',
+          content: request.prompt || '',
+          snippet: request.metadata?.snippet || '',
+        };
+
+        return await MockAIResponses.generateMockResponse(mockRequest, userId);
+      }
+
+      console.log(`🧠 Mock AI disabled for user ${userId} - using real AI extraction`);
+    } else {
+      console.log('⚠️ No userId in request metadata - defaulting to real AI extraction');
     }
-    console.log('🎭 Mock AI enabled false - using ai extraction');
 
 
     // Check if any models are available

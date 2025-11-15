@@ -89,7 +89,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       extractedTransaction = await extractor.extractTransaction(content, {
         subject: extractionRequest.subject,
         fromAddress: extractionRequest.fromAddress,
-        emailId: extractionRequest.emailId
+        emailId: extractionRequest.emailId,
+        userId: email?.user_id // Pass userId for mock AI check
       });
 
       console.log('📊 Real AI extraction result:', {

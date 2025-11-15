@@ -1,17 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { withAuth } from '@/lib/auth/middleware';
 import { MockAIConfig } from '@/lib/config/mock-ai-config';
 
 /**
- * API endpoint to manage Mock AI configuration
- * GET: Returns current mock AI status
- * POST: Toggles mock AI on/off
+ * API endpoint to manage user-level Mock AI configuration
+ * GET: Returns current user's mock AI status
+ * POST: Toggles/enables/disables mock AI for current user
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
+  const userId = user.id;
+
   try {
     if (req.method === 'GET') {
-      // Return current status
-      const status = MockAIConfig.getStatus();
-      
+      // Return current user's status
+      const status = await MockAIConfig.getStatusForUser(userId);
+
       return res.status(200).json({
         success: true,
         mockAI: {
@@ -19,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           source: status.source,
           description: status.description,
         },
+        userId,
         timestamp: new Date().toISOString(),
       });
     }
@@ -33,22 +37,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
       
-      // Perform the requested action
+      // Perform the requested action for the current user
+      let newEnabled: boolean;
+
       switch (action) {
         case 'enable':
-          MockAIConfig.enable();
+          await MockAIConfig.enableForUser(userId);
+          newEnabled = true;
           break;
         case 'disable':
-          MockAIConfig.disable();
+          await MockAIConfig.disableForUser(userId);
+          newEnabled = false;
           break;
         case 'toggle':
-          MockAIConfig.toggle();
+          newEnabled = await MockAIConfig.toggleForUser(userId);
           break;
+        default:
+          newEnabled = false;
       }
-      
+
       // Return updated status
-      const newStatus = MockAIConfig.getStatus();
-      
+      const newStatus = await MockAIConfig.getStatusForUser(userId);
+
       return res.status(200).json({
         success: true,
         action: action,
@@ -57,7 +67,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           source: newStatus.source,
           description: newStatus.description,
         },
-        message: newStatus.enabled 
+        userId,
+        message: newStatus.enabled
           ? 'Mock AI enabled - using pattern-based extraction'
           : 'Mock AI disabled - using real AI models',
         timestamp: new Date().toISOString(),
@@ -78,4 +89,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       details: error instanceof Error ? error.message : 'Unknown error',
     });
   }
-}
+});

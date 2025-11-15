@@ -9,53 +9,40 @@ interface MockAIContextType {
 const MockAIContext = createContext<MockAIContextType | undefined>(undefined);
 
 export function MockAIProvider({ children }: { children: ReactNode }) {
-  // Initialize from localStorage to persist across page reloads
-  const [mockAIEnabled, setMockAIEnabled] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mockAIEnabled');
-      return stored === 'true';
-    }
-    return false;
-  });
-  const [loading, setLoading] = useState(false);
+  // Initialize from server (database) - no localStorage needed
+  const [mockAIEnabled, setMockAIEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Sync with server on mount and update server if localStorage differs
+  // Fetch user's mock AI preference from server on mount
   useEffect(() => {
-    syncWithServer();
+    fetchMockAIStatus();
   }, []);
 
-  const syncWithServer = async () => {
+  const fetchMockAIStatus = async () => {
     try {
+      setLoading(true);
       const response = await fetch('/api/admin/mock-ai');
       if (response.ok) {
         const data = await response.json();
         const serverEnabled = data.mockAI.enabled;
-
-        // If localStorage differs from server, update server to match localStorage
-        if (serverEnabled !== mockAIEnabled) {
-          console.log(`[MockAI] Syncing localStorage (${mockAIEnabled}) to server (was ${serverEnabled})`);
-          await fetch('/api/admin/mock-ai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: mockAIEnabled ? 'enable' : 'disable' }),
-          });
-        }
+        setMockAIEnabled(serverEnabled);
+        console.log(`[MockAI] Loaded user preference from database: ${serverEnabled}`);
       }
     } catch (error) {
-      console.error('Failed to sync mock AI status:', error);
+      console.error('Failed to fetch mock AI status:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const toggleMockAI = async () => {
     setLoading(true);
     try {
+      // Optimistic update for instant UI feedback
       const newValue = !mockAIEnabled;
-
-      // Update localStorage immediately for instant UI feedback
-      localStorage.setItem('mockAIEnabled', String(newValue));
       setMockAIEnabled(newValue);
 
-      // Sync with server in background
+      // Update server (database)
       const response = await fetch('/api/admin/mock-ai', {
         method: 'POST',
         headers: {
@@ -69,13 +56,17 @@ export function MockAIProvider({ children }: { children: ReactNode }) {
       if (!response.ok) {
         console.error('Failed to toggle mock AI on server');
         // Revert on failure
-        localStorage.setItem('mockAIEnabled', String(mockAIEnabled));
         setMockAIEnabled(mockAIEnabled);
+        throw new Error('Failed to update mock AI preference');
       }
+
+      const data = await response.json();
+      // Update with server's confirmed state
+      setMockAIEnabled(data.mockAI.enabled);
+      console.log(`[MockAI] Toggled to: ${data.mockAI.enabled}`);
     } catch (error) {
       console.error('Mock AI toggle error:', error);
       // Revert on error
-      localStorage.setItem('mockAIEnabled', String(mockAIEnabled));
       setMockAIEnabled(mockAIEnabled);
     } finally {
       setLoading(false);
