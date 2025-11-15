@@ -47,57 +47,86 @@ export async function showBrowserNotification(
     requireInteraction?: boolean;
   } = {}
 ): Promise<void> {
-  console.log('[Push] Showing browser notification:', title);
-  console.log('[Push] Options:', options);
+  console.log('[Push] ========================================');
+  console.log('[Push] Showing browser notification at:', new Date().toISOString());
+  console.log('[Push] Title:', title);
+  console.log('[Push] Options:', JSON.stringify(options, null, 2));
 
   const permission = await requestNotificationPermission();
-  console.log('[Push] Permission:', permission);
+  console.log('[Push] Permission status:', permission);
 
   if (permission !== 'granted') {
-    console.warn('[Push] Notification permission not granted');
+    console.warn('[Push] ❌ Notification permission not granted. Current:', permission);
     return;
   }
 
+  console.log('[Push] ✅ Permission granted, proceeding with notification');
+
   const registration = await registerServiceWorker();
-  console.log('[Push] Service worker registration:', !!registration);
+  console.log('[Push] Service worker registration exists:', !!registration);
+  if (registration) {
+    console.log('[Push] Service worker state:', registration.active?.state);
+  }
 
   if (!registration) {
-    console.log('[Push] Using fallback browser notification');
+    console.log('[Push] ⚠️ Using fallback browser notification (no service worker)');
     // Fallback to browser notification if service worker fails
     if ('Notification' in window && Notification.permission === 'granted') {
-      const notification = new Notification(title, {
-        body: options.body,
-        icon: options.icon || '/icon-192x192.png',
-        badge: options.badge || '/badge-72x72.png',
-        tag: options.tag,
-        data: options.data,
-        requireInteraction: options.requireInteraction,
-      });
+      try {
+        const notification = new Notification(title, {
+          body: options.body,
+          icon: options.icon || '/icon-192x192.png',
+          badge: options.badge || '/badge-72x72.png',
+          tag: options.tag,
+          data: options.data,
+          requireInteraction: options.requireInteraction,
+        });
 
-      notification.onclick = () => {
-        console.log('[Push] Notification clicked (fallback)');
-        if (options.data?.url) {
-          window.open(options.data.url, '_blank');
-        }
-        notification.close();
-      };
+        notification.onclick = () => {
+          console.log('[Push] 🖱️ Notification clicked (fallback)');
+          if (options.data?.url) {
+            console.log('[Push] Navigating to:', options.data.url);
+            window.open(options.data.url, '_blank');
+          }
+          notification.close();
+        };
 
-      console.log('[Push] Fallback notification shown');
+        notification.onshow = () => {
+          console.log('[Push] ✅ Fallback notification shown to user');
+        };
+
+        notification.onerror = (error) => {
+          console.error('[Push] ❌ Fallback notification error:', error);
+        };
+
+        console.log('[Push] ✅ Fallback notification created');
+      } catch (error) {
+        console.error('[Push] ❌ Error creating fallback notification:', error);
+      }
+    } else {
+      console.error('[Push] ❌ Cannot show fallback notification - Notification API not available or permission denied');
     }
+    console.log('[Push] ========================================');
     return;
   }
 
   // Use service worker to show notification
-  console.log('[Push] Showing notification via service worker');
-  await registration.showNotification(title, {
-    body: options.body,
-    icon: options.icon || '/icon-192x192.png',
-    badge: options.badge || '/badge-72x72.png',
-    tag: options.tag,
-    data: options.data,
-    requireInteraction: options.requireInteraction !== false,
-  } as NotificationOptions);
-  console.log('[Push] Notification shown successfully');
+  try {
+    console.log('[Push] 📢 Showing notification via service worker');
+    await registration.showNotification(title, {
+      body: options.body,
+      icon: options.icon || '/icon-192x192.png',
+      badge: options.badge || '/badge-72x72.png',
+      tag: options.tag,
+      data: options.data,
+      requireInteraction: options.requireInteraction !== false,
+    } as NotificationOptions);
+    console.log('[Push] ✅ Service worker notification shown successfully');
+  } catch (error) {
+    console.error('[Push] ❌ Error showing service worker notification:', error);
+    console.error('[Push] Error details:', error instanceof Error ? error.message : 'Unknown error');
+  }
+  console.log('[Push] ========================================');
 }
 
 export function isNotificationSupported(): boolean {

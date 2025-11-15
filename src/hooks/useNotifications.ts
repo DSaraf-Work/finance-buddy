@@ -65,15 +65,27 @@ export function useNotifications() {
 
   // Check for new notifications
   const checkForNewNotifications = useCallback(async () => {
-    console.log('[useNotifications] Checking for new notifications...');
-    console.log('[useNotifications] Last checked:', lastChecked);
+    const checkTime = new Date();
+    console.log('[useNotifications] ========================================');
+    console.log('[useNotifications] Checking for new notifications at:', checkTime.toISOString());
+    console.log('[useNotifications] Last checked:', lastChecked.toISOString());
     console.log('[useNotifications] Permission granted:', permissionGranted);
+    console.log('[useNotifications] Time since last check (seconds):', (checkTime.getTime() - lastChecked.getTime()) / 1000);
 
     try {
+      console.log('[useNotifications] Fetching from /api/notifications?limit=10');
       const res = await fetch(`/api/notifications?limit=10`);
+      console.log('[useNotifications] API response status:', res.status);
+
       if (res.ok) {
         const data: Notification[] = await res.json();
-        console.log('[useNotifications] Fetched notifications:', data.length);
+        console.log('[useNotifications] Fetched notifications count:', data.length);
+        console.log('[useNotifications] All notifications:', data.map(n => ({
+          id: n.id,
+          title: n.title,
+          created_at: n.created_at,
+          read: n.read
+        })));
 
         // Find new notifications since last check
         const newNotifications = data.filter(
@@ -81,38 +93,66 @@ export function useNotifications() {
         );
 
         console.log('[useNotifications] New notifications found:', newNotifications.length);
-        console.log('[useNotifications] New notifications:', newNotifications);
-
         if (newNotifications.length > 0) {
+          console.log('[useNotifications] New notification details:', newNotifications.map(n => ({
+            id: n.id,
+            title: n.title,
+            created_at: n.created_at,
+            created_timestamp: new Date(n.created_at).getTime(),
+            last_checked_timestamp: lastChecked.getTime(),
+            is_newer: new Date(n.created_at) > lastChecked
+          })));
+
           if (!permissionGranted) {
-            console.warn('[useNotifications] Permission not granted, cannot show push notifications');
+            console.warn('[useNotifications] ❌ Permission not granted, cannot show push notifications');
+            console.warn('[useNotifications] Current permission status:', Notification.permission);
           } else {
-            console.log('[useNotifications] Showing browser push notifications...');
+            console.log('[useNotifications] ✅ Permission granted, showing browser push notifications...');
             // Show browser push notification for each new notification
             for (const notification of newNotifications) {
-              console.log('[useNotifications] Showing push for:', notification.title);
-              await showBrowserNotification(notification.title, {
+              console.log('[useNotifications] 📢 Showing push for:', notification.title);
+              console.log('[useNotifications] Push data:', {
+                title: notification.title,
                 body: notification.subtitle || notification.body,
                 tag: notification.id,
-                data: {
-                  url: notification.url,
-                  notificationId: notification.id,
-                },
-                requireInteraction: true,
+                url: notification.url
               });
+
+              try {
+                await showBrowserNotification(notification.title, {
+                  body: notification.subtitle || notification.body,
+                  tag: notification.id,
+                  data: {
+                    url: notification.url,
+                    notificationId: notification.id,
+                  },
+                  requireInteraction: true,
+                });
+                console.log('[useNotifications] ✅ Push notification shown successfully for:', notification.id);
+              } catch (pushError) {
+                console.error('[useNotifications] ❌ Error showing push notification:', pushError);
+              }
             }
           }
+        } else {
+          console.log('[useNotifications] No new notifications to show');
         }
 
         setNotifications(data);
-        setLastChecked(new Date());
+        const newCheckTime = new Date();
+        setLastChecked(newCheckTime);
+        console.log('[useNotifications] Updated lastChecked to:', newCheckTime.toISOString());
         await fetchUnreadCount();
       } else {
-        console.error('[useNotifications] Failed to fetch notifications:', res.status);
+        console.error('[useNotifications] ❌ Failed to fetch notifications. Status:', res.status);
+        const errorText = await res.text();
+        console.error('[useNotifications] Error response:', errorText);
       }
     } catch (error) {
-      console.error('[useNotifications] Error checking for new notifications:', error);
+      console.error('[useNotifications] ❌ Error checking for new notifications:', error);
+      console.error('[useNotifications] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     }
+    console.log('[useNotifications] ========================================');
   }, [lastChecked, permissionGranted, fetchUnreadCount]);
 
   // Mark notification as read
