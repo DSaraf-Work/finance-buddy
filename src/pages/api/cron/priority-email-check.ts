@@ -27,10 +27,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Verify cron secret (for security)
-  const cronSecret = req.headers['authorization'];
+  // Support both header and query parameter authentication
+  const headerSecret = req.headers['authorization'];
+  const querySecret = req.query.secret as string;
   const expectedSecret = `Bearer ${process.env.CRON_SECRET}`;
-  
-  if (cronSecret !== expectedSecret) {
+  const expectedQuerySecret = process.env.CRON_SECRET;
+
+  const isValidHeader = headerSecret === expectedSecret;
+  const isValidQuery = querySecret === expectedQuerySecret;
+
+  if (!isValidHeader && !isValidQuery) {
     console.error('❌ [PriorityEmailCheck] Unauthorized cron request');
     return res.status(401).json({ error: 'Unauthorized' });
   }
