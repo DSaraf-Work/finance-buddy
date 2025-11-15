@@ -134,35 +134,44 @@ self.addEventListener('message', (event) => {
 self.addEventListener('push', (event) => {
   console.log('[SW] Push received:', event);
 
-  let data = {
+  let pushData = {
     title: 'Finance Buddy',
     body: 'You have a new notification',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
-    url: '/',
+    data: {
+      url: '/',
+    },
   };
 
   // Parse push payload
   if (event.data) {
     try {
-      data = { ...data, ...event.data.json() };
+      pushData = { ...pushData, ...event.data.json() };
+      console.log('[SW] Parsed push data:', pushData);
     } catch (error) {
       console.error('[SW] Failed to parse push data:', error);
     }
   }
 
+  // Extract URL from nested data object (server sends { data: { url, notificationId } })
+  const notificationUrl = pushData.data?.url || pushData.url || '/';
+
+  console.log('[SW] Notification URL:', notificationUrl);
+
   const options = {
-    body: data.body,
-    icon: data.icon,
-    badge: data.badge,
+    body: pushData.body,
+    icon: pushData.icon,
+    badge: pushData.badge,
     vibrate: [200, 100, 200],
     tag: 'finance-buddy-notification',
     requireInteraction: false,
     data: {
-      url: data.url,
+      url: notificationUrl,
+      notificationId: pushData.data?.notificationId,
       dateOfArrival: Date.now(),
     },
-    actions: data.url ? [
+    actions: notificationUrl ? [
       {
         action: 'open',
         title: 'View',
@@ -174,36 +183,61 @@ self.addEventListener('push', (event) => {
     ] : [],
   };
 
+  console.log('[SW] Showing notification with options:', {
+    title: pushData.title,
+    url: notificationUrl,
+    hasActions: options.actions.length > 0,
+  });
+
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(pushData.title, options)
   );
 });
 
 // Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked:', event.notification);
+  console.log('[SW] Notification clicked:', {
+    action: event.action,
+    data: event.notification.data,
+    title: event.notification.title,
+  });
 
   event.notification.close();
 
   if (event.action === 'close') {
+    console.log('[SW] Close action clicked, dismissing notification');
     return;
   }
 
   const urlToOpen = event.notification.data?.url || '/';
+  console.log('[SW] Opening URL:', urlToOpen);
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
       .then((clientList) => {
-        // Check if there's already a window open
+        console.log('[SW] Found', clientList.length, 'open windows');
+
+        // Try to find an existing window with the app
         for (const client of clientList) {
-          if (client.url === urlToOpen && 'focus' in client) {
-            return client.focus();
+          const clientUrl = new URL(client.url);
+          const targetUrl = new URL(urlToOpen, self.location.origin);
+
+          // If we have a window open to our app, navigate it to the target URL
+          if (clientUrl.origin === targetUrl.origin && 'focus' in client) {
+            console.log('[SW] Focusing existing window and navigating to:', urlToOpen);
+            client.focus();
+            return client.navigate(urlToOpen);
           }
         }
+
         // If no window is open, open a new one
         if (clients.openWindow) {
+          console.log('[SW] Opening new window with URL:', urlToOpen);
           return clients.openWindow(urlToOpen);
         }
+      })
+      .catch((error) => {
+        console.error('[SW] Error handling notification click:', error);
       })
   );
 });
