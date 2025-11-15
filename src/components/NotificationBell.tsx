@@ -20,13 +20,14 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Fetch unread count
-  useEffect(() => {
-    fetchUnreadCount();
-    // Disable Notification auto fetch for now
-    // const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
-    // return () => clearInterval(interval);
-  }, []);
+  // Removed polling - notifications will be triggered via other mechanisms
+  // (e.g., WebSocket, Server-Sent Events, or manual refresh)
+  // useEffect(() => {
+  //   fetchUnreadCount();
+  //   // Disable Notification auto fetch for now
+  //   // const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
+  //   // return () => clearInterval(interval);
+  // }, []);
 
   // Fetch recent notifications when dropdown opens
   useEffect(() => {

@@ -190,12 +190,13 @@ export function useNotifications() {
     }
   }, [fetchUnreadCount]);
 
-  // Poll for new notifications every 30 seconds
-  useEffect(() => {
-    fetchUnreadCount();
-    const interval = setInterval(checkForNewNotifications, 30000);
-    return () => clearInterval(interval);
-  }, [fetchUnreadCount, checkForNewNotifications]);
+  // Removed polling - notifications will be triggered via other mechanisms
+  // (e.g., WebSocket, Server-Sent Events, or manual refresh)
+  // useEffect(() => {
+  //   fetchUnreadCount();
+  //   const interval = setInterval(checkForNewNotifications, 30000);
+  //   return () => clearInterval(interval);
+  // }, [fetchUnreadCount, checkForNewNotifications]);
 
   return {
     notifications,
