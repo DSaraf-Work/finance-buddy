@@ -137,7 +137,7 @@ export class PushManager {
     // Push options for better delivery, especially on iOS
     const options = {
       TTL: 86400, // 24 hours - keep notification for delivery even if device is offline
-      urgency: 'high', // High priority for immediate delivery
+      urgency: 'high' as const, // High priority for immediate delivery
       topic: 'finance-buddy-transactions', // Topic for iOS APNs
     };
 
