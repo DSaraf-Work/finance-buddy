@@ -363,24 +363,52 @@ async function getValidAccessToken(connection: any): Promise<string> {
   // Refresh access token
   console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address} (expired or missing)`);
 
-  const tokens = await refreshAccessToken(connection.refresh_token);
+  try {
+    const tokens = await refreshAccessToken(connection.refresh_token);
 
-  // Set token expiry to 1 year from now
-  const oneYearFromNow = new Date();
-  oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+    // Set token expiry to 1 year from now
+    const oneYearFromNow = new Date();
+    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
 
-  // Update connection with new access token
-  await (supabaseAdmin as any)
-    .from(TABLE_GMAIL_CONNECTIONS)
-    .update({
-      access_token: tokens.access_token,
-      token_expiry: oneYearFromNow.toISOString(),
-    })
-    .eq('id', connection.id);
+    // Update connection with new access token
+    await (supabaseAdmin as any)
+      .from(TABLE_GMAIL_CONNECTIONS)
+      .update({
+        access_token: tokens.access_token,
+        token_expiry: oneYearFromNow.toISOString(),
+      })
+      .eq('id', connection.id);
 
-  console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address} (expires: ${oneYearFromNow.toISOString()})`);
+    console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address} (expires: ${oneYearFromNow.toISOString()})`);
 
-  return tokens.access_token!;
+    return tokens.access_token!;
+  } catch (error: any) {
+    // Handle token refresh errors (revoked, expired, invalid credentials)
+    console.error(`❌ [PriorityEmailProcessor] Failed to refresh access token for ${connection.email_address}:`, {
+      error: error.message,
+      connectionId: connection.id,
+    });
+
+    // Mark connection as invalid if credentials are revoked
+    if (error.message?.includes('Invalid Credentials') ||
+        error.message?.includes('invalid_grant') ||
+        error.message?.includes('Token has been expired or revoked')) {
+
+      console.log(`🔒 [PriorityEmailProcessor] Marking connection as invalid (credentials revoked): ${connection.email_address}`);
+
+      await (supabaseAdmin as any)
+        .from(TABLE_GMAIL_CONNECTIONS)
+        .update({
+          status: 'invalid',
+          last_error: error.message,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', connection.id);
+    }
+
+    // Re-throw the error to be handled by the caller
+    throw new Error(`Failed to refresh access token: ${error.message}`);
+  }
 }
 
 /**

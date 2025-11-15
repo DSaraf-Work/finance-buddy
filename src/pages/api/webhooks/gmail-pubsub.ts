@@ -228,12 +228,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         error: result.error,
       });
 
+      // Check if error is due to invalid credentials
+      const isCredentialError = result.error?.includes('Invalid Credentials') ||
+                                 result.error?.includes('invalid_grant') ||
+                                 result.error?.includes('Token has been expired or revoked');
+
+      if (isCredentialError) {
+        console.log(`🔒 [${requestId}] Gmail connection credentials are invalid - user needs to reconnect:`, {
+          emailAddress: payload.emailAddress,
+          connectionId: connection.id,
+        });
+      }
+
       // Still return 200 to acknowledge receipt (don't retry)
       return res.status(200).json({
         success: false,
         requestId,
-        message: 'Email processing failed',
+        message: isCredentialError
+          ? 'Gmail connection credentials are invalid - user needs to reconnect'
+          : 'Email processing failed',
         error: result.error,
+        credentialError: isCredentialError,
         data: {
           emailAddress: payload.emailAddress,
           historyId: payload.historyId,
