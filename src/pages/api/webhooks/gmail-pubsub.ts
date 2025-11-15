@@ -30,6 +30,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { TABLE_GMAIL_CONNECTIONS } from '@/lib/constants/database';
+import { processWebhookEmail } from '@/lib/priority-email-processor';
 
 interface PubSubMessage {
   message: {
@@ -188,14 +189,66 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       autoSyncEnabled: connection.auto_sync_enabled,
     });
 
-    // TODO: Trigger email sync for this connection
-    // This will be implemented in the next phase
-    console.log(`🔄 [${requestId}] Email sync triggered (placeholder):`, {
+    // Extract messageId from attributes (if available)
+    const messageId = pubsubMessage.message.attributes?.messageId;
+    const fromAddress = pubsubMessage.message.attributes?.from;
+
+    if (!messageId) {
+      console.log(`⚠️ [${requestId}] No messageId in webhook notification, skipping processing`);
+      return res.status(200).json({
+        success: true,
+        requestId,
+        message: 'No messageId provided, webhook acknowledged',
+        data: {
+          emailAddress: payload.emailAddress,
+          historyId: payload.historyId,
+          connectionId: connection.id,
+        }
+      });
+    }
+
+    console.log(`🔄 [${requestId}] Processing email from webhook:`, {
       connectionId: connection.id,
+      messageId: messageId,
+      fromAddress: fromAddress,
       historyId: payload.historyId,
     });
 
-    return res.status(200).json({ 
+    // Process the email using the reusable function from priority-email-processor
+    // Note: We don't mark as read for webhook emails (only for priority email cron)
+    // This allows users to see the email in their inbox
+    const result = await processWebhookEmail(connection, messageId, {
+      markAsRead: false,  // Don't mark as read for webhook emails
+      fromAddress: fromAddress,
+    });
+
+    if (!result.success) {
+      console.error(`❌ [${requestId}] Failed to process webhook email:`, {
+        messageId,
+        error: result.error,
+      });
+
+      // Still return 200 to acknowledge receipt (don't retry)
+      return res.status(200).json({
+        success: false,
+        requestId,
+        message: 'Email processing failed',
+        error: result.error,
+        data: {
+          emailAddress: payload.emailAddress,
+          historyId: payload.historyId,
+          connectionId: connection.id,
+          messageId: messageId,
+        }
+      });
+    }
+
+    console.log(`✅ [${requestId}] Successfully processed webhook email:`, {
+      messageId,
+      emailId: result.emailId,
+    });
+
+    return res.status(200).json({
       success: true,
       requestId,
       message: 'Webhook processed successfully',
@@ -203,6 +256,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         emailAddress: payload.emailAddress,
         historyId: payload.historyId,
         connectionId: connection.id,
+        messageId: messageId,
+        emailId: result.emailId,
+        processed: true,
       }
     });
 

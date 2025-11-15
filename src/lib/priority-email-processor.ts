@@ -160,7 +160,7 @@ async function processConnectionPriorityEmails(connection: any): Promise<{
     // Process each email
     for (const messageId of messageIds) {
       try {
-        await processSingleEmail(connection, accessToken, messageId);
+        await processSingleEmail(connection, accessToken, messageId, true); // Mark as read for priority emails
         result.emailsProcessed++;
         result.emailsMarkedRead++;
       } catch (error: any) {
@@ -179,13 +179,69 @@ async function processConnectionPriorityEmails(connection: any): Promise<{
 }
 
 /**
+ * Process a single email from webhook notification
+ * This is a public wrapper for webhook usage
+ *
+ * @param connection - Gmail connection object from database
+ * @param messageId - Gmail message ID to process
+ * @param options - Processing options
+ */
+export async function processWebhookEmail(
+  connection: any,
+  messageId: string,
+  options: {
+    markAsRead?: boolean;  // Whether to mark email as read after processing (default: false for webhooks)
+    fromAddress?: string;  // Optional: sender address for logging
+  } = {}
+): Promise<{
+  success: boolean;
+  emailId?: string;
+  error?: string;
+}> {
+  try {
+    console.log(`📧 [WebhookEmailProcessor] Processing webhook email:`, {
+      messageId,
+      connectionId: connection.id,
+      emailAddress: connection.email_address,
+      fromAddress: options.fromAddress,
+      markAsRead: options.markAsRead ?? false,
+    });
+
+    // Get valid access token
+    const accessToken = await getValidAccessToken(connection);
+
+    // Process the email
+    await processSingleEmail(connection, accessToken, messageId, options.markAsRead ?? false);
+
+    console.log(`✅ [WebhookEmailProcessor] Successfully processed webhook email: ${messageId}`);
+
+    return {
+      success: true,
+      emailId: messageId,
+    };
+  } catch (error: any) {
+    console.error(`❌ [WebhookEmailProcessor] Failed to process webhook email:`, {
+      messageId,
+      error: error.message,
+      stack: error.stack,
+    });
+
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+}
+
+/**
  * Process a single email message
  * Similar to the gmail-pubsub webhook flow
  */
 async function processSingleEmail(
   connection: any,
   accessToken: string,
-  messageId: string
+  messageId: string,
+  shouldMarkAsRead: boolean = true  // Default to true for priority email cron
 ): Promise<void> {
   console.log(`📧 [PriorityEmailProcessor] Processing email: ${messageId}`);
 
@@ -270,12 +326,16 @@ async function processSingleEmail(
     console.log(`✅ [PriorityEmailProcessor] Processed email with AI: ${messageId}`);
   } catch (error: any) {
     console.error(`❌ [PriorityEmailProcessor] Failed to process email with AI:`, error);
-    // Don't throw - we still want to mark as read
+    // Don't throw - we still want to mark as read if requested
   }
 
-  // Mark email as read in Gmail
-  await markAsRead(accessToken, messageId);
-  console.log(`✅ [PriorityEmailProcessor] Marked email as read: ${messageId}`);
+  // Mark email as read in Gmail (only if requested)
+  if (shouldMarkAsRead) {
+    await markAsRead(accessToken, messageId);
+    console.log(`✅ [PriorityEmailProcessor] Marked email as read: ${messageId}`);
+  } else {
+    console.log(`ℹ️ [PriorityEmailProcessor] Skipped marking email as read (shouldMarkAsRead=false): ${messageId}`);
+  }
 }
 
 /**
