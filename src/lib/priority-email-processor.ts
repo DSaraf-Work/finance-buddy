@@ -283,7 +283,9 @@ async function processSingleEmail(
     }
   }
 
-  // Store email in database if not exists
+  // Store email in database if not exists and get the database ID
+  let emailDatabaseId: string;
+
   if (!existingEmail) {
     const emailData = {
       user_id: connection.user_id,
@@ -299,11 +301,21 @@ async function processSingleEmail(
       status: 'fetched',
     };
 
-    await (supabaseAdmin as any)
+    const { data: insertedEmail, error: insertError } = await (supabaseAdmin as any)
       .from('fb_emails_fetched')
-      .insert(emailData);
+      .insert(emailData)
+      .select('id')
+      .single();
 
-    console.log(`✅ [PriorityEmailProcessor] Stored email in database: ${messageId}`);
+    if (insertError) {
+      throw new Error(`Failed to insert email: ${insertError.message}`);
+    }
+
+    emailDatabaseId = insertedEmail.id;
+    console.log(`✅ [PriorityEmailProcessor] Stored email in database: ${messageId} (DB ID: ${emailDatabaseId})`);
+  } else {
+    emailDatabaseId = existingEmail.id;
+    console.log(`ℹ️ [PriorityEmailProcessor] Using existing email DB ID: ${emailDatabaseId}`);
   }
 
   // Process email with AI to extract transaction
@@ -311,7 +323,7 @@ async function processSingleEmail(
     const emailProcessor = new EmailProcessor();
 
     const emailForProcessing = {
-      id: existingEmail?.id || messageId,
+      id: emailDatabaseId,  // Use the database UUID, not the Gmail message ID
       message_id: messageId,
       from_address: fromAddress,
       subject: subject,
