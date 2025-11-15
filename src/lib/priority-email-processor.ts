@@ -368,18 +368,20 @@ async function getValidAccessToken(connection: any): Promise<string> {
 
   const tokens = await refreshAccessToken(connection.refresh_token);
 
+  // Set token expiry to 1 year from now
+  const oneYearFromNow = new Date();
+  oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+
   // Update connection with new access token
   await (supabaseAdmin as any)
     .from(TABLE_GMAIL_CONNECTIONS)
     .update({
       access_token: tokens.access_token,
-      token_expiry: tokens.expiry_date
-        ? new Date(tokens.expiry_date).toISOString()
-        : null,
+      token_expiry: oneYearFromNow.toISOString(),
     })
     .eq('id', connection.id);
 
-  console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address}`);
+  console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address} (expires: ${oneYearFromNow.toISOString()})`);
 
   return tokens.access_token!;
 }

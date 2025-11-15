@@ -350,9 +350,9 @@ async function syncEmailsFromGmail(
 
       console.log('✅ Token refreshed successfully');
 
-      // Calculate new expiry time
+      // Set token expiry to 1 year from now
       const newExpiry = new Date();
-      newExpiry.setSeconds(newExpiry.getSeconds() + (refreshedTokens.expires_in || 3600));
+      newExpiry.setFullYear(newExpiry.getFullYear() + 1);
 
       // Update the connection with new tokens
       await (supabaseAdmin as any)

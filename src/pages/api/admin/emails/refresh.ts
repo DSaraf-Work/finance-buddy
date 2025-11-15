@@ -67,12 +67,16 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           const refreshed = await refreshAccessToken(connection.refresh_token);
           accessToken = refreshed.access_token;
 
+          // Set token expiry to 1 year from now
+          const newExpiry = new Date();
+          newExpiry.setFullYear(newExpiry.getFullYear() + 1);
+
           // Update token in database
           await (supabaseAdmin as any)
             .from(TABLE_GMAIL_CONNECTIONS)
             .update({
               access_token: accessToken,
-              token_expiry: new Date(Date.now() + 3600000).toISOString(),
+              token_expiry: newExpiry.toISOString(),
             })
             .eq('id', connection.id);
         }
