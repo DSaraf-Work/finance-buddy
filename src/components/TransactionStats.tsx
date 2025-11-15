@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface TransactionStatsProps {
   total: number;
   totalAmount: number;
@@ -5,7 +7,7 @@ interface TransactionStatsProps {
   loading?: boolean;
 }
 
-export default function TransactionStats({ total, totalAmount, avgConfidence, loading = false }: TransactionStatsProps) {
+const TransactionStats = memo(function TransactionStats({ total, totalAmount, avgConfidence, loading = false }: TransactionStatsProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -91,5 +93,7 @@ export default function TransactionStats({ total, totalAmount, avgConfidence, lo
       ))}
     </div>
   );
-}
+});
+
+export default TransactionStats;
 

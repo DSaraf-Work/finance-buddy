@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
@@ -10,6 +10,9 @@ import TransactionFilters from '@/components/TransactionFilters';
 import TransactionCard from '@/components/TransactionCard';
 import { TransactionListSkeleton } from '@/components/TransactionSkeleton';
 import TransactionEmptyState from '@/components/TransactionEmptyState';
+import { ToastContainer } from '@/components/Toast';
+import { useToast } from '@/hooks/useToast';
+import BackToTop from '@/components/BackToTop';
 
 export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
 
@@ -55,8 +58,10 @@ const getDefaultEndDate = () => {
 export default function TransactionsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const { toasts, removeToast, success, error: showError } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterLoading, setFilterLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -185,7 +190,7 @@ export default function TransactionsPage() {
     }
   };
 
-  const handleStatusUpdate = async (transactionId: string, newStatus: TransactionStatus) => {
+  const handleStatusUpdate = useCallback(async (transactionId: string, newStatus: TransactionStatus) => {
     try {
       const response = await fetch('/api/transactions/update-status', {
         method: 'POST',
@@ -204,16 +209,17 @@ export default function TransactionsPage() {
             t.id === transactionId ? { ...t, status: newStatus } : t
           )
         );
+        success(`Status updated to ${newStatus}`);
       } else {
         const error = await response.json();
         console.error('❌ Status update failed:', error);
-        alert(`Status update failed: ${error.error}`);
+        showError(`Status update failed: ${error.error}`);
       }
     } catch (error) {
       console.error('❌ Status update error:', error);
-      alert('Status update failed. Please try again.');
+      showError('Status update failed. Please try again.');
     }
-  };
+  }, [success, showError]);
 
   const handleReExtraction = async (transactionId: string) => {
     try {
@@ -335,9 +341,11 @@ export default function TransactionsPage() {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleApplyFilters = () => {
+  const handleApplyFilters = async () => {
+    setFilterLoading(true);
     setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 when filters change
-    searchTransactions(1);
+    await searchTransactions(1);
+    setFilterLoading(false);
   };
 
   const handleClearFilters = () => {
@@ -396,28 +404,30 @@ export default function TransactionsPage() {
         <div className="py-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="mb-8">
+            <div className="mb-6 sm:mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-blue-100 rounded-xl">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="p-2 sm:p-3 bg-blue-100 rounded-xl flex-shrink-0">
+                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
-                    <p className="text-gray-600 mt-1">AI-extracted financial transactions with smart insights</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Transactions</h1>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1 hidden sm:block">AI-extracted financial transactions with smart insights</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 w-full sm:w-auto">
                   <button
                     onClick={() => searchTransactions()}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    disabled={loading}
+                    className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] text-sm sm:text-base"
+                    aria-label="Refresh transactions"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Refresh
+                    {loading ? 'Loading...' : 'Refresh'}
                   </button>
                 </div>
               </div>
@@ -438,58 +448,8 @@ export default function TransactionsPage() {
               onFilterChange={setFilters}
               onSearch={handleApplyFilters}
               onReset={handleClearFilters}
+              loading={filterLoading}
             />
-
-        {/* Pagination Controls - Top */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                {pagination.total} total transactions
-              </span>
-              <span className="text-sm text-gray-600">
-                Page {pagination.page} of {pagination.totalPages}
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600">Page size:</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={pagination.pageSize}
-                  onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 25)}
-                  className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1}
-                  className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  max={pagination.totalPages}
-                  value={pagination.page}
-                  onChange={(e) => handlePageChange(parseInt(e.target.value) || 1)}
-                  className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
 
             {/* Transactions List */}
             {loading ? (
@@ -509,57 +469,71 @@ export default function TransactionsPage() {
               </div>
             )}
 
-        {/* Pagination Controls - Bottom */}
+        {/* Pagination Controls */}
         {transactions.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">
+          <nav
+            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mt-6"
+            aria-label="Transaction pagination"
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <span aria-live="polite">
                   {pagination.total} total transactions
                 </span>
-                <span className="text-sm text-gray-600">
+                <span aria-current="page">
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600">Page size:</label>
+                  <label htmlFor="page-size" className="text-sm text-gray-600">
+                    Page size:
+                  </label>
                   <input
+                    id="page-size"
                     type="number"
                     min="1"
                     max="100"
                     value={pagination.pageSize}
                     onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 25)}
                     className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Items per page"
                   />
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handlePageChange(pagination.page - 1)}
                     disabled={pagination.page === 1}
-                    className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
+                    aria-label="Go to previous page"
                   >
                     Previous
                   </button>
+                  <label htmlFor="page-number" className="sr-only">
+                    Page number
+                  </label>
                   <input
+                    id="page-number"
                     type="number"
                     min="1"
                     max={pagination.totalPages}
                     value={pagination.page}
                     onChange={(e) => handlePageChange(parseInt(e.target.value) || 1)}
                     className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    aria-label="Current page number"
                   />
                   <button
                     onClick={() => handlePageChange(pagination.page + 1)}
                     disabled={pagination.page >= pagination.totalPages}
-                    className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
+                    aria-label="Go to next page"
                   >
                     Next
                   </button>
                 </div>
               </div>
             </div>
-          </div>
+          </nav>
         )}
       </div>
 
@@ -575,6 +549,12 @@ export default function TransactionsPage() {
           onSave={handleTransactionUpdate}
         />
       )}
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
+
+      {/* Back to Top Button */}
+      <BackToTop />
         </div>
       </Layout>
     </ProtectedRoute>

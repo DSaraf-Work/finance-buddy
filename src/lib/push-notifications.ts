@@ -96,8 +96,7 @@ export async function showBrowserNotification(
     tag: options.tag,
     data: options.data,
     requireInteraction: options.requireInteraction !== false,
-    vibrate: [200, 100, 200],
-  });
+  } as NotificationOptions);
   console.log('[Push] Notification shown successfully');
 }
 
