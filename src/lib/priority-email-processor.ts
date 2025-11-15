@@ -325,6 +325,8 @@ async function processSingleEmail(
       snippet: gmailMessage.snippet,
       internal_date: new Date(parseInt(gmailMessage.internalDate || '0')).toISOString(),
       user_id: connection.user_id,
+      google_user_id: connection.google_user_id,  // Required for fb_emails_processed
+      connection_id: connection.id,  // Required for fb_emails_processed
       plain_body: plainBody || '', // Add plain_body to the email object
     };
 
