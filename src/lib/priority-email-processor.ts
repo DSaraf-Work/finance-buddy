@@ -264,59 +264,54 @@ async function processSingleEmail(
   // Check if this email is already in our database
   const { data: existingEmail } = await (supabaseAdmin as any)
     .from('fb_emails_fetched')
-    .select('id, status')
+    .select('id')
     .eq('message_id', messageId)
     .eq('user_id', connection.user_id)
+    .eq('google_user_id', connection.google_user_id)
     .single();
 
   if (existingEmail) {
-    console.log(`ℹ️ [PriorityEmailProcessor] Email already exists in database:`, {
+    console.log(`⏭️ [PriorityEmailProcessor] Email already exists in database, skipping:`, {
       id: existingEmail.id,
-      status: existingEmail.status,
+      messageId,
     });
 
-    // If already processed, just mark as read
-    if (existingEmail.status === 'processed') {
+    // Mark as read and skip processing
+    if (shouldMarkAsRead) {
       await markAsRead(accessToken, messageId);
-      console.log(`✅ [PriorityEmailProcessor] Marked already-processed email as read: ${messageId}`);
-      return;
-    }
-  }
-
-  // Store email in database if not exists and get the database ID
-  let emailDatabaseId: string;
-
-  if (!existingEmail) {
-    const emailData = {
-      user_id: connection.user_id,
-      google_user_id: connection.google_user_id,
-      connection_id: connection.id,
-      email_address: connection.email_address,
-      message_id: messageId,
-      thread_id: gmailMessage.threadId,
-      from_address: fromAddress,
-      subject: subject,
-      snippet: gmailMessage.snippet,
-      internal_date: new Date(parseInt(gmailMessage.internalDate || '0')).toISOString(),
-      // Note: status is auto-maintained by database triggers, don't set it manually
-    };
-
-    const { data: insertedEmail, error: insertError } = await (supabaseAdmin as any)
-      .from('fb_emails_fetched')
-      .insert(emailData)
-      .select('id')
-      .single();
-
-    if (insertError) {
-      throw new Error(`Failed to insert email: ${insertError.message}`);
+      console.log(`✅ [PriorityEmailProcessor] Marked duplicate email as read: ${messageId}`);
     }
 
-    emailDatabaseId = insertedEmail.id;
-    console.log(`✅ [PriorityEmailProcessor] Stored email in database: ${messageId} (DB ID: ${emailDatabaseId})`);
-  } else {
-    emailDatabaseId = existingEmail.id;
-    console.log(`ℹ️ [PriorityEmailProcessor] Using existing email DB ID: ${emailDatabaseId}`);
+    return;
   }
+
+  // Store email in database and get the database ID
+  const emailData = {
+    user_id: connection.user_id,
+    google_user_id: connection.google_user_id,
+    connection_id: connection.id,
+    email_address: connection.email_address,
+    message_id: messageId,
+    thread_id: gmailMessage.threadId,
+    from_address: fromAddress,
+    subject: subject,
+    snippet: gmailMessage.snippet,
+    internal_date: new Date(parseInt(gmailMessage.internalDate || '0')).toISOString(),
+    // Note: status is auto-maintained by database triggers, don't set it manually
+  };
+
+  const { data: insertedEmail, error: insertError } = await (supabaseAdmin as any)
+    .from('fb_emails_fetched')
+    .insert(emailData)
+    .select('id')
+    .single();
+
+  if (insertError) {
+    throw new Error(`Failed to insert email: ${insertError.message}`);
+  }
+
+  const emailDatabaseId = insertedEmail.id;
+  console.log(`✅ [PriorityEmailProcessor] Stored email in database: ${messageId} (DB ID: ${emailDatabaseId})`);
 
   // Process email with AI to extract transaction
   try {
