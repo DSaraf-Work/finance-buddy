@@ -35,9 +35,7 @@ Wait 500ms for trigger to complete
     ↓
 Find notification by transaction_id
     ↓
-sendPushInBackground(notificationId)
-    ↓
-POST /api/notifications/send-push-internal
+Import PushManager directly (no HTTP call)
     ↓
 PushManager.sendToUser(userId, payload)
     ↓
@@ -53,21 +51,24 @@ User receives push notification (even if browser closed!)
 - Called after transaction is saved
 - Waits 500ms for database trigger to create notification
 - Finds notification by transaction_id
-- Sends push in background (fire and forget)
+- Imports PushManager directly (no HTTP call)
+- Calls PushManager.sendToUser() to send push
 
 ### 2. Send Push Helper (`src/lib/notifications/send-push-helper.ts`)
-**New**: Helper functions for sending push notifications
+**New**: Helper functions for sending push notifications (optional, not used by EmailProcessor)
 - `sendPushForNotification(notificationId)` - Send push for a notification
 - `sendPushDirect(userId, title, options)` - Send push with direct data
 - `sendPushInBackground(notificationId)` - Fire and forget
+- **Note**: EmailProcessor uses PushManager directly, not these helpers
 
 ### 3. Internal API (`src/pages/api/notifications/send-push-internal.ts`)
-**New**: Server-side API for sending push notifications
+**New**: Server-side API for sending push notifications (optional, not used by EmailProcessor)
 - Authenticated with `PUSH_INTERNAL_SECRET`
 - Supports two modes:
   1. Pass `notificationId` - fetches from database
   2. Pass `userId + title + ...` - uses direct data
 - Uses `PushManager` to send Web Push
+- **Note**: EmailProcessor uses PushManager directly, not this API
 
 ### 4. PushManager (`src/lib/push/push-manager.ts`)
 **Existing**: Manages push subscriptions and sending
@@ -80,24 +81,21 @@ User receives push notification (even if browser closed!)
 ### Environment Variables Required
 
 ```bash
-# Internal API secret (generate a random string)
-PUSH_INTERNAL_SECRET=your-secret-key-here
-
-# VAPID keys for Web Push (already configured)
+# VAPID keys for Web Push (required)
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=your-public-key
 VAPID_PRIVATE_KEY=your-private-key
 VAPID_SUBJECT=mailto:your-email@example.com
+```
 
-# App URL for internal API calls
+### Optional Environment Variables
+
+```bash
+# Only needed if using the internal API endpoint (not used by EmailProcessor)
+PUSH_INTERNAL_SECRET=your-secret-key-here
 NEXT_PUBLIC_APP_URL=https://finance-buddy.vercel.app
 ```
 
-### Generate PUSH_INTERNAL_SECRET
-
-```bash
-# Generate a random secret
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
+**Note**: `PUSH_INTERNAL_SECRET` and `NEXT_PUBLIC_APP_URL` are **not required** for push notifications to work. EmailProcessor uses PushManager directly without making HTTP calls.
 
 ## How to Use
 
@@ -220,9 +218,36 @@ navigator.serviceWorker.ready.then(async (registration) => {
 
 ## Next Steps
 
-- [ ] Add `PUSH_INTERNAL_SECRET` to Vercel environment variables
+- [x] ~~Add `PUSH_INTERNAL_SECRET` to Vercel~~ - Not needed, using direct PushManager calls
 - [ ] Test push notifications on production
 - [ ] Monitor server logs for push sending
 - [ ] Add push notification analytics
 - [ ] Add user preferences for notification types
+
+## Troubleshooting
+
+### Vercel Authentication Error
+
+**Problem**: Getting "Authentication Required" HTML response when sending push
+
+**Solution**: This was fixed by using PushManager directly instead of HTTP calls. No authentication bypass needed.
+
+**Old Approach** (had issues):
+```typescript
+// ❌ Made HTTP call to internal API
+await fetch('/api/notifications/send-push-internal', {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${secret}` },
+  body: JSON.stringify({ notificationId })
+});
+// Problem: Hit Vercel authentication protection
+```
+
+**New Approach** (works):
+```typescript
+// ✅ Import and use PushManager directly
+import { PushManager } from '@/lib/push/push-manager';
+await PushManager.sendToUser(userId, payload);
+// No HTTP call, no authentication issues
+```
 
