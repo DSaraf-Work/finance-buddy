@@ -272,6 +272,8 @@ export class EmailProcessor {
    * This is called after the transaction is saved and the database trigger has created the notification
    */
   private async sendPushNotificationForTransaction(transactionId: string): Promise<void> {
+    let notificationId: string | null = null;
+
     try {
       // Wait a bit for the database trigger to create the notification
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -292,6 +294,8 @@ export class EmailProcessor {
         return;
       }
 
+      notificationId = notification.id;
+
       // Send push notification directly using PushManager (no HTTP call)
       const { PushManager } = await import('@/lib/push/push-manager');
 
@@ -308,14 +312,44 @@ export class EmailProcessor {
 
       const result = await PushManager.sendToUser(notification.user_id, payload);
 
-      console.log('[sendPushNotificationForTransaction] ✅ Push sent:', {
+      // Update notification with push delivery status
+      await (supabaseAdmin as any)
+        .from('fb_notifications')
+        .update({
+          push_sent: true,
+          push_sent_at: new Date().toISOString(),
+          push_success_count: result.successCount,
+          push_failure_count: result.failureCount,
+          push_error: result.failureCount > 0 ? 'Some devices failed to receive push' : null,
+        })
+        .eq('id', notification.id);
+
+      console.log('[sendPushNotificationForTransaction] ✅ Push sent and tracked:', {
         notificationId: notification.id,
         userId: notification.user_id,
         successCount: result.successCount,
         failureCount: result.failureCount,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('[sendPushNotificationForTransaction] ❌ Error:', error);
+
+      // Update notification with error status if we have the notification ID
+      if (notificationId) {
+        try {
+          await (supabaseAdmin as any)
+            .from('fb_notifications')
+            .update({
+              push_sent: true,
+              push_sent_at: new Date().toISOString(),
+              push_success_count: 0,
+              push_failure_count: 1,
+              push_error: error.message || 'Failed to send push notification',
+            })
+            .eq('id', notificationId);
+        } catch (updateError) {
+          console.error('[sendPushNotificationForTransaction] ❌ Failed to update notification with error:', updateError);
+        }
+      }
     }
   }
 
