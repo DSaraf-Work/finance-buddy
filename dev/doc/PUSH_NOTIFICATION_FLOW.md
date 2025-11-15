@@ -248,3 +248,194 @@ new Notification(title, options);
 
 **Next Step**: Check browser console logs to see where the flow breaks.
 
+---
+
+## NEW: Server-Side Push Notifications (2025-11-15)
+
+### Overview
+Push notifications are now sent **directly from the server** when a transaction is created, eliminating the need for browser polling. This means users receive notifications **even when their browser is closed**.
+
+### How It Works
+
+#### Step 1: Email Processing
+```
+User/System → POST /api/emails/process
+              ↓
+         Extract transaction data using AI
+              ↓
+         INSERT INTO fb_emails_processed
+```
+
+#### Step 2: Database Trigger Creates Notification
+```
+TRIGGER: trigger_notify_transaction_created (AFTER INSERT)
+              ↓
+FUNCTION: notify_transaction_created()
+              ↓
+INSERT INTO fb_notifications
+```
+
+#### Step 3: Server Sends Push Notification (NEW!)
+```
+EmailProcessor.saveTransaction()
+              ↓
+Wait 500ms for trigger to complete
+              ↓
+Find notification by transaction_id
+              ↓
+Call sendPushInBackground(notificationId)
+              ↓
+POST /api/notifications/send-push-internal
+              ↓
+PushManager.sendToUser(userId, payload)
+              ↓
+Send Web Push to all user devices
+              ↓
+User receives push (even if browser closed!)
+```
+
+### Architecture
+
+#### Components
+
+1. **EmailProcessor** (`src/lib/email-processing/processor.ts`)
+   - Saves transaction to `fb_emails_processed`
+   - Waits 500ms for database trigger to create notification
+   - Calls `sendPushNotificationForTransaction()`
+
+2. **Send Push Helper** (`src/lib/notifications/send-push-helper.ts`)
+   - `sendPushForNotification()` - Send push for a notification ID
+   - `sendPushDirect()` - Send push with direct data
+   - `sendPushInBackground()` - Fire and forget push sending
+
+3. **Internal API** (`src/pages/api/notifications/send-push-internal.ts`)
+   - Authenticated with `PUSH_INTERNAL_SECRET`
+   - Fetches notification from database
+   - Uses `PushManager` to send Web Push
+
+4. **PushManager** (`src/lib/push/push-manager.ts`)
+   - Manages push subscriptions
+   - Sends Web Push notifications using VAPID
+   - Handles multiple devices per user
+
+### Configuration Required
+
+#### Environment Variables
+```bash
+# Internal API secret for server-to-server calls
+PUSH_INTERNAL_SECRET=your-secret-key-here
+
+# VAPID keys for Web Push (already configured)
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your-public-key
+VAPID_PRIVATE_KEY=your-private-key
+VAPID_SUBJECT=mailto:your-email@example.com
+
+# App URL for internal API calls
+NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
+```
+
+#### User Requirements
+1. User must grant notification permission in browser
+2. User must subscribe to push notifications (handled automatically)
+3. Service worker must be registered (`/sw.js`)
+
+### Code Flow
+
+```typescript
+// 1. EmailProcessor saves transaction
+const transactionId = await this.saveTransaction(email, transactionData);
+
+// 2. Wait for database trigger to create notification
+await new Promise(resolve => setTimeout(resolve, 500));
+
+// 3. Find the notification
+const { data: notification } = await supabaseAdmin
+  .from('fb_notifications')
+  .select('id')
+  .eq('metadata->>transaction_id', transactionId)
+  .single();
+
+// 4. Send push in background
+sendPushInBackground(notification.id);
+
+// 5. Internal API sends Web Push
+const result = await PushManager.sendToUser(userId, {
+  title: '💸 Payment to BHARATH',
+  body: 'Debit of INR 303.00',
+  icon: '/icon-192x192.png',
+  data: { url: '/transactions/edit/...' }
+});
+```
+
+### Benefits
+
+✅ **No Polling Required** - Eliminates 30-second polling interval
+✅ **Instant Notifications** - Push sent immediately after transaction creation
+✅ **Works When Browser Closed** - Web Push API delivers to all devices
+✅ **Reduced Server Load** - No constant API polling
+✅ **Better User Experience** - Real-time notifications
+✅ **Multi-Device Support** - Push sent to all subscribed devices
+
+### Testing
+
+1. **Subscribe to Push Notifications**
+   - Open app in browser
+   - Grant notification permission
+   - Service worker automatically subscribes
+
+2. **Process an Email**
+   - Go to Admin → Emails
+   - Click "Process" on an unprocessed email
+   - Transaction is created
+
+3. **Receive Push Notification**
+   - Push notification appears immediately
+   - Works even if browser tab is closed
+   - Works even if browser is closed (on supported platforms)
+
+### Troubleshooting
+
+#### Push Not Received
+
+1. **Check Subscription**
+   ```javascript
+   // In browser console
+   navigator.serviceWorker.ready.then(reg => {
+     reg.pushManager.getSubscription().then(sub => {
+       console.log('Subscription:', sub);
+     });
+   });
+   ```
+
+2. **Check Environment Variables**
+   - Verify `PUSH_INTERNAL_SECRET` is set
+   - Verify VAPID keys are configured
+   - Verify `NEXT_PUBLIC_APP_URL` is correct
+
+3. **Check Server Logs**
+   - Look for `[sendPushNotificationForTransaction]` logs
+   - Look for `[send-push-internal]` logs
+   - Check for errors in PushManager
+
+4. **Check Browser Support**
+   - Chrome/Edge: Full support
+   - Firefox: Full support
+   - Safari: Limited support (macOS only)
+   - Mobile browsers: Varies by platform
+
+### Limitations
+
+❌ **Safari iOS** - No Web Push support (yet)
+❌ **Requires HTTPS** - Web Push only works on HTTPS
+❌ **User Must Subscribe** - Can't send push without subscription
+❌ **Service Worker Required** - Must have `/sw.js` registered
+
+### Future Improvements
+
+- [ ] Add retry logic for failed push sends
+- [ ] Add push notification analytics
+- [ ] Add push notification preferences (per category)
+- [ ] Add push notification scheduling
+- [ ] Add push notification batching
+- [ ] Add fallback to email notifications if push fails
+
