@@ -354,13 +354,17 @@ async function processSingleEmail(
  * Get valid access token for a connection (refresh if needed)
  */
 async function getValidAccessToken(connection: any): Promise<string> {
-  // Check if access token is still valid (simple check - could be enhanced)
-  if (connection.access_token) {
+  // Check if access token exists and is not expired
+  const tokenExpiry = connection.token_expiry || connection.token_expires_at;
+  const isTokenValid = connection.access_token && tokenExpiry && new Date(tokenExpiry) > new Date();
+
+  if (isTokenValid) {
+    console.log(`✅ [PriorityEmailProcessor] Using existing valid access token for ${connection.email_address}`);
     return connection.access_token;
   }
 
   // Refresh access token
-  console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address}`);
+  console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address} (expired or missing)`);
 
   const tokens = await refreshAccessToken(connection.refresh_token);
 
@@ -369,11 +373,13 @@ async function getValidAccessToken(connection: any): Promise<string> {
     .from(TABLE_GMAIL_CONNECTIONS)
     .update({
       access_token: tokens.access_token,
-      token_expires_at: tokens.expiry_date
+      token_expiry: tokens.expiry_date
         ? new Date(tokens.expiry_date).toISOString()
         : null,
     })
     .eq('id', connection.id);
+
+  console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address}`);
 
   return tokens.access_token!;
 }
