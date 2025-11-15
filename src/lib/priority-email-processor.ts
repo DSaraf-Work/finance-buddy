@@ -372,33 +372,56 @@ async function processSingleEmail(
 async function getValidAccessToken(connection: any): Promise<string> {
   // Check if access token exists and is not expired
   const tokenExpiry = connection.token_expiry || connection.token_expires_at;
-  const isTokenValid = connection.access_token && tokenExpiry && new Date(tokenExpiry) > new Date();
+  const now = new Date();
+  const expiryDate = tokenExpiry ? new Date(tokenExpiry) : null;
+
+  // Check if token expiry is suspiciously far in the future (> 2 hours)
+  // This indicates the old bug where we set expiry to 1 year
+  const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+  const isSuspiciousExpiry = expiryDate && expiryDate > twoHoursFromNow;
+
+  const isTokenValid = connection.access_token &&
+                       expiryDate &&
+                       expiryDate > now &&
+                       !isSuspiciousExpiry;
 
   if (isTokenValid) {
-    console.log(`✅ [PriorityEmailProcessor] Using existing valid access token for ${connection.email_address}`);
+    console.log(`✅ [PriorityEmailProcessor] Using existing valid access token for ${connection.email_address}`, {
+      expiresAt: expiryDate?.toISOString(),
+      expiresIn: `${Math.round((expiryDate!.getTime() - now.getTime()) / 1000)}s`,
+    });
     return connection.access_token;
   }
 
   // Refresh access token
-  console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address} (expired or missing)`);
+  const reason = !connection.access_token ? 'missing' :
+                 !expiryDate ? 'no expiry' :
+                 isSuspiciousExpiry ? 'suspicious expiry (old bug)' :
+                 'expired';
+  console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address} (${reason})`);
 
   try {
     const tokens = await refreshAccessToken(connection.refresh_token);
 
-    // Set token expiry to 1 year from now
-    const oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+    // Calculate token expiry from expires_in (in seconds, usually 3600 = 1 hour)
+    // Add a 5-minute buffer to ensure we refresh before actual expiry
+    const expiresInSeconds = (tokens as any).expires_in || 3600;
+    const bufferSeconds = 300; // 5 minutes
+    const tokenExpiry = new Date(Date.now() + (expiresInSeconds - bufferSeconds) * 1000);
 
     // Update connection with new access token
     await (supabaseAdmin as any)
       .from(TABLE_GMAIL_CONNECTIONS)
       .update({
         access_token: tokens.access_token,
-        token_expiry: oneYearFromNow.toISOString(),
+        token_expiry: tokenExpiry.toISOString(),
       })
       .eq('id', connection.id);
 
-    console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address} (expires: ${oneYearFromNow.toISOString()})`);
+    console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address}`, {
+      expiresIn: `${expiresInSeconds}s`,
+      expiresAt: tokenExpiry.toISOString(),
+    });
 
     return tokens.access_token!;
   } catch (error: any) {
