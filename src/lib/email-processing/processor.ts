@@ -164,8 +164,8 @@ export class EmailProcessor {
     // Save extracted transaction and get the ID
     const transactionId = await this.saveExtractedTransaction(email, extractedTransaction);
 
-    // Email status will automatically become 'PROCESSED' due to the transaction being saved
-    console.log(`✅ Email ${email.id} processed successfully - status will be derived as PROCESSED`);
+    // Email status will automatically become 'Processed' via database trigger
+    console.log(`✅ Email ${email.id} processed successfully - status auto-updated to 'Processed' by trigger`);
 
     return transactionId ? [transactionId] : [];
   }

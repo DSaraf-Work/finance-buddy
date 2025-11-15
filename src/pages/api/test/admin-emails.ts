@@ -83,19 +83,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           connection_id: email.connection_id,
         });
 
-        // Update email status
-        await (supabaseAdmin as any)
-          .from(TABLE_EMAILS_FETCHED)
-          .update({
-            status: 'Processed',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', email.id);
-
+        // Email status will be automatically updated to 'Processed' by database trigger
         return res.status(200).json({
           success: true,
           emailId: email.id,
           subject: email.subject,
+          message: 'Email processed successfully - status auto-updated by trigger',
         });
       } catch (error: any) {
         return res.status(500).json({

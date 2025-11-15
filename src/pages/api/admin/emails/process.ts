@@ -98,16 +98,8 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
             connection_id: email.connection_id,
           });
 
-          // Update email status to Processed
-          await (supabaseAdmin as any)
-            .from(TABLE_EMAILS_FETCHED)
-            .update({
-              status: 'Processed',
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', email.id);
-
-          console.log(`✅ Successfully processed email ${email.id}`);
+          // Email status will be automatically updated to 'Processed' by database trigger
+          console.log(`✅ Successfully processed email ${email.id} - status auto-updated by trigger`);
 
           processedCount++;
         } catch (error: any) {
