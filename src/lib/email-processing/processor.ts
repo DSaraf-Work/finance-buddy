@@ -253,7 +253,51 @@ export class EmailProcessor {
       throw new Error(`Failed to save transaction: ${error.message}`);
     }
 
-    return data?.id || null;
+    const transactionId = data?.id || null;
+
+    // Send push notification in background (fire and forget)
+    // The database trigger will create the notification in fb_notifications
+    // We need to wait a bit for the trigger to complete, then send the push
+    if (transactionId) {
+      this.sendPushNotificationForTransaction(transactionId).catch((error) => {
+        console.error('❌ Failed to send push notification:', error);
+      });
+    }
+
+    return transactionId;
+  }
+
+  /**
+   * Send push notification for a newly created transaction
+   * This is called after the transaction is saved and the database trigger has created the notification
+   */
+  private async sendPushNotificationForTransaction(transactionId: string): Promise<void> {
+    try {
+      // Wait a bit for the database trigger to create the notification
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      console.log('[sendPushNotificationForTransaction] 📢 Sending push for transaction:', transactionId);
+
+      // Find the notification created by the trigger
+      const { data: notification, error } = await (supabaseAdmin as any)
+        .from('fb_notifications')
+        .select('id')
+        .eq('metadata->>transaction_id', transactionId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error || !notification) {
+        console.error('[sendPushNotificationForTransaction] ❌ Notification not found for transaction:', transactionId);
+        return;
+      }
+
+      // Send push notification via internal API
+      const { sendPushInBackground } = await import('@/lib/notifications/send-push-helper');
+      sendPushInBackground(notification.id);
+    } catch (error) {
+      console.error('[sendPushNotificationForTransaction] ❌ Error:', error);
+    }
   }
 
   private async rejectEmail(emailId: string, reason: string, type: string = 'processing_error', errorDetails?: any): Promise<void> {
