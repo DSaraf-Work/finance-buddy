@@ -14,57 +14,22 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with session check to prevent flash
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    // Try to get session synchronously from localStorage
-    if (typeof window !== 'undefined') {
-      try {
-        const storedSession = localStorage.getItem('supabase.auth.token');
-        if (storedSession) {
-          const parsed = JSON.parse(storedSession);
-          if (parsed?.currentSession?.user) {
-            return {
-              id: parsed.currentSession.user.id,
-              email: parsed.currentSession.user.email,
-              email_confirmed_at: parsed.currentSession.user.email_confirmed_at,
-              created_at: parsed.currentSession.user.created_at,
-            };
-          }
-        }
-      } catch (e) {
-        // Ignore errors, will check properly in useEffect
-      }
-    }
-    return null;
-  });
+  // Start with null user and loading true
+  // Don't try to read from localStorage synchronously as it's unreliable
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Check initial session
+    // Check initial session immediately
     checkUser();
 
     // Listen for auth changes
     const { data: { subscription } } = authHelpers.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user && session?.access_token && session?.refresh_token) {
-          // Establish server-side session with both tokens
-          try {
-            await fetch('/api/auth/session', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                access_token: session.access_token,
-                refresh_token: session.refresh_token,
-              }),
-            });
-          } catch (error) {
-            console.error('Failed to establish server session:', error);
-          }
-
+          // Set user immediately
           setUser({
             id: session.user.id,
             email: session.user.email!,
@@ -72,20 +37,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             created_at: session.user.created_at!,
           });
           setError(null);
-        } else if (event === 'SIGNED_OUT') {
-          // Clear server-side session
-          try {
-            await fetch('/api/auth/session', {
-              method: 'DELETE',
-            });
-          } catch (error) {
-            console.error('Failed to clear server session:', error);
-          }
+          setLoading(false);
 
+          // Establish server-side session in background
+          fetch('/api/auth/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              access_token: session.access_token,
+              refresh_token: session.refresh_token,
+            }),
+          }).catch(error => {
+            console.error('Failed to establish server session:', error);
+          });
+        } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setError(null);
+          setLoading(false);
+
+          // Clear server-side session in background
+          fetch('/api/auth/session', {
+            method: 'DELETE',
+          }).catch(error => {
+            console.error('Failed to clear server session:', error);
+          });
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+          // Update user on token refresh
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            email_confirmed_at: session.user.email_confirmed_at,
+            created_at: session.user.created_at!,
+          });
         }
-        setLoading(false);
       }
     );
 
@@ -94,46 +80,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkUser = async () => {
     try {
-      const { user, error } = await authHelpers.getUser();
-      if (error) {
-        console.error('Auth check error:', error);
-        setError(error.message);
-        setUser(null);
-      } else if (user) {
-        // Also establish server-side session if we have a valid client session
-        try {
-          const { session } = await authHelpers.getSession();
-          if (session?.access_token && session?.refresh_token) {
-            await fetch('/api/auth/session', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                access_token: session.access_token,
-                refresh_token: session.refresh_token,
-              }),
-            });
-          }
-        } catch (error) {
-          console.error('Failed to establish server session:', error);
-        }
+      // First check if we have a session (faster than getUser)
+      const { session } = await authHelpers.getSession();
 
+      if (session?.user) {
+        // We have a valid session, set user immediately
         setUser({
-          id: user.id,
-          email: user.email!,
-          email_confirmed_at: user.email_confirmed_at,
-          created_at: user.created_at!,
+          id: session.user.id,
+          email: session.user.email!,
+          email_confirmed_at: session.user.email_confirmed_at,
+          created_at: session.user.created_at!,
         });
         setError(null);
+        setLoading(false);
+
+        // Establish server-side session in background (don't await)
+        if (session.access_token && session.refresh_token) {
+          fetch('/api/auth/session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              access_token: session.access_token,
+              refresh_token: session.refresh_token,
+            }),
+          }).catch(error => {
+            console.error('Failed to establish server session:', error);
+          });
+        }
       } else {
+        // No session found
         setUser(null);
+        setError(null);
+        setLoading(false);
       }
     } catch (err) {
       console.error('Auth check error:', err);
       setError('Failed to check authentication status');
       setUser(null);
-    } finally {
       setLoading(false);
     }
   };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -10,28 +10,39 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      // Redirect to auth page with the current path as redirect target
-      const redirectTo = encodeURIComponent(router.asPath);
-      router.replace(`/auth?redirectTo=${redirectTo}`);
+    if (!loading) {
+      if (!user) {
+        // Redirect to auth page with the current path as redirect target
+        const redirectTo = encodeURIComponent(router.asPath);
+        router.replace(`/auth?redirectTo=${redirectTo}`);
+      } else {
+        // User is authenticated, allow rendering
+        setShouldRender(true);
+      }
     }
   }, [user, loading, router]);
 
   // Show loading state while checking authentication
-  // BUT: Don't show the loading UI, just render nothing to prevent flash
-  if (loading) {
-    return null; // Return null instead of loading UI to prevent flash
+  // Show a proper loading UI instead of blank screen to prevent confusion
+  if (loading || !shouldRender) {
+    return (
+      <div className="min-h-screen bg-[#0f0a1a] flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#6b4ce6] mb-4"></div>
+          <p className="text-[#cbd5e1] text-sm">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Show fallback or redirect if not authenticated
+  // Show fallback if not authenticated (shouldn't reach here due to redirect)
   if (!user) {
     if (fallback) {
       return <>{fallback}</>;
     }
-
-    // This will only show briefly before the redirect happens
     return null;
   }
 
