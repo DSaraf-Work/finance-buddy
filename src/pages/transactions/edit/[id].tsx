@@ -18,6 +18,7 @@ export default function TransactionEditPage() {
   const [email, setEmail] = useState<TransactionEditData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [reExtracting, setReExtracting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<EmailProcessed>>({});
 
@@ -73,6 +74,45 @@ export default function TransactionEditPage() {
 
   const handleChange = (field: keyof EmailProcessed, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleReExtract = async () => {
+    if (!email?.email_row_id) {
+      alert('Cannot re-extract: Email row ID not found');
+      return;
+    }
+
+    const confirmed = confirm(
+      'This will re-extract transaction data from the email using AI. ' +
+      'Your current unsaved changes will be lost. Continue?'
+    );
+
+    if (!confirmed) return;
+
+    setReExtracting(true);
+    try {
+      const res = await fetch(`/api/emails/re-extract`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email_row_id: email.email_row_id }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to re-extract transaction');
+      }
+
+      const data = await res.json();
+
+      // Refresh the page data
+      await fetchEmail();
+
+      alert('Transaction re-extracted successfully!');
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    } finally {
+      setReExtracting(false);
+    }
   };
 
   if (loading) {
@@ -490,21 +530,59 @@ export default function TransactionEditPage() {
           </div>
 
           {/* Floating Action Buttons */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#1a1625] border-t border-[#2d1b4e] shadow-[0_-4px_20px_rgba(0,0,0,0.3)] z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex items-center justify-between space-x-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <button
                   onClick={() => router.push('/transactions')}
-                  className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition-colors"
+                  className="px-6 py-3 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-[#2d1b4e]/50 hover:text-[#f8fafc] font-medium transition-all duration-200 border border-[#2d1b4e] hover:border-[#6b4ce6]/50"
                 >
                   ← Back to Transactions
                 </button>
                 <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  onClick={handleReExtract}
+                  disabled={reExtracting || saving}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#ec4899] to-[#8b5cf6] text-white rounded-lg hover:from-[#db2777] hover:to-[#7c3aed] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] flex items-center justify-center gap-2"
+                  title="Re-extract transaction data from email using AI"
                 >
-                  {saving ? 'Saving...' : '💾 Save Changes'}
+                  {reExtracting ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Re-extracting...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      🤖 Re-extract with AI
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving || reExtracting}
+                  className="flex-1 px-6 py-3 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] flex items-center justify-center gap-2"
+                >
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                      </svg>
+                      Save Changes
+                    </>
+                  )}
                 </button>
               </div>
             </div>
