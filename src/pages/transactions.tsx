@@ -402,16 +402,16 @@ export default function TransactionsPage() {
         title="Finance Buddy - Transactions"
         description="AI-extracted financial transactions with smart insights"
       >
-        <div className="min-h-screen bg-white py-12">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-            {/* Header - Minimalist */}
-            <div className="mb-16">
-              <div className="flex items-end justify-between border-b border-gray-200 pb-6">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 py-8 sm:py-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header - Modern Minimal */}
+            <div className="mb-8 sm:mb-12">
+              <div className="flex items-end justify-between pb-4 sm:pb-6 border-b border-gray-200">
                 <div>
-                  <p className="text-sm font-medium text-gray-500 tracking-wide uppercase mb-2">
+                  <p className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-2">
                     Transactions
                   </p>
-                  <h1 className="text-4xl font-light text-gray-900 tracking-tight">
+                  <h1 className="text-3xl sm:text-4xl font-light text-gray-900 tracking-tight">
                     Financial Activity
                   </h1>
                 </div>
@@ -436,13 +436,13 @@ export default function TransactionsPage() {
               loading={filterLoading}
             />
 
-            {/* Transactions List - 2 per row */}
+            {/* Transactions List - Responsive Grid */}
             {loading ? (
               <TransactionListSkeleton count={10} />
             ) : transactions.length === 0 ? (
               <TransactionEmptyState onRefresh={() => searchTransactions()} />
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {transactions.map((transaction) => (
                   <TransactionCard
                     key={transaction.id}
@@ -454,14 +454,14 @@ export default function TransactionsPage() {
               </div>
             )}
 
-        {/* Pagination Controls - Minimalist */}
+        {/* Pagination Controls - Modern Minimal */}
         {transactions.length > 0 && (
           <nav
-            className="border-t border-gray-200 pt-8 mt-12"
+            className="border-t border-gray-200 pt-6 sm:pt-8 mt-8 sm:mt-12"
             aria-label="Transaction pagination"
           >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-6 text-xs text-gray-500 tracking-wide">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+              <div className="flex items-center gap-4 sm:gap-6 text-xs text-gray-500">
                 <span aria-live="polite">
                   {pagination.total} total
                 </span>
@@ -469,22 +469,22 @@ export default function TransactionsPage() {
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 disabled:border-gray-300 disabled:text-gray-300 transition-colors pb-1"
+                  className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white transition-all duration-200"
                   aria-label="Go to previous page"
                 >
                   Previous
                 </button>
-                <span className="text-xs text-gray-400 tracking-wide">
+                <span className="text-sm text-gray-600 px-2">
                   {pagination.page}
                 </span>
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 disabled:border-gray-300 disabled:text-gray-300 transition-colors pb-1"
+                  className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white transition-all duration-200"
                   aria-label="Go to next page"
                 >
                   Next

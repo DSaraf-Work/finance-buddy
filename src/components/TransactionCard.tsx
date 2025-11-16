@@ -107,39 +107,43 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   return (
     <article
-      className="border-b border-gray-200 py-6 hover:bg-gray-50 transition-colors duration-150"
+      className="bg-white rounded-lg border border-gray-200 p-4 sm:p-5 hover:border-blue-300 hover:shadow-sm transition-all duration-200"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role="article"
       aria-label={`Transaction: ${transaction.merchant_name || 'Unknown Merchant'}, ${formatAmount(transaction.amount, transaction.currency)}`}
     >
-      <div className="flex items-start justify-between gap-6">
+      <div className="flex items-start justify-between gap-4">
         {/* Left side - Details */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-3 mb-2">
-            <h3 className="text-base font-medium text-gray-900 truncate">
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-2">
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
               {transaction.merchant_name || 'Unknown Merchant'}
             </h3>
-            <span className="text-xs text-gray-400 tracking-wide">
+            <span className="text-xs text-gray-500">
               {formatDate(transaction.txn_time)}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-gray-500 tracking-wide">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-gray-500">
             {transaction.category && (
-              <span className="capitalize">{transaction.category}</span>
+              <span className="px-2 py-0.5 bg-gray-100 rounded capitalize">
+                {transaction.category}
+              </span>
             )}
             {transaction.account_hint && (
-              <span>{transaction.account_hint}</span>
+              <span className="px-2 py-0.5 bg-gray-100 rounded">
+                {transaction.account_hint}
+              </span>
             )}
           </div>
         </div>
 
         {/* Right side - Amount and Edit */}
-        <div className="flex items-center gap-6 flex-shrink-0">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 sm:gap-4 flex-shrink-0">
           {/* Amount */}
           <div className="text-right">
-            <div className={`text-lg font-light ${getDirectionColor(transaction.direction)}`}>
+            <div className={`text-base sm:text-lg font-semibold ${getDirectionColor(transaction.direction)}`}>
               {transaction.direction === 'debit' && '-'}
               {formatAmount(transaction.amount, transaction.currency)}
             </div>
@@ -148,7 +152,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
           {/* Edit Link */}
           <a
             href={`/transactions/edit/${transaction.id}`}
-            className="text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 transition-colors pb-1"
+            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
             aria-label={`Edit transaction for ${transaction.merchant_name}`}
           >
             Edit

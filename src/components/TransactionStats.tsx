@@ -57,12 +57,13 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="border-l-2 border-gray-200 pl-6 py-4 animate-pulse">
-            <div className="h-3 bg-gray-200 rounded w-24 mb-3"></div>
-            <div className="h-10 bg-gray-200 rounded w-32 mb-2"></div>
-            <div className="h-2 bg-gray-200 rounded w-20"></div>
+          <div key={i} className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6 animate-pulse">
+            <div className="w-10 h-10 bg-gray-200 rounded-lg mb-4"></div>
+            <div className="h-3 bg-gray-200 rounded w-20 mb-2"></div>
+            <div className="h-8 bg-gray-200 rounded w-24 mb-1"></div>
+            <div className="h-2 bg-gray-200 rounded w-16"></div>
           </div>
         ))}
       </div>
@@ -70,47 +71,62 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-      <div className="group">
-        <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
-          <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
-            Total
-          </p>
-          <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
-            {total.toLocaleString()}
-          </p>
-          <p className="text-xs text-gray-400 tracking-wide">
-            Transactions
-          </p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+      <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+            </svg>
+          </div>
         </div>
+        <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+          Total
+        </p>
+        <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+          {total.toLocaleString()}
+        </p>
+        <p className="text-xs text-gray-400">
+          Transactions
+        </p>
       </div>
 
-      <div className="group">
-        <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
-          <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
-            Amount
-          </p>
-          <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
-            {formatCurrency(totalAmount)}
-          </p>
-          <p className="text-xs text-gray-400 tracking-wide">
-            Total value
-          </p>
+      <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+            <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
         </div>
+        <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+          Amount
+        </p>
+        <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+          {formatCurrency(totalAmount)}
+        </p>
+        <p className="text-xs text-gray-400">
+          Total value
+        </p>
       </div>
 
-      <div className="group">
-        <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
-          <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
-            Confidence
-          </p>
-          <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
-            {Math.round(avgConfidence * 100)}%
-          </p>
-          <p className="text-xs text-gray-400 tracking-wide">
-            AI accuracy
-          </p>
+      <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200 sm:col-span-2 lg:col-span-1">
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
         </div>
+        <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+          Confidence
+        </p>
+        <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+          {Math.round(avgConfidence * 100)}%
+        </p>
+        <p className="text-xs text-gray-400">
+          AI accuracy
+        </p>
       </div>
     </div>
   );
