@@ -322,160 +322,160 @@ const HomePage: NextPage = () => {
       title="Finance Buddy - Dashboard"
       description="Finance Buddy dashboard with overview and quick actions"
     >
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 py-8 sm:py-12">
+      <div className="min-h-screen bg-[#0f0a1a] py-8 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header - Modern Minimal */}
+          {/* Welcome Header - Dark Purple Theme */}
           <div className="mb-8 sm:mb-12">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-6 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-6 border-b border-[#2d1b4e]">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-2">
+                <p className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-2">
                   Dashboard
                 </p>
-                <h1 className="text-3xl sm:text-4xl font-light text-gray-900 tracking-tight">
+                <h1 className="text-3xl sm:text-4xl font-light text-[#f8fafc] tracking-tight">
                   Welcome back
                 </h1>
               </div>
               <div className="flex items-center space-x-2 mt-3 sm:mt-0">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                <span className="text-xs font-medium text-gray-600 tracking-wide">ACTIVE</span>
+                <div className="w-1.5 h-1.5 bg-[#10b981] rounded-full animate-pulse"></div>
+                <span className="text-xs font-medium text-[#cbd5e1] tracking-wide">ACTIVE</span>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards - Modern Minimal with Color */}
+          {/* Stats Cards - Dark Purple Theme */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-16">
             {/* Total Emails Card */}
-            <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+            <div className="group bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#6b4ce6]/10 rounded-lg flex items-center justify-center ring-1 ring-[#6b4ce6]/20">
+                  <svg className="w-5 h-5 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
-              <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+              <p className="text-xs font-medium text-[#94a3b8] tracking-wide uppercase mb-2">
                 Emails
               </p>
-              <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+              <p className="text-3xl sm:text-4xl font-light text-[#f8fafc] mb-1 tracking-tight">
                 {loadingStats ? (
-                  <span className="text-gray-300">—</span>
+                  <span className="text-[#64748b]">—</span>
                 ) : (
                   stats.totalEmails.toLocaleString()
                 )}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#cbd5e1]">
                 Synced from Gmail
               </p>
             </div>
 
             {/* Total Transactions Card */}
-            <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+            <div className="group bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 hover:border-[#10b981] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#10b981]/10 rounded-lg flex items-center justify-center ring-1 ring-[#10b981]/20">
+                  <svg className="w-5 h-5 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
-              <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+              <p className="text-xs font-medium text-[#94a3b8] tracking-wide uppercase mb-2">
                 Transactions
               </p>
-              <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+              <p className="text-3xl sm:text-4xl font-light text-[#f8fafc] mb-1 tracking-tight">
                 {loadingStats ? (
-                  <span className="text-gray-300">—</span>
+                  <span className="text-[#64748b]">—</span>
                 ) : (
                   stats.totalTransactions.toLocaleString()
                 )}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#cbd5e1]">
                 AI-extracted
               </p>
             </div>
 
             {/* Connected Accounts Card */}
-            <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200 sm:col-span-2 lg:col-span-1">
+            <div className="group bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 hover:border-[#ec4899] hover:shadow-[0_0_20px_rgba(236,72,153,0.2)] transition-all duration-300 sm:col-span-2 lg:col-span-1">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#ec4899]/10 rounded-lg flex items-center justify-center ring-1 ring-[#ec4899]/20">
+                  <svg className="w-5 h-5 text-[#ec4899]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
               </div>
-              <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+              <p className="text-xs font-medium text-[#94a3b8] tracking-wide uppercase mb-2">
                 Accounts
               </p>
-              <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+              <p className="text-3xl sm:text-4xl font-light text-[#f8fafc] mb-1 tracking-tight">
                 {loadingStats ? (
-                  <span className="text-gray-300">—</span>
+                  <span className="text-[#64748b]">—</span>
                 ) : (
                   stats.totalConnections
                 )}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#cbd5e1]">
                 Connected
               </p>
             </div>
           </div>
 
-          {/* Quick Actions & Connection Status - Modern Minimal */}
+          {/* Quick Actions & Connection Status - Dark Purple Theme */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6">
-              <h3 className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-4 sm:mb-6">
+            <div className="bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6">
+              <h3 className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-4 sm:mb-6">
                 Quick Actions
               </h3>
               <div className="space-y-2">
                 <button
                   onClick={handleConnect}
-                  className="group w-full text-left py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
+                  className="group w-full text-left py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900">Connect Gmail Account</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Connect Gmail Account</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
                 <a
                   href="/admin"
-                  className="group w-full block py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
+                  className="group w-full block py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900">Manage Connections</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Manage Connections</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/emails"
-                  className="group w-full block py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
+                  className="group w-full block py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900">Browse Emails</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Browse Emails</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/transactions"
-                  className="group w-full block py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
+                  className="group w-full block py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900">Review Transactions</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Review Transactions</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <button
                   onClick={handleCheckPriorityEmails}
                   disabled={checkingPriorityEmails}
-                  className="group w-full text-left py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white"
+                  className="group w-full text-left py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#2d1b4e] disabled:hover:bg-transparent"
                 >
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-[#f8fafc]">
                     {checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails'}
                   </span>
                   {checkingPriorityEmails ? (
-                    <svg className="animate-spin h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-4 w-4 text-[#a78bfa]" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   )}
