@@ -296,10 +296,15 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Source Section */}
             <section>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Source Details</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Source Details
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="reference_id" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="reference_id" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Reference ID
                   </label>
                   <input
@@ -307,11 +312,11 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.reference_id || ''}
                     onChange={e => handleChange('reference_id', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="location" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Location
                   </label>
                   <input
@@ -319,24 +324,24 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.location || ''}
                     onChange={e => handleChange('location', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Email Row ID (Read-only)
                   </label>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={formData.email_row_id}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600"
+                      className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] cursor-not-allowed"
                     />
                     <button
                       type="button"
                       onClick={() => copyToClipboard(formData.email_row_id)}
-                      className="px-3 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                      className="px-3 py-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-lg transition-all duration-200"
                       aria-label="Copy email row ID"
                       title="Copy to clipboard"
                     >
@@ -356,14 +361,19 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Meta Section */}
             <section>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Meta Information</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Meta Information
+              </h3>
               <div className="space-y-4">
                 {/* Confidence */}
                 <div>
-                  <label htmlFor="confidence" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="confidence" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Confidence (0-1)
                   </label>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center gap-4">
                     <input
                       id="confidence"
                       type="range"
@@ -372,7 +382,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       step="0.01"
                       value={formData.confidence || 0}
                       onChange={e => handleChange('confidence', e.target.value)}
-                      className="flex-1"
+                      className="flex-1 h-2 bg-[#2d1b4e] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#6b4ce6] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(107,76,230,0.5)]"
                     />
                     <input
                       type="number"
@@ -381,14 +391,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       step="0.01"
                       value={formData.confidence || 0}
                       onChange={e => handleChange('confidence', e.target.value)}
-                      className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-20 px-3 py-2 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     />
                   </div>
                 </div>
 
                 {/* AI Notes (Read-only) */}
                 <div>
-                  <label htmlFor="ai_notes" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="ai_notes" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     AI Notes (Read-only)
                   </label>
                   <textarea
@@ -396,13 +406,13 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     value={formData.ai_notes || 'No AI notes available'}
                     readOnly
                     rows={3}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 resize-none"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] resize-none cursor-not-allowed"
                   />
                 </div>
 
                 {/* User Notes */}
                 <div>
-                  <label htmlFor="user_notes" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="user_notes" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     User Notes
                   </label>
                   <textarea
@@ -410,7 +420,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     value={formData.user_notes || ''}
                     onChange={e => handleChange('user_notes', e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] resize-none transition-all duration-200"
                     placeholder="Add your notes here..."
                   />
                 </div>
@@ -419,21 +429,26 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Read-only System Fields */}
             <section>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">System Information (Read-only)</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                </svg>
+                System Information (Read-only)
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">ID</label>
-                  <div className="flex items-center space-x-2">
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">ID</label>
+                  <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={formData.id}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 text-sm"
+                      className="flex-1 px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                     />
                     <button
                       type="button"
                       onClick={() => copyToClipboard(formData.id)}
-                      className="px-3 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                      className="px-3 py-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-lg transition-all duration-200"
                       aria-label="Copy ID"
                       title="Copy to clipboard"
                     >
@@ -449,48 +464,48 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Google User ID</label>
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">Google User ID</label>
                   <input
                     type="text"
                     value={formData.google_user_id}
                     readOnly
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 text-sm"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Connection ID</label>
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">Connection ID</label>
                   <input
                     type="text"
                     value={formData.connection_id || 'N/A'}
                     readOnly
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 text-sm"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Extraction Version</label>
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">Extraction Version</label>
                   <input
                     type="text"
                     value={formData.extraction_version || 'N/A'}
                     readOnly
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 text-sm"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Created At</label>
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">Created At</label>
                   <input
                     type="text"
                     value={new Date(formData.created_at).toLocaleString()}
                     readOnly
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 text-sm"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Updated At</label>
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">Updated At</label>
                   <input
                     type="text"
                     value={new Date(formData.updated_at).toLocaleString()}
                     readOnly
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-600 text-sm"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -498,8 +513,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Email Body Section */}
             <section>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Original Email Body
@@ -507,45 +522,55 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
               {loadingEmail ? (
                 <div className="flex items-center justify-center py-8">
-                  <svg className="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-8 w-8 text-[#6b4ce6]" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span className="ml-3 text-gray-600">Loading email body...</span>
+                  <span className="ml-3 text-[#cbd5e1]">Loading email body...</span>
                 </div>
               ) : emailBody ? (
-                <div className="bg-white border border-gray-200 rounded-lg p-4 max-h-96 overflow-y-auto">
+                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg p-4 max-h-96 overflow-y-auto">
                   <div
-                    className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap"
+                    className="prose prose-sm max-w-none text-[#cbd5e1] whitespace-pre-wrap [&_a]:text-[#6b4ce6] [&_a:hover]:text-[#8b5cf6]"
                     dangerouslySetInnerHTML={{ __html: emailBody }}
                   />
                 </div>
               ) : (
-                <div className="bg-white border border-gray-200 rounded-lg p-4 text-center text-gray-500">
-                  <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg p-4 text-center">
+                  <svg className="w-12 h-12 mx-auto mb-2 text-[#2d1b4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                   </svg>
-                  <p>No email body available</p>
+                  <p className="text-[#94a3b8]">No email body available</p>
                 </div>
               )}
             </section>
 
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-[#2d1b4e]">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                className="px-6 py-2.5 border border-[#2d1b4e] text-[#cbd5e1] font-medium rounded-lg hover:bg-[#2d1b4e]/30 hover:border-[#6b4ce6]/50 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
                 disabled={isSaving}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                 disabled={isSaving}
               >
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Saving...
+                  </span>
+                ) : (
+                  'Save Changes'
+                )}
               </button>
             </div>
           </form>
