@@ -322,181 +322,196 @@ const HomePage: NextPage = () => {
       title="Finance Buddy - Dashboard"
       description="Finance Buddy dashboard with overview and quick actions"
     >
-      <div className="min-h-screen bg-white py-12">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-          {/* Welcome Header - Minimalist */}
-          <div className="mb-16">
-            <div className="flex items-end justify-between border-b border-gray-200 pb-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 py-8 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Welcome Header - Modern Minimal */}
+          <div className="mb-8 sm:mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-6 border-b border-gray-200">
               <div>
-                <p className="text-sm font-medium text-gray-500 tracking-wide uppercase mb-2">
+                <p className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-2">
                   Dashboard
                 </p>
-                <h1 className="text-4xl font-light text-gray-900 tracking-tight">
+                <h1 className="text-3xl sm:text-4xl font-light text-gray-900 tracking-tight">
                   Welcome back
                 </h1>
               </div>
-              <div className="hidden sm:flex items-center space-x-2">
+              <div className="flex items-center space-x-2 mt-3 sm:mt-0">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
                 <span className="text-xs font-medium text-gray-600 tracking-wide">ACTIVE</span>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards - Minimalist */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+          {/* Stats Cards - Modern Minimal with Color */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-16">
             {/* Total Emails Card */}
-            <div className="group">
-              <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
-                <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
-                  Emails
-                </p>
-                <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
-                  {loadingStats ? (
-                    <span className="text-gray-300">—</span>
-                  ) : (
-                    stats.totalEmails.toLocaleString()
-                  )}
-                </p>
-                <p className="text-xs text-gray-400 tracking-wide">
-                  Synced from Gmail
-                </p>
+            <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
               </div>
+              <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+                Emails
+              </p>
+              <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+                {loadingStats ? (
+                  <span className="text-gray-300">—</span>
+                ) : (
+                  stats.totalEmails.toLocaleString()
+                )}
+              </p>
+              <p className="text-xs text-gray-400">
+                Synced from Gmail
+              </p>
             </div>
 
             {/* Total Transactions Card */}
-            <div className="group">
-              <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
-                <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
-                  Transactions
-                </p>
-                <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
-                  {loadingStats ? (
-                    <span className="text-gray-300">—</span>
-                  ) : (
-                    stats.totalTransactions.toLocaleString()
-                  )}
-                </p>
-                <p className="text-xs text-gray-400 tracking-wide">
-                  AI-extracted
-                </p>
+            <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
               </div>
+              <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+                Transactions
+              </p>
+              <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+                {loadingStats ? (
+                  <span className="text-gray-300">—</span>
+                ) : (
+                  stats.totalTransactions.toLocaleString()
+                )}
+              </p>
+              <p className="text-xs text-gray-400">
+                AI-extracted
+              </p>
             </div>
 
             {/* Connected Accounts Card */}
-            <div className="group">
-              <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
-                <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
-                  Accounts
-                </p>
-                <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
-                  {loadingStats ? (
-                    <span className="text-gray-300">—</span>
-                  ) : (
-                    stats.totalConnections
-                  )}
-                </p>
-                <p className="text-xs text-gray-400 tracking-wide">
-                  Connected
-                </p>
+            <div className="group bg-white rounded-lg border border-gray-200 p-5 sm:p-6 hover:border-blue-300 hover:shadow-sm transition-all duration-200 sm:col-span-2 lg:col-span-1">
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </div>
               </div>
+              <p className="text-xs font-medium text-gray-500 tracking-wide uppercase mb-2">
+                Accounts
+              </p>
+              <p className="text-3xl sm:text-4xl font-light text-gray-900 mb-1 tracking-tight">
+                {loadingStats ? (
+                  <span className="text-gray-300">—</span>
+                ) : (
+                  stats.totalConnections
+                )}
+              </p>
+              <p className="text-xs text-gray-400">
+                Connected
+              </p>
             </div>
           </div>
 
-          {/* Quick Actions & Connection Status - Minimalist */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            {/* Quick Actions - Minimalist */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-500 tracking-widest uppercase mb-6">
-                Actions
+          {/* Quick Actions & Connection Status - Modern Minimal */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
+            {/* Quick Actions */}
+            <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6">
+              <h3 className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-4 sm:mb-6">
+                Quick Actions
               </h3>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <button
                   onClick={handleConnect}
-                  className="group w-full text-left py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
+                  className="group w-full text-left py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900 tracking-wide">Connect Gmail Account</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900">Connect Gmail Account</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
                 <a
                   href="/admin"
-                  className="group w-full block py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
+                  className="group w-full block py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900 tracking-wide">Manage Connections</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900">Manage Connections</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/emails"
-                  className="group w-full block py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
+                  className="group w-full block py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900 tracking-wide">Browse Emails</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900">Browse Emails</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/transactions"
-                  className="group w-full block py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
+                  className="group w-full block py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-gray-900 tracking-wide">Review Transactions</span>
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900">Review Transactions</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <button
                   onClick={handleCheckPriorityEmails}
                   disabled={checkingPriorityEmails}
-                  className="group w-full text-left py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+                  className="group w-full text-left py-3 px-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white"
                 >
-                  <span className="text-sm font-medium text-gray-900 tracking-wide">
-                    {checkingPriorityEmails ? 'Checking Priority Emails...' : 'Check Priority Emails'}
+                  <span className="text-sm font-medium text-gray-900">
+                    {checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails'}
                   </span>
                   {checkingPriorityEmails ? (
-                    <svg className="animate-spin h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                    <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   )}
                 </button>
               </div>
 
-              {/* Priority Email Result - Minimalist */}
+              {/* Priority Email Result */}
               {priorityEmailResult && (
-                <div className={`mt-8 border-l-2 pl-6 py-4 ${
+                <div className={`mt-6 rounded-lg p-4 ${
                   priorityEmailResult.success
-                    ? 'border-emerald-500'
-                    : 'border-red-500'
+                    ? 'bg-emerald-50 border border-emerald-200'
+                    : 'bg-red-50 border border-red-200'
                 }`}>
-                  <p className={`text-xs font-medium tracking-widest uppercase mb-3 ${
-                    priorityEmailResult.success ? 'text-emerald-600' : 'text-red-600'
+                  <p className={`text-xs font-medium tracking-wide uppercase mb-3 ${
+                    priorityEmailResult.success ? 'text-emerald-700' : 'text-red-700'
                   }`}>
-                    {priorityEmailResult.success ? 'Success' : 'Error'}
+                    {priorityEmailResult.success ? '✓ Success' : '✕ Error'}
                   </p>
                   {priorityEmailResult.success && priorityEmailResult.result && (
-                    <div className="space-y-2">
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-xs text-gray-500 tracking-wide">Emails Found</span>
-                        <span className="text-sm font-medium text-gray-900">{priorityEmailResult.result.emailsFound}</span>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <span className="text-xs text-gray-600">Found</span>
+                        <p className="text-lg font-semibold text-gray-900">{priorityEmailResult.result.emailsFound}</p>
                       </div>
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-xs text-gray-500 tracking-wide">Processed</span>
-                        <span className="text-sm font-medium text-gray-900">{priorityEmailResult.result.emailsProcessed}</span>
+                      <div>
+                        <span className="text-xs text-gray-600">Processed</span>
+                        <p className="text-lg font-semibold text-gray-900">{priorityEmailResult.result.emailsProcessed}</p>
                       </div>
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-xs text-gray-500 tracking-wide">Connections</span>
-                        <span className="text-sm font-medium text-gray-900">{priorityEmailResult.result.connectionsProcessed}</span>
+                      <div>
+                        <span className="text-xs text-gray-600">Connections</span>
+                        <p className="text-lg font-semibold text-gray-900">{priorityEmailResult.result.connectionsProcessed}</p>
                       </div>
                     </div>
                   )}
                   {priorityEmailResult.error && (
-                    <p className="text-xs text-red-600 tracking-wide">
+                    <p className="text-xs text-red-700">
                       {priorityEmailResult.error}
                     </p>
                   )}
@@ -504,36 +519,48 @@ const HomePage: NextPage = () => {
               )}
             </div>
 
-            {/* Connection Status - Minimalist */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-500 tracking-widest uppercase mb-6">
-                Connections
+            {/* Connection Status */}
+            <div className="bg-white rounded-lg border border-gray-200 p-5 sm:p-6">
+              <h3 className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-4 sm:mb-6">
+                Connected Accounts
               </h3>
               {connections.length === 0 ? (
-                <div className="border border-gray-200 py-12 text-center">
-                  <p className="text-sm text-gray-500 mb-6 tracking-wide">No accounts connected</p>
+                <div className="text-center py-8 sm:py-12">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-4">No accounts connected</p>
                   <button
                     onClick={handleConnect}
-                    className="inline-block text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 transition-colors duration-150 pb-1"
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
                   >
                     Connect Account
                   </button>
                 </div>
               ) : (
-                <div className="space-y-1">
+                <div className="space-y-3">
                   {connections.map((connection) => (
                     <div
                       key={connection.id}
-                      className="group py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150"
+                      className="group p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200"
                     >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900 tracking-wide">{connection.email_address}</p>
-                          <p className="text-xs text-gray-400 mt-1 tracking-wide">
-                            {connection.last_sync_at ? new Date(connection.last_sync_at).toLocaleDateString() : 'Never synced'}
-                          </p>
+                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-gray-900 truncate">{connection.email_address}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {connection.last_sync_at ? new Date(connection.last_sync_at).toLocaleDateString() : 'Never synced'}
+                            </p>
+                          </div>
                         </div>
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0"></div>
                       </div>
                     </div>
                   ))}
@@ -542,50 +569,81 @@ const HomePage: NextPage = () => {
             </div>
           </div>
 
-          {/* Features Overview - Minimalist */}
-          <div className="border-t border-gray-200 pt-16">
-            <h3 className="text-sm font-medium text-gray-500 tracking-widest uppercase mb-12">
+          {/* Features Overview */}
+          <div className="border-t border-gray-200 pt-12 sm:pt-16">
+            <h3 className="text-xs sm:text-sm font-medium text-blue-600 tracking-wide uppercase mb-8 sm:mb-12">
               Features
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10">
-              <div className="group">
-                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Secure OAuth</h4>
-                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="group p-5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">Secure OAuth</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Gmail integration with industry-standard PKCE security
                 </p>
               </div>
 
-              <div className="group">
-                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Smart Email Sync</h4>
-                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+              <div className="group p-5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">Smart Email Sync</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Manual sync with date ranges and intelligent deduplication
                 </p>
               </div>
 
-              <div className="group">
-                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Advanced Search</h4>
-                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+              <div className="group p-5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">Advanced Search</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Powerful filtering and search capabilities
                 </p>
               </div>
 
-              <div className="group">
-                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">AI Extraction</h4>
-                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+              <div className="group p-5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">AI Extraction</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Automated financial transaction data parsing
                 </p>
               </div>
 
-              <div className="group">
-                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Admin Tools</h4>
-                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+              <div className="group p-5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                <div className="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">Admin Tools</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Comprehensive system health monitoring
                 </p>
               </div>
 
-              <div className="group">
-                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">RLS Security</h4>
-                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+              <div className="group p-5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                <div className="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">RLS Security</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
                   Row-level security data protection
                 </p>
               </div>
