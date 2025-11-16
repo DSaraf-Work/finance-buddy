@@ -82,25 +82,29 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       ></div>
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div
-          className="relative bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-          style={{ borderRadius: '18px' }}
-        >
+        <div className="relative bg-[#1a1625] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl z-10">
+          <div className="sticky top-0 bg-[#0f0a1a]/95 backdrop-blur-sm border-b border-[#2d1b4e] px-6 py-4 rounded-t-xl z-10">
             <div className="flex items-center justify-between">
-              <h2 id="modal-title" className="text-2xl font-bold text-gray-900">
-                Edit Transaction
-              </h2>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-[#f8fafc]">
+                  Edit Transaction
+                </h2>
+              </div>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[#94a3b8] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 p-2 rounded-lg transition-all duration-200"
                 aria-label="Close modal"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,14 +120,19 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
+          <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6 sm:space-y-8">
             {/* Primary Section */}
             <section>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Primary Details</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Primary Details
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Amount */}
                 <div>
-                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="amount" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Amount *
                   </label>
                   <input
@@ -133,14 +142,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     min="0"
                     value={formData.amount}
                     onChange={e => handleChange('amount', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     required
                   />
                 </div>
 
                 {/* Currency */}
                 <div>
-                  <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="currency" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Currency
                   </label>
                   <input
@@ -148,24 +157,24 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.currency || ''}
                     onChange={e => handleChange('currency', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="INR"
                   />
                 </div>
 
                 {/* Direction */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Direction *
                   </label>
-                  <div className="flex space-x-2">
+                  <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => handleChange('direction', 'debit')}
-                      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
                         formData.direction === 'debit'
-                          ? 'bg-red-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-[#ef4444] text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] border border-[#ef4444]'
+                          : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-[#2d1b4e]/50 border border-[#2d1b4e] hover:border-[#ef4444]/50'
                       }`}
                     >
                       Debit
@@ -173,10 +182,10 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleChange('direction', 'credit')}
-                      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+                      className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
                         formData.direction === 'credit'
-                          ? 'bg-green-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-[#10b981] text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-[#10b981]'
+                          : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-[#2d1b4e]/50 border border-[#2d1b4e] hover:border-[#10b981]/50'
                       }`}
                     >
                       Credit
@@ -186,7 +195,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
                 {/* Date/Time */}
                 <div>
-                  <label htmlFor="txn_time" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="txn_time" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Date/Time *
                   </label>
                   <input
@@ -194,14 +203,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="datetime-local"
                     value={formData.txn_time ? formData.txn_time.slice(0, 16) : ''}
                     onChange={e => handleChange('txn_time', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     required
                   />
                 </div>
 
                 {/* Merchant Name */}
                 <div>
-                  <label htmlFor="merchant_name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="merchant_name" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Merchant Name
                   </label>
                   <input
@@ -209,14 +218,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.merchant_name || ''}
                     onChange={e => handleChange('merchant_name', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     maxLength={200}
                   />
                 </div>
 
                 {/* Merchant Normalized */}
                 <div>
-                  <label htmlFor="merchant_normalized" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="merchant_normalized" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Merchant (Normalized)
                   </label>
                   <input
@@ -224,14 +233,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.merchant_normalized || ''}
                     onChange={e => handleChange('merchant_normalized', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     maxLength={200}
                   />
                 </div>
 
                 {/* Category */}
                 <div className="md:col-span-2">
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="category" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Category
                   </label>
                   <input
@@ -239,7 +248,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.category || ''}
                     onChange={e => handleChange('category', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="e.g., Food, Transport, Shopping"
                     maxLength={200}
                   />
@@ -249,10 +258,15 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Account Section */}
             <section>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                Account Details
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="account_hint" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="account_hint" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Account Hint
                   </label>
                   <input
@@ -260,12 +274,12 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.account_hint || ''}
                     onChange={e => handleChange('account_hint', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="e.g., HDFC ****1234"
                   />
                 </div>
                 <div>
-                  <label htmlFor="account_type" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="account_type" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                     Account Type
                   </label>
                   <input
@@ -273,7 +287,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.account_type || ''}
                     onChange={e => handleChange('account_type', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="e.g., Savings, Credit Card"
                   />
                 </div>
