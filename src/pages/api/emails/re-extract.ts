@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createClient } from '@/lib/supabase-server';
 import { extractTransactionFromEmail } from '@/lib/ai-extraction';
 
 export default async function handler(
@@ -11,7 +11,7 @@ export default async function handler(
   }
 
   try {
-    const supabase = createServerSupabaseClient(req, res);
+    const supabase = createClient(req, res);
 
     // Check authentication
     const {
