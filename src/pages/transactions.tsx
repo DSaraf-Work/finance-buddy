@@ -88,6 +88,7 @@ export default function TransactionsPage() {
     direction: '' as 'debit' | 'credit' | '',
     category: '',
     merchant: '',
+    sort: 'desc' as 'asc' | 'desc',
   });
 
   useEffect(() => {
@@ -125,7 +126,7 @@ export default function TransactionsPage() {
       const searchRequest: any = {
         page,
         pageSize: pagination.pageSize,
-        sort: 'desc', // Newest first
+        sort: filters.sort || 'desc', // Use filter sort or default to newest first
       };
 
       // Add filters if they have values
@@ -401,34 +402,18 @@ export default function TransactionsPage() {
         title="Finance Buddy - Transactions"
         description="AI-extracted financial transactions with smart insights"
       >
-        <div className="py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-6 sm:mb-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center space-x-3 sm:space-x-4">
-                  <div className="p-2 sm:p-3 bg-blue-100 rounded-xl flex-shrink-0">
-                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Transactions</h1>
-                    <p className="text-sm sm:text-base text-gray-600 mt-1 hidden sm:block">AI-extracted financial transactions with smart insights</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3 w-full sm:w-auto">
-                  <button
-                    onClick={() => searchTransactions()}
-                    disabled={loading}
-                    className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] text-sm sm:text-base"
-                    aria-label="Refresh transactions"
-                  >
-                    <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    {loading ? 'Loading...' : 'Refresh'}
-                  </button>
+        <div className="min-h-screen bg-white py-12">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
+            {/* Header - Minimalist */}
+            <div className="mb-16">
+              <div className="flex items-end justify-between border-b border-gray-200 pb-6">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 tracking-wide uppercase mb-2">
+                    Transactions
+                  </p>
+                  <h1 className="text-4xl font-light text-gray-900 tracking-tight">
+                    Financial Activity
+                  </h1>
                 </div>
               </div>
             </div>
@@ -451,13 +436,13 @@ export default function TransactionsPage() {
               loading={filterLoading}
             />
 
-            {/* Transactions List */}
+            {/* Transactions List - 2 per row */}
             {loading ? (
               <TransactionListSkeleton count={10} />
             ) : transactions.length === 0 ? (
               <TransactionEmptyState onRefresh={() => searchTransactions()} />
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {transactions.map((transaction) => (
                   <TransactionCard
                     key={transaction.id}
@@ -469,68 +454,41 @@ export default function TransactionsPage() {
               </div>
             )}
 
-        {/* Pagination Controls */}
+        {/* Pagination Controls - Minimalist */}
         {transactions.length > 0 && (
           <nav
-            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mt-6"
+            className="border-t border-gray-200 pt-8 mt-12"
             aria-label="Transaction pagination"
           >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-6 text-xs text-gray-500 tracking-wide">
                 <span aria-live="polite">
-                  {pagination.total} total transactions
+                  {pagination.total} total
                 </span>
                 <span aria-current="page">
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
               </div>
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label htmlFor="page-size" className="text-sm text-gray-600">
-                    Page size:
-                  </label>
-                  <input
-                    id="page-size"
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={pagination.pageSize}
-                    onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 25)}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    aria-label="Items per page"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={pagination.page === 1}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
-                    aria-label="Go to previous page"
-                  >
-                    Previous
-                  </button>
-                  <label htmlFor="page-number" className="sr-only">
-                    Page number
-                  </label>
-                  <input
-                    id="page-number"
-                    type="number"
-                    min="1"
-                    max={pagination.totalPages}
-                    value={pagination.page}
-                    onChange={(e) => handlePageChange(parseInt(e.target.value) || 1)}
-                    className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    aria-label="Current page number"
-                  />
-                  <button
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={pagination.page >= pagination.totalPages}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
-                    aria-label="Go to next page"
-                  >
-                    Next
-                  </button>
-                </div>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className="text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 disabled:border-gray-300 disabled:text-gray-300 transition-colors pb-1"
+                  aria-label="Go to previous page"
+                >
+                  Previous
+                </button>
+                <span className="text-xs text-gray-400 tracking-wide">
+                  {pagination.page}
+                </span>
+                <button
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page >= pagination.totalPages}
+                  className="text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 disabled:border-gray-300 disabled:text-gray-300 transition-colors pb-1"
+                  aria-label="Go to next page"
+                >
+                  Next
+                </button>
               </div>
             </div>
           </nav>

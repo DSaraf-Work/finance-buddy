@@ -57,16 +57,12 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-pulse">
-            <div className="flex items-center justify-between">
-              <div className="space-y-3 flex-1">
-                <div className="h-4 bg-gray-200 rounded w-24"></div>
-                <div className="h-8 bg-gray-200 rounded w-32"></div>
-              </div>
-              <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
-            </div>
+          <div key={i} className="border-l-2 border-gray-200 pl-6 py-4 animate-pulse">
+            <div className="h-3 bg-gray-200 rounded w-24 mb-3"></div>
+            <div className="h-10 bg-gray-200 rounded w-32 mb-2"></div>
+            <div className="h-2 bg-gray-200 rounded w-20"></div>
           </div>
         ))}
       </div>
@@ -74,23 +70,48 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      {stats.map((stat, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-            </div>
-            <div className={`${stat.bgColor} ${stat.textColor} p-3 rounded-xl`}>
-              {stat.icon}
-            </div>
-          </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+      <div className="group">
+        <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
+          <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
+            Total
+          </p>
+          <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
+            {total.toLocaleString()}
+          </p>
+          <p className="text-xs text-gray-400 tracking-wide">
+            Transactions
+          </p>
         </div>
-      ))}
+      </div>
+
+      <div className="group">
+        <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
+          <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
+            Amount
+          </p>
+          <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
+            {formatCurrency(totalAmount)}
+          </p>
+          <p className="text-xs text-gray-400 tracking-wide">
+            Total value
+          </p>
+        </div>
+      </div>
+
+      <div className="group">
+        <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
+          <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
+            Confidence
+          </p>
+          <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
+            {Math.round(avgConfidence * 100)}%
+          </p>
+          <p className="text-xs text-gray-400 tracking-wide">
+            AI accuracy
+          </p>
+        </div>
+      </div>
     </div>
   );
 });
