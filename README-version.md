@@ -1,15 +1,53 @@
 # README Version Control
 
 <!-- README Version Metadata -->
-**Current Version**: v1.0.0
-**Last Updated**: 2025-11-02T14:35:00Z
-**Commit SHA**: 0f19564
+**Current Version**: v2.0.0
+**Last Updated**: 2025-11-16T12:00:00Z
+**Commit SHA**: c19e04d
 **Updated By**: AI Agent
 <!-- End Version Metadata -->
 
 ---
 
 ## Version History
+
+### v2.0.0 (2025-11-16)
+**Commit SHA**: c19e04d
+**Type**: Major Release - Dark Purple Theme
+
+**Changes**:
+- 🎨 **MAJOR**: Complete UI redesign with dark purple theme
+- 🎨 Created comprehensive design system (design/DESIGN_SYSTEM.md)
+- 🎨 Dashboard: Dark purple theme with colored accents
+- 🎨 Transactions: Dark purple theme matching dashboard
+- 🎨 All components updated with new color scheme
+- 🐛 Fixed TypeScript build errors
+- 🐛 Fixed token expiry calculation
+- 🐛 Fixed insufficient permissions handling
+- 📝 Added Gmail token error handling documentation
+- 🔧 Removed priority email cron (Hobby plan limitation)
+- 🔧 Added query parameter authentication for cron
+- ✨ Major UI/UX improvements throughout
+
+**Design System**:
+- Primary: #6b4ce6 (purple), #8b5cf6 (hover), #a78bfa (highlights)
+- Background: #0f0a1a (darkest), #1a1625 (cards), #2d1b4e (elevated)
+- Text: #f8fafc (primary), #cbd5e1 (secondary), #94a3b8 (muted)
+- Accents: #ec4899 (pink), #10b981 (success), #f59e0b (warning), #06b6d4 (info)
+- Purple glow shadows, smooth transitions, responsive design
+
+**Files Changed**: 194 files
+**Commits**: 20+ commits
+**Lines Changed**: +17,685 insertions, -3,162 deletions
+
+**Sections Updated**:
+- Key Features (added dark theme)
+- Tech Stack (design system)
+- UI/UX (complete redesign)
+- Components (all updated)
+- Mobile Support (iPhone 16 optimized)
+
+---
 
 ### v1.0.0 (2025-11-02)
 **Commit SHA**: 0f19564

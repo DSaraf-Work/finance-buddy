@@ -95,6 +95,17 @@ Finance Buddy provides:
 - **Transaction Status**: Review, Approved, Rejected, Invalid states
 - **Confidence Scores**: See AI confidence for each extraction
 
+### 🎨 Dark Purple UI/UX Design
+- **Modern Dark Theme**: Aesthetic dark purple color scheme throughout
+- **Design System**: Comprehensive design tokens (colors, typography, spacing, shadows)
+- **Purple Accents**: Primary purple (#6b4ce6) with colored highlights (pink, emerald, amber, cyan)
+- **Smooth Animations**: 300ms transitions, purple glow effects, hover states
+- **Mobile-First**: Optimized for iPhone 16 (393px × 852px) and all screen sizes
+- **Responsive Grids**: Adaptive layouts (1→2→3 columns)
+- **High Contrast**: WCAG AA compliant text colors (#f8fafc on #0f0a1a)
+- **Touch-Friendly**: Minimum 44px touch targets for mobile
+- **Minimalist Aesthetic**: Clean, modern, professional appearance
+
 ### 📈 Dashboard & Analytics
 - **Overview Stats**: Total transactions, total amount, average confidence
 - **Email Stats**: Total emails, processed count, error count
@@ -123,9 +134,11 @@ Finance Buddy provides:
 - **Framework**: Next.js 14 (React 18)
 - **Language**: TypeScript 5.0
 - **Styling**: Tailwind CSS 4.1
-- **UI Components**: Custom React components
+- **Design System**: Dark purple theme with comprehensive design tokens
+- **UI Components**: Custom React components with dark theme
 - **State Management**: React Context API
 - **Forms**: Native HTML5 with validation
+- **Responsive Design**: Mobile-first approach (iPhone 16 optimized)
 
 ### Backend
 - **Runtime**: Node.js 18+
