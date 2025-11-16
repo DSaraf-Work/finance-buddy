@@ -3,6 +3,22 @@
 ## Project Overview
 **Finance Buddy**: Gmail financial email automation system that connects multiple Gmail accounts via OAuth, enables manual syncs over date ranges, and stores emails with strict idempotency. Automatically extracts transaction data from financial emails using AI.
 
+### Platform & User Experience
+**🚨 CRITICAL: Mobile-First PWA Application**
+- **Primary Platform**: Progressive Web App (PWA) - installed on mobile devices
+- **Primary Usage**: Mobile web (smartphones, tablets)
+- **Secondary Usage**: Desktop web (occasional use)
+- **Design Philosophy**: Mobile-first, touch-optimized, offline-capable
+
+**All AI decisions MUST prioritize:**
+- ✅ Mobile viewport optimization (320px - 428px width)
+- ✅ Touch-friendly UI (minimum 44x44px touch targets)
+- ✅ Thumb-reachable navigation (bottom navigation preferred)
+- ✅ Performance on mobile networks (minimize bundle size, optimize images)
+- ✅ Offline functionality where applicable
+- ✅ PWA best practices (service workers, manifest, installability)
+- ✅ Responsive design that scales up to desktop (not down from desktop)
+
 ### Core Features
 - **Gmail OAuth Integration**: Connect multiple Gmail accounts securely
 - **Manual Sync**: Sync emails over date ranges with optional sender filters and paging
@@ -21,6 +37,7 @@
 - **Gmail Integration**: OAuth-only access using `messages.list` + `messages.get`
 - **AI Integration**: OpenAI, Anthropic Claude, Google AI for transaction extraction
 - **Deployment**: Vercel (follow Vercel conventions during local dev)
+- **PWA**: Service workers, web manifest, offline support
 
 ---
 
@@ -125,6 +142,125 @@ For every code change, follow this checklist:
 
 ---
 
+## Mobile-First Design Principles
+
+### 🚨 CRITICAL: Always Design for Mobile First
+
+**Every UI/UX decision must prioritize mobile experience:**
+
+### 1. Viewport & Layout
+- ✅ **Design for 375px width first** (iPhone SE, most common mobile viewport)
+- ✅ **Test on 320px** (minimum supported width)
+- ✅ **Scale up to tablet** (768px) and desktop (1024px+)
+- ✅ **Use mobile-first Tailwind breakpoints**: base (mobile) → `sm:` → `md:` → `lg:`
+- ❌ **Never** design desktop-first and scale down
+
+**Example:**
+```tsx
+// ✅ CORRECT: Mobile-first
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+
+// ❌ WRONG: Desktop-first
+<div className="grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
+```
+
+### 2. Touch Targets
+- ✅ **Minimum 44x44px** for all interactive elements (Apple HIG standard)
+- ✅ **Prefer 48x48px** for primary actions (Material Design standard)
+- ✅ **Add padding** to increase touch area without visual size
+- ✅ **Space elements** at least 8px apart to prevent mis-taps
+
+**Example:**
+```tsx
+// ✅ CORRECT: Adequate touch target
+<button className="min-h-[44px] min-w-[44px] px-4 py-2">
+
+// ❌ WRONG: Too small for touch
+<button className="px-2 py-1">
+```
+
+### 3. Navigation & Reachability
+- ✅ **Bottom navigation** for primary actions (thumb-reachable)
+- ✅ **Top navigation** for secondary/contextual actions
+- ✅ **Sticky bottom bars** for critical actions (Save, Submit, etc.)
+- ✅ **Avoid top-right corners** for frequent actions (hard to reach)
+
+### 4. Typography & Readability
+- ✅ **Minimum 16px** for body text (prevents zoom on iOS)
+- ✅ **Line height 1.5-1.6** for readability
+- ✅ **Max 60-70 characters** per line on mobile
+- ✅ **Adequate contrast** (WCAG AA minimum: 4.5:1)
+
+**Example:**
+```tsx
+// ✅ CORRECT: Mobile-readable
+<p className="text-base leading-relaxed">  // 16px, line-height: 1.625
+
+// ❌ WRONG: Too small
+<p className="text-xs">  // 12px - will trigger zoom on iOS
+```
+
+### 5. Forms & Input
+- ✅ **Large input fields** (min 44px height)
+- ✅ **Proper input types** (`type="email"`, `type="tel"`, etc.) for mobile keyboards
+- ✅ **Autocomplete attributes** for autofill
+- ✅ **Clear labels** above inputs (not placeholders as labels)
+- ✅ **Inline validation** with clear error messages
+- ✅ **Avoid horizontal scrolling** in forms
+
+### 6. Performance
+- ✅ **Optimize images** (WebP, lazy loading, responsive images)
+- ✅ **Minimize JavaScript bundle** (code splitting, tree shaking)
+- ✅ **Reduce network requests** (combine, cache, CDN)
+- ✅ **Fast initial load** (< 3 seconds on 3G)
+- ✅ **Smooth animations** (60fps, use CSS transforms)
+
+### 7. Gestures & Interactions
+- ✅ **Swipe gestures** for common actions (delete, archive)
+- ✅ **Pull-to-refresh** for data updates
+- ✅ **Long-press** for contextual menus
+- ✅ **Haptic feedback** for important actions (where supported)
+- ❌ **Avoid hover-only** interactions (no hover on touch devices)
+
+### 8. Content Density
+- ✅ **Prioritize content** - show most important info first
+- ✅ **Progressive disclosure** - hide advanced options in menus
+- ✅ **Collapsible sections** for long content
+- ✅ **Infinite scroll or pagination** for long lists
+- ❌ **Avoid cramming** too much on one screen
+
+### 9. PWA Requirements
+- ✅ **Service worker** for offline support
+- ✅ **Web manifest** for installability
+- ✅ **App icons** (multiple sizes: 192px, 512px)
+- ✅ **Splash screen** configuration
+- ✅ **Offline fallback** page
+- ✅ **Add to home screen** prompt
+
+### 10. Testing on Mobile
+- ✅ **Test on real devices** when possible
+- ✅ **Use Chrome DevTools** mobile emulation
+- ✅ **Test touch interactions** (tap, swipe, long-press)
+- ✅ **Test on slow networks** (3G throttling)
+- ✅ **Test in portrait and landscape**
+- ✅ **Test with different font sizes** (accessibility)
+
+### Mobile-First Checklist
+
+For every UI component or page, verify:
+- [ ] Designed for 375px width first
+- [ ] All touch targets ≥ 44x44px
+- [ ] Text ≥ 16px (body text)
+- [ ] Navigation is thumb-reachable
+- [ ] Forms use proper input types
+- [ ] Images are optimized
+- [ ] No horizontal scrolling
+- [ ] Works offline (where applicable)
+- [ ] Tested on mobile viewport
+- [ ] Smooth on 3G network
+
+---
+
 ## Code Quality Standards
 
 ### Modularity & Separation of Concerns
@@ -167,11 +303,42 @@ For every code change, follow this checklist:
 - ❌ Never hand off untested features
 - ❌ Never skip production testing
 
+### 🚨 Mobile Testing (CRITICAL)
+**ALWAYS test on mobile viewport first:**
+- ✅ **Set viewport to 375x667** (iPhone SE) in Chrome DevTools or Playwright
+- ✅ **Test touch interactions** (tap, swipe, long-press)
+- ✅ **Verify touch targets** are ≥ 44x44px
+- ✅ **Check text readability** (≥ 16px font size)
+- ✅ **Test scrolling** (no horizontal scroll, smooth vertical scroll)
+- ✅ **Test forms** (proper keyboard types, no zoom on input focus)
+- ✅ **Test navigation** (bottom nav reachable, no top-right critical actions)
+- ✅ **Test on slow network** (3G throttling in DevTools)
+- ✅ **Test portrait and landscape** orientations
+- ✅ **Verify responsive breakpoints** (320px, 375px, 428px, 768px, 1024px)
+
+**Playwright Mobile Testing Example:**
+```typescript
+// Set mobile viewport
+await page.setViewportSize({ width: 375, height: 667 });
+
+// Test touch target size
+const button = await page.locator('button');
+const box = await button.boundingBox();
+expect(box.width).toBeGreaterThanOrEqual(44);
+expect(box.height).toBeGreaterThanOrEqual(44);
+
+// Test no horizontal scroll
+const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+```
+
 ### MCP Server Usage for Testing
 - **Playwright MCP**: Preferred for automated, comprehensive testing
 - **Chrome MCP stdio**: Alternative for interactive testing and debugging
 - **Test both local (localhost:3000) and production (Vercel URL)**
 - **Use reasoned thinking** to identify edge cases before testing
+- **ALWAYS test mobile viewport first**, then desktop
 
 ---
 
