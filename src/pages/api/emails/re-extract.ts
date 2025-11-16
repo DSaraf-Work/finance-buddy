@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@/lib/supabase-server';
-import { extractTransactionFromEmail } from '@/lib/ai-extraction';
+import { TransactionExtractor } from '@/lib/email-processing/extractors/transaction-extractor';
 
 export default async function handler(
   req: NextApiRequest,
@@ -42,15 +42,24 @@ export default async function handler(
     }
 
     // Re-extract transaction using AI
-    const extractedData = await extractTransactionFromEmail(
-      emailData.plain_body || emailData.html_body || '',
-      emailData.subject || '',
-      emailData.from_address || ''
-    );
+    const extractor = new TransactionExtractor();
+    const extractionResult = await extractor.extractTransaction({
+      emailId: emailData.message_id,
+      subject: emailData.subject || '',
+      fromAddress: emailData.from_address || '',
+      plainBody: emailData.plain_body || '',
+      snippet: emailData.snippet || '',
+      internalDate: emailData.internal_date ? new Date(emailData.internal_date) : new Date(),
+    });
 
-    if (!extractedData) {
-      return res.status(500).json({ error: 'Failed to extract transaction data' });
+    if (!extractionResult.success || !extractionResult.transaction) {
+      return res.status(500).json({
+        error: 'Failed to extract transaction data',
+        details: extractionResult.error
+      });
     }
+
+    const extractedData = extractionResult.transaction;
 
     // Update the existing processed email record
     const { data: existingProcessed, error: existingError } = await supabase
@@ -71,17 +80,17 @@ export default async function handler(
         amount: extractedData.amount,
         currency: extractedData.currency,
         direction: extractedData.direction,
-        txn_time: extractedData.txn_time,
-        merchant_name: extractedData.merchant_name,
-        merchant_normalized: extractedData.merchant_normalized,
+        txn_time: extractedData.txnTime?.toISOString(),
+        merchant_name: extractedData.merchantName,
+        merchant_normalized: extractedData.merchantNormalized,
         category: extractedData.category,
-        account_hint: extractedData.account_hint,
-        account_type: extractedData.account_type,
-        reference_id: extractedData.reference_id,
+        account_hint: extractedData.accountHint,
+        account_type: extractedData.accountType,
+        reference_id: extractedData.referenceId,
         location: extractedData.location,
         confidence: extractedData.confidence,
-        ai_notes: extractedData.ai_notes,
-        extraction_version: extractedData.extraction_version,
+        ai_notes: extractedData.aiNotes,
+        extraction_version: extractedData.extractionVersion,
         updated_at: new Date().toISOString(),
       })
       .eq('id', existingProcessed.id)
