@@ -63,23 +63,31 @@ export default function TransactionFilters({
   };
 
   return (
-    <div className="bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 mb-6 sm:mb-8">
-      {/* Header - Dark Purple Theme */}
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
+    <div className="relative bg-gradient-to-br from-[#1a1625] to-[#0f0a1a] rounded-2xl border border-[#2d1b4e] p-6 mb-8 overflow-hidden">
+      {/* Gradient Accent */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6b4ce6] to-transparent"></div>
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2 text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase hover:text-[#6b4ce6] transition-colors"
+          className="group flex items-center gap-3 text-sm font-semibold text-white hover:text-[#a78bfa] transition-colors"
           aria-expanded={isExpanded}
           aria-controls="filter-panel"
         >
-          Filters
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6b4ce6]/20 to-[#8b5cf6]/20 flex items-center justify-center ring-1 ring-[#6b4ce6]/30 group-hover:ring-[#6b4ce6]/60 transition-all">
+            <svg className="w-4 h-4 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+          </div>
+          <span className="tracking-wide">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 bg-[#6b4ce6]/20 text-[#a78bfa] text-xs rounded-full ring-1 ring-[#6b4ce6]/30">
+            <span className="px-2.5 py-1 bg-gradient-to-r from-[#6b4ce6] to-[#8b5cf6] text-white text-xs font-bold rounded-lg shadow-lg shadow-[#6b4ce6]/30">
               {activeFilterCount}
             </span>
           )}
           <svg
-            className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -89,59 +97,66 @@ export default function TransactionFilters({
         </button>
         <button
           onClick={onReset}
-          className="text-xs sm:text-sm font-medium text-[#cbd5e1] hover:text-[#f8fafc] transition-colors"
+          className="px-4 py-2 text-sm font-medium text-[#94a3b8] hover:text-white bg-[#2d1b4e]/50 hover:bg-[#2d1b4e] rounded-xl transition-all duration-300"
           aria-label="Reset all filters"
         >
-          Reset
+          Reset All
         </button>
       </div>
 
-      {/* Collapsible Filter Panel - Dark Theme */}
+      {/* Collapsible Filter Panel */}
       {isExpanded && (
-        <div id="filter-panel" className="border-t border-[#2d1b4e] pt-4 sm:pt-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+        <div id="filter-panel" className="relative">
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-[#2d1b4e] to-transparent mb-6"></div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
             {/* Date From */}
-            <div>
-              <label htmlFor="date-from" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="space-y-2">
+              <label htmlFor="date-from" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 From Date
               </label>
-              <input
-                id="date-from"
-                type="date"
-                value={filters.date_from}
-                onChange={(e) => handleChange('date_from', e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
-                aria-label="Filter by start date"
-              />
+              <div className="relative">
+                <input
+                  id="date-from"
+                  type="date"
+                  value={filters.date_from}
+                  onChange={(e) => handleChange('date_from', e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full px-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white placeholder-[#94a3b8] backdrop-blur-sm"
+                  aria-label="Filter by start date"
+                />
+              </div>
             </div>
 
             {/* Date To */}
-            <div>
-              <label htmlFor="date-to" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="space-y-2">
+              <label htmlFor="date-to" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 To Date
               </label>
-              <input
-                id="date-to"
-                type="date"
-                value={filters.date_to}
-                onChange={(e) => handleChange('date_to', e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
-                aria-label="Filter by end date"
-              />
+              <div className="relative">
+                <input
+                  id="date-to"
+                  type="date"
+                  value={filters.date_to}
+                  onChange={(e) => handleChange('date_to', e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full px-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white placeholder-[#94a3b8] backdrop-blur-sm"
+                  aria-label="Filter by end date"
+                />
+              </div>
             </div>
 
             {/* Sort */}
-            <div>
-              <label htmlFor="sort" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="space-y-2">
+              <label htmlFor="sort" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 Sort By
               </label>
               <select
                 id="sort"
                 value={filters.sort || 'desc'}
                 onChange={(e) => handleChange('sort', e.target.value)}
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
+                className="w-full px-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white backdrop-blur-sm"
                 aria-label="Sort transactions"
               >
                 <option value="desc">Newest First</option>
@@ -150,15 +165,15 @@ export default function TransactionFilters({
             </div>
 
             {/* Status */}
-            <div>
-              <label htmlFor="status" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="space-y-2">
+              <label htmlFor="status" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 Status
               </label>
               <select
                 id="status"
                 value={filters.status}
                 onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
+                className="w-full px-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white backdrop-blur-sm"
                 aria-label="Filter by transaction status"
               >
                 <option value="">All Statuses</option>
@@ -170,15 +185,15 @@ export default function TransactionFilters({
             </div>
 
             {/* Direction */}
-            <div>
-              <label htmlFor="direction" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="space-y-2">
+              <label htmlFor="direction" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 Direction
               </label>
               <select
                 id="direction"
                 value={filters.direction}
                 onChange={(e) => handleChange('direction', e.target.value)}
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
+                className="w-full px-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white backdrop-blur-sm"
                 aria-label="Filter by transaction direction"
               >
                 <option value="">All Directions</option>
@@ -188,15 +203,15 @@ export default function TransactionFilters({
             </div>
 
             {/* Category */}
-            <div>
-              <label htmlFor="category" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="space-y-2">
+              <label htmlFor="category" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 Category
               </label>
               <select
                 id="category"
                 value={filters.category}
                 onChange={(e) => handleChange('category', e.target.value)}
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc] capitalize"
+                className="w-full px-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white capitalize backdrop-blur-sm"
                 aria-label="Filter by transaction category"
               >
                 <option value="">All Categories</option>
@@ -209,32 +224,57 @@ export default function TransactionFilters({
             </div>
 
             {/* Merchant */}
-            <div className="sm:col-span-2">
-              <label htmlFor="merchant" className="block text-xs font-medium text-[#cbd5e1] mb-2">
+            <div className="sm:col-span-2 space-y-2">
+              <label htmlFor="merchant" className="block text-xs font-semibold text-[#94a3b8] tracking-wider uppercase">
                 Merchant
               </label>
-              <input
-                id="merchant"
-                type="text"
-                value={filters.merchant}
-                onChange={(e) => handleChange('merchant', e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Search merchant..."
-                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc] placeholder-[#94a3b8]"
-                aria-label="Filter by merchant name"
-              />
+              <div className="relative">
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  id="merchant"
+                  type="text"
+                  value={filters.merchant}
+                  onChange={(e) => handleChange('merchant', e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Search merchant..."
+                  className="w-full pl-11 pr-4 py-2.5 bg-[#2d1b4e]/50 border border-[#2d1b4e] rounded-xl focus:border-[#6b4ce6] focus:ring-2 focus:ring-[#6b4ce6]/20 transition-all text-sm text-white placeholder-[#94a3b8] backdrop-blur-sm"
+                  aria-label="Filter by merchant name"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Search Button - Dark Theme */}
-          <button
-            onClick={onSearch}
-            disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-[#f8fafc] text-sm font-medium rounded-lg hover:bg-[#8b5cf6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_20px_rgba(107,76,230,0.3)]"
-            aria-label="Search transactions with current filters"
-          >
-            {loading ? 'Searching...' : 'Apply Filters'}
-          </button>
+          {/* Apply Button */}
+          <div className="flex items-center justify-end">
+            <button
+              onClick={onSearch}
+              disabled={loading}
+              className="group relative px-8 py-3 bg-gradient-to-r from-[#6b4ce6] to-[#8b5cf6] text-white text-sm font-semibold rounded-xl hover:shadow-2xl hover:shadow-[#6b4ce6]/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden"
+              aria-label="Search transactions with current filters"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                {loading ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Apply Filters
+                  </>
+                )}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#8b5cf6] to-[#a78bfa] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+          </div>
         </div>
       )}
     </div>
