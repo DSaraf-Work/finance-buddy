@@ -107,57 +107,52 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   return (
     <article
-      className="bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-4 sm:p-5 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300"
+      className="bg-[#1a1625] rounded-lg sm:rounded-xl border border-[#2d1b4e] p-3 sm:p-4 md:p-5 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role="article"
       aria-label={`Transaction: ${transaction.merchant_name || 'Unknown Merchant'}, ${formatAmount(transaction.amount, transaction.currency)}`}
     >
-      <div className="flex items-start justify-between gap-4">
-        {/* Left side - Details */}
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-2">
-            <h3 className="text-sm sm:text-base font-semibold text-[#f8fafc] truncate">
-              {transaction.merchant_name || 'Unknown Merchant'}
-            </h3>
-            <span className="text-xs text-[#cbd5e1]">
-              {formatDate(transaction.txn_time)}
-            </span>
-          </div>
+      {/* Merchant Name */}
+      <div className="mb-2 sm:mb-3">
+        <h3 className="text-xs sm:text-sm md:text-base font-semibold text-[#f8fafc] truncate mb-1">
+          {transaction.merchant_name || 'Unknown Merchant'}
+        </h3>
+        <span className="text-[10px] sm:text-xs text-[#cbd5e1]">
+          {formatDate(transaction.txn_time)}
+        </span>
+      </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-[#cbd5e1]">
-            {transaction.category && (
-              <span className="px-2 py-0.5 bg-[#2d1b4e] rounded capitalize ring-1 ring-[#6b4ce6]/20">
-                {transaction.category}
-              </span>
-            )}
-            {transaction.account_hint && (
-              <span className="px-2 py-0.5 bg-[#2d1b4e] rounded ring-1 ring-[#6b4ce6]/20">
-                {transaction.account_hint}
-              </span>
-            )}
-          </div>
+      {/* Category and Account Tags */}
+      <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-[#cbd5e1] mb-3 sm:mb-4">
+        {transaction.category && (
+          <span className="px-1.5 sm:px-2 py-0.5 bg-[#2d1b4e] rounded capitalize ring-1 ring-[#6b4ce6]/20">
+            {transaction.category}
+          </span>
+        )}
+        {transaction.account_hint && (
+          <span className="px-1.5 sm:px-2 py-0.5 bg-[#2d1b4e] rounded ring-1 ring-[#6b4ce6]/20 truncate max-w-[120px]">
+            {transaction.account_hint}
+          </span>
+        )}
+      </div>
+
+      {/* Amount and Edit Button */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Amount */}
+        <div className={`text-sm sm:text-base md:text-lg font-semibold ${getDirectionColor(transaction.direction)} truncate`}>
+          {transaction.direction === 'debit' && '-'}
+          {formatAmount(transaction.amount, transaction.currency)}
         </div>
 
-        {/* Right side - Amount and Edit */}
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 sm:gap-4 flex-shrink-0">
-          {/* Amount */}
-          <div className="text-right">
-            <div className={`text-base sm:text-lg font-semibold ${getDirectionColor(transaction.direction)}`}>
-              {transaction.direction === 'debit' && '-'}
-              {formatAmount(transaction.amount, transaction.currency)}
-            </div>
-          </div>
-
-          {/* Edit Link */}
-          <a
-            href={`/transactions/edit/${transaction.id}`}
-            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-[#f8fafc] bg-[#6b4ce6] rounded-lg hover:bg-[#8b5cf6] transition-all duration-200 shadow-[0_0_10px_rgba(107,76,230,0.3)]"
-            aria-label={`Edit transaction for ${transaction.merchant_name}`}
-          >
-            Edit
-          </a>
-        </div>
+        {/* Edit Link */}
+        <a
+          href={`/transactions/edit/${transaction.id}`}
+          className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-[#f8fafc] bg-[#6b4ce6] rounded-md sm:rounded-lg hover:bg-[#8b5cf6] transition-all duration-200 shadow-[0_0_10px_rgba(107,76,230,0.3)] flex-shrink-0"
+          aria-label={`Edit transaction for ${transaction.merchant_name}`}
+        >
+          Edit
+        </a>
       </div>
     </article>
   );
