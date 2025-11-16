@@ -4,7 +4,7 @@ interface TransactionEmptyStateProps {
 
 export default function TransactionEmptyState({ onRefresh }: TransactionEmptyStateProps) {
   return (
-    <div className="bg-bg-secondary rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
+    <div className="bg-[#1a1625] rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12">
       <div className="text-center max-w-md mx-auto" role="status" aria-live="polite">
         {/* Illustration */}
         <div className="mb-6">
@@ -16,12 +16,12 @@ export default function TransactionEmptyState({ onRefresh }: TransactionEmptySta
         </div>
 
         {/* Title */}
-        <h3 className="text-2xl font-bold text-text-primary mb-3">
+        <h3 className="text-2xl font-bold text-[#f8fafc] mb-3">
           No Transactions Found
         </h3>
 
         {/* Description */}
-        <p className="text-text-secondary mb-8 leading-relaxed">
+        <p className="text-[#cbd5e1] mb-8 leading-relaxed">
           We couldn't find any transactions matching your criteria. Try adjusting your filters or process some emails to see transactions here.
         </p>
 
@@ -40,7 +40,7 @@ export default function TransactionEmptyState({ onRefresh }: TransactionEmptySta
 
           <a
             href="/emails"
-            className="w-full sm:w-auto px-6 py-3 bg-bg-secondary text-text-secondary border-2 border-border rounded-xl hover:bg-bg-primary/50 hover:border-gray-400 transition-all duration-300 font-medium flex items-center justify-center min-h-[44px]"
+            className="w-full sm:w-auto px-6 py-3 bg-[#1a1625] text-[#cbd5e1] border-2 border-[#2d1b4e] rounded-xl hover:bg-[#0f0a1a]/50 hover:border-gray-400 transition-all duration-300 font-medium flex items-center justify-center min-h-[44px]"
             aria-label="Go to emails page to process new transactions"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,9 +51,9 @@ export default function TransactionEmptyState({ onRefresh }: TransactionEmptySta
         </div>
 
         {/* Tips */}
-        <div className="mt-8 pt-8 border-t border-border">
-          <p className="text-sm font-medium text-text-secondary mb-3">💡 Quick Tips:</p>
-          <ul className="text-sm text-text-secondary space-y-2 text-left">
+        <div className="mt-8 pt-8 border-t border-[#2d1b4e]">
+          <p className="text-sm font-medium text-[#cbd5e1] mb-3">💡 Quick Tips:</p>
+          <ul className="text-sm text-[#cbd5e1] space-y-2 text-left">
             <li className="flex items-start">
               <svg className="w-4 h-4 mr-2 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

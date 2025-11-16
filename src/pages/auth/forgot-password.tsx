@@ -57,10 +57,10 @@ const ForgotPasswordPage: NextPage = () => {
   // Show loading if checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-bg-primary/50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0f0a1a]/50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-text-secondary">Loading...</p>
+          <p className="text-[#cbd5e1]">Loading...</p>
         </div>
       </div>
     );
@@ -78,21 +78,21 @@ const ForgotPasswordPage: NextPage = () => {
         <meta name="description" content="Reset your Finance Buddy password" />
       </Head>
 
-      <div className="min-h-screen bg-bg-primary/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#0f0a1a]/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">Finance Buddy</h1>
-            <p className="text-text-secondary mb-8">Gmail Financial Email Automation</p>
+            <h1 className="text-3xl font-bold text-[#f8fafc] mb-2">Finance Buddy</h1>
+            <p className="text-[#cbd5e1] mb-8">Gmail Financial Email Automation</p>
           </div>
           
-          <div className="bg-bg-secondary py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-[#1a1625] py-8 px-4 shadow sm:rounded-lg sm:px-10">
             {!isSubmitted ? (
               <>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-text-primary text-center">
+                  <h2 className="text-2xl font-bold text-[#f8fafc] text-center">
                     Forgot your password?
                   </h2>
-                  <p className="mt-2 text-center text-sm text-text-secondary">
+                  <p className="mt-2 text-center text-sm text-[#cbd5e1]">
                     Enter your email address and we'll send you a link to reset your password.
                   </p>
                 </div>
@@ -107,7 +107,7 @@ const ForgotPasswordPage: NextPage = () => {
                   )}
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-text-secondary">
+                    <label htmlFor="email" className="block text-sm font-medium text-[#cbd5e1]">
                       Email address
                     </label>
                     <div className="mt-1">
@@ -156,17 +156,17 @@ const ForgotPasswordPage: NextPage = () => {
               </>
             ) : (
               <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-accent-emerald/10 mb-4">
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#10b981]/10 mb-4">
                   <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 
-                <h2 className="text-2xl font-bold text-text-primary mb-4">
+                <h2 className="text-2xl font-bold text-[#f8fafc] mb-4">
                   Check your email
                 </h2>
                 
-                <p className="text-text-secondary mb-6">
+                <p className="text-[#cbd5e1] mb-6">
                   We've sent a password reset link to <strong>{email}</strong>
                 </p>
                 

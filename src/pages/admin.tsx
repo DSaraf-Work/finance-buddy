@@ -140,18 +140,18 @@ const AdminPage: NextPage = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-brand-primary to-brand-hover rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                     <span className="text-xl sm:text-2xl">⚙️</span>
                   </div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">Admin Dashboard</h1>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Admin Dashboard</h1>
                 </div>
-                <p className="mt-1 text-sm sm:text-base text-text-secondary">
+                <p className="mt-1 text-sm sm:text-base text-[#cbd5e1]">
                   Manage Gmail connections and monitor system health
                 </p>
               </div>
               <button
                 onClick={handleConnect}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-brand-primary text-white font-medium rounded-lg hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-primary transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] w-full sm:w-auto"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#0f0a1a] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] w-full sm:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -161,15 +161,15 @@ const AdminPage: NextPage = () => {
             </div>
 
             {/* Mock AI Configuration */}
-            <div className="bg-bg-secondary shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border rounded-xl mb-8">
+            <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl mb-8">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex-1">
-                    <h3 className="text-base sm:text-lg leading-6 font-semibold text-text-primary flex items-center gap-2">
+                    <h3 className="text-base sm:text-lg leading-6 font-semibold text-[#f8fafc] flex items-center gap-2">
                       <span className="text-xl">🤖</span>
                       Mock AI Configuration
                     </h3>
-                    <p className="mt-1 text-sm text-text-secondary">
+                    <p className="mt-1 text-sm text-[#cbd5e1]">
                       {mockAIEnabled
                         ? 'Using pattern-based mock responses for development/testing'
                         : 'Using real AI models (OpenAI, Anthropic, Google)'
@@ -179,15 +179,15 @@ const AdminPage: NextPage = () => {
                   <div className="flex items-center gap-3">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                       mockAIEnabled
-                        ? 'bg-accent-amber/10 text-accent-amber border border-[#f59e0b]/30'
-                        : 'bg-accent-emerald/10 text-accent-emerald border border-[#10b981]/30'
+                        ? 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30'
+                        : 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30'
                     }`}>
                       {mockAIEnabled ? 'Mock AI' : 'Real AI'}
                     </span>
                     <button
                       onClick={toggleMockAI}
-                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary ${
-                        mockAIEnabled ? 'bg-brand-primary' : 'bg-bg-elevated'
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] ${
+                        mockAIEnabled ? 'bg-[#6b4ce6]' : 'bg-[#2d1b4e]'
                       }`}
                     >
                       <span
@@ -199,13 +199,13 @@ const AdminPage: NextPage = () => {
                   </div>
                 </div>
                 {mockAIEnabled && (
-                  <div className="mt-4 p-3 bg-accent-amber/10 border border-[#f59e0b]/30 rounded-lg">
+                  <div className="mt-4 p-3 bg-[#f59e0b]/10 border border-[#f59e0b]/30 rounded-lg">
                     <div className="flex gap-3">
                       <div className="flex-shrink-0">
-                        <span className="text-accent-amber text-lg">⚠️</span>
+                        <span className="text-[#f59e0b] text-lg">⚠️</span>
                       </div>
                       <div>
-                        <p className="text-sm text-text-secondary">
+                        <p className="text-sm text-[#cbd5e1]">
                           Mock AI is enabled. Transaction extraction will use pattern-based logic instead of real AI models.
                           This saves API costs during development but may be less accurate than real AI.
                         </p>
@@ -218,23 +218,23 @@ const AdminPage: NextPage = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
-              <div className="bg-bg-secondary overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border rounded-xl hover:border-brand-primary hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-brand-primary to-brand-hover rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
                       <span className="text-2xl">📧</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <dl>
-                        <dt className="text-xs sm:text-sm font-medium text-text-muted truncate uppercase tracking-wide">Total Emails</dt>
-                        <dd className="text-xl sm:text-2xl font-bold text-text-primary mt-1">{stats.totalEmails}</dd>
+                        <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] truncate uppercase tracking-wide">Total Emails</dt>
+                        <dd className="text-xl sm:text-2xl font-bold text-[#f8fafc] mt-1">{stats.totalEmails}</dd>
                       </dl>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-bg-secondary overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border rounded-xl hover:border-brand-primary hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#10b981] to-[#059669] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.3)]">
@@ -242,15 +242,15 @@ const AdminPage: NextPage = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <dl>
-                        <dt className="text-xs sm:text-sm font-medium text-text-muted truncate uppercase tracking-wide">Total Transactions</dt>
-                        <dd className="text-xl sm:text-2xl font-bold text-text-primary mt-1">{stats.totalTransactions}</dd>
+                        <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] truncate uppercase tracking-wide">Total Transactions</dt>
+                        <dd className="text-xl sm:text-2xl font-bold text-[#f8fafc] mt-1">{stats.totalTransactions}</dd>
                       </dl>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-bg-secondary overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border rounded-xl hover:border-brand-primary hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#ec4899] to-[#db2777] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(236,72,153,0.3)]">
@@ -258,8 +258,8 @@ const AdminPage: NextPage = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <dl>
-                        <dt className="text-xs sm:text-sm font-medium text-text-muted truncate uppercase tracking-wide">Last Sync</dt>
-                        <dd className="text-xl sm:text-2xl font-bold text-text-primary mt-1 truncate">
+                        <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] truncate uppercase tracking-wide">Last Sync</dt>
+                        <dd className="text-xl sm:text-2xl font-bold text-[#f8fafc] mt-1 truncate">
                           {stats.lastSyncDate ? formatDate(stats.lastSyncDate) : 'Never'}
                         </dd>
                       </dl>
@@ -270,9 +270,9 @@ const AdminPage: NextPage = () => {
             </div>
 
             {/* Gmail Connections */}
-            <div className="bg-bg-secondary shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border rounded-xl mb-8">
-              <div className="px-6 py-4 border-b border-border">
-                <h2 className="text-base sm:text-lg font-semibold text-text-primary flex items-center gap-2">
+            <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl mb-8">
+              <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -281,14 +281,14 @@ const AdminPage: NextPage = () => {
               </div>
               {connections.length === 0 ? (
                 <div className="text-center py-12 px-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-brand-primary to-brand-hover rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                     <span className="text-3xl">📧</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">No Gmail accounts connected</h3>
-                  <p className="text-text-secondary mb-6 max-w-md mx-auto">Connect your first Gmail account to start syncing financial emails</p>
+                  <h3 className="text-lg font-semibold text-[#f8fafc] mb-2">No Gmail accounts connected</h3>
+                  <p className="text-[#cbd5e1] mb-6 max-w-md mx-auto">Connect your first Gmail account to start syncing financial emails</p>
                   <button
                     onClick={handleConnect}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary text-white font-medium rounded-lg hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -299,51 +299,51 @@ const AdminPage: NextPage = () => {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
-                    <thead className="bg-bg-primary/50 border-b border-border">
+                    <thead className="bg-[#0f0a1a]/50 border-b border-[#2d1b4e]">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
                           Account
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
                           Last Sync
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
                           Scopes
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
                           Connected
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-bg-secondary">
+                    <tbody className="bg-[#1a1625]">
                       {connections.map((connection) => {
                         const status = getConnectionStatus(connection);
                         const statusConfig = {
-                          error: { bg: 'bg-error/10', color: 'text-error', border: 'border-[#ef4444]/30' },
-                          stale: { bg: 'bg-accent-amber/10', color: 'text-accent-amber', border: 'border-[#f59e0b]/30' },
-                          active: { bg: 'bg-accent-emerald/10', color: 'text-accent-emerald', border: 'border-[#10b981]/30' },
-                          new: { bg: 'bg-brand-primary/10', color: 'text-[#a78bfa]', border: 'border-[#6b4ce6]/30' },
+                          error: { bg: 'bg-[#ef4444]/10', color: 'text-[#ef4444]', border: 'border-[#ef4444]/30' },
+                          stale: { bg: 'bg-[#f59e0b]/10', color: 'text-[#f59e0b]', border: 'border-[#f59e0b]/30' },
+                          active: { bg: 'bg-[#10b981]/10', color: 'text-[#10b981]', border: 'border-[#10b981]/30' },
+                          new: { bg: 'bg-[#6b4ce6]/10', color: 'text-[#a78bfa]', border: 'border-[#6b4ce6]/30' },
                         };
                         const statusStyle = statusConfig[status.status as keyof typeof statusConfig] || statusConfig.new;
 
                         return (
-                          <tr key={connection.id} className="hover:bg-bg-elevated/20 transition-all duration-200 border-b border-border">
+                          <tr key={connection.id} className="hover:bg-[#2d1b4e]/20 transition-all duration-200 border-b border-[#2d1b4e]">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-3">
-                                <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-brand-primary to-brand-hover rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
+                                <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
                                   <span className="text-lg">📧</span>
                                 </div>
                                 <div>
-                                  <div className="text-sm font-medium text-text-primary">
+                                  <div className="text-sm font-medium text-[#f8fafc]">
                                     {connection.email_address}
                                   </div>
-                                  <div className="text-xs text-text-muted">
+                                  <div className="text-xs text-[#94a3b8]">
                                     ID: {connection.id.substring(0, 8)}...
                                   </div>
                                 </div>
@@ -354,27 +354,27 @@ const AdminPage: NextPage = () => {
                                 {status.label}
                               </span>
                               {connection.last_error && (
-                                <div className="text-xs text-error mt-1" title={connection.last_error}>
+                                <div className="text-xs text-[#ef4444] mt-1" title={connection.last_error}>
                                   Error: {connection.last_error.substring(0, 50)}...
                                 </div>
                               )}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#cbd5e1]">
                               {formatDate(connection.last_sync_at)}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#94a3b8]">
                               <div className="max-w-xs truncate" title={connection.granted_scopes.join(', ')}>
                                 {connection.granted_scopes.length} scopes
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#94a3b8]">
                               {formatDate(connection.created_at)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <button
                                 onClick={() => handleDisconnect(connection.id)}
                                 disabled={loading}
-                                className="px-3 py-1.5 text-error hover:text-[#dc2626] hover:bg-error/10 rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-1.5 text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 Disconnect
                               </button>
@@ -402,9 +402,9 @@ const AdminPage: NextPage = () => {
 
             {/* System Information */}
             {health && (
-              <div className="bg-bg-secondary rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border">
-                <div className="px-6 py-4 border-b border-border">
-                  <h2 className="text-base sm:text-lg font-semibold text-text-primary flex items-center gap-2">
+              <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e]">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                     <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -414,13 +414,13 @@ const AdminPage: NextPage = () => {
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h3 className="text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">Environment Variables</h3>
+                      <h3 className="text-sm font-semibold text-[#f8fafc] mb-3 uppercase tracking-wide">Environment Variables</h3>
                       <div className="space-y-2">
                         {Object.entries(health.environment).map(([key, value]) => (
-                          <div key={key} className="flex items-center justify-between p-2 bg-bg-primary/50 rounded-lg border border-border">
-                            <span className="text-sm text-text-secondary">{key}</span>
+                          <div key={key} className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                            <span className="text-sm text-[#cbd5e1]">{key}</span>
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              value ? 'bg-accent-emerald/10 text-accent-emerald border border-[#10b981]/30' : 'bg-error/10 text-error border border-[#ef4444]/30'
+                              value ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'
                             }`}>
                               {value ? 'Set' : 'Missing'}
                             </span>
@@ -430,27 +430,27 @@ const AdminPage: NextPage = () => {
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">Database Status</h3>
+                      <h3 className="text-sm font-semibold text-[#f8fafc] mb-3 uppercase tracking-wide">Database Status</h3>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between p-2 bg-bg-primary/50 rounded-lg border border-border">
-                          <span className="text-sm text-text-secondary">Connection</span>
+                        <div className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                          <span className="text-sm text-[#cbd5e1]">Connection</span>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            health.database.connected ? 'bg-accent-emerald/10 text-accent-emerald border border-[#10b981]/30' : 'bg-error/10 text-error border border-[#ef4444]/30'
+                            health.database.connected ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'
                           }`}>
                             {health.database.connected ? 'Connected' : 'Failed'}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between p-2 bg-bg-primary/50 rounded-lg border border-border">
-                          <span className="text-sm text-text-secondary">RLS Active</span>
+                        <div className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                          <span className="text-sm text-[#cbd5e1]">RLS Active</span>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            health.database.rls_active ? 'bg-accent-emerald/10 text-accent-emerald border border-[#10b981]/30' : 'bg-accent-amber/10 text-accent-amber border border-[#f59e0b]/30'
+                            health.database.rls_active ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30'
                           }`}>
                             {health.database.rls_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        <div className="mt-3 p-2 bg-bg-primary/50 rounded-lg border border-border">
-                          <span className="text-sm text-text-secondary font-medium">Tables:</span>
-                          <div className="text-xs text-text-muted mt-1">
+                        <div className="mt-3 p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                          <span className="text-sm text-[#cbd5e1] font-medium">Tables:</span>
+                          <div className="text-xs text-[#94a3b8] mt-1">
                             {health.database.tables.join(', ')}
                           </div>
                         </div>
@@ -458,15 +458,15 @@ const AdminPage: NextPage = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-border">
+                  <div className="mt-6 pt-6 border-t border-[#2d1b4e]">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div>
-                        <span className="text-sm font-semibold text-text-primary">Version: </span>
-                        <span className="text-sm text-text-secondary">{health.version}</span>
+                        <span className="text-sm font-semibold text-[#f8fafc]">Version: </span>
+                        <span className="text-sm text-[#cbd5e1]">{health.version}</span>
                       </div>
                       <div>
-                        <span className="text-sm font-semibold text-text-primary">Last Updated: </span>
-                        <span className="text-sm text-text-secondary">{formatDate(health.timestamp)}</span>
+                        <span className="text-sm font-semibold text-[#f8fafc]">Last Updated: </span>
+                        <span className="text-sm text-[#cbd5e1]">{formatDate(health.timestamp)}</span>
                       </div>
                     </div>
                   </div>

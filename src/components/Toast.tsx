@@ -21,14 +21,14 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
   const getToastStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-accent-emerald/10 border-[#10b981]/30 text-accent-emerald';
+        return 'bg-[#10b981]/10 border-[#10b981]/30 text-[#10b981]';
       case 'error':
-        return 'bg-error/10 border-[#ef4444]/30 text-error';
+        return 'bg-[#ef4444]/10 border-[#ef4444]/30 text-[#ef4444]';
       case 'warning':
-        return 'bg-accent-amber/10 border-[#f59e0b]/30 text-accent-amber';
+        return 'bg-[#f59e0b]/10 border-[#f59e0b]/30 text-[#f59e0b]';
       case 'info':
       default:
-        return 'bg-brand-primary/10 border-[#6b4ce6]/30 text-[#6b4ce6]';
+        return 'bg-[#6b4ce6]/10 border-[#6b4ce6]/30 text-[#6b4ce6]';
     }
   };
 
@@ -36,19 +36,19 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
     switch (type) {
       case 'success':
         return (
-          <svg className="w-5 h-5 text-accent-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         );
       case 'error':
         return (
-          <svg className="w-5 h-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-[#ef4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         );
       case 'warning':
         return (
-          <svg className="w-5 h-5 text-accent-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-[#f59e0b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         );

@@ -139,8 +139,8 @@ export default function TransactionDetailPage() {
   const getStatusBadge = (status: string) => {
     const colors = {
       pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-accent-emerald/10 text-accent-emerald',
-      rejected: 'bg-error/10 text-error',
+      confirmed: 'bg-[#10b981]/10 text-[#10b981]',
+      rejected: 'bg-[#ef4444]/10 text-[#ef4444]',
     };
     return colors[status as keyof typeof colors] || colors.pending;
   };
@@ -150,7 +150,7 @@ export default function TransactionDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-text-secondary">Loading transaction...</p>
+          <p className="mt-4 text-[#cbd5e1]">Loading transaction...</p>
         </div>
       </div>
     );
@@ -160,7 +160,7 @@ export default function TransactionDetailPage() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-error">Error</h2>
+          <h2 className="text-xl font-semibold text-[#ef4444]">Error</h2>
           <p className="mt-2 text-red-600">{error || 'Transaction not found'}</p>
           <button
             onClick={() => router.push('/transactions')}
@@ -177,21 +177,21 @@ export default function TransactionDetailPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="mb-6 text-sm text-text-secondary">
+        <nav className="mb-6 text-sm text-[#cbd5e1]">
           <a href="/" className="hover:text-blue-600">Home</a>
           {' > '}
           <a href="/transactions" className="hover:text-blue-600">Transactions</a>
           {' > '}
-          <span className="text-text-primary">{transaction.id.substring(0, 8)}...</span>
+          <span className="text-[#f8fafc]">{transaction.id.substring(0, 8)}...</span>
         </nav>
 
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-text-primary">
+            <h1 className="text-3xl font-bold text-[#f8fafc]">
               Transaction Details
             </h1>
-            <p className="mt-2 text-text-secondary">
+            <p className="mt-2 text-[#cbd5e1]">
               View and edit transaction information
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function TransactionDetailPage() {
               <>
                 <button
                   onClick={() => setEditing(true)}
-                  className="px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-hover font-medium"
+                  className="px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
                 >
                   Edit
                 </button>
@@ -228,7 +228,7 @@ export default function TransactionDetailPage() {
                     setEditing(false);
                     setEditedData(transaction);
                   }}
-                  className="px-4 py-2 bg-gray-300 text-text-secondary rounded-lg hover:bg-gray-400 font-medium"
+                  className="px-4 py-2 bg-gray-300 text-[#cbd5e1] rounded-lg hover:bg-gray-400 font-medium"
                 >
                   Cancel
                 </button>
@@ -241,32 +241,32 @@ export default function TransactionDetailPage() {
           {/* Main Content - 2 columns */}
           <div className="lg:col-span-2 space-y-6">
             {/* Transaction Summary Card */}
-            <div className="bg-bg-secondary rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">
+            <div className="bg-[#1a1625] rounded-lg shadow-lg p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">
                 Transaction Summary
               </h2>
               
               {/* Amount - Large Display */}
               <div className="mb-6 text-center py-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                <p className="text-sm text-text-secondary mb-2">Amount</p>
+                <p className="text-sm text-[#cbd5e1] mb-2">Amount</p>
                 {editing ? (
                   <div className="flex items-center justify-center space-x-2">
                     <input
                       type="text"
                       value={editedData.currency || 'INR'}
                       onChange={(e) => setEditedData({ ...editedData, currency: e.target.value })}
-                      className="w-20 px-3 py-2 border border-border rounded-lg"
+                      className="w-20 px-3 py-2 border border-[#2d1b4e] rounded-lg"
                     />
                     <input
                       type="number"
                       step="0.01"
                       value={editedData.amount || ''}
                       onChange={(e) => setEditedData({ ...editedData, amount: parseFloat(e.target.value) })}
-                      className="w-40 px-3 py-2 border border-border rounded-lg text-3xl font-bold"
+                      className="w-40 px-3 py-2 border border-[#2d1b4e] rounded-lg text-3xl font-bold"
                     />
                   </div>
                 ) : (
-                  <p className="text-4xl font-bold text-text-primary">
+                  <p className="text-4xl font-bold text-[#f8fafc]">
                     {formatCurrency(transaction.amount, transaction.currency)}
                   </p>
                 )}
@@ -275,7 +275,7 @@ export default function TransactionDetailPage() {
               {/* Merchant and Date */}
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">
                     Merchant
                   </label>
                   {editing ? (
@@ -283,16 +283,16 @@ export default function TransactionDetailPage() {
                       type="text"
                       value={editedData.merchant_name || ''}
                       onChange={(e) => setEditedData({ ...editedData, merchant_name: e.target.value })}
-                      className="w-full px-3 py-2 border border-border rounded-lg"
+                      className="w-full px-3 py-2 border border-[#2d1b4e] rounded-lg"
                     />
                   ) : (
-                    <p className="text-lg font-semibold text-text-primary">
+                    <p className="text-lg font-semibold text-[#f8fafc]">
                       {transaction.merchant_name || 'N/A'}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">
                     Date
                   </label>
                   {editing ? (
@@ -300,10 +300,10 @@ export default function TransactionDetailPage() {
                       type="datetime-local"
                       value={editedData.txn_time ? new Date(editedData.txn_time).toISOString().slice(0, 16) : ''}
                       onChange={(e) => setEditedData({ ...editedData, txn_time: new Date(e.target.value).toISOString() })}
-                      className="w-full px-3 py-2 border border-border rounded-lg"
+                      className="w-full px-3 py-2 border border-[#2d1b4e] rounded-lg"
                     />
                   ) : (
-                    <p className="text-lg text-text-primary">
+                    <p className="text-lg text-[#f8fafc]">
                       {formatDate(transaction.txn_time)}
                     </p>
                   )}
@@ -315,8 +315,8 @@ export default function TransactionDetailPage() {
           {/* Sidebar - 1 column */}
           <div className="space-y-6">
             {/* AI Confidence */}
-            <div className="bg-bg-secondary rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
+            <div className="bg-[#1a1625] rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-[#f8fafc] mb-3">
                 AI Confidence
               </h3>
               <div className="flex items-center">
@@ -328,29 +328,29 @@ export default function TransactionDetailPage() {
                     ></div>
                   </div>
                 </div>
-                <span className="ml-3 text-lg font-semibold text-text-primary">
+                <span className="ml-3 text-lg font-semibold text-[#f8fafc]">
                   {((transaction.confidence || 0) * 100).toFixed(0)}%
                 </span>
               </div>
             </div>
 
             {/* Source Email */}
-            <div className="bg-bg-secondary rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
+            <div className="bg-[#1a1625] rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-[#f8fafc] mb-3">
                 Source Email
               </h3>
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="font-medium text-text-secondary">From:</span>
-                  <p className="text-text-primary">{transaction.email.from_address}</p>
+                  <span className="font-medium text-[#cbd5e1]">From:</span>
+                  <p className="text-[#f8fafc]">{transaction.email.from_address}</p>
                 </div>
                 <div>
-                  <span className="font-medium text-text-secondary">Subject:</span>
-                  <p className="text-text-primary">{transaction.email.subject}</p>
+                  <span className="font-medium text-[#cbd5e1]">Subject:</span>
+                  <p className="text-[#f8fafc]">{transaction.email.subject}</p>
                 </div>
                 <div>
-                  <span className="font-medium text-text-secondary">Date:</span>
-                  <p className="text-text-primary">{formatDate(transaction.email.internal_date)}</p>
+                  <span className="font-medium text-[#cbd5e1]">Date:</span>
+                  <p className="text-[#f8fafc]">{formatDate(transaction.email.internal_date)}</p>
                 </div>
               </div>
             </div>

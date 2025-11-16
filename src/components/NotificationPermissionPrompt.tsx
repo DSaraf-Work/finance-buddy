@@ -43,7 +43,7 @@ export default function NotificationPermissionPrompt() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm">
-      <div className="bg-bg-secondary rounded-2xl shadow-2xl border border-border p-6 animate-slide-up">
+      <div className="bg-[#1a1625] rounded-2xl shadow-2xl border border-[#2d1b4e] p-6 animate-slide-up">
         <div className="flex items-start space-x-4">
           <div className="flex-shrink-0">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
@@ -54,10 +54,10 @@ export default function NotificationPermissionPrompt() {
           </div>
           
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-text-primary mb-1">
+            <h3 className="text-lg font-semibold text-[#f8fafc] mb-1">
               Enable Notifications
             </h3>
-            <p className="text-sm text-text-secondary mb-4">
+            <p className="text-sm text-[#cbd5e1] mb-4">
               Get instant alerts when new transactions are detected from your emails.
             </p>
             
@@ -70,7 +70,7 @@ export default function NotificationPermissionPrompt() {
               </button>
               <button
                 onClick={handleDismiss}
-                className="px-4 py-2 text-text-secondary hover:text-text-primary font-medium"
+                className="px-4 py-2 text-[#cbd5e1] hover:text-[#f8fafc] font-medium"
               >
                 Not now
               </button>
@@ -79,7 +79,7 @@ export default function NotificationPermissionPrompt() {
           
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-gray-400 hover:text-text-secondary"
+            className="flex-shrink-0 text-gray-400 hover:text-[#cbd5e1]"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

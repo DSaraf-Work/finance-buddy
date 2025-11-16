@@ -14,14 +14,14 @@ const TestAuthPage: NextPage = () => {
         <meta name="description" content="Test authentication flows and components" />
       </Head>
 
-      <div className="min-h-screen bg-bg-primary/50 py-12 px-4">
+      <div className="min-h-screen bg-[#0f0a1a]/50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-text-primary mb-2">
+            <h1 className="text-3xl font-bold text-[#f8fafc] mb-2">
               Authentication Testing Suite
             </h1>
-            <p className="text-text-secondary">
+            <p className="text-[#cbd5e1]">
               Comprehensive testing interface for all authentication flows and components
             </p>
             <div className="mt-4 text-sm text-blue-600">
@@ -31,9 +31,9 @@ const TestAuthPage: NextPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Sign In/Up */}
-            <div className="bg-bg-secondary rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Sign In / Sign Up</h2>
-              <p className="text-text-secondary mb-4">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Sign In / Sign Up</h2>
+              <p className="text-[#cbd5e1] mb-4">
                 Main authentication page with toggle between sign-in and sign-up modes.
               </p>
               <a
@@ -45,9 +45,9 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Forgot Password */}
-            <div className="bg-bg-secondary rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Forgot Password</h2>
-              <p className="text-text-secondary mb-4">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Forgot Password</h2>
+              <p className="text-[#cbd5e1] mb-4">
                 Password reset flow - enter email to receive reset link.
               </p>
               <a
@@ -59,9 +59,9 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Reset Password */}
-            <div className="bg-bg-secondary rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Reset Password</h2>
-              <p className="text-text-secondary mb-4">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Reset Password</h2>
+              <p className="text-[#cbd5e1] mb-4">
                 Password reset completion - requires valid session from email link.
               </p>
               <a
@@ -76,9 +76,9 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Protected Routes */}
-            <div className="bg-bg-secondary rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Protected Routes</h2>
-              <p className="text-text-secondary mb-4">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Protected Routes</h2>
+              <p className="text-[#cbd5e1] mb-4">
                 Test route protection - should redirect to auth if not signed in.
               </p>
               <div className="space-y-2">
@@ -98,9 +98,9 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Authentication Flow */}
-            <div className="bg-bg-secondary rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Authentication Flow</h2>
-              <div className="text-sm text-text-secondary space-y-2">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Authentication Flow</h2>
+              <div className="text-sm text-[#cbd5e1] space-y-2">
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
                   <span>User visits protected route</span>
@@ -121,9 +121,9 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Password Reset Flow */}
-            <div className="bg-bg-secondary rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-text-primary mb-4">Password Reset Flow</h2>
-              <div className="text-sm text-text-secondary space-y-2">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Password Reset Flow</h2>
+              <div className="text-sm text-[#cbd5e1] space-y-2">
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                   <span>Click "Forgot password?" link</span>
@@ -149,15 +149,15 @@ const TestAuthPage: NextPage = () => {
           </div>
 
           {/* Quick Test Form */}
-          <div className="mt-8 bg-bg-secondary rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-text-primary mb-4">Quick Test Form</h2>
-            <p className="text-text-secondary mb-4">
+          <div className="mt-8 bg-[#1a1625] rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Quick Test Form</h2>
+            <p className="text-[#cbd5e1] mb-4">
               Test form validation and UI components without actual authentication.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Email</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Email</label>
                 <input
                   type="email"
                   value={email}
@@ -168,7 +168,7 @@ const TestAuthPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Password</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Password</label>
                 <input
                   type="password"
                   value={password}
@@ -179,7 +179,7 @@ const TestAuthPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Confirm Password</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Confirm Password</label>
                 <input
                   type="password"
                   value={confirmPassword}

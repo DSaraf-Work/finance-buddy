@@ -96,9 +96,9 @@ export function Layout({ children, title, description }: LayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-bg-primary">
-        {/* Navigation Header - Sticky with Theme Support */}
-        <nav className="sticky top-0 z-50 bg-bg-secondary shadow-[0_4px_20px_rgba(0,0,0,0.3)] border-b border-border" role="navigation" aria-label="Main navigation">
+      <div className="min-h-screen bg-[#0f0a1a]">
+        {/* Navigation Header - Sticky with Dark Purple Theme */}
+        <nav className="sticky top-0 z-50 bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border-b border-[#2d1b4e]" role="navigation" aria-label="Main navigation">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
             <div className="flex justify-between items-center h-14 sm:h-16 lg:h-[72px]">
               {/* Logo and primary navigation */}
@@ -106,24 +106,24 @@ export function Layout({ children, title, description }: LayoutProps) {
                 <div className="flex-shrink-0 flex items-center">
                   <Link
                     href="/"
-                    className="group flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary rounded-lg px-2 py-1 transition-all duration-200"
+                    className="group flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] rounded-lg px-2 py-1 transition-all duration-200"
                     aria-label="Finance Buddy Home"
                   >
                     {/* Logo Icon */}
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-brand-primary to-brand-hover rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)] group-hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] transition-all duration-300">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)] group-hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] transition-all duration-300">
                       <span className="text-lg sm:text-xl lg:text-2xl font-bold text-white">₹</span>
                     </div>
                     {/* Logo Text */}
                     <div className="hidden sm:block">
-                      <div className="text-base sm:text-lg lg:text-xl font-semibold text-text-primary group-hover:text-brand-light transition-colors duration-200">
+                      <div className="text-base sm:text-lg lg:text-xl font-semibold text-[#f8fafc] group-hover:text-[#a78bfa] transition-colors duration-200">
                         Finance Buddy
                       </div>
-                      <div className="text-[10px] sm:text-xs text-text-muted font-light tracking-wide hidden lg:block">
+                      <div className="text-[10px] sm:text-xs text-[#94a3b8] font-light tracking-wide hidden lg:block">
                         Smart Finance Tracking
                       </div>
                     </div>
                     {/* Mobile abbreviated logo */}
-                    <span className="sm:hidden text-base font-semibold text-text-primary group-hover:text-brand-light transition-colors duration-200">FB</span>
+                    <span className="sm:hidden text-base font-semibold text-[#f8fafc] group-hover:text-[#a78bfa] transition-colors duration-200">FB</span>
                   </Link>
                 </div>
 
@@ -131,7 +131,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                 <div className="hidden lg:block relative">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="inline-flex items-center px-4 py-2.5 border border-border rounded-lg text-sm font-medium text-text-secondary bg-bg-secondary hover:bg-bg-elevated/30 hover:border-brand-primary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary transition-all duration-200 min-h-[44px] shadow-sm"
+                    className="inline-flex items-center px-4 py-2.5 border border-[#2d1b4e] rounded-lg text-sm font-medium text-[#cbd5e1] bg-[#1a1625] hover:bg-[#2d1b4e]/30 hover:border-[#6b4ce6] hover:text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 min-h-[44px] shadow-sm"
                     aria-expanded={dropdownOpen}
                     aria-haspopup="true"
                     aria-label="Navigation menu"
@@ -165,7 +165,7 @@ export function Layout({ children, title, description }: LayoutProps) {
 
                       {/* Dropdown content - Dark Purple Theme */}
                       <div
-                        className="absolute left-0 mt-3 w-80 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] bg-bg-secondary border border-border z-20 animate-fade-in-down overflow-hidden"
+                        className="absolute left-0 mt-3 w-80 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] bg-[#1a1625] border border-[#2d1b4e] z-20 animate-fade-in-down overflow-hidden"
                         role="menu"
                         aria-orientation="vertical"
                       >
@@ -176,8 +176,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                               href={item.href}
                               className={`block px-4 py-3 text-sm transition-all duration-200 focus:outline-none ${
                                 isActive(item.href)
-                                  ? 'bg-brand-primary/20 text-[#a78bfa] border-l-4 border-[#6b4ce6] shadow-[inset_0_0_20px_rgba(107,76,230,0.1)]'
-                                  : 'text-text-secondary hover:bg-bg-elevated/30 hover:text-text-primary border-l-4 border-transparent'
+                                  ? 'bg-[#6b4ce6]/20 text-[#a78bfa] border-l-4 border-[#6b4ce6] shadow-[inset_0_0_20px_rgba(107,76,230,0.1)]'
+                                  : 'text-[#cbd5e1] hover:bg-[#2d1b4e]/30 hover:text-[#f8fafc] border-l-4 border-transparent'
                               }`}
                               onClick={() => setDropdownOpen(false)}
                               role="menuitem"
@@ -187,7 +187,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                                 <div className="flex-1 min-w-0">
                                   <div className="font-medium">{item.name}</div>
                                   {item.description && (
-                                    <div className="text-xs text-text-muted mt-0.5 line-clamp-2">
+                                    <div className="text-xs text-[#94a3b8] mt-0.5 line-clamp-2">
                                       {item.description}
                                     </div>
                                   )}
@@ -212,9 +212,9 @@ export function Layout({ children, title, description }: LayoutProps) {
                       disabled={loading}
                       className={`hidden sm:inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-medium transition-all duration-200 min-h-[44px] border ${
                         mockAIEnabled
-                          ? 'bg-accent-amber/10 text-accent-amber border-[#f59e0b]/30 hover:bg-accent-amber/20 hover:border-[#f59e0b]/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                          : 'bg-accent-emerald/10 text-accent-emerald border-[#10b981]/30 hover:bg-accent-emerald/20 hover:border-[#10b981]/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary`}
+                          ? 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/30 hover:bg-[#f59e0b]/20 hover:border-[#f59e0b]/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                          : 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30 hover:bg-[#10b981]/20 hover:border-[#10b981]/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
+                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625]`}
                       title={mockAIEnabled ? 'Mock AI: ON (Click to use Real AI)' : 'Mock AI: OFF (Click to use Mock AI)'}
                       aria-label={mockAIEnabled ? 'Switch to Real AI' : 'Switch to Mock AI'}
                     >
@@ -228,11 +228,11 @@ export function Layout({ children, title, description }: LayoutProps) {
                     </div>
 
                     {/* User email - Hidden on mobile, truncated on tablet */}
-                    <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-bg-elevated/30 rounded-lg border border-border">
+                    <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-[#2d1b4e]/30 rounded-lg border border-[#2d1b4e]">
                       <svg className="w-4 h-4 text-[#a78bfa] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span className="text-xs lg:text-sm text-text-secondary max-w-[100px] lg:max-w-[180px] truncate font-medium" title={user.email}>
+                      <span className="text-xs lg:text-sm text-[#cbd5e1] max-w-[100px] lg:max-w-[180px] truncate font-medium" title={user.email}>
                         {user.email}
                       </span>
                     </div>
@@ -240,7 +240,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                     {/* Sign Out - Hidden on mobile */}
                     <button
                       onClick={signOut}
-                      className="hidden md:inline-flex items-center gap-2 text-xs lg:text-sm text-text-secondary hover:text-text-primary hover:bg-bg-elevated/30 px-3 lg:px-4 py-2 rounded-lg border border-transparent hover:border-border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary min-h-[44px] font-medium"
+                      className="hidden md:inline-flex items-center gap-2 text-xs lg:text-sm text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 px-3 lg:px-4 py-2 rounded-lg border border-transparent hover:border-[#2d1b4e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] min-h-[44px] font-medium"
                       aria-label="Sign out"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +254,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="lg:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-elevated/30 border border-transparent hover:border-border focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary transition-all duration-200 min-h-[44px] min-w-[44px]"
+                  className="lg:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 border border-transparent hover:border-[#2d1b4e] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 min-h-[44px] min-w-[44px]"
                   aria-expanded={mobileMenuOpen}
                   aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
                 >
@@ -273,27 +273,27 @@ export function Layout({ children, title, description }: LayoutProps) {
 
           {/* Mobile menu - Dark Purple Theme */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-border bg-bg-secondary animate-fade-in-down shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+            <div className="lg:hidden border-t border-[#2d1b4e] bg-[#1a1625] animate-fade-in-down shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
               {/* User info section - Mobile only */}
               {user && (
-                <div className="px-4 py-4 border-b border-border bg-bg-primary/50">
+                <div className="px-4 py-4 border-b border-[#2d1b4e] bg-[#0f0a1a]/50">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 bg-gradient-to-br from-brand-primary to-brand-hover rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)] flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)] flex-shrink-0">
                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-text-muted font-medium uppercase tracking-wide mb-0.5">Account</p>
-                        <p className="text-sm font-medium text-text-primary truncate" title={user.email}>
+                        <p className="text-xs text-[#94a3b8] font-medium uppercase tracking-wide mb-0.5">Account</p>
+                        <p className="text-sm font-medium text-[#f8fafc] truncate" title={user.email}>
                           {user.email}
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={signOut}
-                      className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm font-medium text-text-secondary bg-bg-secondary hover:bg-bg-elevated/30 hover:text-text-primary hover:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary transition-all duration-200 min-h-[44px] flex-shrink-0"
+                      className="inline-flex items-center gap-2 px-3 py-2 border border-[#2d1b4e] rounded-lg text-sm font-medium text-[#cbd5e1] bg-[#1a1625] hover:bg-[#2d1b4e]/30 hover:text-[#f8fafc] hover:border-[#6b4ce6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 min-h-[44px] flex-shrink-0"
                       aria-label="Sign out"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,9 +310,9 @@ export function Layout({ children, title, description }: LayoutProps) {
                       disabled={loading}
                       className={`w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] border ${
                         mockAIEnabled
-                          ? 'bg-accent-amber/10 text-accent-amber border-[#f59e0b]/30 hover:bg-accent-amber/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                          : 'bg-accent-emerald/10 text-accent-emerald border-[#10b981]/30 hover:bg-accent-emerald/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-bg-secondary`}
+                          ? 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/30 hover:bg-[#f59e0b]/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                          : 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30 hover:bg-[#10b981]/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
+                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625]`}
                       aria-label={mockAIEnabled ? 'Switch to Real AI' : 'Switch to Mock AI'}
                     >
                       <span className="text-lg" aria-hidden="true">{mockAIEnabled ? '🤖' : '🧠'}</span>
@@ -330,8 +330,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                     href={item.href}
                     className={`block px-4 py-3.5 text-base transition-all duration-200 focus:outline-none min-h-[44px] ${
                       isActive(item.href)
-                        ? 'bg-brand-primary/20 text-[#a78bfa] border-l-4 border-[#6b4ce6] shadow-[inset_0_0_20px_rgba(107,76,230,0.1)]'
-                        : 'text-text-secondary hover:bg-bg-elevated/30 hover:text-text-primary border-l-4 border-transparent'
+                        ? 'bg-[#6b4ce6]/20 text-[#a78bfa] border-l-4 border-[#6b4ce6] shadow-[inset_0_0_20px_rgba(107,76,230,0.1)]'
+                        : 'text-[#cbd5e1] hover:bg-[#2d1b4e]/30 hover:text-[#f8fafc] border-l-4 border-transparent'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                     role="menuitem"
@@ -341,7 +341,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                       <div className="flex-1 min-w-0">
                         <div className="font-medium">{item.name}</div>
                         {item.description && (
-                          <div className="text-xs text-text-muted mt-0.5 line-clamp-1">
+                          <div className="text-xs text-[#94a3b8] mt-0.5 line-clamp-1">
                             {item.description}
                           </div>
                         )}
@@ -361,7 +361,7 @@ export function Layout({ children, title, description }: LayoutProps) {
 
         {/* Breadcrumbs - Dark Purple Theme */}
         {router.pathname !== '/' && (
-          <div className="bg-bg-secondary border-b border-border">
+          <div className="bg-[#1a1625] border-b border-[#2d1b4e]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-2 py-3 text-sm">
                 {getBreadcrumbs().map((crumb, index) => (
@@ -376,7 +376,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                       className={`transition-colors duration-200 ${
                         index === getBreadcrumbs().length - 1
                           ? 'text-[#a78bfa] font-medium'
-                          : 'text-text-muted hover:text-text-secondary'
+                          : 'text-[#94a3b8] hover:text-[#cbd5e1]'
                       }`}
                     >
                       {crumb.name}

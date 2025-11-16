@@ -63,7 +63,7 @@ export default function TransactionFilters({
   };
 
   return (
-    <div className="bg-bg-secondary rounded-xl border border-border p-5 sm:p-6 mb-6 sm:mb-8">
+    <div className="bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 mb-6 sm:mb-8">
       {/* Header - Dark Purple Theme */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <button
@@ -74,7 +74,7 @@ export default function TransactionFilters({
         >
           Filters
           {activeFilterCount > 0 && (
-            <span className="px-2 py-0.5 bg-brand-primary/20 text-[#a78bfa] text-xs rounded-full ring-1 ring-brand-primary/30">
+            <span className="px-2 py-0.5 bg-[#6b4ce6]/20 text-[#a78bfa] text-xs rounded-full ring-1 ring-[#6b4ce6]/30">
               {activeFilterCount}
             </span>
           )}
@@ -89,7 +89,7 @@ export default function TransactionFilters({
         </button>
         <button
           onClick={onReset}
-          className="text-xs sm:text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+          className="text-xs sm:text-sm font-medium text-[#cbd5e1] hover:text-[#f8fafc] transition-colors"
           aria-label="Reset all filters"
         >
           Reset
@@ -98,11 +98,11 @@ export default function TransactionFilters({
 
       {/* Collapsible Filter Panel - Dark Theme */}
       {isExpanded && (
-        <div id="filter-panel" className="border-t border-border pt-4 sm:pt-6">
+        <div id="filter-panel" className="border-t border-[#2d1b4e] pt-4 sm:pt-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
             {/* Date From */}
             <div>
-              <label htmlFor="date-from" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="date-from" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 From Date
               </label>
               <input
@@ -111,14 +111,14 @@ export default function TransactionFilters({
                 value={filters.date_from}
                 onChange={(e) => handleChange('date_from', e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
                 aria-label="Filter by start date"
               />
             </div>
 
             {/* Date To */}
             <div>
-              <label htmlFor="date-to" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="date-to" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 To Date
               </label>
               <input
@@ -127,21 +127,21 @@ export default function TransactionFilters({
                 value={filters.date_to}
                 onChange={(e) => handleChange('date_to', e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
                 aria-label="Filter by end date"
               />
             </div>
 
             {/* Sort */}
             <div>
-              <label htmlFor="sort" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="sort" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 Sort By
               </label>
               <select
                 id="sort"
                 value={filters.sort || 'desc'}
                 onChange={(e) => handleChange('sort', e.target.value)}
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
                 aria-label="Sort transactions"
               >
                 <option value="desc">Newest First</option>
@@ -151,14 +151,14 @@ export default function TransactionFilters({
 
             {/* Status */}
             <div>
-              <label htmlFor="status" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="status" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 Status
               </label>
               <select
                 id="status"
                 value={filters.status}
                 onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
                 aria-label="Filter by transaction status"
               >
                 <option value="">All Statuses</option>
@@ -171,14 +171,14 @@ export default function TransactionFilters({
 
             {/* Direction */}
             <div>
-              <label htmlFor="direction" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="direction" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 Direction
               </label>
               <select
                 id="direction"
                 value={filters.direction}
                 onChange={(e) => handleChange('direction', e.target.value)}
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc]"
                 aria-label="Filter by transaction direction"
               >
                 <option value="">All Directions</option>
@@ -189,14 +189,14 @@ export default function TransactionFilters({
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="category" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 Category
               </label>
               <select
                 id="category"
                 value={filters.category}
                 onChange={(e) => handleChange('category', e.target.value)}
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary capitalize"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc] capitalize"
                 aria-label="Filter by transaction category"
               >
                 <option value="">All Categories</option>
@@ -210,7 +210,7 @@ export default function TransactionFilters({
 
             {/* Merchant */}
             <div className="sm:col-span-2">
-              <label htmlFor="merchant" className="block text-xs font-medium text-text-secondary mb-2">
+              <label htmlFor="merchant" className="block text-xs font-medium text-[#cbd5e1] mb-2">
                 Merchant
               </label>
               <input
@@ -220,7 +220,7 @@ export default function TransactionFilters({
                 onChange={(e) => handleChange('merchant', e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search merchant..."
-                className="w-full px-3 py-2 bg-bg-elevated border border-border rounded-lg focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50 transition-colors text-sm text-text-primary placeholder-text-muted"
+                className="w-full px-3 py-2 bg-[#2d1b4e] border border-[#2d1b4e] rounded-lg focus:border-[#6b4ce6] focus:ring-1 focus:ring-[#6b4ce6]/50 transition-colors text-sm text-[#f8fafc] placeholder-[#94a3b8]"
                 aria-label="Filter by merchant name"
               />
             </div>
@@ -230,7 +230,7 @@ export default function TransactionFilters({
           <button
             onClick={onSearch}
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-brand-primary text-text-primary text-sm font-medium rounded-lg hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_20px_rgba(107,76,230,0.3)]"
+            className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-[#f8fafc] text-sm font-medium rounded-lg hover:bg-[#8b5cf6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_20px_rgba(107,76,230,0.3)]"
             aria-label="Search transactions with current filters"
           >
             {loading ? 'Searching...' : 'Apply Filters'}
