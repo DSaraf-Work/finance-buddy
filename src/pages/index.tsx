@@ -322,301 +322,218 @@ const HomePage: NextPage = () => {
       title="Finance Buddy - Dashboard"
       description="Finance Buddy dashboard with overview and quick actions"
     >
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header - Enhanced */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between">
+      <div className="min-h-screen bg-white py-12">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
+          {/* Welcome Header - Minimalist */}
+          <div className="mb-16">
+            <div className="flex items-end justify-between border-b border-gray-200 pb-6">
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Welcome back!
-                </h1>
-                <p className="mt-2 text-base text-gray-600">
-                  {user.email}
+                <p className="text-sm font-medium text-gray-500 tracking-wide uppercase mb-2">
+                  Dashboard
                 </p>
+                <h1 className="text-4xl font-light text-gray-900 tracking-tight">
+                  Welcome back
+                </h1>
               </div>
-              <div className="hidden sm:block">
-                <div className="flex items-center space-x-2 px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-gray-700">All Systems Operational</span>
-                </div>
+              <div className="hidden sm:flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                <span className="text-xs font-medium text-gray-600 tracking-wide">ACTIVE</span>
               </div>
             </div>
-            <p className="mt-3 text-sm text-gray-500">
-              Here's your financial automation overview
-            </p>
           </div>
 
-          {/* Stats Cards - Enhanced with gradients and better visual hierarchy */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {/* Stats Cards - Minimalist */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             {/* Total Emails Card */}
-            <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full"></div>
-              <div className="relative p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                      Total Emails
-                    </p>
-                    <p className="mt-3 text-4xl font-bold text-gray-900">
-                      {loadingStats ? (
-                        <span className="animate-pulse">...</span>
-                      ) : (
-                        stats.totalEmails.toLocaleString()
-                      )}
-                    </p>
-                    <p className="mt-2 text-xs text-gray-500">
-                      Synced from Gmail
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">📧</span>
-                    </div>
-                  </div>
-                </div>
+            <div className="group">
+              <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
+                <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
+                  Emails
+                </p>
+                <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
+                  {loadingStats ? (
+                    <span className="text-gray-300">—</span>
+                  ) : (
+                    stats.totalEmails.toLocaleString()
+                  )}
+                </p>
+                <p className="text-xs text-gray-400 tracking-wide">
+                  Synced from Gmail
+                </p>
               </div>
             </div>
 
             {/* Total Transactions Card */}
-            <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-bl-full"></div>
-              <div className="relative p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                      Transactions
-                    </p>
-                    <p className="mt-3 text-4xl font-bold text-gray-900">
-                      {loadingStats ? (
-                        <span className="animate-pulse">...</span>
-                      ) : (
-                        stats.totalTransactions.toLocaleString()
-                      )}
-                    </p>
-                    <p className="mt-2 text-xs text-gray-500">
-                      AI-extracted
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">💰</span>
-                    </div>
-                  </div>
-                </div>
+            <div className="group">
+              <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
+                <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
+                  Transactions
+                </p>
+                <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
+                  {loadingStats ? (
+                    <span className="text-gray-300">—</span>
+                  ) : (
+                    stats.totalTransactions.toLocaleString()
+                  )}
+                </p>
+                <p className="text-xs text-gray-400 tracking-wide">
+                  AI-extracted
+                </p>
               </div>
             </div>
 
             {/* Connected Accounts Card */}
-            <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-bl-full"></div>
-              <div className="relative p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                      Accounts
-                    </p>
-                    <p className="mt-3 text-4xl font-bold text-gray-900">
-                      {loadingStats ? (
-                        <span className="animate-pulse">...</span>
-                      ) : (
-                        stats.totalConnections
-                      )}
-                    </p>
-                    <p className="mt-2 text-xs text-gray-500">
-                      Gmail connected
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">🔗</span>
-                    </div>
-                  </div>
-                </div>
+            <div className="group">
+              <div className="border-l-2 border-gray-900 pl-6 py-4 hover:border-gray-600 transition-colors duration-200">
+                <p className="text-xs font-medium text-gray-500 tracking-widest uppercase mb-3">
+                  Accounts
+                </p>
+                <p className="text-5xl font-extralight text-gray-900 mb-2 tracking-tight">
+                  {loadingStats ? (
+                    <span className="text-gray-300">—</span>
+                  ) : (
+                    stats.totalConnections
+                  )}
+                </p>
+                <p className="text-xs text-gray-400 tracking-wide">
+                  Connected
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Quick Actions & Connection Status - Side by side */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-            {/* Quick Actions - Enhanced */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Quick Actions</h3>
-                <span className="text-2xl">⚡</span>
-              </div>
-              <div className="space-y-3">
+          {/* Quick Actions & Connection Status - Minimalist */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+            {/* Quick Actions - Minimalist */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 tracking-widest uppercase mb-6">
+                Actions
+              </h3>
+              <div className="space-y-1">
                 <button
                   onClick={handleConnect}
-                  className="group w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-3.5 px-5 rounded-xl transition-all duration-200 flex items-center justify-between shadow-md hover:shadow-lg"
+                  className="group w-full text-left py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
                 >
-                  <div className="flex items-center">
-                    <span className="text-xl mr-3">🔗</span>
-                    <span>Connect Gmail Account</span>
-                  </div>
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900 tracking-wide">Connect Gmail Account</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
                 <a
                   href="/admin"
-                  className="group w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3.5 px-5 rounded-xl transition-all duration-200 flex items-center justify-between border-2 border-gray-200 hover:border-gray-300"
+                  className="group w-full block py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
                 >
-                  <div className="flex items-center">
-                    <span className="text-xl mr-3">⚙️</span>
-                    <span>Manage Connections</span>
-                  </div>
-                  <svg className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900 tracking-wide">Manage Connections</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/emails"
-                  className="group w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3.5 px-5 rounded-xl transition-all duration-200 flex items-center justify-between border-2 border-gray-200 hover:border-gray-300"
+                  className="group w-full block py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
                 >
-                  <div className="flex items-center">
-                    <span className="text-xl mr-3">📧</span>
-                    <span>Browse Emails</span>
-                  </div>
-                  <svg className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900 tracking-wide">Browse Emails</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/transactions"
-                  className="group w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3.5 px-5 rounded-xl transition-all duration-200 flex items-center justify-between border-2 border-gray-200 hover:border-gray-300"
+                  className="group w-full block py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between"
                 >
-                  <div className="flex items-center">
-                    <span className="text-xl mr-3">💰</span>
-                    <span>Review Transactions</span>
-                  </div>
-                  <svg className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <span className="text-sm font-medium text-gray-900 tracking-wide">Review Transactions</span>
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <button
                   onClick={handleCheckPriorityEmails}
                   disabled={checkingPriorityEmails}
-                  className="group w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-medium py-3.5 px-5 rounded-xl transition-all duration-200 flex items-center justify-between shadow-md hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                  className="group w-full text-left py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 flex items-center justify-between disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
                 >
-                  <div className="flex items-center">
-                    <span className="text-xl mr-3">🚀</span>
-                    <span>{checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails'}</span>
-                  </div>
-                  {checkingPriorityEmails && (
-                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <span className="text-sm font-medium text-gray-900 tracking-wide">
+                    {checkingPriorityEmails ? 'Checking Priority Emails...' : 'Check Priority Emails'}
+                  </span>
+                  {checkingPriorityEmails ? (
+                    <svg className="animate-spin h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                     </svg>
                   )}
                 </button>
               </div>
 
-              {/* Priority Email Result - Enhanced */}
+              {/* Priority Email Result - Minimalist */}
               {priorityEmailResult && (
-                <div className={`mt-6 rounded-xl overflow-hidden ${
+                <div className={`mt-8 border-l-2 pl-6 py-4 ${
                   priorityEmailResult.success
-                    ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200'
-                    : 'bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200'
+                    ? 'border-emerald-500'
+                    : 'border-red-500'
                 }`}>
-                  <div className="p-5">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          priorityEmailResult.success ? 'bg-green-500' : 'bg-red-500'
-                        }`}>
-                          <span className="text-xl">
-                            {priorityEmailResult.success ? '✓' : '✕'}
-                          </span>
-                        </div>
+                  <p className={`text-xs font-medium tracking-widest uppercase mb-3 ${
+                    priorityEmailResult.success ? 'text-emerald-600' : 'text-red-600'
+                  }`}>
+                    {priorityEmailResult.success ? 'Success' : 'Error'}
+                  </p>
+                  {priorityEmailResult.success && priorityEmailResult.result && (
+                    <div className="space-y-2">
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-xs text-gray-500 tracking-wide">Emails Found</span>
+                        <span className="text-sm font-medium text-gray-900">{priorityEmailResult.result.emailsFound}</span>
                       </div>
-                      <div className="ml-4 flex-1">
-                        <h4 className={`font-bold text-lg ${
-                          priorityEmailResult.success ? 'text-green-900' : 'text-red-900'
-                        }`}>
-                          {priorityEmailResult.success ? 'Check Complete!' : 'Check Failed'}
-                        </h4>
-                        {priorityEmailResult.success && priorityEmailResult.result && (
-                          <div className="mt-3 grid grid-cols-2 gap-3">
-                            <div className="bg-white/60 rounded-lg p-3">
-                              <p className="text-xs text-gray-600 font-medium">Emails Found</p>
-                              <p className="text-2xl font-bold text-gray-900">{priorityEmailResult.result.emailsFound}</p>
-                            </div>
-                            <div className="bg-white/60 rounded-lg p-3">
-                              <p className="text-xs text-gray-600 font-medium">Processed</p>
-                              <p className="text-2xl font-bold text-gray-900">{priorityEmailResult.result.emailsProcessed}</p>
-                            </div>
-                            <div className="bg-white/60 rounded-lg p-3">
-                              <p className="text-xs text-gray-600 font-medium">Marked Read</p>
-                              <p className="text-2xl font-bold text-gray-900">{priorityEmailResult.result.emailsMarkedRead}</p>
-                            </div>
-                            <div className="bg-white/60 rounded-lg p-3">
-                              <p className="text-xs text-gray-600 font-medium">Connections</p>
-                              <p className="text-2xl font-bold text-gray-900">{priorityEmailResult.result.connectionsProcessed}</p>
-                            </div>
-                          </div>
-                        )}
-                        {priorityEmailResult.error && (
-                          <p className="mt-3 text-sm text-red-700 bg-white/60 rounded-lg p-3">
-                            {priorityEmailResult.error}
-                          </p>
-                        )}
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-xs text-gray-500 tracking-wide">Processed</span>
+                        <span className="text-sm font-medium text-gray-900">{priorityEmailResult.result.emailsProcessed}</span>
+                      </div>
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-xs text-gray-500 tracking-wide">Connections</span>
+                        <span className="text-sm font-medium text-gray-900">{priorityEmailResult.result.connectionsProcessed}</span>
                       </div>
                     </div>
-                  </div>
+                  )}
+                  {priorityEmailResult.error && (
+                    <p className="text-xs text-red-600 tracking-wide">
+                      {priorityEmailResult.error}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Connection Status - Enhanced */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Connected Accounts</h3>
-                <span className="text-2xl">🔗</span>
-              </div>
+            {/* Connection Status - Minimalist */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 tracking-widest uppercase mb-6">
+                Connections
+              </h3>
               {connections.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-4xl">📭</span>
-                  </div>
-                  <p className="text-gray-600 font-medium mb-2">No accounts connected</p>
-                  <p className="text-sm text-gray-500 mb-6">Connect your first Gmail account to get started</p>
+                <div className="border border-gray-200 py-12 text-center">
+                  <p className="text-sm text-gray-500 mb-6 tracking-wide">No accounts connected</p>
                   <button
                     onClick={handleConnect}
-                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
+                    className="inline-block text-xs font-medium text-gray-900 tracking-widest uppercase border-b-2 border-gray-900 hover:border-gray-600 transition-colors duration-150 pb-1"
                   >
-                    <span className="mr-2">🔗</span>
-                    Connect Your First Account
+                    Connect Account
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-1">
                   {connections.map((connection) => (
                     <div
                       key={connection.id}
-                      className="group relative bg-gradient-to-r from-gray-50 to-blue-50/30 hover:from-blue-50 hover:to-indigo-50 rounded-xl p-4 transition-all duration-200 border border-gray-200 hover:border-blue-300"
+                      className="group py-4 px-6 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150"
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                            <span className="text-lg">📧</span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-gray-900">{connection.email_address}</p>
-                            <p className="text-xs text-gray-500 flex items-center mt-1">
-                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              Last sync: {connection.last_sync_at ? new Date(connection.last_sync_at).toLocaleDateString() : 'Never'}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 tracking-wide">{connection.email_address}</p>
+                          <p className="text-xs text-gray-400 mt-1 tracking-wide">
+                            {connection.last_sync_at ? new Date(connection.last_sync_at).toLocaleDateString() : 'Never synced'}
+                          </p>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
-                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>
-                            Active
-                          </span>
-                        </div>
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
                       </div>
                     </div>
                   ))}
@@ -625,77 +542,52 @@ const HomePage: NextPage = () => {
             </div>
           </div>
 
-          {/* Features Overview - Enhanced with better visual design */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Powerful Features</h3>
-              <p className="text-gray-600">Everything you need to manage your financial emails</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="group relative bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-blue-100 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
-                <div className="absolute top-4 right-4 w-12 h-12 bg-blue-500/10 rounded-full"></div>
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🔐</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">Secure OAuth</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">Gmail integration with industry-standard PKCE security</p>
-                </div>
+          {/* Features Overview - Minimalist */}
+          <div className="border-t border-gray-200 pt-16">
+            <h3 className="text-sm font-medium text-gray-500 tracking-widest uppercase mb-12">
+              Features
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10">
+              <div className="group">
+                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Secure OAuth</h4>
+                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+                  Gmail integration with industry-standard PKCE security
+                </p>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border-2 border-emerald-100 hover:border-emerald-300 transition-all duration-300 hover:shadow-lg">
-                <div className="absolute top-4 right-4 w-12 h-12 bg-emerald-500/10 rounded-full"></div>
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">📧</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">Smart Email Sync</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">Manual sync with date ranges and intelligent deduplication</p>
-                </div>
+              <div className="group">
+                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Smart Email Sync</h4>
+                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+                  Manual sync with date ranges and intelligent deduplication
+                </p>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border-2 border-purple-100 hover:border-purple-300 transition-all duration-300 hover:shadow-lg">
-                <div className="absolute top-4 right-4 w-12 h-12 bg-purple-500/10 rounded-full"></div>
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🔍</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">Advanced Search</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">Powerful filtering and search capabilities</p>
-                </div>
+              <div className="group">
+                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Advanced Search</h4>
+                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+                  Powerful filtering and search capabilities
+                </p>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl border-2 border-amber-100 hover:border-amber-300 transition-all duration-300 hover:shadow-lg">
-                <div className="absolute top-4 right-4 w-12 h-12 bg-amber-500/10 rounded-full"></div>
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">💰</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">AI Extraction</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">Automated financial transaction data parsing</p>
-                </div>
+              <div className="group">
+                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">AI Extraction</h4>
+                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+                  Automated financial transaction data parsing
+                </p>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-cyan-50 to-sky-50 p-6 rounded-xl border-2 border-cyan-100 hover:border-cyan-300 transition-all duration-300 hover:shadow-lg">
-                <div className="absolute top-4 right-4 w-12 h-12 bg-cyan-500/10 rounded-full"></div>
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🔧</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">Admin Tools</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">Comprehensive system health monitoring</p>
-                </div>
+              <div className="group">
+                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">Admin Tools</h4>
+                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+                  Comprehensive system health monitoring
+                </p>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-rose-50 to-red-50 p-6 rounded-xl border-2 border-rose-100 hover:border-rose-300 transition-all duration-300 hover:shadow-lg">
-                <div className="absolute top-4 right-4 w-12 h-12 bg-rose-500/10 rounded-full"></div>
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🛡️</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">RLS Security</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">Row-level security data protection</p>
-                </div>
+              <div className="group">
+                <h4 className="text-sm font-medium text-gray-900 tracking-wide mb-2">RLS Security</h4>
+                <p className="text-xs text-gray-500 leading-relaxed tracking-wide">
+                  Row-level security data protection
+                </p>
               </div>
             </div>
           </div>
