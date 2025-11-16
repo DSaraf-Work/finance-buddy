@@ -146,21 +146,21 @@ const TestPage: NextPage = () => {
         <meta name="description" content="Testing interface for Finance Buddy L1 features" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-[#0f0a1a]/50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Finance Buddy Testing Dashboard</h1>
-            <p className="mt-2 text-gray-600">Comprehensive testing interface for L1 features validation</p>
+            <h1 className="text-3xl font-bold text-[#f8fafc]">Finance Buddy Testing Dashboard</h1>
+            <p className="mt-2 text-[#cbd5e1]">Comprehensive testing interface for L1 features validation</p>
           </div>
 
           {/* Health Status */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">System Health</h2>
+                <h2 className="text-xl font-semibold text-[#f8fafc]">System Health</h2>
                 <button
                   onClick={fetchHealth}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  className="px-3 py-1 bg-[#6b4ce6] text-white rounded text-sm hover:bg-[#8b5cf6]"
                 >
                   Refresh
                 </button>
@@ -175,7 +175,7 @@ const TestPage: NextPage = () => {
                   </div>
                   
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Environment Variables</h3>
+                    <h3 className="font-medium text-[#f8fafc] mb-2">Environment Variables</h3>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       {Object.entries(health.environment).map(([key, value]) => (
                         <div key={key} className="flex items-center">
@@ -187,7 +187,7 @@ const TestPage: NextPage = () => {
                   </div>
                   
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Database</h3>
+                    <h3 className="font-medium text-[#f8fafc] mb-2">Database</h3>
                     <div className="text-sm space-y-1">
                       <div className="flex items-center">
                         <span className={`w-2 h-2 rounded-full mr-2 ${health.database.connected ? 'bg-green-500' : 'bg-red-500'}`}></span>
@@ -209,14 +209,14 @@ const TestPage: NextPage = () => {
             </div>
 
             {/* API Testing Controls */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">API Testing</h2>
+            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">API Testing</h2>
               
               <div className="space-y-4">
                 <button
                   onClick={testAllEndpoints}
                   disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-[#6b4ce6] text-white rounded hover:bg-[#8b5cf6] disabled:opacity-50"
                 >
                   {loading ? 'Testing...' : 'Test All Endpoints'}
                 </button>
@@ -236,7 +236,7 @@ const TestPage: NextPage = () => {
                   </button>
                   <button
                     onClick={() => testEndpoint('/api/gmail/connections')}
-                    className="px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                    className="px-3 py-2 bg-[#6b4ce6] text-white rounded text-sm hover:bg-[#8b5cf6]"
                   >
                     Test Connections
                   </button>
@@ -264,47 +264,47 @@ const TestPage: NextPage = () => {
           </div>
 
           {/* Manual Sync Testing */}
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Manual Sync Testing</h2>
+          <div className="bg-[#1a1625] rounded-lg shadow p-6 mb-8">
+            <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Manual Sync Testing</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Connection ID</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Connection ID</label>
                 <input
                   type="text"
                   value={syncForm.connection_id}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, connection_id: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
                   placeholder="test-connection-id"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Date From</label>
                 <input
                   type="date"
                   value={syncForm.date_from}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, date_from: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Date To</label>
                 <input
                   type="date"
                   value={syncForm.date_to}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, date_to: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Page Size</label>
                 <select
                   value={syncForm.pageSize}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, pageSize: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -323,23 +323,23 @@ const TestPage: NextPage = () => {
           </div>
 
           {/* Additional Testing Tools */}
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Additional Testing Tools</h2>
+          <div className="bg-[#1a1625] rounded-lg shadow p-6 mb-8">
+            <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Additional Testing Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <a
                 href="/test/auth"
-                className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                className="block p-4 border border-[#2d1b4e] rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
               >
                 <div className="flex items-center">
                   <div className="text-2xl mr-3">🔐</div>
                   <div>
-                    <h3 className="font-medium text-gray-900">Authentication Testing</h3>
-                    <p className="text-sm text-gray-600">Test auth flows, password reset, and route protection</p>
+                    <h3 className="font-medium text-[#f8fafc]">Authentication Testing</h3>
+                    <p className="text-sm text-[#cbd5e1]">Test auth flows, password reset, and route protection</p>
                   </div>
                 </div>
               </a>
 
-              <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="p-4 border border-[#2d1b4e] rounded-lg bg-gray-50">
                 <div className="flex items-center">
                   <div className="text-2xl mr-3">🚧</div>
                   <div>
@@ -352,9 +352,9 @@ const TestPage: NextPage = () => {
           </div>
 
           {/* Test Results */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Test Results</h2>
+          <div className="bg-[#1a1625] rounded-lg shadow">
+            <div className="px-6 py-4 border-b border-[#2d1b4e]">
+              <h2 className="text-xl font-semibold text-[#f8fafc]">Recent Test Results</h2>
             </div>
             
             <div className="divide-y divide-gray-200">
@@ -370,9 +370,9 @@ const TestPage: NextPage = () => {
                         <span className={`w-3 h-3 rounded-full mr-3 ${result.success ? 'bg-green-500' : 'bg-red-500'}`}></span>
                         <span className="font-medium">{result.method} {result.endpoint}</span>
                         <span className={`ml-2 px-2 py-1 text-xs rounded ${
-                          result.status === 200 ? 'bg-green-100 text-green-800' :
+                          result.status === 200 ? 'bg-[#10b981]/10 text-[#10b981]' :
                           result.status === 401 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                          'bg-[#ef4444]/10 text-[#ef4444]'
                         }`}>
                           {result.status}
                         </span>
@@ -382,7 +382,7 @@ const TestPage: NextPage = () => {
                       </span>
                     </div>
                     
-                    <div className="bg-gray-50 rounded p-3 text-sm">
+                    <div className="bg-[#0f0a1a]/50 rounded p-3 text-sm">
                       <pre className="whitespace-pre-wrap text-xs overflow-x-auto">
                         {JSON.stringify(result.response, null, 2)}
                       </pre>

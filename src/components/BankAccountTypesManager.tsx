@@ -89,12 +89,12 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
   };
 
   return (
-    <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+    <div className={`bg-[#1a1625] rounded-lg shadow p-6 ${className}`}>
       <div className="mb-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-xl font-semibold text-[#f8fafc] mb-2">
           🏦 Bank Account Types
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-[#cbd5e1]">
           Manage email addresses from banks that send transaction notifications. 
           These will be used to filter and process financial emails.
         </p>
@@ -108,14 +108,14 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
             value={newAccountType}
             onChange={(e) => setNewAccountType(e.target.value)}
             placeholder="Enter bank email (e.g., alerts@bank.com)"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-4 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             onKeyPress={(e) => e.key === 'Enter' && !loading && addAccountType()}
             disabled={loading}
           />
           <button
             onClick={addAccountType}
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Adding...' : 'Add'}
           </button>
@@ -137,11 +137,11 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
             {accountTypes.map((accountType) => (
               <div
                 key={accountType}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-lg hover:bg-[#2d1b4e]/30 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">📧</span>
-                  <span className="font-mono text-sm text-gray-700">{accountType}</span>
+                  <span className="font-mono text-sm text-[#cbd5e1]">{accountType}</span>
                 </div>
                 <button
                   onClick={() => removeAccountType(accountType)}
@@ -158,10 +158,10 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
 
       {/* Stats */}
       {accountTypes.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center justify-between text-sm text-gray-600">
+        <div className="mt-4 pt-4 border-t border-[#2d1b4e]">
+          <div className="flex items-center justify-between text-sm text-[#cbd5e1]">
             <span>Total configured:</span>
-            <span className="font-semibold text-gray-900">{accountTypes.length}</span>
+            <span className="font-semibold text-[#f8fafc]">{accountTypes.length}</span>
           </div>
         </div>
       )}

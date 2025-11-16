@@ -126,8 +126,8 @@ export default function RejectedEmailsPage() {
         <div className="py-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Rejected Emails Management</h1>
-            <p className="mt-2 text-gray-600">Review and manage rejected emails</p>
+            <h1 className="text-3xl font-bold text-[#f8fafc]">Rejected Emails Management</h1>
+            <p className="mt-2 text-[#cbd5e1]">Review and manage rejected emails</p>
           </div>
 
           {/* Status Filter */}
@@ -137,8 +137,8 @@ export default function RejectedEmailsPage() {
                 onClick={() => setSelectedStatus('REVIEW')}
                 className={`px-4 py-2 rounded font-medium transition-colors ${
                   selectedStatus === 'REVIEW'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'bg-[#6b4ce6] text-white'
+                    : 'bg-gray-200 text-[#cbd5e1] hover:bg-gray-300'
                 }`}
               >
                 Review ({rejectedEmails.length})
@@ -148,7 +148,7 @@ export default function RejectedEmailsPage() {
                 className={`px-4 py-2 rounded font-medium transition-colors ${
                   selectedStatus === 'INVALID'
                     ? 'bg-red-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'bg-gray-200 text-[#cbd5e1] hover:bg-gray-300'
                 }`}
               >
                 Invalid
@@ -157,9 +157,9 @@ export default function RejectedEmailsPage() {
           </div>
 
           {/* Rejected Emails Table */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900">
+          <div className="bg-[#1a1625] rounded-lg shadow overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#2d1b4e]">
+              <h2 className="text-lg font-medium text-[#f8fafc]">
                 {selectedStatus === 'REVIEW' ? 'Emails Under Review' : 'Invalid Emails'}
               </h2>
             </div>
@@ -191,11 +191,11 @@ export default function RejectedEmailsPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
                     {rejectedEmails.map((rejectedEmail) => (
                       <tr key={rejectedEmail.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-[#f8fafc]">
                             {rejectedEmail.fb_emails.subject || 'No Subject'}
                           </div>
                           <div className="text-sm text-gray-500">
@@ -206,14 +206,14 @@ export default function RejectedEmailsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-[#f8fafc]">
                             <span className="font-medium">Type:</span> {rejectedEmail.rejection_type}
                           </div>
                           <div className="text-sm text-gray-500">
                             <span className="font-medium">Reason:</span> {rejectedEmail.rejection_reason}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {formatDateTime(rejectedEmail.rejected_at)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -225,7 +225,7 @@ export default function RejectedEmailsPage() {
                                 className={`px-3 py-1 rounded text-xs font-medium ${
                                   processingIds.has(rejectedEmail.id)
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-red-100 text-red-800 hover:bg-red-200'
+                                    : 'bg-[#ef4444]/10 text-[#ef4444] hover:bg-red-200'
                                 }`}
                               >
                                 Mark Invalid
@@ -250,7 +250,7 @@ export default function RejectedEmailsPage() {
                               className={`px-3 py-1 rounded text-xs font-medium ${
                                 processingIds.has(rejectedEmail.id)
                                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                  : 'bg-[#2d1b4e]/30 text-gray-800 hover:bg-gray-200'
                               }`}
                             >
                               Delete

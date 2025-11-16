@@ -91,15 +91,15 @@ export default function KeywordTagInput({
       case 'common':
         return 'bg-blue-50 border-blue-200';
       case 'rare':
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-[#0f0a1a]/50 border-[#2d1b4e]';
       default:
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-[#0f0a1a]/50 border-[#2d1b4e]';
     }
   };
 
   return (
     <div className={`relative ${className}`}>
-      <div className="w-full min-h-[42px] px-3 py-2 border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-colors">
+      <div className="w-full min-h-[42px] px-3 py-2 border border-[#2d1b4e] rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-colors">
         <div className="flex flex-wrap gap-1 items-center">
           {/* Current Tags */}
           {currentTags.map((tag, index) => (
@@ -135,16 +135,16 @@ export default function KeywordTagInput({
 
       {/* Suggestions Dropdown */}
       {showSuggestions && filteredSuggestions.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-1 bg-[#1a1625] border border-[#2d1b4e] rounded-md shadow-lg max-h-60 overflow-y-auto">
           {filteredSuggestions.map((keyword) => (
             <button
               key={keyword.id}
               type="button"
               onClick={() => handleSuggestionClick(keyword)}
-              className={`w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-l-2 ${getUsageBadgeColor(keyword.usage_category)}`}
+              className={`w-full px-3 py-2 text-left hover:bg-[#0f0a1a]/50 focus:bg-[#0f0a1a]/50 focus:outline-none border-l-2 ${getUsageBadgeColor(keyword.usage_category)}`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-[#f8fafc]">
                   {keyword.keyword}
                 </span>
                 <div className="flex items-center space-x-2">
@@ -174,7 +174,7 @@ export default function KeywordTagInput({
                   key={keyword.id}
                   type="button"
                   onClick={() => addTag(keyword.keyword)}
-                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="px-2 py-1 text-xs bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-full hover:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {keyword.keyword}
                 </button>

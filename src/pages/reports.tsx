@@ -128,7 +128,7 @@ const ReportsPage: NextPage = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading reports...</p>
+                <p className="text-[#cbd5e1]">Loading reports...</p>
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@ const ReportsPage: NextPage = () => {
             <div className="mb-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
+                  <h1 className="text-2xl font-bold text-[#f8fafc]">Reports & Analytics</h1>
                   <p className="mt-1 text-sm text-gray-500">
                     Insights and analytics for your financial email data
                   </p>
@@ -175,11 +175,11 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Date Range Filter */}
-            <div className="bg-white shadow rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Date Range</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg p-6 mb-8">
+              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Date Range</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">From Date</label>
                   <input
                     type="date"
                     value={dateRange.from}
@@ -188,7 +188,7 @@ const ReportsPage: NextPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">To Date</label>
                   <input
                     type="date"
                     value={dateRange.to}
@@ -209,7 +209,7 @@ const ReportsPage: NextPage = () => {
 
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -218,7 +218,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Emails</dt>
-                        <dd className="text-lg font-medium text-gray-900">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {reportData.emailStats.totalEmails.toLocaleString()}
                         </dd>
                       </dl>
@@ -227,7 +227,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -236,7 +236,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Transactions</dt>
-                        <dd className="text-lg font-medium text-gray-900">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {reportData.transactionStats.totalTransactions.toLocaleString()}
                         </dd>
                       </dl>
@@ -245,7 +245,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -254,7 +254,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Amount</dt>
-                        <dd className="text-lg font-medium text-gray-900">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {formatCurrency(reportData.transactionStats.totalAmount)}
                         </dd>
                       </dl>
@@ -263,7 +263,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -272,7 +272,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Sync Success Rate</dt>
-                        <dd className="text-lg font-medium text-gray-900">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {Math.round((reportData.syncStats.successfulSyncs / reportData.syncStats.totalSyncs) * 100)}%
                         </dd>
                       </dl>
@@ -285,22 +285,22 @@ const ReportsPage: NextPage = () => {
             {/* Charts and Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               {/* Email Status Distribution */}
-              <div className="bg-white shadow rounded-lg p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Email Status Distribution</h3>
+              <div className="bg-[#1a1625] shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Email Status Distribution</h3>
                 <div className="space-y-3">
                   {reportData.emailStats.emailsByStatus.map((item) => (
                     <div key={item.status} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{item.status}</span>
+                      <span className="text-sm text-[#cbd5e1]">{item.status}</span>
                       <div className="flex items-center">
                         <div className="w-32 bg-gray-200 rounded-full h-2 mr-3">
                           <div
-                            className="bg-blue-600 h-2 rounded-full"
+                            className="bg-[#6b4ce6] h-2 rounded-full"
                             style={{
                               width: `${(item.count / reportData.emailStats.totalEmails) * 100}%`
                             }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">{item.count}</span>
+                        <span className="text-sm font-medium text-[#f8fafc]">{item.count}</span>
                       </div>
                     </div>
                   ))}
@@ -308,12 +308,12 @@ const ReportsPage: NextPage = () => {
               </div>
 
               {/* Transaction Direction */}
-              <div className="bg-white shadow rounded-lg p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Transaction Direction</h3>
+              <div className="bg-[#1a1625] shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Transaction Direction</h3>
                 <div className="space-y-3">
                   {reportData.transactionStats.transactionsByDirection.map((item) => (
                     <div key={item.direction} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 capitalize">{item.direction}</span>
+                      <span className="text-sm text-[#cbd5e1] capitalize">{item.direction}</span>
                       <div className="flex items-center">
                         <div className="w-32 bg-gray-200 rounded-full h-2 mr-3">
                           <div
@@ -323,7 +323,7 @@ const ReportsPage: NextPage = () => {
                             }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-[#f8fafc]">
                           {item.count} ({formatCurrency(item.amount)})
                         </span>
                       </div>
@@ -334,8 +334,8 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Top Senders */}
-            <div className="bg-white shadow rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Top Email Senders</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg p-6 mb-8">
+              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Email Senders</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -351,16 +351,16 @@ const ReportsPage: NextPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
                     {reportData.emailStats.topSenders.map((sender, index) => (
                       <tr key={sender.sender}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {sender.sender}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {sender.count}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {Math.round((sender.count / reportData.emailStats.totalEmails) * 100)}%
                         </td>
                       </tr>
@@ -371,8 +371,8 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Transaction Categories */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Top Transaction Categories</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg p-6">
+              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Transaction Categories</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -391,19 +391,19 @@ const ReportsPage: NextPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
                     {reportData.transactionStats.transactionsByCategory.map((category) => (
                       <tr key={category.category}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {category.category}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {category.count}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {formatCurrency(category.amount)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {formatCurrency(category.amount / category.count)}
                         </td>
                       </tr>

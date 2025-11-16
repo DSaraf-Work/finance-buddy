@@ -67,7 +67,7 @@ export function PushNotificationPrompt() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className="text-green-600">✓</span>
-            <p className="text-sm text-green-800">
+            <p className="text-sm text-[#10b981]">
               Push notifications enabled
             </p>
           </div>
@@ -122,7 +122,7 @@ export function PushNotificationPrompt() {
               }
             }}
             disabled={loading}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="bg-[#6b4ce6] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#8b5cf6] disabled:opacity-50 transition-colors"
           >
             {loading ? 'Enabling...' : 'Enable Notifications'}
           </button>
