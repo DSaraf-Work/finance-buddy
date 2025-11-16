@@ -117,94 +117,109 @@ const SettingsPage: NextPage = () => {
 
   return (
     <ProtectedRoute>
-      <Layout 
+      <Layout
         title="Settings - Finance Buddy"
         description="Manage your account settings and preferences"
       >
-        <div className="py-6">
+        <div className="py-6 sm:py-8 lg:py-10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-              <p className="mt-1 text-sm text-gray-500">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                  <span className="text-xl sm:text-2xl">⚙️</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Settings</h1>
+              </div>
+              <p className="mt-1 text-sm sm:text-base text-[#cbd5e1]">
                 Manage your account settings and preferences
               </p>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* Account Information */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Account Information</h3>
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Account Information
+                  </h3>
                 </div>
                 <div className="px-6 py-4">
                   <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">Email Address</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{user?.email}</dd>
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">Email Address</dt>
+                      <dd className="mt-1 text-sm sm:text-base text-[#f8fafc]">{user?.email}</dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">Account Created</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">Account Created</dt>
+                      <dd className="mt-1 text-sm sm:text-base text-[#f8fafc]">
                         {user?.created_at ? formatDate(user.created_at) : 'N/A'}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">Email Confirmed</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">Email Confirmed</dt>
+                      <dd className="mt-1 text-sm sm:text-base text-[#f8fafc]">
                         {user?.email_confirmed_at ? 'Yes' : 'No'}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">User ID</dt>
-                      <dd className="mt-1 text-sm text-gray-900 font-mono">{user?.id}</dd>
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">User ID</dt>
+                      <dd className="mt-1 text-xs sm:text-sm text-[#cbd5e1] font-mono break-all">{user?.id}</dd>
                     </div>
                   </dl>
                 </div>
               </div>
 
               {/* Password Update */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Change Password
+                  </h3>
                 </div>
                 <div className="px-6 py-4">
                   <form onSubmit={handlePasswordUpdate} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         New Password
                       </label>
                       <input
                         type="password"
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                        className="input-field"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                         placeholder="Enter new password"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Confirm New Password
                       </label>
                       <input
                         type="password"
                         value={passwordForm.confirmPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="input-field"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                         placeholder="Confirm new password"
                         required
                       />
                     </div>
                     {passwordMessage && (
-                      <div className={`text-sm ${passwordMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+                      <div className={`text-sm p-3 rounded-lg ${passwordMessage.includes('successfully') ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'}`}>
                         {passwordMessage}
                       </div>
                     )}
                     <button
                       type="submit"
                       disabled={passwordLoading}
-                      className="btn-primary"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {passwordLoading ? 'Updating...' : 'Update Password'}
                     </button>
@@ -213,10 +228,15 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Push Notifications */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Push Notifications</h3>
-                  <p className="mt-1 text-sm text-gray-500">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    Push Notifications
+                  </h3>
+                  <p className="mt-1 text-sm text-[#cbd5e1]">
                     Get notified when new transactions are extracted
                   </p>
                 </div>
@@ -226,13 +246,18 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Connected Accounts */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">Connected Gmail Accounts</h3>
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                      <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Connected Gmail Accounts
+                    </h3>
                     <button
                       onClick={handleConnect}
-                      className="btn-primary"
+                      className="w-full sm:w-auto px-5 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                     >
                       Connect Account
                     </button>
@@ -241,14 +266,17 @@ const SettingsPage: NextPage = () => {
                 <div className="px-6 py-4">
                   {loading ? (
                     <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6b4ce6] mx-auto"></div>
                     </div>
                   ) : connections.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-gray-500 mb-4">No Gmail accounts connected</p>
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                        <span className="text-3xl">📧</span>
+                      </div>
+                      <p className="text-[#cbd5e1] mb-4">No Gmail accounts connected</p>
                       <button
                         onClick={handleConnect}
-                        className="btn-primary"
+                        className="px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                       >
                         Connect Your First Account
                       </button>
@@ -256,28 +284,30 @@ const SettingsPage: NextPage = () => {
                   ) : (
                     <div className="space-y-4">
                       {connections.map((connection) => (
-                        <div key={connection.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                        <div key={connection.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-[#2d1b4e] rounded-lg bg-[#0f0a1a]/50 hover:border-[#6b4ce6] hover:bg-[#2d1b4e]/20 transition-all duration-200 gap-4">
                           <div className="flex-1">
-                            <div className="flex items-center">
-                              <span className="text-2xl mr-3">📧</span>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
+                                <span className="text-lg">📧</span>
+                              </div>
                               <div>
-                                <p className="text-sm font-medium text-gray-900">{connection.email_address}</p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-sm font-medium text-[#f8fafc]">{connection.email_address}</p>
+                                <p className="text-xs text-[#94a3b8]">
                                   Connected: {formatDate(connection.created_at)}
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-[#94a3b8]">
                                   Last sync: {formatDate(connection.last_sync_at)}
                                 </p>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-3">
-                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                          <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30">
                               Connected
                             </span>
                             <button
                               onClick={() => handleDisconnect(connection.id)}
-                              className="text-red-600 hover:text-red-900 text-sm"
+                              className="px-3 py-1.5 text-sm text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200"
                             >
                               Disconnect
                             </button>
@@ -290,76 +320,81 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Preferences */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Preferences</h3>
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    Preferences
+                  </h3>
                 </div>
                 <div className="px-6 py-4">
                   <div className="space-y-6">
                     <div>
-                      <label className="flex items-center">
+                      <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           checked={preferences.emailNotifications}
                           onChange={(e) => setPreferences(prev => ({ ...prev, emailNotifications: e.target.checked }))}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="rounded border-[#2d1b4e] bg-[#0f0a1a] text-[#6b4ce6] focus:ring-[#6b4ce6] focus:ring-offset-[#1a1625] w-4 h-4"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Email notifications</span>
+                        <span className="ml-2 text-sm text-[#f8fafc]">Email notifications</span>
                       </label>
-                      <p className="mt-1 text-xs text-gray-500">Receive email notifications for sync status and errors</p>
+                      <p className="mt-1 text-xs text-[#94a3b8] ml-6">Receive email notifications for sync status and errors</p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Sync Frequency
                       </label>
                       <select
                         value={preferences.syncFrequency}
                         onChange={(e) => setPreferences(prev => ({ ...prev, syncFrequency: e.target.value }))}
-                        className="input-field"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
-                        <option value="manual">Manual only</option>
-                        <option value="hourly">Every hour</option>
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
+                        <option value="manual" className="bg-[#1a1625]">Manual only</option>
+                        <option value="hourly" className="bg-[#1a1625]">Every hour</option>
+                        <option value="daily" className="bg-[#1a1625]">Daily</option>
+                        <option value="weekly" className="bg-[#1a1625]">Weekly</option>
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Data Retention
                       </label>
                       <select
                         value={preferences.dataRetention}
                         onChange={(e) => setPreferences(prev => ({ ...prev, dataRetention: e.target.value }))}
-                        className="input-field"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
-                        <option value="3months">3 months</option>
-                        <option value="6months">6 months</option>
-                        <option value="1year">1 year</option>
-                        <option value="2years">2 years</option>
-                        <option value="forever">Forever</option>
+                        <option value="3months" className="bg-[#1a1625]">3 months</option>
+                        <option value="6months" className="bg-[#1a1625]">6 months</option>
+                        <option value="1year" className="bg-[#1a1625]">1 year</option>
+                        <option value="2years" className="bg-[#1a1625]">2 years</option>
+                        <option value="forever" className="bg-[#1a1625]">Forever</option>
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Export Format
                       </label>
                       <select
                         value={preferences.exportFormat}
                         onChange={(e) => setPreferences(prev => ({ ...prev, exportFormat: e.target.value }))}
-                        className="input-field"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
-                        <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
-                        <option value="xlsx">Excel (XLSX)</option>
+                        <option value="csv" className="bg-[#1a1625]">CSV</option>
+                        <option value="json" className="bg-[#1a1625]">JSON</option>
+                        <option value="xlsx" className="bg-[#1a1625]">Excel (XLSX)</option>
                       </select>
                     </div>
 
                     <button
                       onClick={() => alert('Preferences saved! (This is a demo - actual saving would be implemented)')}
-                      className="btn-primary"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                     >
                       Save Preferences
                     </button>
