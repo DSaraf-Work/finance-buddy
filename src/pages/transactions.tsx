@@ -357,6 +357,7 @@ export default function TransactionsPage() {
       direction: '',
       category: '',
       merchant: '',
+      sort: 'desc',
     });
     setPagination(prev => ({ ...prev, page: 1 }));
     // Manually trigger search after clearing filters
