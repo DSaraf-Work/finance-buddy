@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Head from 'next/head';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { MockAIProvider } from '@/contexts/MockAIContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import '../styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -47,11 +48,13 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
       </Head>
-      <AuthProvider>
-        <MockAIProvider>
-          <Component {...pageProps} />
-        </MockAIProvider>
-      </AuthProvider>
+      <ThemeProvider defaultScheme="darkPurple">
+        <AuthProvider>
+          <MockAIProvider>
+            <Component {...pageProps} />
+          </MockAIProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </>
   );
 }

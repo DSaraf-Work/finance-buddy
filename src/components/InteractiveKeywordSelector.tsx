@@ -161,9 +161,9 @@ export default function InteractiveKeywordSelector({
   };
 
   const getUsageBadge = (keyword: TransactionKeyword) => {
-    if (keyword.usage_count > 10) return { text: 'Popular', class: 'bg-[#10b981]/10 text-[#10b981]' };
+    if (keyword.usage_count > 10) return { text: 'Popular', class: 'bg-accent-emerald/10 text-accent-emerald' };
     if (keyword.usage_count > 3) return { text: 'Common', class: 'bg-blue-100 text-blue-800' };
-    return { text: 'New', class: 'bg-[#2d1b4e]/30 text-gray-800' };
+    return { text: 'New', class: 'bg-bg-elevated/30 text-gray-800' };
   };
 
   const getSmartSuggestions = () => {
@@ -256,12 +256,12 @@ export default function InteractiveKeywordSelector({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search keywords..."
-          className="w-full px-4 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="absolute right-3 top-2.5 text-gray-400 hover:text-[#cbd5e1]"
+            className="absolute right-3 top-2.5 text-gray-400 hover:text-text-secondary"
           >
             ×
           </button>
@@ -271,7 +271,7 @@ export default function InteractiveKeywordSelector({
       {/* Keyword Categories */}
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {categories.map(category => (
-          <div key={category.name} className="border border-[#2d1b4e] rounded-lg overflow-hidden">
+          <div key={category.name} className="border border-border rounded-lg overflow-hidden">
             <div 
               className="px-4 py-2 font-medium text-white text-sm"
               style={{ backgroundColor: category.color }}
@@ -292,7 +292,7 @@ export default function InteractiveKeywordSelector({
                       className={`relative inline-flex items-center px-3 py-2 text-sm rounded-lg border transition-all ${
                         isSelected
                           ? 'bg-blue-100 border-blue-300 text-blue-800 shadow-sm'
-                          : 'bg-[#0f0a1a]/50 border-[#2d1b4e] text-[#cbd5e1] hover:bg-gray-100'
+                          : 'bg-bg-primary/50 border-border text-text-secondary hover:bg-gray-100'
                       }`}
                     >
                       <span>{keyword.keyword}</span>
@@ -331,13 +331,13 @@ export default function InteractiveKeywordSelector({
                 value={newKeyword}
                 onChange={(e) => setNewKeyword(e.target.value)}
                 placeholder="Enter new keyword..."
-                className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 autoFocus
               />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="Food & Dining">Food & Dining</option>
                 <option value="Health & Fitness">Health & Fitness</option>
@@ -353,7 +353,7 @@ export default function InteractiveKeywordSelector({
               <button
                 type="submit"
                 disabled={!newKeyword.trim() || isAddingKeyword}
-                className="px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isAddingKeyword ? 'Adding...' : 'Add'}
               </button>
@@ -363,7 +363,7 @@ export default function InteractiveKeywordSelector({
                   setShowAddForm(false);
                   setNewKeyword('');
                 }}
-                className="px-4 py-2 text-[#cbd5e1] border border-[#2d1b4e] rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 text-text-secondary border border-border rounded-lg hover:bg-gray-50"
               >
                 Cancel
               </button>

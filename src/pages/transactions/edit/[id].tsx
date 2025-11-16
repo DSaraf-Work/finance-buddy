@@ -530,19 +530,19 @@ export default function TransactionEditPage() {
           </div>
 
           {/* Floating Action Buttons */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#1a1625] border-t border-[#2d1b4e] shadow-[0_-4px_20px_rgba(0,0,0,0.3)] z-50">
+          <div className="fixed bottom-0 left-0 right-0 bg-bg-secondary border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.3)] z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <button
                   onClick={() => router.push('/transactions')}
-                  className="px-6 py-3 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-[#2d1b4e]/50 hover:text-[#f8fafc] font-medium transition-all duration-200 border border-[#2d1b4e] hover:border-[#6b4ce6]/50"
+                  className="px-6 py-3 bg-bg-elevated/30 text-text-secondary rounded-lg hover:bg-bg-elevated/50 hover:text-text-primary font-medium transition-all duration-200 border border-border hover:border-brand-primary/50"
                 >
                   ← Back to Transactions
                 </button>
                 <button
                   onClick={handleReExtract}
                   disabled={reExtracting || saving}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#ec4899] to-[#8b5cf6] text-white rounded-lg hover:from-[#db2777] hover:to-[#7c3aed] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#ec4899] to-brand-hover text-white rounded-lg hover:from-[#db2777] hover:to-[#7c3aed] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] flex items-center justify-center gap-2"
                   title="Re-extract transaction data from email using AI"
                 >
                   {reExtracting ? (
@@ -565,7 +565,7 @@ export default function TransactionEditPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving || reExtracting}
-                  className="flex-1 px-6 py-3 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-brand-primary text-white rounded-lg hover:bg-brand-hover font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] flex items-center justify-center gap-2"
                 >
                   {saving ? (
                     <>

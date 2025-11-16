@@ -38,9 +38,9 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   const getDirectionColor = (direction?: string | null) => {
     switch (direction) {
-      case 'debit': return 'text-[#ef4444]';
-      case 'credit': return 'text-[#10b981]';
-      default: return 'text-[#cbd5e1]';
+      case 'debit': return 'text-error';
+      case 'credit': return 'text-accent-emerald';
+      default: return 'text-text-secondary';
     }
   };
 
@@ -107,7 +107,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   return (
     <article
-      className="bg-[#1a1625] rounded-lg sm:rounded-xl border border-[#2d1b4e] p-3 sm:p-4 md:p-5 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300"
+      className="bg-bg-secondary rounded-lg sm:rounded-xl border border-border p-3 sm:p-4 md:p-5 hover:border-brand-primary hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role="article"
@@ -115,23 +115,23 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
     >
       {/* Merchant Name */}
       <div className="mb-2 sm:mb-3">
-        <h3 className="text-xs sm:text-sm md:text-base font-semibold text-[#f8fafc] truncate mb-1">
+        <h3 className="text-xs sm:text-sm md:text-base font-semibold text-text-primary truncate mb-1">
           {transaction.merchant_name || 'Unknown Merchant'}
         </h3>
-        <span className="text-[10px] sm:text-xs text-[#cbd5e1]">
+        <span className="text-[10px] sm:text-xs text-text-secondary">
           {formatDate(transaction.txn_time)}
         </span>
       </div>
 
       {/* Category and Account Tags */}
-      <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-[#cbd5e1] mb-3 sm:mb-4">
+      <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-text-secondary mb-3 sm:mb-4">
         {transaction.category && (
-          <span className="px-1.5 sm:px-2 py-0.5 bg-[#2d1b4e] rounded capitalize ring-1 ring-[#6b4ce6]/20">
+          <span className="px-1.5 sm:px-2 py-0.5 bg-bg-elevated rounded capitalize ring-1 ring-brand-primary/20">
             {transaction.category}
           </span>
         )}
         {transaction.account_hint && (
-          <span className="px-1.5 sm:px-2 py-0.5 bg-[#2d1b4e] rounded ring-1 ring-[#6b4ce6]/20 truncate max-w-[120px]">
+          <span className="px-1.5 sm:px-2 py-0.5 bg-bg-elevated rounded ring-1 ring-brand-primary/20 truncate max-w-[120px]">
             {transaction.account_hint}
           </span>
         )}
@@ -148,7 +148,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
         {/* Edit Link */}
         <a
           href={`/transactions/edit/${transaction.id}`}
-          className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-[#f8fafc] bg-[#6b4ce6] rounded-md sm:rounded-lg hover:bg-[#8b5cf6] transition-all duration-200 shadow-[0_0_10px_rgba(107,76,230,0.3)] flex-shrink-0"
+          className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-text-primary bg-brand-primary rounded-md sm:rounded-lg hover:bg-brand-hover transition-all duration-200 shadow-[0_0_10px_rgba(107,76,230,0.3)] flex-shrink-0"
           aria-label={`Edit transaction for ${transaction.merchant_name}`}
         >
           Edit

@@ -87,9 +87,9 @@ export default function CustomAccountTypesManager({ className = '' }: CustomAcco
   };
 
   return (
-    <div className={`bg-[#1a1625] shadow rounded-lg ${className}`}>
-      <div className="px-6 py-4 border-b border-[#2d1b4e]">
-        <h2 className="text-lg font-medium text-[#f8fafc]">💳 Custom Account Types</h2>
+    <div className={`bg-bg-secondary shadow rounded-lg ${className}`}>
+      <div className="px-6 py-4 border-b border-border">
+        <h2 className="text-lg font-medium text-text-primary">💳 Custom Account Types</h2>
         <p className="mt-1 text-sm text-gray-500">
           Add custom account type identifiers (e.g., KIWI_YES_0421, HDFC_SWIGGY_7712, DCB_4277)
         </p>
@@ -98,7 +98,7 @@ export default function CustomAccountTypesManager({ className = '' }: CustomAcco
       <div className="p-6">
         {/* Add New Account Type */}
         <div className="mb-6">
-          <label htmlFor="new-account-type" className="block text-sm font-medium text-[#cbd5e1] mb-2">
+          <label htmlFor="new-account-type" className="block text-sm font-medium text-text-secondary mb-2">
             Add New Account Type
           </label>
           <div className="flex gap-2">
@@ -109,13 +109,13 @@ export default function CustomAccountTypesManager({ className = '' }: CustomAcco
               onChange={(e) => setNewAccountType(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addAccountType()}
               placeholder="e.g., KIWI_YES_0421"
-              className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="flex-1 px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={loading}
             />
             <button
               onClick={addAccountType}
               disabled={loading || !newAccountType.trim()}
-              className="px-4 py-2 bg-[#6b4ce6] text-white rounded-md hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-brand-primary text-white rounded-md hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Adding...' : 'Add'}
             </button>
@@ -130,11 +130,11 @@ export default function CustomAccountTypesManager({ className = '' }: CustomAcco
 
         {/* List of Custom Account Types */}
         <div>
-          <h3 className="text-sm font-medium text-[#cbd5e1] mb-3">
+          <h3 className="text-sm font-medium text-text-secondary mb-3">
             Current Custom Account Types ({customAccountTypes.length})
           </h3>
           {customAccountTypes.length === 0 ? (
-            <div className="text-center py-8 bg-[#0f0a1a]/50 rounded-lg">
+            <div className="text-center py-8 bg-bg-primary/50 rounded-lg">
               <span className="text-4xl mb-2 block">💳</span>
               <p className="text-gray-500 text-sm">No custom account types configured</p>
               <p className="text-gray-400 text-xs mt-1">Add your first custom account type above</p>
@@ -144,16 +144,16 @@ export default function CustomAccountTypesManager({ className = '' }: CustomAcco
               {customAccountTypes.map((accountType) => (
                 <div
                   key={accountType}
-                  className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-lg hover:bg-[#2d1b4e]/30 transition-colors"
+                  className="flex items-center justify-between p-3 bg-bg-primary/50 rounded-lg hover:bg-bg-elevated/30 transition-colors"
                 >
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">💳</span>
-                    <span className="text-sm font-medium text-[#f8fafc]">{accountType}</span>
+                    <span className="text-sm font-medium text-text-primary">{accountType}</span>
                   </div>
                   <button
                     onClick={() => deleteAccountType(accountType)}
                     disabled={loading}
-                    className="text-red-600 hover:text-[#ef4444] text-sm font-medium disabled:opacity-50"
+                    className="text-red-600 hover:text-error text-sm font-medium disabled:opacity-50"
                   >
                     Remove
                   </button>

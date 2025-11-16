@@ -2,7 +2,7 @@ export default function TransactionSkeleton() {
   return (
     <div className="animate-pulse">
       {/* Skeleton for transaction card */}
-      <div className="bg-[#1a1625] rounded-xl shadow-sm border border-gray-100 p-6 mb-4">
+      <div className="bg-bg-secondary rounded-xl shadow-sm border border-gray-100 p-6 mb-4">
         <div className="flex items-center justify-between">
           {/* Left side - Icon and details */}
           <div className="flex items-center space-x-4 flex-1">

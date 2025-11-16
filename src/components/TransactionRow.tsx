@@ -38,10 +38,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
   const getStatusColor = (status: TransactionStatus) => {
     switch (status) {
       case 'REVIEW': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'APPROVED': return 'bg-[#10b981]/10 text-[#10b981] border-green-200';
-      case 'INVALID': return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
-      case 'REJECTED': return 'bg-[#ef4444]/10 text-[#ef4444] border-red-200';
-      default: return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
+      case 'APPROVED': return 'bg-accent-emerald/10 text-accent-emerald border-green-200';
+      case 'INVALID': return 'bg-bg-elevated/30 text-gray-800 border-border';
+      case 'REJECTED': return 'bg-error/10 text-error border-red-200';
+      default: return 'bg-bg-elevated/30 text-gray-800 border-border';
     }
   };
 
@@ -75,19 +75,19 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
   const getDirectionColor = (direction?: string | null) => {
     switch (direction) {
-      case 'debit': return 'bg-[#ef4444]/10 text-[#ef4444] border-red-200';
-      case 'credit': return 'bg-[#10b981]/10 text-[#10b981] border-green-200';
+      case 'debit': return 'bg-error/10 text-error border-red-200';
+      case 'credit': return 'bg-accent-emerald/10 text-accent-emerald border-green-200';
       case 'transfer': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
+      default: return 'bg-bg-elevated/30 text-gray-800 border-border';
     }
   };
 
   const getConfidenceColor = (confidence?: string | null) => {
-    if (!confidence) return 'bg-[#2d1b4e]/30 text-gray-800';
+    if (!confidence) return 'bg-bg-elevated/30 text-gray-800';
     const conf = parseFloat(confidence);
-    if (conf >= 0.8) return 'bg-[#10b981]/10 text-[#10b981]';
+    if (conf >= 0.8) return 'bg-accent-emerald/10 text-accent-emerald';
     if (conf >= 0.6) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-[#ef4444]/10 text-[#ef4444]';
+    return 'bg-error/10 text-error';
   };
 
   const getCategoryIcon = (category?: string | null) => {
@@ -112,19 +112,19 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
   };
 
   return (
-    <div className={`transition-all duration-300 ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md' : 'bg-[#1a1625] hover:bg-gray-50'}`}>
+    <div className={`transition-all duration-300 ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md' : 'bg-bg-secondary hover:bg-gray-50'}`}>
       {/* Main Row */}
       <div className="px-8 py-6 flex items-center justify-between">
         <div className="flex items-center space-x-6 flex-1">
           {/* Category Icon */}
-          <div className="text-3xl p-2 bg-[#2d1b4e]/30 rounded-xl hover:bg-gray-200 transition-colors">
+          <div className="text-3xl p-2 bg-bg-elevated/30 rounded-xl hover:bg-gray-200 transition-colors">
             {getCategoryIcon(transaction.category)}
           </div>
 
           {/* Transaction Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-4 mb-2">
-              <h3 className="text-lg font-semibold text-[#f8fafc] truncate">
+              <h3 className="text-lg font-semibold text-text-primary truncate">
                 {transaction.merchant_name || 'Unknown Merchant'}
               </h3>
               <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${getDirectionColor(transaction.direction)}`}>
@@ -134,7 +134,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 {getStatusLabel(transaction.status)}
               </span>
             </div>
-            <div className="flex items-center space-x-6 text-sm text-[#cbd5e1]">
+            <div className="flex items-center space-x-6 text-sm text-text-secondary">
               <div className="flex items-center space-x-1">
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -168,7 +168,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
           {/* Amount */}
           <div className="text-right">
-            <div className="text-2xl font-bold text-[#f8fafc] mb-1">
+            <div className="text-2xl font-bold text-text-primary mb-1">
               {formatAmount(transaction.amount, transaction.currency)}
             </div>
             <div className="flex items-center justify-end space-x-2">
@@ -197,7 +197,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               disabled={isReExtracting}
               className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                 isReExtracting
-                  ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                  ? 'text-gray-400 bg-bg-elevated/30 cursor-not-allowed'
                   : 'text-gray-400 hover:text-purple-600 hover:bg-purple-100'
               }`}
               title="Re-extract with AI"
@@ -224,8 +224,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-green-600 hover:bg-[#10b981]/10'
+                      ? 'text-gray-400 bg-bg-elevated/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-green-600 hover:bg-accent-emerald/10'
                   }`}
                   title="Approve transaction"
                 >
@@ -241,8 +241,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-red-600 hover:bg-[#ef4444]/10'
+                      ? 'text-gray-400 bg-bg-elevated/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-red-600 hover:bg-error/10'
                   }`}
                   title="Reject transaction"
                 >
@@ -258,8 +258,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-200'
+                      ? 'text-gray-400 bg-bg-elevated/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-text-secondary hover:bg-gray-200'
                   }`}
                   title="Mark as invalid"
                 >
@@ -275,7 +275,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                      ? 'text-gray-400 bg-bg-elevated/30 cursor-not-allowed'
                       : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-100'
                   }`}
                   title="Mark for review"
@@ -294,7 +294,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
               isExpanded
                 ? 'text-blue-600 bg-blue-100 shadow-md'
-                : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-100'
+                : 'text-gray-400 hover:text-text-secondary hover:bg-gray-100'
             }`}
             title={isExpanded ? 'Collapse details' : 'Expand details'}
           >
@@ -315,8 +315,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
         <div className="px-8 pb-8 border-t border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="pt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Transaction Details */}
-            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
-              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
+            <div className="bg-bg-secondary rounded-xl p-6 shadow-sm">
+              <h4 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -324,20 +324,20 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Reference ID</dt>
-                  <dd className="text-sm text-[#f8fafc] font-mono bg-[#0f0a1a]/50 px-2 py-1 rounded mt-1">{transaction.reference_id || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-text-secondary">Reference ID</dt>
+                  <dd className="text-sm text-text-primary font-mono bg-bg-primary/50 px-2 py-1 rounded mt-1">{transaction.reference_id || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Account Hint</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.account_hint || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-text-secondary">Account Hint</dt>
+                  <dd className="text-sm text-text-primary mt-1">{transaction.account_hint || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Location</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.location || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-text-secondary">Location</dt>
+                  <dd className="text-sm text-text-primary mt-1">{transaction.location || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Account Type</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">
+                  <dt className="text-sm font-medium text-text-secondary">Account Type</dt>
+                  <dd className="text-sm text-text-primary mt-1">
                     {transaction.account_type ? (
                       <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
                         {transaction.account_type.replace(/_/g, ' ')}
@@ -346,13 +346,13 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Transaction Type</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">
+                  <dt className="text-sm font-medium text-text-secondary">Transaction Type</dt>
+                  <dd className="text-sm text-text-primary mt-1">
                     {transaction.transaction_type ? (
                       <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                         transaction.transaction_type === 'Dr'
-                          ? 'bg-[#ef4444]/10 text-red-700'
-                          : 'bg-[#10b981]/10 text-green-700'
+                          ? 'bg-error/10 text-red-700'
+                          : 'bg-accent-emerald/10 text-green-700'
                       }`}>
                         {transaction.transaction_type === 'Dr' ? 'Dr (Debit)' : 'Cr (Credit)'}
                       </span>
@@ -363,8 +363,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             </div>
 
             {/* Merchant Info */}
-            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
-              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
+            <div className="bg-bg-secondary rounded-xl p-6 shadow-sm">
+              <h4 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
@@ -372,23 +372,23 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Original Name</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.merchant_name || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-text-secondary">Original Name</dt>
+                  <dd className="text-sm text-text-primary mt-1">{transaction.merchant_name || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Normalized</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.merchant_normalized || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-text-secondary">Normalized</dt>
+                  <dd className="text-sm text-text-primary mt-1">{transaction.merchant_normalized || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Category</dt>
-                  <dd className="text-sm text-[#f8fafc] capitalize mt-1">{transaction.category || 'Uncategorized'}</dd>
+                  <dt className="text-sm font-medium text-text-secondary">Category</dt>
+                  <dd className="text-sm text-text-primary capitalize mt-1">{transaction.category || 'Uncategorized'}</dd>
                 </div>
               </dl>
             </div>
 
             {/* AI & User Notes */}
-            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
-              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
+            <div className="bg-bg-secondary rounded-xl p-6 shadow-sm">
+              <h4 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
@@ -396,7 +396,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">AI Keywords</dt>
+                  <dt className="text-sm font-medium text-text-secondary">AI Keywords</dt>
                   <dd className="mt-2">
                     {transaction.ai_notes ? (
                       <div className="flex flex-wrap gap-2">
@@ -415,8 +415,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">User Notes</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">
+                  <dt className="text-sm font-medium text-text-secondary">User Notes</dt>
+                  <dd className="text-sm text-text-primary mt-1">
                     {transaction.user_notes || (
                       <span className="text-gray-400 italic">No user notes</span>
                     )}
@@ -429,7 +429,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
           {/* Metadata & Actions */}
           <div className="mt-8 pt-6 border-t border-blue-200">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-6 text-sm text-[#cbd5e1]">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-text-secondary">
                 <div className="flex items-center space-x-1">
                   <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -453,10 +453,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
                   Re-extract
                 </button>
-                <button className="px-4 py-2 text-sm font-medium text-green-600 bg-[#10b981]/10 rounded-lg hover:bg-green-200 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-green-600 bg-accent-emerald/10 rounded-lg hover:bg-green-200 transition-colors">
                   Approve
                 </button>
-                <button className="px-4 py-2 text-sm font-medium text-red-600 bg-[#ef4444]/10 rounded-lg hover:bg-red-200 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-red-600 bg-error/10 rounded-lg hover:bg-red-200 transition-colors">
                   Reject
                 </button>
               </div>

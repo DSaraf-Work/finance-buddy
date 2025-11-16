@@ -151,10 +151,10 @@ export default function AdminEmailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f0a1a]/50 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-primary/50 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-[#cbd5e1]">Loading...</p>
+          <p className="mt-2 text-text-secondary">Loading...</p>
         </div>
       </div>
     );
@@ -165,15 +165,15 @@ export default function AdminEmailsPage() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#f8fafc]">Admin - Email Management</h1>
-          <p className="mt-2 text-[#cbd5e1]">
+          <h1 className="text-3xl font-bold text-text-primary">Admin - Email Management</h1>
+          <p className="mt-2 text-text-secondary">
             Manage whitelisted senders and process emails
           </p>
         </div>
 
         {/* Whitelisted Senders Section */}
-        <div className="bg-[#1a1625] rounded-lg shadow p-6 mb-6">
-          <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Whitelisted Senders</h2>
+        <div className="bg-bg-secondary rounded-lg shadow p-6 mb-6">
+          <h2 className="text-xl font-semibold text-text-primary mb-4">Whitelisted Senders</h2>
           
           {/* Add Sender Form */}
           <div className="flex gap-2 mb-4">
@@ -182,12 +182,12 @@ export default function AdminEmailsPage() {
               value={newSender}
               onChange={(e) => setNewSender(e.target.value)}
               placeholder="Enter email address (e.g., alerts@bank.com)"
-              className="flex-1 px-4 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               onKeyPress={(e) => e.key === 'Enter' && addSender()}
             />
             <button
               onClick={addSender}
-              className="px-6 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
+              className="px-6 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-hover font-medium"
             >
               Add Sender
             </button>
@@ -201,9 +201,9 @@ export default function AdminEmailsPage() {
               whitelistedSenders.map((sender) => (
                 <div
                   key={sender}
-                  className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-bg-primary/50 rounded-lg"
                 >
-                  <span className="text-[#f8fafc] font-mono text-sm">{sender}</span>
+                  <span className="text-text-primary font-mono text-sm">{sender}</span>
                   <button
                     onClick={() => removeSender(sender)}
                     className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
@@ -217,14 +217,14 @@ export default function AdminEmailsPage() {
         </div>
 
         {/* Email Actions Section */}
-        <div className="bg-[#1a1625] rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Email Actions</h2>
+        <div className="bg-bg-secondary rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-text-primary mb-4">Email Actions</h2>
 
           <div className="space-y-4">
             {/* Refresh Emails Button */}
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
-              <h3 className="font-semibold text-[#f8fafc] mb-2">Refresh Emails from Gmail</h3>
-              <p className="text-sm text-[#cbd5e1] mb-3">
+            <div className="border border-border rounded-lg p-4">
+              <h3 className="font-semibold text-text-primary mb-2">Refresh Emails from Gmail</h3>
+              <p className="text-sm text-text-secondary mb-3">
                 Fetches new emails from all connected Gmail accounts for whitelisted senders
               </p>
               <button
@@ -238,7 +238,7 @@ export default function AdminEmailsPage() {
               {refreshStats && (
                 <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                   <h4 className="font-semibold text-green-900 mb-2">Refresh Results:</h4>
-                  <ul className="text-sm text-[#10b981] space-y-1">
+                  <ul className="text-sm text-accent-emerald space-y-1">
                     <li>✅ Total Fetched: {refreshStats.totalFetched}</li>
                     <li>🆕 New Emails: {refreshStats.newEmails}</li>
                     <li>🔄 Updated Emails: {refreshStats.updatedEmails}</li>
@@ -251,9 +251,9 @@ export default function AdminEmailsPage() {
             </div>
 
             {/* Process All Fetched Emails Button */}
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
-              <h3 className="font-semibold text-[#f8fafc] mb-2">Process All Fetched Emails</h3>
-              <p className="text-sm text-[#cbd5e1] mb-3">
+            <div className="border border-border rounded-lg p-4">
+              <h3 className="font-semibold text-text-primary mb-2">Process All Fetched Emails</h3>
+              <p className="text-sm text-text-secondary mb-3">
                 Processes all fetched emails with AI to extract transactions (batch size: 10)
               </p>
               <button

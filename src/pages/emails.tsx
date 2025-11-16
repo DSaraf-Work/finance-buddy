@@ -601,23 +601,23 @@ const EmailsPage: NextPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-brand-primary to-brand-hover rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                       <span className="text-xl sm:text-2xl">📧</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Email Management</h1>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">Email Management</h1>
                   </div>
-                  <p className="mt-1 text-sm sm:text-base text-[#cbd5e1]">
+                  <p className="mt-1 text-sm sm:text-base text-text-secondary">
                     Review and manage Gmail emails from connected accounts
                   </p>
                 </div>
-                <div className="text-sm text-[#94a3b8]">
+                <div className="text-sm text-text-muted">
                   {pagination.total} total emails
                 </div>
               </div>
             </div>
           {/* Filters */}
-          <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-6 mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
+          <div className="bg-bg-secondary rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-border p-6 mb-6">
+            <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>

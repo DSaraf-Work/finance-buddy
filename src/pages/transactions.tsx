@@ -403,16 +403,16 @@ export default function TransactionsPage() {
         title="Finance Buddy - Transactions"
         description="AI-extracted financial transactions with smart insights"
       >
-        <div className="min-h-screen bg-[#0f0a1a] py-8 sm:py-12">
+        <div className="min-h-screen bg-bg-primary py-8 sm:py-12">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header - Dark Purple Theme */}
             <div className="mb-8 sm:mb-12">
-              <div className="flex items-end justify-between pb-4 sm:pb-6 border-b border-[#2d1b4e]">
+              <div className="flex items-end justify-between pb-4 sm:pb-6 border-b border-border">
                 <div>
                   <p className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-2">
                     Transactions
                   </p>
-                  <h1 className="text-3xl sm:text-4xl font-light text-[#f8fafc] tracking-tight">
+                  <h1 className="text-3xl sm:text-4xl font-light text-text-primary tracking-tight">
                     Financial Activity
                   </h1>
                 </div>
@@ -458,11 +458,11 @@ export default function TransactionsPage() {
         {/* Pagination Controls - Dark Purple Theme */}
         {transactions.length > 0 && (
           <nav
-            className="border-t border-[#2d1b4e] pt-6 sm:pt-8 mt-8 sm:mt-12"
+            className="border-t border-border pt-6 sm:pt-8 mt-8 sm:mt-12"
             aria-label="Transaction pagination"
           >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
-              <div className="flex items-center gap-4 sm:gap-6 text-xs text-[#cbd5e1]">
+              <div className="flex items-center gap-4 sm:gap-6 text-xs text-text-secondary">
                 <span aria-live="polite">
                   {pagination.total} total
                 </span>
@@ -474,7 +474,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="px-4 py-2 text-sm font-medium text-[#f8fafc] bg-[#1a1625] border border-[#2d1b4e] rounded-lg hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#2d1b4e] disabled:hover:bg-[#1a1625] transition-all duration-200"
+                  className="px-4 py-2 text-sm font-medium text-text-primary bg-bg-secondary border border-border rounded-lg hover:border-brand-primary hover:bg-brand-primary/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-bg-secondary transition-all duration-200"
                   aria-label="Go to previous page"
                 >
                   Previous
@@ -485,7 +485,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-4 py-2 text-sm font-medium text-[#f8fafc] bg-[#1a1625] border border-[#2d1b4e] rounded-lg hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#2d1b4e] disabled:hover:bg-[#1a1625] transition-all duration-200"
+                  className="px-4 py-2 text-sm font-medium text-text-primary bg-bg-secondary border border-border rounded-lg hover:border-brand-primary hover:bg-brand-primary/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-bg-secondary transition-all duration-200"
                   aria-label="Go to next page"
                 >
                   Next

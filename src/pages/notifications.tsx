@@ -78,8 +78,8 @@ export default function NotificationsPage() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#f8fafc]">Notifications</h1>
-          <p className="mt-2 text-[#cbd5e1]">
+          <h1 className="text-3xl font-bold text-text-primary">Notifications</h1>
+          <p className="mt-2 text-text-secondary">
             Stay updated with your transaction alerts
           </p>
         </div>
@@ -94,8 +94,8 @@ export default function NotificationsPage() {
               }}
               className={`px-4 py-2 rounded-lg font-medium ${
                 filter === 'all'
-                  ? 'bg-[#6b4ce6] text-white'
-                  : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
+                  ? 'bg-brand-primary text-white'
+                  : 'bg-bg-elevated/30 text-text-secondary hover:bg-gray-200'
               }`}
             >
               All
@@ -107,8 +107,8 @@ export default function NotificationsPage() {
               }}
               className={`px-4 py-2 rounded-lg font-medium ${
                 filter === 'unread'
-                  ? 'bg-[#6b4ce6] text-white'
-                  : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
+                  ? 'bg-brand-primary text-white'
+                  : 'bg-bg-elevated/30 text-text-secondary hover:bg-gray-200'
               }`}
             >
               Unread
@@ -120,8 +120,8 @@ export default function NotificationsPage() {
               }}
               className={`px-4 py-2 rounded-lg font-medium ${
                 filter === 'read'
-                  ? 'bg-[#6b4ce6] text-white'
-                  : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
+                  ? 'bg-brand-primary text-white'
+                  : 'bg-bg-elevated/30 text-text-secondary hover:bg-gray-200'
               }`}
             >
               Read
@@ -149,10 +149,10 @@ export default function NotificationsPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-[#cbd5e1]">Loading notifications...</p>
+            <p className="mt-2 text-text-secondary">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-12 bg-[#0f0a1a]/50 rounded-lg">
+          <div className="text-center py-12 bg-bg-primary/50 rounded-lg">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
               fill="none"
@@ -166,23 +166,23 @@ export default function NotificationsPage() {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <p className="mt-4 text-[#cbd5e1]">No notifications found</p>
+            <p className="mt-4 text-text-secondary">No notifications found</p>
           </div>
         ) : (
           <div className="space-y-4">
             {notifications.map(notification => (
               <div
                 key={notification.id}
-                className={`bg-[#1a1625] rounded-lg shadow p-6 ${
+                className={`bg-bg-secondary rounded-lg shadow p-6 ${
                   !notification.read ? 'border-l-4 border-blue-600' : ''
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-[#f8fafc]">
+                    <h3 className="text-lg font-semibold text-text-primary">
                       {notification.title}
                     </h3>
-                    <p className="mt-2 text-[#cbd5e1]">{notification.message}</p>
+                    <p className="mt-2 text-text-secondary">{notification.message}</p>
                     <p className="mt-2 text-sm text-gray-500">
                       {formatDate(notification.created_at)}
                     </p>
@@ -192,7 +192,7 @@ export default function NotificationsPage() {
                           markAsRead(notification.id);
                           router.push(notification.action_url!);
                         }}
-                        className="mt-4 inline-flex items-center px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
+                        className="mt-4 inline-flex items-center px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-hover font-medium"
                       >
                         {notification.action_label || 'View'}
                       </button>
@@ -220,7 +220,7 @@ export default function NotificationsPage() {
                     )}
                     <button
                       onClick={() => deleteNotification(notification.id)}
-                      className="text-red-600 hover:text-[#ef4444]"
+                      className="text-red-600 hover:text-error"
                       title="Delete"
                     >
                       <svg
@@ -248,17 +248,17 @@ export default function NotificationsPage() {
             <button
               onClick={() => setPage(prev => Math.max(1, prev - 1))}
               disabled={page === 1}
-              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-bg-elevated/30 text-text-secondary rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
-            <span className="text-[#cbd5e1]">
+            <span className="text-text-secondary">
               Page {page} of {totalPages}
             </span>
             <button
               onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-bg-elevated/30 text-text-secondary rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
