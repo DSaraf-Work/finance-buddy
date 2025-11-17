@@ -161,9 +161,9 @@ export default function InteractiveKeywordSelector({
   };
 
   const getUsageBadge = (keyword: TransactionKeyword) => {
-    if (keyword.usage_count > 10) return { text: 'Popular', class: 'bg-[#10b981]/10 text-[#10b981]' };
-    if (keyword.usage_count > 3) return { text: 'Common', class: 'bg-blue-100 text-blue-800' };
-    return { text: 'New', class: 'bg-[#2d1b4e]/30 text-gray-800' };
+    if (keyword.usage_count > 10) return { text: 'Popular', class: 'bg-[#10b981]/20 text-[#10b981]' };
+    if (keyword.usage_count > 3) return { text: 'Common', class: 'bg-[#5D5FEF]/20 text-[#888BFF]' };
+    return { text: 'New', class: 'bg-[#2A2C35] text-[#6F7280]' };
   };
 
   const getSmartSuggestions = () => {
@@ -188,7 +188,7 @@ export default function InteractiveKeywordSelector({
   if (loading) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-32 bg-gray-200 rounded-lg"></div>
+        <div className="h-32 bg-[#1E2026] rounded-lg"></div>
       </div>
     );
   }
@@ -197,14 +197,14 @@ export default function InteractiveKeywordSelector({
     <div className={`space-y-4 ${className}`}>
       {/* Selected Keywords Display */}
       {selectedKeywords.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <span className="text-sm font-medium text-blue-900">Selected:</span>
+        <div className="flex flex-wrap gap-2 p-3 bg-[#5D5FEF]/10 rounded-lg border border-[#5D5FEF]/30">
+          <span className="text-sm font-medium text-[#F0F1F5]">Selected:</span>
           {selectedKeywords.map((keyword, index) => {
             const keywordObj = keywords.find(k => k.keyword === keyword);
             return (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded-full"
+                className="inline-flex items-center px-2 py-1 text-sm bg-[#5D5FEF]/20 text-[#F0F1F5] rounded-full border border-[#5D5FEF]/40"
                 style={{ backgroundColor: keywordObj?.color ? `${keywordObj.color}20` : undefined }}
               >
                 {keyword}
@@ -214,7 +214,7 @@ export default function InteractiveKeywordSelector({
                     const newSelected = selectedKeywords.filter(k => k !== keyword);
                     onChange(newSelected.join(', '));
                   }}
-                  className="ml-1 text-blue-600 hover:text-blue-800"
+                  className="ml-1 text-[#F0F1F5] hover:text-[#5D5FEF] transition-colors"
                 >
                   ×
                 </button>
@@ -226,9 +226,9 @@ export default function InteractiveKeywordSelector({
 
       {/* Smart Suggestions */}
       {merchantName && getSmartSuggestions().length > 0 && (
-        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <div className="p-3 bg-[#888BFF]/10 rounded-lg border border-[#888BFF]/30">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm font-medium text-yellow-900">💡 Smart suggestions for {merchantName}:</span>
+            <span className="text-sm font-medium text-[#F0F1F5]">💡 Smart suggestions for {merchantName}:</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {getSmartSuggestions().map(suggestion => {
@@ -238,7 +238,7 @@ export default function InteractiveKeywordSelector({
                   key={suggestion}
                   type="button"
                   onClick={() => toggleKeyword(keywordObj)}
-                  className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-full hover:bg-yellow-200 transition-colors"
+                  className="px-3 py-1 text-sm bg-[#888BFF]/20 text-[#F0F1F5] rounded-full hover:bg-[#888BFF]/30 transition-colors border border-[#888BFF]/40"
                 >
                   + {suggestion}
                 </button>
@@ -256,12 +256,12 @@ export default function InteractiveKeywordSelector({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search keywords..."
-          className="w-full px-4 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-4 py-2 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="absolute right-3 top-2.5 text-gray-400 hover:text-[#cbd5e1]"
+            className="absolute right-3 top-2.5 text-[#6F7280] hover:text-[#F0F1F5] transition-colors"
           >
             ×
           </button>
@@ -271,19 +271,19 @@ export default function InteractiveKeywordSelector({
       {/* Keyword Categories */}
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {categories.map(category => (
-          <div key={category.name} className="border border-[#2d1b4e] rounded-lg overflow-hidden">
-            <div 
-              className="px-4 py-2 font-medium text-white text-sm"
+          <div key={category.name} className="border border-[#2A2C35] rounded-lg overflow-hidden bg-[#15161A]">
+            <div
+              className="px-4 py-2 font-medium text-[#F0F1F5] text-sm"
               style={{ backgroundColor: category.color }}
             >
               {category.name} ({category.keywords.length})
             </div>
-            <div className="p-3 bg-white">
+            <div className="p-3 bg-[#1E2026]">
               <div className="flex flex-wrap gap-2">
                 {category.keywords.map(keyword => {
                   const isSelected = selectedKeywords.includes(keyword.keyword);
                   const badge = getUsageBadge(keyword);
-                  
+
                   return (
                     <button
                       key={keyword.id}
@@ -291,8 +291,8 @@ export default function InteractiveKeywordSelector({
                       onClick={() => toggleKeyword(keyword)}
                       className={`relative inline-flex items-center px-3 py-2 text-sm rounded-lg border transition-all ${
                         isSelected
-                          ? 'bg-blue-100 border-blue-300 text-blue-800 shadow-sm'
-                          : 'bg-[#0f0a1a]/50 border-[#2d1b4e] text-[#cbd5e1] hover:bg-gray-100'
+                          ? 'bg-[#5D5FEF]/20 border-[#5D5FEF] text-[#F0F1F5] shadow-sm'
+                          : 'bg-[#15161A] border-[#2A2C35] text-[#B2B4C2] hover:bg-[#1E2026] hover:border-[#5D5FEF]/50'
                       }`}
                     >
                       <span>{keyword.keyword}</span>
@@ -302,7 +302,7 @@ export default function InteractiveKeywordSelector({
                         </span>
                       )}
                       {keyword.auto_generated && (
-                        <span className="ml-1 text-xs text-purple-600">AI</span>
+                        <span className="ml-1 text-xs text-[#888BFF]">AI</span>
                       )}
                     </button>
                   );
@@ -314,12 +314,12 @@ export default function InteractiveKeywordSelector({
       </div>
 
       {/* Add New Keyword */}
-      <div className="border-t pt-4">
+      <div className="border-t border-[#2A2C35] pt-4">
         {!showAddForm ? (
           <button
             type="button"
             onClick={() => setShowAddForm(true)}
-            className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+            className="w-full px-4 py-2 text-sm text-[#5D5FEF] border border-[#5D5FEF]/50 rounded-lg hover:bg-[#5D5FEF]/10 transition-colors"
           >
             + Add Custom Keyword
           </button>
@@ -331,13 +331,13 @@ export default function InteractiveKeywordSelector({
                 value={newKeyword}
                 onChange={(e) => setNewKeyword(e.target.value)}
                 placeholder="Enter new keyword..."
-                className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-1 px-3 py-2 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                 autoFocus
               />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-3 py-2 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
               >
                 <option value="Food & Dining">Food & Dining</option>
                 <option value="Health & Fitness">Health & Fitness</option>
@@ -353,7 +353,7 @@ export default function InteractiveKeywordSelector({
               <button
                 type="submit"
                 disabled={!newKeyword.trim() || isAddingKeyword}
-                className="px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-[#F0F1F5] rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {isAddingKeyword ? 'Adding...' : 'Add'}
               </button>
@@ -363,7 +363,7 @@ export default function InteractiveKeywordSelector({
                   setShowAddForm(false);
                   setNewKeyword('');
                 }}
-                className="px-4 py-2 text-[#cbd5e1] border border-[#2d1b4e] rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 text-[#B2B4C2] border border-[#2A2C35] rounded-lg hover:bg-[#1E2026] transition-colors"
               >
                 Cancel
               </button>
