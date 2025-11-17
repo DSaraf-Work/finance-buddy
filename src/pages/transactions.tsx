@@ -403,34 +403,19 @@ export default function TransactionsPage() {
         title="Finance Buddy - Transactions"
         description="AI-extracted financial transactions with smart insights"
       >
-        {/* Modern Gradient Background */}
-        <div className="min-h-screen bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0f0a1a] py-8 sm:py-12">
+        {/* Vibrant Colorful Background */}
+        <div className="min-h-screen bg-[#0f172a] py-8 sm:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Modern Header with Gradient */}
+            {/* Colorful Header */}
             <div className="mb-8 sm:mb-12">
-              <div className="relative">
-                {/* Gradient Accent Line */}
-                <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#6b4ce6] to-transparent"></div>
-
-                <div className="flex items-end justify-between pb-6 sm:pb-8">
-                  <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] flex items-center justify-center shadow-lg shadow-[#6b4ce6]/30">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                      </div>
-                      <p className="text-xs sm:text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] to-[#ec4899] tracking-wide uppercase">
-                        Transactions
-                      </p>
-                    </div>
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-                      Financial Activity
-                    </h1>
-                    <p className="text-sm sm:text-base text-[#94a3b8] mt-2">
-                      AI-powered transaction insights and analytics
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between pb-6">
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                    Transactions
+                  </h1>
+                  <p className="text-sm sm:text-base text-slate-400">
+                    Track and manage your financial activity
+                  </p>
                 </div>
               </div>
             </div>
@@ -471,27 +456,24 @@ export default function TransactionsPage() {
               </div>
             )}
 
-        {/* Modern Pagination Controls */}
+        {/* Pagination Controls */}
         {transactions.length > 0 && (
           <nav
-            className="relative mt-10 sm:mt-12"
+            className="mt-10 sm:mt-12 bg-white rounded-2xl p-6 shadow-sm"
             aria-label="Transaction pagination"
           >
-            {/* Gradient Divider */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6b4ce6]/30 to-transparent"></div>
+            {/* Colorful Top Border */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-t-2xl"></div>
 
-            <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               {/* Pagination Info */}
               <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#6b4ce6] to-[#8b5cf6]"></div>
-                  <span className="text-sm text-[#94a3b8]" aria-live="polite">
-                    <span className="text-white font-semibold">{pagination.total}</span> transactions
-                  </span>
-                </div>
-                <div className="h-4 w-px bg-[#2d1b4e]"></div>
-                <span className="text-sm text-[#94a3b8]" aria-current="page">
-                  Page <span className="text-white font-semibold">{pagination.page}</span> of <span className="text-white font-semibold">{pagination.totalPages}</span>
+                <span className="text-sm text-slate-600" aria-live="polite">
+                  <span className="text-slate-900 font-semibold">{pagination.total}</span> transactions
+                </span>
+                <div className="h-4 w-px bg-slate-300"></div>
+                <span className="text-sm text-slate-600" aria-current="page">
+                  Page <span className="text-slate-900 font-semibold">{pagination.page}</span> of <span className="text-slate-900 font-semibold">{pagination.totalPages}</span>
                 </span>
               </div>
 
@@ -500,7 +482,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="group relative px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#1a1625] to-[#2d1b4e] rounded-xl border border-[#2d1b4e] hover:border-[#6b4ce6] hover:shadow-lg hover:shadow-[#6b4ce6]/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#2d1b4e] disabled:hover:shadow-none transition-all duration-300"
+                  className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:border-violet-500 hover:text-violet-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 disabled:hover:text-slate-700 transition-all duration-300"
                   aria-label="Go to previous page"
                 >
                   <span className="flex items-center gap-2">
@@ -512,7 +494,7 @@ export default function TransactionsPage() {
                 </button>
 
                 {/* Current Page Indicator */}
-                <div className="px-4 py-2.5 bg-gradient-to-r from-[#6b4ce6] to-[#8b5cf6] rounded-xl shadow-lg shadow-[#6b4ce6]/30">
+                <div className="px-4 py-2.5 bg-gradient-to-r from-violet-500 to-purple-500 rounded-xl shadow-md">
                   <span className="text-sm font-bold text-white">
                     {pagination.page}
                   </span>
@@ -521,7 +503,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="group relative px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#1a1625] to-[#2d1b4e] rounded-xl border border-[#2d1b4e] hover:border-[#6b4ce6] hover:shadow-lg hover:shadow-[#6b4ce6]/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#2d1b4e] disabled:hover:shadow-none transition-all duration-300"
+                  className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border-2 border-slate-300 rounded-xl hover:border-violet-500 hover:text-violet-600 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-300 disabled:hover:text-slate-700 transition-all duration-300"
                   aria-label="Go to next page"
                 >
                   <span className="flex items-center gap-2">
