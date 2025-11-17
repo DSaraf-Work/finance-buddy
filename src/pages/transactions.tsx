@@ -420,7 +420,7 @@ export default function TransactionsPage() {
               </div>
             </div>
 
-            {/* Stats Cards */}
+            {/* Compact Stats Cards */}
             <TransactionStats
               total={stats.total}
               totalAmount={stats.totalAmount}
@@ -428,7 +428,7 @@ export default function TransactionsPage() {
               loading={loading}
             />
 
-            {/* Filters */}
+            {/* Filters - Reduced spacing */}
             <TransactionFilters
               filters={filters}
               categories={categories}
@@ -438,23 +438,25 @@ export default function TransactionsPage() {
               loading={filterLoading}
             />
 
-            {/* Transactions List - Responsive Grid Layout (2 cols mobile, 2 cols tablet, 3 cols desktop) */}
-            {loading ? (
-              <TransactionListSkeleton count={10} />
-            ) : transactions.length === 0 ? (
-              <TransactionEmptyState onRefresh={() => searchTransactions()} />
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
-                {transactions.map((transaction) => (
-                  <TransactionCard
-                    key={transaction.id}
-                    transaction={transaction}
-                    onQuickEdit={() => openTransactionModal(transaction)}
-                    onStatusUpdate={(status) => handleStatusUpdate(transaction.id, status)}
-                  />
-                ))}
-              </div>
-            )}
+            {/* Transactions List - Optimized spacing */}
+            <div className="mt-4">
+              {loading ? (
+                <TransactionListSkeleton count={10} />
+              ) : transactions.length === 0 ? (
+                <TransactionEmptyState onRefresh={() => searchTransactions()} />
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
+                  {transactions.map((transaction) => (
+                    <TransactionCard
+                      key={transaction.id}
+                      transaction={transaction}
+                      onQuickEdit={() => openTransactionModal(transaction)}
+                      onStatusUpdate={(status) => handleStatusUpdate(transaction.id, status)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
 
         {/* Pagination Controls */}
         {transactions.length > 0 && (

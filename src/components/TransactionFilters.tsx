@@ -122,7 +122,7 @@ export default function TransactionFilters({
   };
 
   return (
-    <div className="relative bg-[#15161A] rounded-xl p-4 sm:p-5 mb-6 shadow-sm border border-[#2A2C35]">
+    <div className="relative bg-[#15161A] rounded-xl p-4 sm:p-5 mb-4 shadow-sm border border-[#2A2C35]">
       {/* Purple Top Border */}
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF]"></div>
 
