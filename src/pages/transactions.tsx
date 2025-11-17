@@ -420,7 +420,7 @@ export default function TransactionsPage() {
               </div>
             </div>
 
-            {/* Compact Stats Cards */}
+            {/* Section 1: Sticky Stats Bar - Always visible */}
             <TransactionStats
               total={stats.total}
               totalAmount={stats.totalAmount}
@@ -428,18 +428,37 @@ export default function TransactionsPage() {
               loading={loading}
             />
 
-            {/* Filters - Reduced spacing */}
-            <TransactionFilters
-              filters={filters}
-              categories={categories}
-              onFilterChange={setFilters}
-              onSearch={handleApplyFilters}
-              onReset={handleClearFilters}
-              loading={filterLoading}
-            />
+            {/* Section 2: Filters - Distinct background with spacing */}
+            <div className="mb-6 sm:mb-8">
+              <div className="bg-[#0F1014] rounded-2xl p-4 sm:p-6 border border-[#2A2C35]/50 shadow-lg">
+                <TransactionFilters
+                  filters={filters}
+                  categories={categories}
+                  onFilterChange={setFilters}
+                  onSearch={handleApplyFilters}
+                  onReset={handleClearFilters}
+                  loading={filterLoading}
+                />
+              </div>
+            </div>
 
-            {/* Transactions List - Optimized spacing */}
-            <div className="mt-4">
+            {/* Section 3: Transactions List - Clear separation */}
+            <div className="mt-6 sm:mt-8">
+              {/* Section Header */}
+              {!loading && transactions.length > 0 && (
+                <div className="flex items-center justify-between mb-4 sm:mb-5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-[#5D5FEF] to-[#888BFF] rounded-full"></div>
+                    <h2 className="text-base sm:text-lg font-semibold text-[#F0F1F5]">
+                      Transactions
+                    </h2>
+                    <span className="text-xs sm:text-sm text-[#6F7280] ml-1">
+                      ({transactions.length} {transactions.length === 1 ? 'result' : 'results'})
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {loading ? (
                 <TransactionListSkeleton count={10} />
               ) : transactions.length === 0 ? (
