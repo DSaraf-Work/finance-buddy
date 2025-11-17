@@ -105,48 +105,56 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
     }
   };
 
-  // Get purple-themed card color based on category
+  // Get palette-aligned card color based on category
   const getCardColor = (category?: string | null) => {
     switch (category?.toLowerCase()) {
       case 'food':
       case 'dining':
+        // Error color (flat, no gradient)
         return 'from-[#F45C63] to-[#F45C63]';
       case 'transport':
       case 'travel':
+        // Info gradient
         return 'from-[#6C85FF] to-[#888BFF]';
       case 'shopping':
-        return 'from-[#888BFF] to-[#5D5FEF]';
+        // Brand gradient
+        return 'from-[#5D5FEF] to-[#888BFF]';
       case 'bills':
       case 'utilities':
+        // Info to brand gradient
         return 'from-[#6C85FF] to-[#5D5FEF]';
       case 'finance':
+        // Success color (flat, no gradient)
         return 'from-[#4ECF9E] to-[#4ECF9E]';
       case 'entertainment':
+        // Brand gradient (reversed)
         return 'from-[#888BFF] to-[#5D5FEF]';
       case 'health':
+        // Error to brand gradient
         return 'from-[#F45C63] to-[#888BFF]';
       default:
+        // Default brand gradient
         return 'from-[#5D5FEF] to-[#888BFF]';
     }
   };
 
   return (
     <article
-      className="group relative bg-[#15161A] rounded-2xl p-5 hover:shadow-2xl hover:shadow-[#5D5FEF]/10 hover:scale-[1.02] transition-all duration-300 overflow-hidden border border-[#2A2C35]"
+      className="group relative bg-[#15161A] rounded-2xl p-4 sm:p-5 hover:shadow-xl hover:scale-[1.01] transition-all duration-300 overflow-hidden border border-[#2A2C35] shadow-sm"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role="article"
       aria-label={`Transaction: ${transaction.merchant_name || 'Unknown Merchant'}, ${formatAmount(transaction.amount, transaction.currency)}`}
     >
-      {/* Purple Top Border */}
+      {/* Category-based Top Border */}
       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getCardColor(transaction.category)}`}></div>
 
       {/* Content */}
       <div className="relative z-10">
         {/* Header with Icon and Status */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-3 sm:mb-4">
           {/* Category Icon */}
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getCardColor(transaction.category)} flex items-center justify-center shadow-lg`}>
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${getCardColor(transaction.category)} flex items-center justify-center shadow-md`}>
             <div className="text-white">
               {getCategoryIcon(transaction.category)}
             </div>
@@ -195,23 +203,23 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
           {/* Amount */}
           <div className="flex-1">
             <p className="text-[10px] text-[#6F7280] uppercase tracking-wide mb-1 font-semibold">Amount</p>
-            <div className={`text-xl font-bold ${getDirectionColor(transaction.direction)} truncate`}>
+            <div className={`text-lg sm:text-xl font-bold ${getDirectionColor(transaction.direction)} truncate`}>
               {transaction.direction === 'debit' && '-'}
               {formatAmount(transaction.amount, transaction.currency)}
             </div>
           </div>
 
-          {/* Edit Button */}
+          {/* Edit Button - Brand gradient */}
           <a
             href={`/transactions/edit/${transaction.id}`}
-            className={`px-4 py-2.5 text-xs font-semibold text-white bg-gradient-to-r ${getCardColor(transaction.category)} rounded-xl hover:shadow-lg transition-all duration-300 flex-shrink-0`}
+            className="px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] rounded-xl hover:shadow-lg hover:shadow-[#5D5FEF]/30 transition-all duration-300 flex-shrink-0"
             aria-label={`Edit transaction for ${transaction.merchant_name}`}
           >
             <span className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              Edit
+              <span className="hidden sm:inline">Edit</span>
             </span>
           </a>
         </div>

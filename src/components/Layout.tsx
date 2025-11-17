@@ -131,7 +131,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                 <div className="hidden lg:block relative">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="inline-flex items-center px-4 py-2.5 border border-[#2d1b4e] rounded-lg text-sm font-medium text-[#cbd5e1] bg-[#1a1625] hover:bg-[#2d1b4e]/30 hover:border-[#6b4ce6] hover:text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 min-h-[44px] shadow-sm"
+                    className="inline-flex items-center px-4 py-2.5 border border-[#2A2C35] rounded-lg text-sm font-medium text-[#B2B4C2] bg-[#15161A] hover:bg-[#1E2026] hover:border-[#5D5FEF] hover:text-[#F0F1F5] focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A] transition-all duration-200 min-h-[44px] shadow-sm"
                     aria-expanded={dropdownOpen}
                     aria-haspopup="true"
                     aria-label="Navigation menu"
@@ -163,9 +163,9 @@ export function Layout({ children, title, description }: LayoutProps) {
                         aria-hidden="true"
                       ></div>
 
-                      {/* Dropdown content - Dark Purple Theme */}
+                      {/* Dropdown content - Purple + Slate Gray */}
                       <div
-                        className="absolute left-0 mt-3 w-80 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] bg-[#1a1625] border border-[#2d1b4e] z-20 animate-fade-in-down overflow-hidden"
+                        className="absolute left-0 mt-3 w-80 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] bg-[#15161A] border border-[#2A2C35] z-20 animate-fade-in-down overflow-hidden"
                         role="menu"
                         aria-orientation="vertical"
                       >
@@ -176,8 +176,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                               href={item.href}
                               className={`block px-4 py-3 text-sm transition-all duration-200 focus:outline-none ${
                                 isActive(item.href)
-                                  ? 'bg-[#6b4ce6]/20 text-[#a78bfa] border-l-4 border-[#6b4ce6] shadow-[inset_0_0_20px_rgba(107,76,230,0.1)]'
-                                  : 'text-[#cbd5e1] hover:bg-[#2d1b4e]/30 hover:text-[#f8fafc] border-l-4 border-transparent'
+                                  ? 'bg-[#5D5FEF]/20 text-[#888BFF] border-l-4 border-[#5D5FEF] shadow-[inset_0_0_20px_rgba(93,95,239,0.1)]'
+                                  : 'text-[#B2B4C2] hover:bg-[#1E2026] hover:text-[#F0F1F5] border-l-4 border-transparent'
                               }`}
                               onClick={() => setDropdownOpen(false)}
                               role="menuitem"
@@ -187,7 +187,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                                 <div className="flex-1 min-w-0">
                                   <div className="font-medium">{item.name}</div>
                                   {item.description && (
-                                    <div className="text-xs text-[#94a3b8] mt-0.5 line-clamp-2">
+                                    <div className="text-xs text-[#6F7280] mt-0.5 line-clamp-2">
                                       {item.description}
                                     </div>
                                   )}
@@ -202,7 +202,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                 </div>
               </div>
 
-              {/* User menu - Dark Purple Theme */}
+              {/* User menu - Purple + Slate Gray */}
               <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-shrink-0">
                 {user && (
                   <>
@@ -213,8 +213,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                       className={`hidden sm:inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-medium transition-all duration-200 min-h-[44px] border ${
                         mockAIEnabled
                           ? 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/30 hover:bg-[#f59e0b]/20 hover:border-[#f59e0b]/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                          : 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30 hover:bg-[#10b981]/20 hover:border-[#10b981]/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625]`}
+                          : 'bg-[#4ECF9E]/10 text-[#4ECF9E] border-[#4ECF9E]/30 hover:bg-[#4ECF9E]/20 hover:border-[#4ECF9E]/50 shadow-[0_0_10px_rgba(78,207,158,0.2)]'
+                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A]`}
                       title={mockAIEnabled ? 'Mock AI: ON (Click to use Real AI)' : 'Mock AI: OFF (Click to use Mock AI)'}
                       aria-label={mockAIEnabled ? 'Switch to Real AI' : 'Switch to Mock AI'}
                     >
@@ -228,11 +228,11 @@ export function Layout({ children, title, description }: LayoutProps) {
                     </div>
 
                     {/* User email - Hidden on mobile, truncated on tablet */}
-                    <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-[#2d1b4e]/30 rounded-lg border border-[#2d1b4e]">
-                      <svg className="w-4 h-4 text-[#a78bfa] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-[#1E2026] rounded-lg border border-[#2A2C35]">
+                      <svg className="w-4 h-4 text-[#888BFF] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span className="text-xs lg:text-sm text-[#cbd5e1] max-w-[100px] lg:max-w-[180px] truncate font-medium" title={user.email}>
+                      <span className="text-xs lg:text-sm text-[#B2B4C2] max-w-[100px] lg:max-w-[180px] truncate font-medium" title={user.email}>
                         {user.email}
                       </span>
                     </div>
@@ -240,7 +240,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                     {/* Sign Out - Hidden on mobile */}
                     <button
                       onClick={signOut}
-                      className="hidden md:inline-flex items-center gap-2 text-xs lg:text-sm text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 px-3 lg:px-4 py-2 rounded-lg border border-transparent hover:border-[#2d1b4e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] min-h-[44px] font-medium"
+                      className="hidden md:inline-flex items-center gap-2 text-xs lg:text-sm text-[#B2B4C2] hover:text-[#F0F1F5] hover:bg-[#1E2026] px-3 lg:px-4 py-2 rounded-lg border border-transparent hover:border-[#2A2C35] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A] min-h-[44px] font-medium"
                       aria-label="Sign out"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +254,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="lg:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 border border-transparent hover:border-[#2d1b4e] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 min-h-[44px] min-w-[44px]"
+                  className="lg:hidden inline-flex items-center justify-center p-2.5 rounded-lg text-[#B2B4C2] hover:text-[#F0F1F5] hover:bg-[#1E2026] border border-transparent hover:border-[#2A2C35] focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A] transition-all duration-200 min-h-[44px] min-w-[44px]"
                   aria-expanded={mobileMenuOpen}
                   aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
                 >
@@ -271,29 +271,29 @@ export function Layout({ children, title, description }: LayoutProps) {
             </div>
           </div>
 
-          {/* Mobile menu - Dark Purple Theme */}
+          {/* Mobile menu - Purple + Slate Gray */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-[#2d1b4e] bg-[#1a1625] animate-fade-in-down shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+            <div className="lg:hidden border-t border-[#2A2C35] bg-[#15161A] animate-fade-in-down shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
               {/* User info section - Mobile only */}
               {user && (
-                <div className="px-4 py-4 border-b border-[#2d1b4e] bg-[#0f0a1a]/50">
+                <div className="px-4 py-4 border-b border-[#2A2C35] bg-[#0A0B0D]/50">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)] flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(93,95,239,0.3)] flex-shrink-0">
                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-[#94a3b8] font-medium uppercase tracking-wide mb-0.5">Account</p>
-                        <p className="text-sm font-medium text-[#f8fafc] truncate" title={user.email}>
+                        <p className="text-xs text-[#6F7280] font-medium uppercase tracking-wide mb-0.5">Account</p>
+                        <p className="text-sm font-medium text-[#F0F1F5] truncate" title={user.email}>
                           {user.email}
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={signOut}
-                      className="inline-flex items-center gap-2 px-3 py-2 border border-[#2d1b4e] rounded-lg text-sm font-medium text-[#cbd5e1] bg-[#1a1625] hover:bg-[#2d1b4e]/30 hover:text-[#f8fafc] hover:border-[#6b4ce6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 min-h-[44px] flex-shrink-0"
+                      className="inline-flex items-center gap-2 px-3 py-2 border border-[#2A2C35] rounded-lg text-sm font-medium text-[#B2B4C2] bg-[#15161A] hover:bg-[#1E2026] hover:text-[#F0F1F5] hover:border-[#5D5FEF] focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A] transition-all duration-200 min-h-[44px] flex-shrink-0"
                       aria-label="Sign out"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -311,8 +311,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                       className={`w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] border ${
                         mockAIEnabled
                           ? 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/30 hover:bg-[#f59e0b]/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                          : 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30 hover:bg-[#10b981]/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625]`}
+                          : 'bg-[#4ECF9E]/10 text-[#4ECF9E] border-[#4ECF9E]/30 hover:bg-[#4ECF9E]/20 shadow-[0_0_10px_rgba(78,207,158,0.2)]'
+                      } ${loading ? 'opacity-50 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A]`}
                       aria-label={mockAIEnabled ? 'Switch to Real AI' : 'Switch to Mock AI'}
                     >
                       <span className="text-lg" aria-hidden="true">{mockAIEnabled ? '🤖' : '🧠'}</span>
@@ -330,8 +330,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                     href={item.href}
                     className={`block px-4 py-3.5 text-base transition-all duration-200 focus:outline-none min-h-[44px] ${
                       isActive(item.href)
-                        ? 'bg-[#6b4ce6]/20 text-[#a78bfa] border-l-4 border-[#6b4ce6] shadow-[inset_0_0_20px_rgba(107,76,230,0.1)]'
-                        : 'text-[#cbd5e1] hover:bg-[#2d1b4e]/30 hover:text-[#f8fafc] border-l-4 border-transparent'
+                        ? 'bg-[#5D5FEF]/20 text-[#888BFF] border-l-4 border-[#5D5FEF] shadow-[inset_0_0_20px_rgba(93,95,239,0.1)]'
+                        : 'text-[#B2B4C2] hover:bg-[#1E2026] hover:text-[#F0F1F5] border-l-4 border-transparent'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                     role="menuitem"
@@ -341,13 +341,13 @@ export function Layout({ children, title, description }: LayoutProps) {
                       <div className="flex-1 min-w-0">
                         <div className="font-medium">{item.name}</div>
                         {item.description && (
-                          <div className="text-xs text-[#94a3b8] mt-0.5 line-clamp-1">
+                          <div className="text-xs text-[#6F7280] mt-0.5 line-clamp-1">
                             {item.description}
                           </div>
                         )}
                       </div>
                       {isActive(item.href) && (
-                        <svg className="w-5 h-5 text-[#6b4ce6] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-5 h-5 text-[#5D5FEF] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                       )}
@@ -359,15 +359,15 @@ export function Layout({ children, title, description }: LayoutProps) {
           )}
         </nav>
 
-        {/* Breadcrumbs - Dark Purple Theme */}
+        {/* Breadcrumbs - Purple + Slate Gray (No underline on mobile) */}
         {router.pathname !== '/' && (
-          <div className="bg-[#1a1625] border-b border-[#2d1b4e]">
+          <div className="bg-[#15161A] border-b border-[#2A2C35]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-2 py-3 text-sm">
                 {getBreadcrumbs().map((crumb, index) => (
                   <React.Fragment key={crumb.href}>
                     {index > 0 && (
-                      <svg className="w-4 h-4 text-[#2d1b4e]" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-[#2A2C35]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
@@ -375,8 +375,8 @@ export function Layout({ children, title, description }: LayoutProps) {
                       href={crumb.href}
                       className={`transition-colors duration-200 ${
                         index === getBreadcrumbs().length - 1
-                          ? 'text-[#a78bfa] font-medium'
-                          : 'text-[#94a3b8] hover:text-[#cbd5e1]'
+                          ? 'text-[#888BFF] font-medium'
+                          : 'text-[#6F7280] hover:text-[#B2B4C2]'
                       }`}
                     >
                       {crumb.name}

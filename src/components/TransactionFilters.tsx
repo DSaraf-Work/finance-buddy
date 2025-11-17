@@ -26,7 +26,8 @@ export default function TransactionFilters({
   onReset,
   loading = false,
 }: TransactionFiltersProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  // Collapsed by default on mobile, expanded on desktop
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleChange = (field: string, value: any) => {
     onFilterChange({ ...filters, [field]: value });
