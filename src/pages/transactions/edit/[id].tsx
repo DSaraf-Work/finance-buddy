@@ -757,20 +757,40 @@ export default function TransactionEditPage() {
             )}
           </div>
 
-          {/* Floating Action Buttons */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#1a1625] border-t border-[#2d1b4e] shadow-[0_-4px_20px_rgba(0,0,0,0.3)] z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+          {/* Sticky Action Bar - Mobile Optimized with Safe Area */}
+          <div className="fixed bottom-0 left-0 right-0 bg-[#15161A]/95 backdrop-blur-md border-t border-[#2A2C35] shadow-[0_-8px_32px_rgba(0,0,0,0.4)] z-50 pb-safe">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+              {/* Primary Actions - Prominent */}
+              <div className="flex flex-col gap-3 mb-3">
+                {/* Save Button - Primary Action (Top) */}
                 <button
-                  onClick={() => router.push('/transactions')}
-                  className="px-6 py-3 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-[#2d1b4e]/50 hover:text-[#f8fafc] font-medium transition-all duration-200 border border-[#2d1b4e] hover:border-[#6b4ce6]/50"
+                  onClick={handleSave}
+                  disabled={saving || reExtracting}
+                  className="w-full min-h-[56px] px-6 py-4 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white rounded-xl hover:shadow-2xl hover:shadow-[#5D5FEF]/40 active:scale-[0.98] font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
                 >
-                  ← Back to Transactions
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span className="text-lg">Saving Changes...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-lg">Save Changes</span>
+                    </>
+                  )}
                 </button>
+
+                {/* Re-extract Button - Secondary Action */}
                 <button
                   onClick={handleReExtract}
                   disabled={reExtracting || saving}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#ec4899] to-[#8b5cf6] text-white rounded-lg hover:from-[#db2777] hover:to-[#7c3aed] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(236,72,153,0.3)] hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] flex items-center justify-center gap-2"
+                  className="w-full min-h-[52px] px-6 py-3.5 bg-[#1E2026] text-[#F0F1F5] rounded-xl hover:bg-[#2A2C35] active:scale-[0.98] font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2.5 border border-[#2A2C35] hover:border-[#5D5FEF]/50"
                   title="Re-extract transaction data from email using AI"
                 >
                   {reExtracting ? (
@@ -779,40 +799,29 @@ export default function TransactionEditPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Re-extracting...
+                      <span>Re-extracting with AI...</span>
                     </>
                   ) : (
                     <>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                       </svg>
-                      🤖 Re-extract with AI
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving || reExtracting}
-                  className="flex-1 px-6 py-3 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] flex items-center justify-center gap-2"
-                >
-                  {saving ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                      </svg>
-                      Save Changes
+                      <span>Re-extract with AI</span>
                     </>
                   )}
                 </button>
               </div>
+
+              {/* Back Button - Tertiary Action */}
+              <button
+                onClick={() => router.push('/transactions')}
+                className="w-full min-h-[44px] px-4 py-2.5 bg-transparent text-[#B2B4C2] rounded-lg hover:bg-[#1E2026] active:scale-[0.98] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span>Back to Transactions</span>
+              </button>
             </div>
           </div>
         </div>

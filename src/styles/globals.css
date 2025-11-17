@@ -174,3 +174,33 @@ body {
   left: 0;
   top: 0;
 }
+
+/* Safe Area Support for Mobile Devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pb-safe-4 {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .pb-safe-6 {
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Fallback for browsers that don't support safe-area-inset */
+@supports not (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: 1rem;
+  }
+
+  .pb-safe-4 {
+    padding-bottom: 1rem;
+  }
+
+  .pb-safe-6 {
+    padding-bottom: 1.5rem;
+  }
+}
