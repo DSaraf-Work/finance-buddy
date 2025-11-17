@@ -366,7 +366,7 @@ export default function TransactionEditPage() {
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                {/* Amount with Currency Symbol */}
+                {/* 1. Amount with Currency Symbol - PRIMARY */}
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-[#B2B4C2] mb-1.5 sm:mb-2">
                     Amount <span className="text-[#F45C63]">*</span>
@@ -414,39 +414,27 @@ export default function TransactionEditPage() {
                   )}
                 </div>
 
-                {/* Direction */}
-                <div>
+                {/* 2. Category - CLASSIFICATION */}
+                <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Type
+                    Category
+                    <span className="ml-2 text-xs text-[#6F7280]">(Helps organize your transactions)</span>
                   </label>
                   <select
-                    value={formData.direction || ''}
-                    onChange={(e) => handleChange('direction', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    value={formData.category || ''}
+                    onChange={(e) => handleChange('category', e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] capitalize focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                   >
-                    <option value="">Select type</option>
-                    <option value="debit">💸 Debit (Expense)</option>
-                    <option value="credit">💰 Credit (Income)</option>
+                    <option value="">Select category</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat} className="capitalize">
+                        {cat}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
-                {/* Transaction Time */}
-                <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Transaction Date <span className="text-[#F45C63]">*</span>
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={formData.txn_time ? new Date(formData.txn_time).toISOString().slice(0, 16) : ''}
-                    onChange={(e) => handleChange('txn_time', e.target.value)}
-                    className={`w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border ${validationErrors.txn_time ? 'border-[#F45C63]' : 'border-[#2A2C35]'} rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
-                  />
-                  {validationErrors.txn_time && (
-                    <p className="mt-1 text-xs text-[#F45C63]">{validationErrors.txn_time}</p>
-                  )}
-                </div>
-
-                {/* Merchant Name */}
+                {/* 3. Merchant Name */}
                 <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
                     Merchant Name <span className="text-[#F45C63]">*</span>
@@ -463,29 +451,11 @@ export default function TransactionEditPage() {
                   )}
                 </div>
 
-                {/* Category Dropdown */}
-                <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Category
-                  </label>
-                  <select
-                    value={formData.category || ''}
-                    onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] capitalize focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
-                  >
-                    <option value="">Select category</option>
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat} className="capitalize">
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Merchant Normalized */}
-                <div>
+                {/* 4. Merchant Normalized */}
+                <div className="sm:col-span-2">
                   <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
                     Merchant (Normalized)
+                    <span className="ml-2 text-xs text-[#6F7280]">(Standardized merchant name)</span>
                   </label>
                   <input
                     type="text"
@@ -496,103 +466,21 @@ export default function TransactionEditPage() {
                   />
                 </div>
 
-                {/* Transaction Type */}
-                <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Transaction Type
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.transaction_type || ''}
-                    onChange={(e) => handleChange('transaction_type', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
-                    placeholder="e.g., UPI, Card, etc."
-                  />
-                </div>
-
-                {/* Reference ID */}
-                <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Reference ID
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.reference_id || ''}
-                    onChange={(e) => handleChange('reference_id', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
-                    placeholder="Transaction reference"
-                  />
-                </div>
-
-                {/* Location */}
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.location || ''}
-                    onChange={(e) => handleChange('location', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
-                    placeholder="Transaction location"
-                  />
-                </div>
-
-                {/* Keywords Selector - Full Width */}
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Keywords
-                    <span className="ml-2 text-xs text-[#6F7280]">(Optional - helps with categorization)</span>
-                  </label>
-                  <InteractiveKeywordSelector
-                    value={formData.ai_notes || ''}
-                    onChange={(value) => handleChange('ai_notes', value)}
-                    merchantName={formData.merchant_name || undefined}
-                    transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
-                  />
-                </div>
-
-                {/* User Notes - Full Width */}
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
-                    Notes
-                  </label>
-                  <textarea
-                    value={formData.user_notes || ''}
-                    onChange={(e) => handleChange('user_notes', e.target.value)}
-                    rows={3}
-                    className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all resize-none"
-                    placeholder="Add your notes here..."
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Account Details Card */}
-            <div className="bg-[#15161A] rounded-xl shadow-sm border border-[#2A2C35] p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-[#F0F1F5] mb-4 sm:mb-6 flex items-center">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-[#5D5FEF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-                Account Details
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                {/* Account Hint */}
+                {/* 5. Account Details - INTEGRATED */}
                 <div>
                   <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
                     Account Hint
+                    <span className="ml-2 text-xs text-[#6F7280]">(e.g., Last 4 digits)</span>
                   </label>
                   <input
                     type="text"
                     value={formData.account_hint || ''}
                     onChange={(e) => handleChange('account_hint', e.target.value)}
                     className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
-                    placeholder="e.g., Last 4 digits"
+                    placeholder="e.g., ****1234"
                   />
                 </div>
 
-                {/* Account Type */}
                 <div>
                   <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
                     Account Type
@@ -610,6 +498,119 @@ export default function TransactionEditPage() {
                     <option value="WALLET">👛 Wallet</option>
                     <option value="OTHER">📋 Other</option>
                   </select>
+                </div>
+
+                {/* 6. Type (Direction) */}
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                    Transaction Type
+                    <span className="ml-2 text-xs text-[#6F7280]">(Debit or Credit)</span>
+                  </label>
+                  <select
+                    value={formData.direction || ''}
+                    onChange={(e) => handleChange('direction', e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                  >
+                    <option value="">Select type</option>
+                    <option value="debit">💸 Debit (Expense)</option>
+                    <option value="credit">💰 Credit (Income)</option>
+                  </select>
+                </div>
+
+                {/* 7. Keywords - IMPROVED */}
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[#5D5FEF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span>Keywords</span>
+                    <span className="text-xs text-[#6F7280] font-normal">(Add tags to help find this transaction later)</span>
+                  </label>
+                  <div className="bg-[#1E2026]/50 border border-[#2A2C35] rounded-xl p-3">
+                    <InteractiveKeywordSelector
+                      value={formData.ai_notes || ''}
+                      onChange={(value) => handleChange('ai_notes', value)}
+                      merchantName={formData.merchant_name || undefined}
+                      transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
+                    />
+                    <p className="mt-2 text-xs text-[#6F7280] flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Examples: "groceries", "monthly", "urgent", "reimbursable"
+                    </p>
+                  </div>
+                </div>
+
+                {/* 8. Other Details - SECONDARY */}
+                <div>
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                    Transaction Date <span className="text-[#F45C63]">*</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formData.txn_time ? new Date(formData.txn_time).toISOString().slice(0, 16) : ''}
+                    onChange={(e) => handleChange('txn_time', e.target.value)}
+                    className={`w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border ${validationErrors.txn_time ? 'border-[#F45C63]' : 'border-[#2A2C35]'} rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
+                  />
+                  {validationErrors.txn_time && (
+                    <p className="mt-1 text-xs text-[#F45C63]">{validationErrors.txn_time}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                    Payment Method
+                    <span className="ml-2 text-xs text-[#6F7280]">(e.g., UPI, Card)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.transaction_type || ''}
+                    onChange={(e) => handleChange('transaction_type', e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    placeholder="e.g., UPI, Credit Card"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                    Reference ID
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.reference_id || ''}
+                    onChange={(e) => handleChange('reference_id', e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    placeholder="Transaction reference"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.location || ''}
+                    onChange={(e) => handleChange('location', e.target.value)}
+                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    placeholder="Transaction location"
+                  />
+                </div>
+
+                {/* User Notes - Full Width */}
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                    Personal Notes
+                    <span className="ml-2 text-xs text-[#6F7280]">(Private notes for yourself)</span>
+                  </label>
+                  <textarea
+                    value={formData.user_notes || ''}
+                    onChange={(e) => handleChange('user_notes', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all resize-none"
+                    placeholder="Add your personal notes here..."
+                  />
                 </div>
               </div>
             </div>
