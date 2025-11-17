@@ -140,10 +140,10 @@ const HomePage: NextPage = () => {
   if (loading) {
     return (
       <Layout title="Finance Buddy - Loading...">
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading Finance Buddy...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5D5FEF] mx-auto mb-4"></div>
+            <p className="text-[#B2B4C2]">Loading Finance Buddy...</p>
           </div>
         </div>
       </Layout>

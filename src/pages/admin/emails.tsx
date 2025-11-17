@@ -151,10 +151,10 @@ export default function AdminEmailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f0a1a]/50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-[#cbd5e1]">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
+          <p className="mt-2 text-[#B2B4C2]">Loading...</p>
         </div>
       </div>
     );

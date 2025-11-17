@@ -148,8 +148,8 @@ export default function NotificationsPage() {
         {/* Notifications List */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-[#cbd5e1]">Loading notifications...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
+            <p className="mt-2 text-[#B2B4C2]">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-12 bg-[#0f0a1a]/50 rounded-lg">

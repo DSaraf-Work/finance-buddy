@@ -29,10 +29,10 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   // Show a proper loading UI instead of blank screen to prevent confusion
   if (loading || !shouldRender) {
     return (
-      <div className="min-h-screen bg-[#0f0a1a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#6b4ce6] mb-4"></div>
-          <p className="text-[#cbd5e1] text-sm">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#5D5FEF] mb-4"></div>
+          <p className="text-[#B2B4C2] text-sm">Loading...</p>
         </div>
       </div>
     );

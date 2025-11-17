@@ -131,8 +131,8 @@ export default function NotificationBell() {
             {/* Notifications List */}
             <div className="max-h-96 overflow-y-auto">
               {loading ? (
-                <div className="px-4 py-8 text-center text-[#94a3b8]">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#6b4ce6]"></div>
+                <div className="px-4 py-8 text-center text-[#6F7280]">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
                   <p className="mt-2 text-sm">Loading...</p>
                 </div>
               ) : notifications.length === 0 ? (

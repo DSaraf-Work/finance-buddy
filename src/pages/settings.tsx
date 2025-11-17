@@ -266,7 +266,7 @@ const SettingsPage: NextPage = () => {
                 <div className="px-6 py-4">
                   {loading ? (
                     <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#6b4ce6] mx-auto"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF] mx-auto"></div>
                     </div>
                   ) : connections.length === 0 ? (
                     <div className="text-center py-8">
