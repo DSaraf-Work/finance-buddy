@@ -96,9 +96,9 @@ export function Layout({ children, title, description }: LayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-[#0f0a1a]">
-        {/* Navigation Header - Sticky with Dark Purple Theme */}
-        <nav className="sticky top-0 z-50 bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border-b border-[#2d1b4e]" role="navigation" aria-label="Main navigation">
+      <div className="min-h-screen bg-[#0A0B0D]">
+        {/* Navigation Header - Sticky with Purple + Slate Gray Theme */}
+        <nav className="sticky top-0 z-50 bg-[#15161A] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border-b border-[#2A2C35]" role="navigation" aria-label="Main navigation">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
             <div className="flex justify-between items-center h-14 sm:h-16 lg:h-[72px]">
               {/* Logo and primary navigation */}
@@ -106,24 +106,24 @@ export function Layout({ children, title, description }: LayoutProps) {
                 <div className="flex-shrink-0 flex items-center">
                   <Link
                     href="/"
-                    className="group flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] rounded-lg px-2 py-1 transition-all duration-200"
+                    className="group flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A] rounded-lg px-2 py-1 transition-all duration-200"
                     aria-label="Finance Buddy Home"
                   >
                     {/* Logo Icon */}
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)] group-hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] transition-all duration-300">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(93,95,239,0.3)] group-hover:shadow-[0_0_20px_rgba(93,95,239,0.5)] transition-all duration-300">
                       <span className="text-lg sm:text-xl lg:text-2xl font-bold text-white">₹</span>
                     </div>
                     {/* Logo Text */}
                     <div className="hidden sm:block">
-                      <div className="text-base sm:text-lg lg:text-xl font-semibold text-[#f8fafc] group-hover:text-[#a78bfa] transition-colors duration-200">
+                      <div className="text-base sm:text-lg lg:text-xl font-semibold text-[#F0F1F5] group-hover:text-[#888BFF] transition-colors duration-200">
                         Finance Buddy
                       </div>
-                      <div className="text-[10px] sm:text-xs text-[#94a3b8] font-light tracking-wide hidden lg:block">
+                      <div className="text-[10px] sm:text-xs text-[#6F7280] font-light tracking-wide hidden lg:block">
                         Smart Finance Tracking
                       </div>
                     </div>
                     {/* Mobile abbreviated logo */}
-                    <span className="sm:hidden text-base font-semibold text-[#f8fafc] group-hover:text-[#a78bfa] transition-colors duration-200">FB</span>
+                    <span className="sm:hidden text-base font-semibold text-[#F0F1F5] group-hover:text-[#888BFF] transition-colors duration-200">FB</span>
                   </Link>
                 </div>
 
