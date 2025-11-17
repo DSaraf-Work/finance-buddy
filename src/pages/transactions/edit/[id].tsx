@@ -545,8 +545,10 @@ export default function TransactionEditPage() {
                     <span className="ml-2 text-xs text-[#6F7280]">(Optional - helps with categorization)</span>
                   </label>
                   <InteractiveKeywordSelector
-                    selectedKeywords={formData.keywords || []}
-                    onKeywordsChange={(keywords) => handleChange('keywords', keywords)}
+                    value={formData.ai_notes || ''}
+                    onChange={(value) => handleChange('ai_notes', value)}
+                    merchantName={formData.merchant_name || undefined}
+                    transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
                   />
                 </div>
 
