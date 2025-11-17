@@ -57,64 +57,69 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-        {[1, 2].map((i) => (
-          <div key={i} className="bg-[#15161A] rounded-xl border border-[#2A2C35] p-4 animate-pulse">
-            <div className="flex items-center gap-3 pl-2">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#1E2026] rounded-lg flex-shrink-0"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-2 bg-[#1E2026] rounded w-16"></div>
-                <div className="h-6 bg-[#1E2026] rounded w-20"></div>
-              </div>
+      <div className="sticky top-0 z-40 bg-[#0A0B0D]/95 backdrop-blur-md border-b border-[#2A2C35] mb-4">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 animate-pulse">
+          {/* Skeleton 1 */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-1">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#1E2026] rounded-lg flex-shrink-0"></div>
+            <div className="flex-1 space-y-1.5">
+              <div className="h-2 bg-[#1E2026] rounded w-16"></div>
+              <div className="h-4 bg-[#1E2026] rounded w-20"></div>
             </div>
           </div>
-        ))}
+
+          {/* Divider */}
+          <div className="h-10 w-px bg-[#2A2C35]"></div>
+
+          {/* Skeleton 2 */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-1">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#1E2026] rounded-lg flex-shrink-0"></div>
+            <div className="flex-1 space-y-1.5">
+              <div className="h-2 bg-[#1E2026] rounded w-16"></div>
+              <div className="h-4 bg-[#1E2026] rounded w-20"></div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-      {/* Total Transactions Card - Compact */}
-      <div className="relative bg-[#15161A] rounded-xl p-4 hover:shadow-lg transition-all duration-200 overflow-hidden border border-[#2A2C35]">
-        {/* Purple Left Border */}
-        <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-[#5D5FEF] to-[#888BFF]"></div>
-
-        {/* Content - Horizontal Layout */}
-        <div className="relative z-10 flex items-center gap-3 pl-2">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="sticky top-0 z-40 bg-[#0A0B0D]/95 backdrop-blur-md border-b border-[#2A2C35] mb-4">
+      {/* Ultra-Compact Sticky Stats Bar */}
+      <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5">
+        {/* Total Transactions - Inline */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] flex items-center justify-center flex-shrink-0 shadow-sm">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] sm:text-xs font-medium text-[#6F7280] mb-0.5">
+            <p className="text-[10px] sm:text-xs font-medium text-[#6F7280] leading-tight">
               Transactions
             </p>
-            <p className="text-xl sm:text-2xl font-bold text-[#F0F1F5] tracking-tight truncate">
+            <p className="text-base sm:text-lg font-bold text-[#F0F1F5] tracking-tight truncate">
               {total.toLocaleString()}
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Total Amount Card - Compact */}
-      <div className="relative bg-[#15161A] rounded-xl p-4 hover:shadow-lg transition-all duration-200 overflow-hidden border border-[#2A2C35]">
-        {/* Green Left Border */}
-        <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#4ECF9E]"></div>
+        {/* Divider */}
+        <div className="h-10 w-px bg-[#2A2C35] flex-shrink-0"></div>
 
-        {/* Content - Horizontal Layout */}
-        <div className="relative z-10 flex items-center gap-3 pl-2">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#4ECF9E] flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Total Amount - Inline */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#4ECF9E] flex items-center justify-center flex-shrink-0 shadow-sm">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] sm:text-xs font-medium text-[#6F7280] mb-0.5">
+            <p className="text-[10px] sm:text-xs font-medium text-[#6F7280] leading-tight">
               Total Amount
             </p>
-            <p className="text-xl sm:text-2xl font-bold text-[#F0F1F5] tracking-tight truncate">
+            <p className="text-base sm:text-lg font-bold text-[#F0F1F5] tracking-tight truncate">
               {formatCurrency(totalAmount)}
             </p>
           </div>
