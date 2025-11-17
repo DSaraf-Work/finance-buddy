@@ -20,10 +20,10 @@ interface TransactionFiltersProps {
 
 // Quick filter presets
 const QUICK_FILTERS = [
+  { label: 'Today', value: 'today', icon: '📍' },
+  { label: 'Yesterday', value: 'yesterday', icon: '⏮️' },
   { label: 'This Month', value: 'this_month', icon: '📅' },
   { label: 'Last Month', value: 'last_month', icon: '📆' },
-  { label: 'Last 7 Days', value: 'last_7_days', icon: '🗓️' },
-  { label: 'Last 30 Days', value: 'last_30_days', icon: '📊' },
 ];
 
 // Helper to get date range for quick filters
@@ -33,6 +33,18 @@ const getQuickFilterDates = (filterValue: string): { from: string; to: string } 
   const month = today.getMonth();
 
   switch (filterValue) {
+    case 'today':
+      return {
+        from: today.toISOString().split('T')[0],
+        to: today.toISOString().split('T')[0],
+      };
+    case 'yesterday':
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      return {
+        from: yesterday.toISOString().split('T')[0],
+        to: yesterday.toISOString().split('T')[0],
+      };
     case 'this_month':
       return {
         from: new Date(year, month, 1).toISOString().split('T')[0],
@@ -42,20 +54,6 @@ const getQuickFilterDates = (filterValue: string): { from: string; to: string } 
       return {
         from: new Date(year, month - 1, 1).toISOString().split('T')[0],
         to: new Date(year, month, 0).toISOString().split('T')[0],
-      };
-    case 'last_7_days':
-      const last7 = new Date(today);
-      last7.setDate(last7.getDate() - 7);
-      return {
-        from: last7.toISOString().split('T')[0],
-        to: today.toISOString().split('T')[0],
-      };
-    case 'last_30_days':
-      const last30 = new Date(today);
-      last30.setDate(last30.getDate() - 30);
-      return {
-        from: last30.toISOString().split('T')[0],
-        to: today.toISOString().split('T')[0],
       };
     default:
       return { from: '', to: '' };
