@@ -43,10 +43,10 @@ export interface Transaction {
   updated_at: string;
 }
 
-// Helper function to get date 4 days ago
+// Helper function to get start of current month
 const getDefaultStartDate = () => {
   const date = new Date();
-  date.setDate(date.getDate() - 4);
+  date.setDate(1); // First day of current month
   return date.toISOString().split('T')[0];
 };
 
@@ -438,13 +438,13 @@ export default function TransactionsPage() {
               loading={filterLoading}
             />
 
-            {/* Transactions List - Responsive Grid Layout */}
+            {/* Transactions List - Responsive Grid Layout (2 cols mobile, 2 cols tablet, 3 cols desktop) */}
             {loading ? (
               <TransactionListSkeleton count={10} />
             ) : transactions.length === 0 ? (
               <TransactionEmptyState onRefresh={() => searchTransactions()} />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
                 {transactions.map((transaction) => (
                   <TransactionCard
                     key={transaction.id}
