@@ -74,8 +74,7 @@ export default function TransactionFilters({
 
   const handleChange = (field: string, value: any) => {
     onFilterChange({ ...filters, [field]: value });
-    // Auto-search on change for better UX
-    setTimeout(() => onSearch(), 100);
+    // Removed auto-search - user must click "Apply Filters" button
   };
 
   const handleQuickFilter = (filterValue: string) => {
@@ -86,6 +85,7 @@ export default function TransactionFilters({
       date_from: dates.from,
       date_to: dates.to,
     });
+    // Auto-apply for quick filters only (better UX for quick actions)
     setTimeout(() => onSearch(), 100);
   };
 
@@ -153,13 +153,26 @@ export default function TransactionFilters({
             </svg>
           </button>
 
-          <button
-            onClick={onReset}
-            className="px-3 py-1.5 text-xs font-medium text-[#B2B4C2] hover:text-[#F0F1F5] bg-[#1E2026] hover:bg-[#2A2C35] rounded-lg transition-all duration-200 border border-[#2A2C35]"
-            aria-label="Reset all filters"
-          >
-            Reset
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onSearch}
+              disabled={loading}
+              className="px-4 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] hover:opacity-90 rounded-lg transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+              aria-label="Apply filters"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {loading ? 'Applying...' : 'Apply Filters'}
+            </button>
+            <button
+              onClick={onReset}
+              className="px-3 py-1.5 text-xs font-medium text-[#B2B4C2] hover:text-[#F0F1F5] bg-[#1E2026] hover:bg-[#2A2C35] rounded-lg transition-all duration-200 border border-[#2A2C35]"
+              aria-label="Reset all filters"
+            >
+              Reset
+            </button>
+          </div>
         </div>
 
         {/* Quick Filter Pills - Always Visible */}
