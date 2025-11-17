@@ -140,90 +140,88 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   return (
     <article
-      className="group relative bg-[#15161A] rounded-2xl p-4 sm:p-5 hover:shadow-xl hover:scale-[1.01] transition-all duration-300 overflow-hidden border border-[#2A2C35] shadow-sm"
+      className="group relative bg-[#15161A] rounded-2xl p-4 hover:shadow-2xl hover:shadow-[#5D5FEF]/10 active:scale-[0.98] transition-all duration-200 overflow-hidden border border-[#2A2C35] shadow-sm cursor-pointer"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      role="article"
+      onClick={onQuickEdit}
+      role="button"
       aria-label={`Transaction: ${transaction.merchant_name || 'Unknown Merchant'}, ${formatAmount(transaction.amount, transaction.currency)}`}
     >
-      {/* Category-based Top Border */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getCardColor(transaction.category)}`}></div>
+      {/* Category-based Left Border - More Prominent */}
+      <div className={`absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b ${getCardColor(transaction.category)}`}></div>
 
       {/* Content */}
-      <div className="relative z-10">
-        {/* Header with Icon and Status */}
-        <div className="flex items-start justify-between mb-3 sm:mb-4">
-          {/* Category Icon */}
-          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${getCardColor(transaction.category)} flex items-center justify-center shadow-md`}>
+      <div className="relative z-10 pl-2">
+        {/* Header: Icon, Merchant, Status - Single Row */}
+        <div className="flex items-center gap-3 mb-3">
+          {/* Category Icon - Smaller, More Compact */}
+          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${getCardColor(transaction.category)} flex items-center justify-center shadow-sm flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
             <div className="text-white">
               {getCategoryIcon(transaction.category)}
             </div>
           </div>
 
-          {/* Status Badge */}
+          {/* Merchant Name and Date - Stacked */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-bold text-[#F0F1F5] truncate leading-tight">
+              {transaction.merchant_name || 'Unknown Merchant'}
+            </h3>
+            <p className="text-[10px] text-[#6F7280] mt-0.5 truncate">
+              {formatDate(transaction.txn_time)}
+            </p>
+          </div>
+
+          {/* Status Badge - Compact */}
           {transaction.status && (
-            <span className={`px-2.5 py-1 text-[10px] font-semibold rounded-lg ${getStatusColor(transaction.status)}`}>
+            <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md ${getStatusColor(transaction.status)} flex-shrink-0 uppercase tracking-wide`}>
               {transaction.status}
             </span>
           )}
         </div>
 
-        {/* Merchant Name */}
+        {/* Amount - Large and Prominent */}
         <div className="mb-3">
-          <h3 className="text-base font-bold text-[#F0F1F5] truncate mb-1">
-            {transaction.merchant_name || 'Unknown Merchant'}
-          </h3>
-          <div className="flex items-center gap-2 text-xs text-[#B2B4C2]">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span>{formatDate(transaction.txn_time)}</span>
-          </div>
-        </div>
-
-        {/* Category and Account Tags */}
-        <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
-          {transaction.category && (
-            <span className="px-2.5 py-1 bg-[#1E2026] text-[#B2B4C2] rounded-lg capitalize font-medium border border-[#2A2C35]">
-              {transaction.category}
-            </span>
-          )}
-          {transaction.account_hint && (
-            <span className="px-2.5 py-1 bg-[#1E2026] text-[#B2B4C2] rounded-lg truncate max-w-[140px] border border-[#2A2C35]">
-              {transaction.account_hint}
-            </span>
-          )}
-        </div>
-
-        {/* Divider */}
-        <div className="h-px bg-[#2A2C35] mb-4"></div>
-
-        {/* Amount and Edit Button */}
-        <div className="flex items-center justify-between gap-3">
-          {/* Amount */}
-          <div className="flex-1">
-            <p className="text-[10px] text-[#6F7280] uppercase tracking-wide mb-1 font-semibold">Amount</p>
-            <div className={`text-lg sm:text-xl font-bold ${getDirectionColor(transaction.direction)} truncate`}>
-              {transaction.direction === 'debit' && '-'}
+          <div className="flex items-baseline gap-2">
+            <span className={`text-2xl font-bold ${getDirectionColor(transaction.direction)} tracking-tight`}>
+              {transaction.direction === 'debit' && '−'}
+              {transaction.direction === 'credit' && '+'}
               {formatAmount(transaction.amount, transaction.currency)}
-            </div>
+            </span>
+          </div>
+        </div>
+
+        {/* Footer: Category, Account, Edit - Compact Row */}
+        <div className="flex items-center justify-between gap-2">
+          {/* Tags - Inline, Compact */}
+          <div className="flex items-center gap-1.5 text-[10px] flex-1 min-w-0">
+            {transaction.category && (
+              <span className="px-2 py-0.5 bg-[#1E2026]/50 text-[#B2B4C2] rounded-md capitalize font-medium truncate">
+                {transaction.category}
+              </span>
+            )}
+            {transaction.account_hint && (
+              <span className="px-2 py-0.5 bg-[#1E2026]/50 text-[#6F7280] rounded-md truncate max-w-[80px]">
+                {transaction.account_hint}
+              </span>
+            )}
           </div>
 
-          {/* Edit Button - Brand gradient */}
+          {/* Edit Button - Icon Only, Floating */}
           <a
             href={`/transactions/edit/${transaction.id}`}
-            className="px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] rounded-xl hover:shadow-lg hover:shadow-[#5D5FEF]/30 transition-all duration-300 flex-shrink-0"
+            onClick={(e) => e.stopPropagation()}
+            className="w-8 h-8 flex items-center justify-center text-white bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] rounded-lg hover:shadow-lg hover:shadow-[#5D5FEF]/40 active:scale-95 transition-all duration-200 flex-shrink-0 group-hover:scale-110"
             aria-label={`Edit transaction for ${transaction.merchant_name}`}
           >
-            <span className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              <span className="hidden sm:inline">Edit</span>
-            </span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
           </a>
         </div>
       </div>
+
+      {/* Hover Indicator - Subtle Glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#5D5FEF]/0 to-[#888BFF]/0 group-hover:from-[#5D5FEF]/5 group-hover:to-[#888BFF]/5 transition-all duration-300 pointer-events-none rounded-2xl"></div>
     </article>
   );
 });
