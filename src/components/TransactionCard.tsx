@@ -28,19 +28,19 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   const getStatusColor = (status: TransactionStatus) => {
     switch (status) {
-      case 'REVIEW': return 'bg-yellow-100 text-yellow-700 border border-yellow-300';
-      case 'APPROVED': return 'bg-green-100 text-green-700 border border-green-300';
-      case 'INVALID': return 'bg-gray-100 text-gray-700 border border-gray-300';
-      case 'REJECTED': return 'bg-red-100 text-red-700 border border-red-300';
-      default: return 'bg-blue-100 text-blue-700 border border-blue-300';
+      case 'REVIEW': return 'bg-[#6C85FF]/10 text-[#6C85FF] border border-[#6C85FF]/30';
+      case 'APPROVED': return 'bg-[#4ECF9E]/10 text-[#4ECF9E] border border-[#4ECF9E]/30';
+      case 'INVALID': return 'bg-[#6F7280]/10 text-[#6F7280] border border-[#6F7280]/30';
+      case 'REJECTED': return 'bg-[#F45C63]/10 text-[#F45C63] border border-[#F45C63]/30';
+      default: return 'bg-[#5D5FEF]/10 text-[#5D5FEF] border border-[#5D5FEF]/30';
     }
   };
 
   const getDirectionColor = (direction?: string | null) => {
     switch (direction) {
-      case 'debit': return 'text-[#ef4444]';
-      case 'credit': return 'text-[#10b981]';
-      default: return 'text-[#cbd5e1]';
+      case 'debit': return 'text-[#F45C63]';
+      case 'credit': return 'text-[#4ECF9E]';
+      default: return 'text-[#B2B4C2]';
     }
   };
 
@@ -105,40 +105,40 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
     }
   };
 
-  // Get vibrant card color based on category
+  // Get purple-themed card color based on category
   const getCardColor = (category?: string | null) => {
     switch (category?.toLowerCase()) {
       case 'food':
       case 'dining':
-        return 'from-orange-500 to-red-500';
+        return 'from-[#F45C63] to-[#F45C63]';
       case 'transport':
       case 'travel':
-        return 'from-blue-500 to-cyan-500';
+        return 'from-[#6C85FF] to-[#888BFF]';
       case 'shopping':
-        return 'from-pink-500 to-purple-500';
+        return 'from-[#888BFF] to-[#5D5FEF]';
       case 'bills':
       case 'utilities':
-        return 'from-yellow-500 to-orange-500';
+        return 'from-[#6C85FF] to-[#5D5FEF]';
       case 'finance':
-        return 'from-green-500 to-emerald-500';
+        return 'from-[#4ECF9E] to-[#4ECF9E]';
       case 'entertainment':
-        return 'from-purple-500 to-indigo-500';
+        return 'from-[#888BFF] to-[#5D5FEF]';
       case 'health':
-        return 'from-red-500 to-pink-500';
+        return 'from-[#F45C63] to-[#888BFF]';
       default:
-        return 'from-violet-500 to-purple-500';
+        return 'from-[#5D5FEF] to-[#888BFF]';
     }
   };
 
   return (
     <article
-      className="group relative bg-white rounded-2xl p-5 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-hidden"
+      className="group relative bg-[#15161A] rounded-2xl p-5 hover:shadow-2xl hover:shadow-[#5D5FEF]/10 hover:scale-[1.02] transition-all duration-300 overflow-hidden border border-[#2A2C35]"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       role="article"
       aria-label={`Transaction: ${transaction.merchant_name || 'Unknown Merchant'}, ${formatAmount(transaction.amount, transaction.currency)}`}
     >
-      {/* Colorful Top Border */}
+      {/* Purple Top Border */}
       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getCardColor(transaction.category)}`}></div>
 
       {/* Content */}
@@ -162,10 +162,10 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
         {/* Merchant Name */}
         <div className="mb-3">
-          <h3 className="text-base font-bold text-slate-900 truncate mb-1">
+          <h3 className="text-base font-bold text-[#F0F1F5] truncate mb-1">
             {transaction.merchant_name || 'Unknown Merchant'}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-[#B2B4C2]">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
@@ -176,25 +176,25 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
         {/* Category and Account Tags */}
         <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
           {transaction.category && (
-            <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg capitalize font-medium">
+            <span className="px-2.5 py-1 bg-[#1E2026] text-[#B2B4C2] rounded-lg capitalize font-medium border border-[#2A2C35]">
               {transaction.category}
             </span>
           )}
           {transaction.account_hint && (
-            <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg truncate max-w-[140px]">
+            <span className="px-2.5 py-1 bg-[#1E2026] text-[#B2B4C2] rounded-lg truncate max-w-[140px] border border-[#2A2C35]">
               {transaction.account_hint}
             </span>
           )}
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-slate-200 mb-4"></div>
+        <div className="h-px bg-[#2A2C35] mb-4"></div>
 
         {/* Amount and Edit Button */}
         <div className="flex items-center justify-between gap-3">
           {/* Amount */}
           <div className="flex-1">
-            <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 font-semibold">Amount</p>
+            <p className="text-[10px] text-[#6F7280] uppercase tracking-wide mb-1 font-semibold">Amount</p>
             <div className={`text-xl font-bold ${getDirectionColor(transaction.direction)} truncate`}>
               {transaction.direction === 'debit' && '-'}
               {formatAmount(transaction.amount, transaction.currency)}

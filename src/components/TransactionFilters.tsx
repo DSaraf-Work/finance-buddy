@@ -63,26 +63,26 @@ export default function TransactionFilters({
   };
 
   return (
-    <div className="relative bg-white rounded-2xl p-6 mb-8 shadow-sm">
-      {/* Colorful Top Border */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+    <div className="relative bg-[#15161A] rounded-2xl p-6 mb-8 shadow-sm border border-[#2A2C35]">
+      {/* Purple Top Border */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF]"></div>
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="group flex items-center gap-3 text-sm font-semibold text-slate-900 hover:text-violet-600 transition-colors"
+          className="group flex items-center gap-3 text-sm font-semibold text-[#F0F1F5] hover:text-[#888BFF] transition-colors"
           aria-expanded={isExpanded}
           aria-controls="filter-panel"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shadow-md">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] flex items-center justify-center shadow-md">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
           </div>
           <span className="tracking-wide">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="px-2.5 py-1 bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs font-bold rounded-lg shadow-md">
+            <span className="px-2.5 py-1 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white text-xs font-bold rounded-lg shadow-md">
               {activeFilterCount}
             </span>
           )}
@@ -97,7 +97,7 @@ export default function TransactionFilters({
         </button>
         <button
           onClick={onReset}
-          className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-300"
+          className="px-4 py-2 text-sm font-medium text-[#B2B4C2] hover:text-[#F0F1F5] bg-[#1E2026] hover:bg-[#2A2C35] rounded-xl transition-all duration-300 border border-[#2A2C35]"
           aria-label="Reset all filters"
         >
           Reset All
@@ -108,12 +108,12 @@ export default function TransactionFilters({
       {isExpanded && (
         <div id="filter-panel" className="relative">
           {/* Divider */}
-          <div className="h-px bg-slate-200 mb-6"></div>
+          <div className="h-px bg-[#2A2C35] mb-6"></div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
             {/* Date From */}
             <div className="space-y-2">
-              <label htmlFor="date-from" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="date-from" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 From Date
               </label>
               <div className="relative">
@@ -123,7 +123,7 @@ export default function TransactionFilters({
                   value={filters.date_from}
                   onChange={(e) => handleChange('date_from', e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900"
+                  className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5]"
                   aria-label="Filter by start date"
                 />
               </div>
@@ -131,7 +131,7 @@ export default function TransactionFilters({
 
             {/* Date To */}
             <div className="space-y-2">
-              <label htmlFor="date-to" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="date-to" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 To Date
               </label>
               <div className="relative">
@@ -141,7 +141,7 @@ export default function TransactionFilters({
                   value={filters.date_to}
                   onChange={(e) => handleChange('date_to', e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900"
+                  className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5]"
                   aria-label="Filter by end date"
                 />
               </div>
@@ -149,14 +149,14 @@ export default function TransactionFilters({
 
             {/* Sort */}
             <div className="space-y-2">
-              <label htmlFor="sort" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="sort" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 Sort By
               </label>
               <select
                 id="sort"
                 value={filters.sort || 'desc'}
                 onChange={(e) => handleChange('sort', e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900"
+                className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5]"
                 aria-label="Sort transactions"
               >
                 <option value="desc">Newest First</option>
@@ -166,14 +166,14 @@ export default function TransactionFilters({
 
             {/* Status */}
             <div className="space-y-2">
-              <label htmlFor="status" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="status" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 Status
               </label>
               <select
                 id="status"
                 value={filters.status}
                 onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900"
+                className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5]"
                 aria-label="Filter by transaction status"
               >
                 <option value="">All Statuses</option>
@@ -186,14 +186,14 @@ export default function TransactionFilters({
 
             {/* Direction */}
             <div className="space-y-2">
-              <label htmlFor="direction" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="direction" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 Direction
               </label>
               <select
                 id="direction"
                 value={filters.direction}
                 onChange={(e) => handleChange('direction', e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900"
+                className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5]"
                 aria-label="Filter by transaction direction"
               >
                 <option value="">All Directions</option>
@@ -204,14 +204,14 @@ export default function TransactionFilters({
 
             {/* Category */}
             <div className="space-y-2">
-              <label htmlFor="category" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="category" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 Category
               </label>
               <select
                 id="category"
                 value={filters.category}
                 onChange={(e) => handleChange('category', e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900 capitalize"
+                className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5] capitalize"
                 aria-label="Filter by transaction category"
               >
                 <option value="">All Categories</option>
@@ -225,11 +225,11 @@ export default function TransactionFilters({
 
             {/* Merchant */}
             <div className="sm:col-span-2 space-y-2">
-              <label htmlFor="merchant" className="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+              <label htmlFor="merchant" className="block text-xs font-semibold text-[#B2B4C2] tracking-wider uppercase">
                 Merchant
               </label>
               <div className="relative">
-                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6F7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
@@ -239,7 +239,7 @@ export default function TransactionFilters({
                   onChange={(e) => handleChange('merchant', e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Search merchant..."
-                  className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all text-sm text-slate-900 placeholder-slate-400"
+                  className="w-full pl-11 pr-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl focus:border-[#5D5FEF] focus:ring-2 focus:ring-[#5D5FEF]/20 transition-all text-sm text-[#F0F1F5] placeholder-[#6F7280]"
                   aria-label="Filter by merchant name"
                 />
               </div>
@@ -251,7 +251,7 @@ export default function TransactionFilters({
             <button
               onClick={onSearch}
               disabled={loading}
-              className="px-8 py-3 bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              className="px-8 py-3 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white text-sm font-semibold rounded-xl hover:shadow-xl hover:shadow-[#5D5FEF]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               aria-label="Search transactions with current filters"
             >
               <span className="flex items-center gap-2">
