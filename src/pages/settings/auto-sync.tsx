@@ -1,6 +1,7 @@
 // Auto-Sync Settings Page - Manage Gmail auto-sync configuration
 
 import { useState, useEffect } from 'react';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface Connection {
   id: string;
@@ -136,10 +137,7 @@ export default function AutoSyncSettingsPage() {
 
         {/* Connections List */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-[#cbd5e1]">Loading connections...</p>
-          </div>
+          <LoadingScreen message="Loading connections..." fullScreen={false} size="md" />
         ) : connections.length === 0 ? (
           <div className="text-center py-12 bg-[#1a1625] rounded-[var(--radius-md)] shadow">
             <svg

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { EmailPublic, EmailSearchRequest, PaginatedResponse, EmailStatus, GmailConnectionPublic } from '@/types';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface EmailFilters {
   date_from?: string;
@@ -846,8 +847,8 @@ const EmailsPage: NextPage = () => {
             </div>
             
             {loading ? (
-              <div className="px-6 py-8 text-center">
-                <div className="text-gray-500">Loading emails...</div>
+              <div className="px-6 py-8">
+                <LoadingScreen message="Loading emails..." fullScreen={false} size="md" />
               </div>
             ) : emails.length === 0 ? (
               <div className="px-6 py-8 text-center">
