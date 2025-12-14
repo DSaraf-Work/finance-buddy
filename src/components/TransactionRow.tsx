@@ -324,20 +324,20 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Reference ID</dt>
-                  <dd className="text-sm text-[#f8fafc] font-mono bg-[#0f0a1a]/50 px-2 py-1 rounded mt-1">{transaction.reference_id || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Reference ID</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] font-mono bg-[var(--color-bg-app)]/50 px-2 py-1 rounded mt-1">{transaction.reference_id || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Account Hint</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.account_hint || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Account Hint</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] mt-1">{transaction.account_hint || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Location</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.location || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Location</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] mt-1">{transaction.location || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Account Type</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Account Type</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] mt-1">
                     {transaction.account_type ? (
                       <span className="inline-block px-2 py-1 text-xs bg-[var(--color-info)]/20 text-[var(--color-info)] rounded-full">
                         {transaction.account_type.replace(/_/g, ' ')}
@@ -346,8 +346,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Transaction Type</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Transaction Type</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] mt-1">
                     {transaction.transaction_type ? (
                       <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                         transaction.transaction_type === 'Dr'
