@@ -25,9 +25,9 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
       ),
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600',
+      color: 'from-[var(--color-accent-primary)] to-[var(--color-accent-hover)]',
+      bgColor: 'bg-[var(--color-info)]/20',
+      textColor: 'text-[var(--color-info)]',
     },
     {
       label: 'Total Amount',
@@ -37,9 +37,9 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-600',
+      color: 'from-[var(--color-income)] to-[var(--color-income)]',
+      bgColor: 'bg-[var(--color-income)]/20',
+      textColor: 'text-[var(--color-income)]',
     },
     {
       label: 'Avg Confidence',
@@ -50,8 +50,8 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
         </svg>
       ),
       color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
+      bgColor: 'bg-[var(--color-accent-primary)]/20',
+      textColor: 'text-[var(--color-accent-primary)]',
     },
   ];
 
@@ -91,7 +91,7 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
         {/* Total Transactions - Inline */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-md)] bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-sm)]">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-text-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
           </div>
@@ -111,7 +111,7 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
         {/* Total Amount - Inline */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-md)] bg-[var(--color-income)] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-sm)]">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-text-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>

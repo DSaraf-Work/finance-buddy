@@ -495,17 +495,17 @@ const EmailsPage: NextPage = () => {
 
   const getStatusColor = (status: EmailStatus | string) => {
     switch (status) {
-      case 'Fetched': return 'bg-blue-100 text-blue-800';
-      case 'Processed': return 'bg-green-100 text-green-800';
-      case 'Failed': return 'bg-red-100 text-red-800';
-      case 'Invalid': return 'bg-gray-100 text-gray-800';
-      case 'NON_TRANSACTIONAL': return 'bg-yellow-100 text-yellow-800';
-      case 'REJECT': return 'bg-red-100 text-red-800';
+      case 'Fetched': return 'bg-[var(--color-info)]/20 text-[var(--color-info)]';
+      case 'Processed': return 'bg-[var(--color-income)]/20 text-[var(--color-income)]';
+      case 'Failed': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
+      case 'Invalid': return 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]';
+      case 'NON_TRANSACTIONAL': return 'bg-[var(--color-warning)]/20 text-[var(--color-warning)]';
+      case 'REJECT': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
       // Derived statuses from backend
-      case 'FETCHED': return 'bg-blue-100 text-blue-800';
-      case 'PROCESSED': return 'bg-green-100 text-green-800';
-      case 'REJECTED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'FETCHED': return 'bg-[var(--color-info)]/20 text-[var(--color-info)]';
+      case 'PROCESSED': return 'bg-[var(--color-income)]/20 text-[var(--color-income)]';
+      case 'REJECTED': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
+      default: return 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]';
     }
   };
 
@@ -605,21 +605,21 @@ const EmailsPage: NextPage = () => {
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                       <span className="text-xl sm:text-2xl">📧</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Email Management</h1>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-text-primary)]">Email Management</h1>
                   </div>
-                  <p className="mt-1 text-sm sm:text-base text-[#cbd5e1]">
+                  <p className="mt-1 text-sm sm:text-base text-[var(--color-text-secondary)]">
                     Review and manage Gmail emails from connected accounts
                   </p>
                 </div>
-                <div className="text-sm text-[#94a3b8]">
+                <div className="text-sm text-[var(--color-text-muted)]">
                   {pagination.total} total emails
                 </div>
               </div>
             </div>
           {/* Filters */}
-          <div className="bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-6 mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)] border border-[var(--color-border)] p-6 mb-6">
+            <h2 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
               Filters
@@ -627,7 +627,7 @@ const EmailsPage: NextPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Date From</label>
                 <input
                   type="date"
                   value={filters.date_from || ''}
@@ -637,7 +637,7 @@ const EmailsPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Date To</label>
                 <input
                   type="date"
                   value={filters.date_to || ''}
@@ -647,16 +647,16 @@ const EmailsPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                   Accounts <span className="text-red-500">*</span>
-                  <span className="text-xs text-gray-500 ml-1">
+                  <span className="text-xs text-[var(--color-text-muted)] ml-1">
                     ({filters.email_addresses?.length || 0} selected)
                   </span>
                 </label>
                 {loadingConnections ? (
-                  <div className="input-field bg-gray-50 text-gray-500">Loading connections...</div>
+                  <div className="input-field bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]">Loading connections...</div>
                 ) : connections.length === 0 ? (
-                  <div className="input-field bg-red-50 text-red-600">No Gmail connections found</div>
+                  <div className="input-field bg-[var(--color-expense)]/10 text-[var(--color-expense)]">No Gmail connections found</div>
                 ) : (
                   <div className="relative">
                     <div className="input-field min-h-[2.5rem] max-h-24 overflow-y-auto">
@@ -666,9 +666,9 @@ const EmailsPage: NextPage = () => {
                             type="checkbox"
                             checked={filters.email_addresses?.includes(connection.email_address) || false}
                             onChange={(e) => handleEmailAddressChange(connection.email_address, e.target.checked)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-[var(--color-border)] text-[var(--color-accent-primary)] focus:ring-[var(--color-accent-primary)]"
                           />
-                          <span className="text-sm text-gray-700">{connection.email_address}</span>
+                          <span className="text-sm text-[var(--color-text-secondary)]">{connection.email_address}</span>
                         </label>
                       ))}
                     </div>
@@ -680,7 +680,7 @@ const EmailsPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Status</label>
                 <select
                   value={filters.status || ''}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
@@ -700,7 +700,7 @@ const EmailsPage: NextPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sender</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Sender</label>
                 <input
                   type="text"
                   value={filters.sender || ''}
@@ -711,7 +711,7 @@ const EmailsPage: NextPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Search Query</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Search Query</label>
                 <input
                   type="text"
                   value={filters.q || ''}
@@ -725,7 +725,7 @@ const EmailsPage: NextPage = () => {
             {/* Pagination Controls and Database Toggle */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Page Number</label>
                 <input
                   type="number"
                   min="1"
@@ -742,7 +742,7 @@ const EmailsPage: NextPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Page Size</label>
                 <input
                   type="number"
                   min="1"
@@ -755,18 +755,18 @@ const EmailsPage: NextPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Data Source</label>
                 <div className="flex items-center space-x-3 mt-2">
                   <label className="flex items-center">
                     <input
                       type="checkbox"
                       checked={filters.db_only || false}
                       onChange={(e) => handleBooleanFilterChange('db_only', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-[var(--color-accent-primary)] focus:ring-[var(--color-accent-primary)] border-[var(--color-border)] rounded"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Database Only</span>
+                    <span className="ml-2 text-sm text-[var(--color-text-secondary)]">Database Only</span>
                   </label>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-[var(--color-text-muted)]">
                     {filters.db_only ? 'Searching local database only' : 'Will fetch from Gmail if needed'}
                   </span>
                 </div>
@@ -813,8 +813,8 @@ const EmailsPage: NextPage = () => {
                 disabled={batchProcessing || loading}
                 className={`px-4 py-2 rounded font-medium transition-colors ${
                   batchProcessing || loading
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
+                    ? 'bg-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed'
+                    : 'bg-[var(--color-income)] text-[var(--color-text-primary)] hover:bg-[var(--color-income)]'
                 }`}
               >
                 {batchProcessing && batchProgress.total > 0
@@ -828,8 +828,8 @@ const EmailsPage: NextPage = () => {
                 disabled={batchProcessing || loading}
                 className={`px-4 py-2 rounded font-medium transition-colors ${
                   batchProcessing || loading
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
+                    ? 'bg-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed'
+                    : 'bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] hover:bg-[var(--color-accent-hover)]'
                 }`}
               >
                 {batchProcessing && batchProgress.total > 0 && batchProgress.current <= emails.length
@@ -841,9 +841,9 @@ const EmailsPage: NextPage = () => {
           </div>
 
           {/* Email Grid */}
-          <div className="bg-white rounded-[var(--radius-md)] shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900">Emails</h2>
+          <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-md)] shadow-[var(--shadow-md)] overflow-hidden">
+            <div className="px-6 py-4 border-b border-[var(--color-border)]">
+              <h2 className="text-lg font-medium text-[var(--color-text-primary)]">Emails</h2>
             </div>
             
             {loading ? (
@@ -852,49 +852,49 @@ const EmailsPage: NextPage = () => {
               </div>
             ) : emails.length === 0 ? (
               <div className="px-6 py-8 text-center">
-                <div className="text-gray-500">No emails found. Try adjusting your filters.</div>
+                <div className="text-[var(--color-text-muted)]">No emails found. Try adjusting your filters.</div>
               </div>
             ) : (
               <>
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[var(--color-bg-elevated)]">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                           Date
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                           From
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                           Subject
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                           Account
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
                           Remarks
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider sticky right-0 bg-[var(--color-bg-elevated)]">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-[var(--color-bg-card)] divide-y divide-[var(--color-border)]">
                       {emails.map((email) => (
-                        <tr key={email.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <tr key={email.id} className="hover:bg-[var(--color-bg-elevated)]">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-primary)]">
                             {formatDateTime(email.internal_date)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-primary)]">
                             <div className="truncate max-w-xs" title={email.from_address || 'N/A'}>
                               {email.from_address || 'N/A'}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm text-[var(--color-text-primary)]">
                             <div className="truncate max-w-md" title={email.subject || 'No Subject'}>
                               {email.subject || 'No Subject'}
                             </div>
@@ -926,21 +926,21 @@ const EmailsPage: NextPage = () => {
                               </span>
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--color-text-primary)]">
                             <div className="truncate max-w-xs" title={email.email_address}>
                               {email.email_address}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm text-[var(--color-text-primary)]">
                             <div className="truncate max-w-xs" title={email.remarks || 'No remarks'}>
                               {email.remarks || '-'}
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-white">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-[var(--color-bg-card)]">
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={() => openEmailDrawer(email)}
-                                className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                                className="text-[var(--color-accent-primary)] hover:text-[var(--color-accent-hover)] transition-colors duration-200"
                                 title="View Details"
                               >
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -955,7 +955,7 @@ const EmailsPage: NextPage = () => {
                                   disabled={processingEmails.has(email.id)}
                                   className={`${
                                     processingEmails.has(email.id)
-                                      ? 'text-blue-500 cursor-not-allowed'
+                                      ? 'text-[var(--color-accent-primary)] cursor-not-allowed'
                                       : 'text-green-600 hover:text-green-900'
                                   } transition-colors duration-200`}
                                   title={processingEmails.has(email.id) ? "Processing..." : "Process Email with AI"}
@@ -987,7 +987,7 @@ const EmailsPage: NextPage = () => {
                               {(email.status === 'REJECT') && (
                                 <button
                                   onClick={() => openStatusModal(email)}
-                                  className="text-blue-600 hover:text-blue-900"
+                                  className="text-[var(--color-accent-primary)] hover:text-[var(--color-accent-hover)]"
                                   title="Unreject Email"
                                 >
                                   🔄
@@ -1002,8 +1002,8 @@ const EmailsPage: NextPage = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
+                <div className="px-6 py-4 border-t border-[var(--color-border)] flex items-center justify-between">
+                  <div className="text-sm text-[var(--color-text-secondary)]">
                     Showing {((pagination.page - 1) * pagination.pageSize) + 1} to{' '}
                     {Math.min(pagination.page * pagination.pageSize, pagination.total)} of{' '}
                     {pagination.total} results
@@ -1013,7 +1013,7 @@ const EmailsPage: NextPage = () => {
                     <button
                       onClick={() => handlePageChange(pagination.page - 1)}
                       disabled={!pagination.hasPrev}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
+                      className="px-3 py-1 border border-[var(--color-border)] rounded text-sm disabled:opacity-50 bg-[var(--color-bg-card)] text-[var(--color-text-primary)]"
                     >
                       Previous
                     </button>
@@ -1025,7 +1025,7 @@ const EmailsPage: NextPage = () => {
                     <button
                       onClick={() => handlePageChange(pagination.page + 1)}
                       disabled={!pagination.hasNext}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
+                      className="px-3 py-1 border border-[var(--color-border)] rounded text-sm disabled:opacity-50 bg-[var(--color-bg-card)] text-[var(--color-text-primary)]"
                     >
                       Next
                     </button>
@@ -1039,14 +1039,14 @@ const EmailsPage: NextPage = () => {
         {/* Email Detail Drawer */}
         {showDrawer && selectedEmail && (
           <div className="fixed inset-0 z-50 overflow-hidden">
-            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={closeEmailDrawer}></div>
-            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-[var(--shadow-xl)]">
+            <div className="absolute inset-0 bg-[var(--color-bg-app)]/50" onClick={closeEmailDrawer}></div>
+            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-[var(--color-bg-card)] shadow-[var(--shadow-xl)]">
               <div className="flex flex-col h-full">
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                  <h2 className="text-lg font-medium text-gray-900">Email Details</h2>
+                <div className="px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
+                  <h2 className="text-lg font-medium text-[var(--color-text-primary)]">Email Details</h2>
                   <button
                     onClick={closeEmailDrawer}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
                   >
                     <span className="sr-only">Close</span>
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1058,22 +1058,22 @@ const EmailsPage: NextPage = () => {
                 <div className="flex-1 overflow-y-auto p-6">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Basic Information</h3>
+                      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Basic Information</h3>
                       <dl className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Message ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedEmail.message_id}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Message ID</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)] font-mono">{selectedEmail.message_id}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Thread ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedEmail.thread_id}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Thread ID</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)] font-mono">{selectedEmail.thread_id}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Internal Date</dt>
-                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.internal_date)}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Internal Date</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)]">{formatDateTime(selectedEmail.internal_date)}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Status</dt>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Status</dt>
                           <dd>
                             <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedEmail.status)}`}>
                               {(selectedEmail.status === 'Processed' || (selectedEmail.status as string) === 'PROCESSED') && (
@@ -1089,56 +1089,56 @@ const EmailsPage: NextPage = () => {
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Email Headers</h3>
+                      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Email Headers</h3>
                       <dl className="space-y-3">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">From</dt>
-                          <dd className="text-sm text-gray-900">{selectedEmail.from_address || 'N/A'}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">From</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)]">{selectedEmail.from_address || 'N/A'}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">To</dt>
-                          <dd className="text-sm text-gray-900">
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">To</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)]">
                             {selectedEmail.to_addresses?.join(', ') || 'N/A'}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Subject</dt>
-                          <dd className="text-sm text-gray-900">{selectedEmail.subject || 'No Subject'}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Subject</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)]">{selectedEmail.subject || 'No Subject'}</dd>
                         </div>
                       </dl>
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Snippet</h3>
-                      <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
+                      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Snippet</h3>
+                      <div className="bg-[var(--color-bg-elevated)] rounded p-3 text-sm text-[var(--color-text-secondary)]">
                         {selectedEmail.snippet || 'No snippet available'}
                       </div>
                     </div>
                     
                     {selectedEmail.error_reason && (
                       <div>
-                        <h3 className="text-sm font-medium text-gray-900 mb-2">Error Reason</h3>
-                        <div className="bg-red-50 border border-red-200 rounded p-3 text-sm text-red-700">
+                        <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Error Reason</h3>
+                        <div className="bg-[var(--color-expense)]/10 border border-[var(--color-expense)]/30 rounded p-3 text-sm text-[var(--color-expense)]">
                           {selectedEmail.error_reason}
                         </div>
                       </div>
                     )}
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Timestamps</h3>
+                      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Timestamps</h3>
                       <dl className="space-y-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.created_at)}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Created At</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)]">{formatDateTime(selectedEmail.created_at)}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.updated_at)}</dd>
+                          <dt className="text-sm font-medium text-[var(--color-text-muted)]">Updated At</dt>
+                          <dd className="text-sm text-[var(--color-text-primary)]">{formatDateTime(selectedEmail.updated_at)}</dd>
                         </div>
                         {selectedEmail.processed_at && (
                           <div>
-                            <dt className="text-sm font-medium text-gray-500">Processed At</dt>
-                            <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.processed_at)}</dd>
+                            <dt className="text-sm font-medium text-[var(--color-text-muted)]">Processed At</dt>
+                            <dd className="text-sm text-[var(--color-text-primary)]">{formatDateTime(selectedEmail.processed_at)}</dd>
                           </div>
                         )}
                       </dl>
@@ -1146,7 +1146,7 @@ const EmailsPage: NextPage = () => {
                   </div>
                 </div>
                 
-                <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
+                <div className="px-6 py-4 border-t border-[var(--color-border)] flex gap-3">
                   {selectedEmail && (selectedEmail.status === 'Fetched' || (selectedEmail.status as string) === 'FETCHED') && (
                     <button
                       onClick={() => {
@@ -1185,7 +1185,7 @@ const EmailsPage: NextPage = () => {
                         handleRejectEmail(selectedEmail);
                         closeEmailDrawer();
                       }}
-                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                      className="px-4 py-2 bg-[var(--color-expense)] text-[var(--color-text-primary)] rounded hover:bg-[var(--color-expense)]"
                     >
                       Reject Email
                     </button>
@@ -1200,50 +1200,50 @@ const EmailsPage: NextPage = () => {
         {showStatusModal && statusModalEmail && (
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex items-center justify-center min-h-screen px-4">
-              <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeStatusModal}></div>
-              <div className="relative bg-white rounded-[var(--radius-md)] shadow-[var(--shadow-xl)] max-w-md w-full">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">
+              <div className="fixed inset-0 bg-[var(--color-bg-app)]/50" onClick={closeStatusModal}></div>
+              <div className="relative bg-[var(--color-bg-card)] rounded-[var(--radius-md)] shadow-[var(--shadow-xl)] max-w-md w-full">
+                <div className="px-6 py-4 border-b border-[var(--color-border)]">
+                  <h3 className="text-lg font-medium text-[var(--color-text-primary)]">
                     {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}
                   </h3>
                 </div>
 
                 <div className="px-6 py-4 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                       Email Subject
                     </label>
-                    <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                    <p className="text-sm text-[var(--color-text-secondary)] bg-[var(--color-bg-elevated)] p-2 rounded">
                       {statusModalEmail.subject || 'No Subject'}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                       Action
                     </label>
                     <select
                       value={newStatus}
                       onChange={(e) => setNewStatus(e.target.value as 'REJECT' | 'UNREJECT')}
-                      className="w-full border border-gray-300 rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-[var(--color-border)] rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)] bg-[var(--color-bg-app)] text-[var(--color-text-primary)]"
                     >
                       <option value="REJECT">Reject Email</option>
                       <option value="UNREJECT">Unreject Email</option>
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-[var(--color-text-muted)] mt-1">
                       Note: Status is now automatically derived. Use the Process button (⚙️) to process emails with AI.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                       {newStatus === 'UNREJECT' ? 'Unreject Reason' : 'Rejection Reason'}
                     </label>
                     <textarea
                       value={statusRemarks}
                       onChange={(e) => setStatusRemarks(e.target.value)}
                       rows={3}
-                      className="w-full border border-gray-300 rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-[var(--color-border)] rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)] bg-[var(--color-bg-app)] text-[var(--color-text-primary)]"
                       placeholder={newStatus === 'UNREJECT' ? 'Enter reason for unrejecting this email...' : 'Enter reason for rejecting this email...'}
                     />
                   </div>
@@ -1252,16 +1252,16 @@ const EmailsPage: NextPage = () => {
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
                   <button
                     onClick={closeStatusModal}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-[var(--radius-md)]"
+                    className="px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-elevated)] hover:bg-[var(--color-border)] rounded-[var(--radius-md)]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleStatusUpdate}
-                    className={`px-4 py-2 text-sm font-medium text-white rounded-[var(--radius-md)] ${
+                    className={`px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] rounded-[var(--radius-md)] ${
                       newStatus === 'UNREJECT'
-                        ? 'bg-green-600 hover:bg-green-700'
-                        : 'bg-red-600 hover:bg-red-700'
+                        ? 'bg-[var(--color-income)] hover:bg-[var(--color-income)]'
+                        : 'bg-[var(--color-expense)] hover:bg-[var(--color-expense)]'
                     }`}
                   >
                     {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}

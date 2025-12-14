@@ -251,11 +251,11 @@ export default function TransactionEditPage() {
       <ProtectedRoute>
         <Layout title="Error" description="Failed to load transaction">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-6 text-center">
-              <p className="text-red-800 font-medium">Error: {error || 'Transaction not found'}</p>
+            <div className="bg-[var(--color-expense)]/10 border border-[var(--color-expense)]/30 rounded-[var(--radius-md)] p-6 text-center">
+              <p className="text-[var(--color-expense)] font-medium">Error: {error || 'Transaction not found'}</p>
               <button
                 onClick={() => router.push('/transactions')}
-                className="mt-4 px-4 py-2 bg-red-600 text-white rounded-[var(--radius-md)] hover:bg-red-700"
+                className="mt-4 px-4 py-2 bg-[var(--color-expense)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-expense)]"
               >
                 Back to Transactions
               </button>
@@ -275,7 +275,7 @@ export default function TransactionEditPage() {
         {/* Toast Notifications */}
         {showSuccessToast && (
           <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
-            <div className="bg-[var(--color-income)] text-white px-6 py-3 rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] flex items-center gap-3">
+            <div className="bg-[var(--color-income)] text-[var(--color-text-primary)] px-6 py-3 rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] flex items-center gap-3">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
@@ -286,7 +286,7 @@ export default function TransactionEditPage() {
 
         {showErrorToast && (
           <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
-            <div className="bg-[var(--color-expense)] text-white px-6 py-3 rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] flex items-center gap-3">
+            <div className="bg-[var(--color-expense)] text-[var(--color-text-primary)] px-6 py-3 rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] flex items-center gap-3">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -297,13 +297,13 @@ export default function TransactionEditPage() {
 
         <div className="min-h-screen bg-[var(--color-bg-app)]">
           {/* Modern Header with Purple Gradient */}
-          <div className="bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white px-4 sm:px-6 lg:px-8 py-6 sm:py-8 shadow-[var(--shadow-lg)]">
+          <div className="bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 shadow-[var(--shadow-lg)]">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => router.push('/transactions')}
-                    className="p-2 hover:bg-white/20 rounded-[var(--radius-md)] transition-colors flex-shrink-0"
+                    className="p-2 hover:bg-[var(--color-bg-app)]/20 rounded-[var(--radius-md)] transition-colors flex-shrink-0"
                     aria-label="Back to transactions"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,7 +314,7 @@ export default function TransactionEditPage() {
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">
                       Edit Transaction
                     </h1>
-                    <p className="mt-1 text-white/80 text-xs sm:text-sm truncate">
+                    <p className="mt-1 text-[var(--color-text-primary)]/80 text-xs sm:text-sm truncate">
                       {hasUnsavedChanges && '● Unsaved changes'}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ export default function TransactionEditPage() {
                   <button
                     onClick={handleReExtract}
                     disabled={reExtracting}
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-[var(--radius-md)] transition-colors text-sm font-medium disabled:opacity-50"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[var(--color-bg-app)]/20 hover:bg-[var(--color-bg-app)]/30 rounded-[var(--radius-md)] transition-colors text-sm font-medium disabled:opacity-50"
                     title="Re-extract with AI"
                   >
                     {reExtracting ? (
@@ -612,15 +612,15 @@ export default function TransactionEditPage() {
             </div>
 
             {/* Confidence & Status Card */}
-            <div className="bg-white rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
+              <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6">
                 Confidence & Status
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Confidence */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                     Confidence Score
                   </label>
                   <div className="flex items-center space-x-4">
@@ -633,7 +633,7 @@ export default function TransactionEditPage() {
                       onChange={(e) => handleChange('confidence', parseFloat(e.target.value))}
                       className="flex-1"
                     />
-                    <span className="text-sm font-medium text-gray-700 w-16 text-right">
+                    <span className="text-sm font-medium text-[var(--color-text-secondary)] w-16 text-right">
                       {((formData.confidence || 0) * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -641,7 +641,7 @@ export default function TransactionEditPage() {
 
                 {/* Status */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                     Status
                   </label>
                   <select
@@ -657,14 +657,14 @@ export default function TransactionEditPage() {
 
                 {/* Extraction Version */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                     Extraction Version
                   </label>
                   <input
                     type="text"
                     value={formData.extraction_version || ''}
                     onChange={(e) => handleChange('extraction_version', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-[var(--radius-md)] focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+                    className="w-full px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-transparent bg-[var(--color-bg-app)] text-[var(--color-text-primary)]"
                     placeholder="AI extraction version"
                   />
                 </div>
@@ -672,29 +672,29 @@ export default function TransactionEditPage() {
             </div>
 
             {/* Notes Card */}
-            <div className="bg-white rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
+              <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6">
                 Notes
               </h2>
 
               <div className="space-y-6">
                 {/* AI Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                     AI Notes
                   </label>
                   <textarea
                     value={formData.ai_notes || ''}
                     onChange={(e) => handleChange('ai_notes', e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-[var(--radius-md)] focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+                    className="w-full px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-transparent bg-[var(--color-bg-app)] text-[var(--color-text-primary)]"
                     placeholder="AI-generated notes and observations"
                   />
                 </div>
 
                 {/* User Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
                     User Notes
                   </label>
                   <textarea
@@ -710,8 +710,8 @@ export default function TransactionEditPage() {
 
             {/* Email Body Card */}
             {email.email_fetched && (
-              <div className="bg-white rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
+              <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
+                <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6">
                   Related Email Body
                 </h2>
 
@@ -719,24 +719,24 @@ export default function TransactionEditPage() {
                   {/* Email Metadata */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-gray-200">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">From</p>
-                      <p className="text-sm text-gray-900">{email.email_fetched.from_address || 'N/A'}</p>
+                      <p className="text-sm font-medium text-[var(--color-text-muted)]">From</p>
+                      <p className="text-sm text-[var(--color-text-primary)]">{email.email_fetched.from_address || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Subject</p>
-                      <p className="text-sm text-gray-900">{email.email_fetched.subject || 'N/A'}</p>
+                      <p className="text-sm font-medium text-[var(--color-text-muted)]">Subject</p>
+                      <p className="text-sm text-[var(--color-text-primary)]">{email.email_fetched.subject || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Date</p>
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm font-medium text-[var(--color-text-muted)]">Date</p>
+                      <p className="text-sm text-[var(--color-text-primary)]">
                         {email.email_fetched.internal_date
                           ? new Date(email.email_fetched.internal_date).toLocaleString()
                           : 'N/A'}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Message ID</p>
-                      <p className="text-sm text-gray-900 font-mono truncate">
+                      <p className="text-sm font-medium text-[var(--color-text-muted)]">Message ID</p>
+                      <p className="text-sm text-[var(--color-text-primary)] font-mono truncate">
                         {email.email_fetched.message_id}
                       </p>
                     </div>
@@ -744,9 +744,9 @@ export default function TransactionEditPage() {
 
                   {/* Email Body */}
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-2">Email Content</p>
-                    <div className="bg-gray-50 rounded-[var(--radius-md)] p-4 max-h-96 overflow-y-auto">
-                      <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
+                    <p className="text-sm font-medium text-[var(--color-text-secondary)] mb-2">Email Content</p>
+                    <div className="bg-[var(--color-bg-elevated)] rounded-[var(--radius-md)] p-4 max-h-96 overflow-y-auto">
+                      <pre className="text-sm text-[var(--color-text-primary)] whitespace-pre-wrap font-mono">
                         {email.email_fetched.plain_body || 'No email body available'}
                       </pre>
                     </div>
@@ -765,7 +765,7 @@ export default function TransactionEditPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving || reExtracting}
-                  className="w-full min-h-[56px] px-6 py-4 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white rounded-[var(--radius-lg)] hover:shadow-[var(--shadow-xl)] hover:shadow-[#5D5FEF]/40 active:scale-[0.98] font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
+                  className="w-full min-h-[56px] px-6 py-4 bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] rounded-[var(--radius-lg)] hover:shadow-[var(--shadow-xl)] hover:shadow-[var(--color-accent-primary)]/40 active:scale-[0.98] font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
                 >
                   {saving ? (
                     <>

@@ -89,23 +89,23 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="relative bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] shadow-[var(--shadow-xl)] border border-[var(--color-border)] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 bg-[#0f0a1a]/95 backdrop-blur-sm border-b border-[#2d1b4e] px-6 py-4 rounded-t-xl z-10">
+          <div className="sticky top-0 bg-[var(--color-bg-app)]/95 backdrop-blur-sm border-b border-[var(--color-border)] px-6 py-4 rounded-t-xl z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-md)] flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] flex items-center justify-center shadow-[var(--shadow-md)]">
+                  <svg className="w-5 h-5 text-[var(--color-text-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </div>
-                <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-[#f8fafc]">
+                <h2 id="modal-title" className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)]">
                   Edit Transaction
                 </h2>
               </div>
               <button
                 onClick={onClose}
-                className="text-[#94a3b8] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 p-2 rounded-[var(--radius-md)] transition-all duration-200"
+                className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]/30 p-2 rounded-[var(--radius-md)] transition-all duration-200"
                 aria-label="Close modal"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -124,8 +124,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
           <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6 sm:space-y-8">
             {/* Primary Section */}
             <section>
-              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Primary Details
@@ -133,7 +133,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Amount */}
                 <div>
-                  <label htmlFor="amount" className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
+                  <label htmlFor="amount" className="block text-xs sm:text-sm font-medium text-[var(--color-text-secondary)] mb-2 uppercase tracking-wide">
                     Amount *
                   </label>
                   <input
@@ -143,7 +143,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     min="0"
                     value={formData.amount}
                     onChange={e => handleChange('amount', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     required
                   />
                 </div>
@@ -158,7 +158,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.currency || ''}
                     onChange={e => handleChange('currency', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     placeholder="INR"
                   />
                 </div>
@@ -174,8 +174,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       onClick={() => handleChange('direction', 'debit')}
                       className={`flex-1 px-4 py-2.5 rounded-[var(--radius-md)] font-medium transition-all duration-200 ${
                         formData.direction === 'debit'
-                          ? 'bg-[#ef4444] text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] border border-[#ef4444]'
-                          : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-[#2d1b4e]/50 border border-[#2d1b4e] hover:border-[#ef4444]/50'
+                          ? 'bg-[var(--color-expense)] text-[var(--color-text-primary)] shadow-[var(--shadow-md)] border border-[var(--color-expense)]'
+                          : 'bg-[var(--color-border)]/30 text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]/50 border border-[var(--color-border)] hover:border-[var(--color-expense)]/50'
                       }`}
                     >
                       Debit
@@ -185,8 +185,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       onClick={() => handleChange('direction', 'credit')}
                       className={`flex-1 px-4 py-2.5 rounded-[var(--radius-md)] font-medium transition-all duration-200 ${
                         formData.direction === 'credit'
-                          ? 'bg-[#10b981] text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-[#10b981]'
-                          : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-[#2d1b4e]/50 border border-[#2d1b4e] hover:border-[#10b981]/50'
+                          ? 'bg-[var(--color-income)] text-[var(--color-text-primary)] shadow-[var(--shadow-md)] border border-[var(--color-income)]'
+                          : 'bg-[var(--color-border)]/30 text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]/50 border border-[var(--color-border)] hover:border-[var(--color-income)]/50'
                       }`}
                     >
                       Credit
@@ -204,7 +204,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="datetime-local"
                     value={formData.txn_time ? formData.txn_time.slice(0, 16) : ''}
                     onChange={e => handleChange('txn_time', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     required
                   />
                 </div>
@@ -219,7 +219,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.merchant_name || ''}
                     onChange={e => handleChange('merchant_name', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     maxLength={200}
                   />
                 </div>
@@ -234,7 +234,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.merchant_normalized || ''}
                     onChange={e => handleChange('merchant_normalized', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     maxLength={200}
                   />
                 </div>
@@ -249,7 +249,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.category || ''}
                     onChange={e => handleChange('category', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     placeholder="e.g., Food, Transport, Shopping"
                     maxLength={200}
                   />
@@ -259,8 +259,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Account Section */}
             <section>
-              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
                 Account Details
@@ -275,7 +275,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.account_hint || ''}
                     onChange={e => handleChange('account_hint', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     placeholder="e.g., HDFC ****1234"
                   />
                 </div>
@@ -288,7 +288,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.account_type || ''}
                     onChange={e => handleChange('account_type', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                     placeholder="e.g., Savings, Credit Card"
                   />
                 </div>
@@ -297,8 +297,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Source Section */}
             <section>
-              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
                 Source Details
@@ -313,7 +313,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.reference_id || ''}
                     onChange={e => handleChange('reference_id', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                   />
                 </div>
                 <div>
@@ -325,7 +325,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.location || ''}
                     onChange={e => handleChange('location', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:border-[var(--color-accent-primary)] transition-all duration-200"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -362,8 +362,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Meta Section */}
             <section>
-              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Meta Information
@@ -430,8 +430,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Read-only System Fields */}
             <section>
-              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
                 System Information (Read-only)
@@ -514,8 +514,8 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
             {/* Email Body Section */}
             <section>
-              <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Original Email Body
@@ -524,9 +524,9 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
               {loadingEmail ? (
                 <LoadingScreen message="Loading email body..." fullScreen={false} size="sm" />
               ) : emailBody ? (
-                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] p-4 max-h-96 overflow-y-auto">
+                <div className="bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-4 max-h-96 overflow-y-auto">
                   <div
-                    className="prose prose-sm max-w-none text-[#cbd5e1] whitespace-pre-wrap [&_a]:text-[#6b4ce6] [&_a:hover]:text-[#8b5cf6]"
+                    className="prose prose-sm max-w-none text-[var(--color-text-secondary)] whitespace-pre-wrap [&_a]:text-[var(--color-accent-primary)] [&_a:hover]:text-[var(--color-accent-hover)]"
                     dangerouslySetInnerHTML={{ __html: emailBody }}
                   />
                 </div>
@@ -541,18 +541,18 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
             </section>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-[#2d1b4e]">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-[var(--color-border)]">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 border border-[#2d1b4e] text-[#cbd5e1] font-medium rounded-[var(--radius-md)] hover:bg-[#2d1b4e]/30 hover:border-[#6b4ce6]/50 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
+                className="px-6 py-2.5 border border-[var(--color-border)] text-[var(--color-text-secondary)] font-medium rounded-[var(--radius-md)] hover:bg-[var(--color-border)]/30 hover:border-[var(--color-accent-primary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-card)] transition-all duration-200"
                 disabled={isSaving}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                className="px-6 py-2.5 bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] font-medium rounded-[var(--radius-md)] hover:bg-[var(--color-accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-card)] transition-all duration-200 shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-lg)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                 disabled={isSaving}
               >
                 {isSaving ? (

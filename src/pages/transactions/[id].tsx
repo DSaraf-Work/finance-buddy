@@ -163,7 +163,7 @@ export default function TransactionDetailPage() {
           <p className="mt-2 text-red-600">{error || 'Transaction not found'}</p>
           <button
             onClick={() => router.push('/transactions')}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-[var(--radius-md)] hover:bg-red-700"
+            className="mt-4 px-4 py-2 bg-[var(--color-expense)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-expense)]"
           >
             Back to Transactions
           </button>
@@ -178,9 +178,9 @@ export default function TransactionDetailPage() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm text-[#cbd5e1]">
-          <a href="/" className="hover:text-blue-600">Home</a>
+          <a href="/" className="hover:text-[var(--color-accent-primary)]">Home</a>
           {' > '}
-          <a href="/transactions" className="hover:text-blue-600">Transactions</a>
+          <a href="/transactions" className="hover:text-[var(--color-accent-primary)]">Transactions</a>
           {' > '}
           <span className="text-[#f8fafc]">{transaction.id.substring(0, 8)}...</span>
         </nav>
@@ -203,13 +203,13 @@ export default function TransactionDetailPage() {
               <>
                 <button
                   onClick={() => setEditing(true)}
-                  className="px-4 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] font-medium"
+                  className="px-4 py-2 bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-accent-hover)] font-medium"
                 >
                   Edit
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-[var(--radius-md)] hover:bg-red-700 font-medium"
+                  className="px-4 py-2 bg-[var(--color-expense)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-expense)] font-medium"
                 >
                   Delete
                 </button>
@@ -219,7 +219,7 @@ export default function TransactionDetailPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-4 py-2 bg-green-600 text-white rounded-[var(--radius-md)] hover:bg-green-700 font-medium disabled:opacity-50"
+                  className="px-4 py-2 bg-[var(--color-income)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-income)] font-medium disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -228,7 +228,7 @@ export default function TransactionDetailPage() {
                     setEditing(false);
                     setEditedData(transaction);
                   }}
-                  className="px-4 py-2 bg-gray-300 text-[#cbd5e1] rounded-[var(--radius-md)] hover:bg-gray-400 font-medium"
+                  className="px-4 py-2 bg-[var(--color-border)] text-[var(--color-text-secondary)] rounded-[var(--radius-md)] hover:bg-[var(--color-text-muted)] font-medium"
                 >
                   Cancel
                 </button>
@@ -321,7 +321,7 @@ export default function TransactionDetailPage() {
               </h3>
               <div className="flex items-center">
                 <div className="flex-1">
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-[var(--color-border)] rounded-full h-3">
                     <div
                       className={`h-3 rounded-full bg-${getConfidenceColor(transaction.confidence)}-500`}
                       style={{ width: `${(transaction.confidence || 0) * 100}%` }}

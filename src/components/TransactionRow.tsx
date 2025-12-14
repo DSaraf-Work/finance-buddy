@@ -37,11 +37,11 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
   const getStatusColor = (status: TransactionStatus) => {
     switch (status) {
-      case 'REVIEW': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'APPROVED': return 'bg-[#10b981]/10 text-[#10b981] border-green-200';
-      case 'INVALID': return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
-      case 'REJECTED': return 'bg-[#ef4444]/10 text-[#ef4444] border-red-200';
-      default: return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
+      case 'REVIEW': return 'bg-[var(--color-warning)]/20 text-[var(--color-warning)] border-[var(--color-warning)]/30';
+      case 'APPROVED': return 'bg-[var(--color-income)]/10 text-[var(--color-income)] border-[var(--color-income)]/30';
+      case 'INVALID': return 'bg-[var(--color-border)]/30 text-[var(--color-text-primary)] border-[var(--color-border)]';
+      case 'REJECTED': return 'bg-[var(--color-expense)]/10 text-[var(--color-expense)] border-[var(--color-expense)]/30';
+      default: return 'bg-[var(--color-border)]/30 text-[var(--color-text-primary)] border-[var(--color-border)]';
     }
   };
 
@@ -75,19 +75,19 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
   const getDirectionColor = (direction?: string | null) => {
     switch (direction) {
-      case 'debit': return 'bg-[#ef4444]/10 text-[#ef4444] border-red-200';
-      case 'credit': return 'bg-[#10b981]/10 text-[#10b981] border-green-200';
-      case 'transfer': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
+      case 'debit': return 'bg-[var(--color-expense)]/10 text-[var(--color-expense)] border-[var(--color-expense)]/30';
+      case 'credit': return 'bg-[var(--color-income)]/10 text-[var(--color-income)] border-[var(--color-income)]/30';
+      case 'transfer': return 'bg-[var(--color-info)]/20 text-[var(--color-info)] border-[var(--color-info)]/30';
+      default: return 'bg-[var(--color-border)]/30 text-[var(--color-text-primary)] border-[var(--color-border)]';
     }
   };
 
   const getConfidenceColor = (confidence?: string | null) => {
-    if (!confidence) return 'bg-[#2d1b4e]/30 text-gray-800';
+    if (!confidence) return 'bg-[var(--color-border)]/30 text-[var(--color-text-primary)]';
     const conf = parseFloat(confidence);
-    if (conf >= 0.8) return 'bg-[#10b981]/10 text-[#10b981]';
-    if (conf >= 0.6) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-[#ef4444]/10 text-[#ef4444]';
+    if (conf >= 0.8) return 'bg-[var(--color-income)]/10 text-[var(--color-income)]';
+    if (conf >= 0.6) return 'bg-[var(--color-warning)]/20 text-[var(--color-warning)]';
+    return 'bg-[var(--color-expense)]/10 text-[var(--color-expense)]';
   };
 
   const getCategoryIcon = (category?: string | null) => {
@@ -112,19 +112,19 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
   };
 
   return (
-    <div className={`transition-all duration-300 ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-[var(--shadow-md)]' : 'bg-[#1a1625] hover:bg-gray-50'}`}>
+    <div className={`transition-all duration-300 ${isExpanded ? 'bg-[var(--color-info)]/10 shadow-[var(--shadow-md)]' : 'bg-[var(--color-bg-card)] hover:bg-[var(--color-bg-elevated)]'}`}>
       {/* Main Row */}
       <div className="px-8 py-6 flex items-center justify-between">
         <div className="flex items-center space-x-6 flex-1">
           {/* Category Icon */}
-          <div className="text-3xl p-2 bg-[#2d1b4e]/30 rounded-[var(--radius-lg)] hover:bg-gray-200 transition-colors">
+          <div className="text-3xl p-2 bg-[var(--color-border)]/30 rounded-[var(--radius-lg)] hover:bg-[var(--color-bg-elevated)] transition-colors">
             {getCategoryIcon(transaction.category)}
           </div>
 
           {/* Transaction Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-4 mb-2">
-              <h3 className="text-lg font-semibold text-[#f8fafc] truncate">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] truncate">
                 {transaction.merchant_name || 'Unknown Merchant'}
               </h3>
               <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${getDirectionColor(transaction.direction)}`}>
@@ -134,16 +134,16 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 {getStatusLabel(transaction.status)}
               </span>
             </div>
-            <div className="flex items-center space-x-6 text-sm text-[#cbd5e1]">
+            <div className="flex items-center space-x-6 text-sm text-[var(--color-text-secondary)]">
               <div className="flex items-center space-x-1">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span>{formatDate(transaction.txn_time)}</span>
               </div>
               {transaction.category && (
                 <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                   </svg>
                   <span className="capitalize font-medium">{transaction.category}</span>
@@ -156,7 +156,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   </svg>
                   <div className="flex space-x-1">
                     {transaction.ai_notes.split(',').slice(0, 3).map((note, index) => (
-                      <span key={index} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                      <span key={index} className="text-xs bg-[var(--color-accent-primary)]/20 text-[var(--color-accent-primary)] px-2 py-1 rounded-full">
                         {note.trim()}
                       </span>
                     ))}
@@ -168,7 +168,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
           {/* Amount */}
           <div className="text-right">
-            <div className="text-2xl font-bold text-[#f8fafc] mb-1">
+            <div className="text-2xl font-bold text-[var(--color-text-primary)] mb-1">
               {formatAmount(transaction.amount, transaction.currency)}
             </div>
             <div className="flex items-center justify-end space-x-2">
@@ -183,7 +183,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
         <div className="flex items-center space-x-2 ml-6">
           <button
             onClick={onEdit}
-            className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105"
+            className="p-3 text-[var(--color-text-muted)] hover:text-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/20 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105"
             title="Edit transaction"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,8 +197,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               disabled={isReExtracting}
               className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                 isReExtracting
-                  ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                  : 'text-gray-400 hover:text-purple-600 hover:bg-purple-100'
+                  ? 'text-[var(--color-text-muted)] bg-[var(--color-border)]/30 cursor-not-allowed'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/20'
               }`}
               title="Re-extract with AI"
             >
@@ -224,8 +224,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-green-600 hover:bg-[#10b981]/10'
+                      ? 'text-[var(--color-text-muted)] bg-[var(--color-border)]/30 cursor-not-allowed'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-income)] hover:bg-[var(--color-income)]/10'
                   }`}
                   title="Approve transaction"
                 >
@@ -241,8 +241,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-red-600 hover:bg-[#ef4444]/10'
+                      ? 'text-[var(--color-text-muted)] bg-[var(--color-border)]/30 cursor-not-allowed'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-expense)] hover:bg-[var(--color-expense)]/10'
                   }`}
                   title="Reject transaction"
                 >
@@ -258,8 +258,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-200'
+                      ? 'text-[var(--color-text-muted)] bg-[var(--color-border)]/30 cursor-not-allowed'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)]'
                   }`}
                   title="Mark as invalid"
                 >
@@ -275,8 +275,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   disabled={isUpdatingStatus}
                   className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
-                      : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-100'
+                      ? 'text-[var(--color-text-muted)] bg-[var(--color-border)]/30 cursor-not-allowed'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-warning)] hover:bg-[var(--color-warning)]/20'
                   }`}
                   title="Mark for review"
                 >
@@ -293,8 +293,8 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             onClick={() => setIsExpanded(!isExpanded)}
             className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
               isExpanded
-                ? 'text-blue-600 bg-blue-100 shadow-[var(--shadow-md)]'
-                : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-100'
+                ? 'text-[var(--color-accent-primary)] bg-[var(--color-accent-primary)]/20 shadow-[var(--shadow-md)]'
+                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)]'
             }`}
             title={isExpanded ? 'Collapse details' : 'Expand details'}
           >
@@ -317,7 +317,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             {/* Transaction Details */}
             <div className="bg-[#1a1625] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-sm)]">
               <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 mr-2 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Transaction Details
@@ -339,7 +339,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   <dt className="text-sm font-medium text-[#cbd5e1]">Account Type</dt>
                   <dd className="text-sm text-[#f8fafc] mt-1">
                     {transaction.account_type ? (
-                      <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
+                      <span className="inline-block px-2 py-1 text-xs bg-[var(--color-info)]/20 text-[var(--color-info)] rounded-full">
                         {transaction.account_type.replace(/_/g, ' ')}
                       </span>
                     ) : 'N/A'}
@@ -372,11 +372,11 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Original Name</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.merchant_name || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Original Name</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] mt-1">{transaction.merchant_name || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">Normalized</dt>
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">Normalized</dt>
                   <dd className="text-sm text-[#f8fafc] mt-1">{transaction.merchant_normalized || 'N/A'}</dd>
                 </div>
                 <div>
@@ -437,13 +437,13 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   <span>Confidence: {transaction.confidence ? `${Math.round(parseFloat(transaction.confidence) * 100)}%` : 'N/A'}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                   </svg>
                   <span>Version: {transaction.extraction_version}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span>Created: {formatDate(transaction.created_at)}</span>

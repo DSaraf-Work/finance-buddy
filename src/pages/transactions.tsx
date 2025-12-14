@@ -382,13 +382,13 @@ export default function TransactionsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <div className="text-[var(--color-expense)] text-xl mb-4">⚠️ Error</div>
+          <p className="text-[var(--color-text-secondary)] mb-4">{error}</p>
           <button
             onClick={() => searchTransactions()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-[var(--radius-md)] hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-accent-hover)] transition-colors"
           >
             Retry
           </button>
