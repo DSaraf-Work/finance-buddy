@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface ReportData {
   emailStats: {
@@ -124,14 +125,7 @@ const ReportsPage: NextPage = () => {
     return (
       <ProtectedRoute>
         <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-[#cbd5e1]">Loading reports...</p>
-              </div>
-            </div>
-          </div>
+          <LoadingScreen message="Loading reports..." fullScreen={false} />
         </Layout>
       </ProtectedRoute>
     );

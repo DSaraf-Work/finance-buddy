@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
+import LoadingScreen from '@/components/LoadingScreen';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
 
 interface DashboardStats {
@@ -140,12 +141,7 @@ const HomePage: NextPage = () => {
   if (loading) {
     return (
       <Layout title="Finance Buddy - Loading...">
-        <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-accent-primary)] mx-auto mb-4"></div>
-            <p className="text-[var(--color-text-secondary)]">Loading Finance Buddy...</p>
-          </div>
-        </div>
+        <LoadingScreen message="Loading Finance Buddy..." />
       </Layout>
     );
   }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface Notification {
   id: string;
@@ -131,9 +132,8 @@ export default function NotificationBell() {
             {/* Notifications List */}
             <div className="max-h-96 overflow-y-auto">
               {loading ? (
-                <div className="px-4 py-8 text-center text-[var(--color-text-muted)]">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)]"></div>
-                  <p className="mt-2 text-sm">Loading...</p>
+                <div className="px-4 py-8">
+                  <LoadingScreen message="Loading..." fullScreen={false} size="sm" />
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="px-4 py-8 text-center">

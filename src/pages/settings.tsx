@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
+import LoadingScreen from '@/components/LoadingScreen';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
 import { PushNotificationPrompt } from '@/components/PushNotificationPrompt';
 
@@ -265,9 +266,7 @@ const SettingsPage: NextPage = () => {
                 </div>
                 <div className="px-6 py-4">
                   {loading ? (
-                    <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)] mx-auto"></div>
-                    </div>
+                    <LoadingScreen message="Loading..." fullScreen={false} size="sm" />
                   ) : connections.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">

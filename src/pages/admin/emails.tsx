@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/router';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface WhitelistedSender {
   email: string;
@@ -150,14 +151,7 @@ export default function AdminEmailsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)]"></div>
-          <p className="mt-2 text-[var(--color-text-secondary)]">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   return (

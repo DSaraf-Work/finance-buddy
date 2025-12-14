@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const ResetPasswordPage: NextPage = () => {
   const [password, setPassword] = useState('');
@@ -67,14 +68,7 @@ const ResetPasswordPage: NextPage = () => {
 
   // Show loading if checking auth
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0f0a1a]/50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-[#cbd5e1]">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   // Don't render if no valid session (will redirect)

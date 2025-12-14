@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import LoadingScreen from '@/components/LoadingScreen';
 import { Database } from '@/types/database';
 import InteractiveKeywordSelector from '@/components/InteractiveKeywordSelector';
 
@@ -239,12 +240,7 @@ export default function TransactionEditPage() {
     return (
       <ProtectedRoute>
         <Layout title="Loading..." description="Loading transaction details">
-          <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading transaction...</p>
-            </div>
-          </div>
+          <LoadingScreen message="Loading transaction details..." />
         </Layout>
       </ProtectedRoute>
     );

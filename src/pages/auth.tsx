@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const AuthPage: NextPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -74,14 +75,7 @@ const AuthPage: NextPage = () => {
 
   // Show loading if checking auth
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-accent-primary)] mx-auto mb-4"></div>
-          <p className="text-[var(--color-text-secondary)]">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   // Don't render if already authenticated (will redirect)

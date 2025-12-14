@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -28,14 +29,7 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   // Show loading state while checking authentication
   // Show a proper loading UI instead of blank screen to prevent confusion
   if (loading || !shouldRender) {
-    return (
-      <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-accent-primary)] mb-4"></div>
-          <p className="text-[var(--color-text-secondary)] text-sm">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." size="md" />;
   }
 
   // Show fallback if not authenticated (shouldn't reach here due to redirect)

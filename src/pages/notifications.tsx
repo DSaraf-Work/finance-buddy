@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import LoadingScreen from '@/components/LoadingScreen';
 
 interface Notification {
   id: string;
@@ -147,10 +148,7 @@ export default function NotificationsPage() {
 
         {/* Notifications List */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)]"></div>
-            <p className="mt-2 text-[var(--color-text-secondary)]">Loading notifications...</p>
-          </div>
+          <LoadingScreen message="Loading notifications..." fullScreen={false} size="sm" />
         ) : notifications.length === 0 ? (
           <div className="text-center py-12 bg-[#0f0a1a]/50 rounded-[var(--radius-md)]">
             <svg
