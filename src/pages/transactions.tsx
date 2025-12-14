@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import LoadingScreen from '@/components/LoadingScreen';
 import TransactionRow from '@/components/TransactionRow';
 import TransactionModal from '@/components/TransactionModal';
 import TransactionStats from '@/components/TransactionStats';
@@ -371,12 +372,11 @@ export default function TransactionsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading transactions...</p>
-        </div>
-      </div>
+      <ProtectedRoute>
+        <Layout title="Transactions - Finance Buddy" description="View and manage your transactions">
+          <LoadingScreen message="Loading transactions..." />
+        </Layout>
+      </ProtectedRoute>
     );
   }
 

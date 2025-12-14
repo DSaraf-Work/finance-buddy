@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import LoadingScreen from '@/components/LoadingScreen';
 import ReviewTransactionRow from '@/components/ReviewTransactionRow';
 import ReviewEditModal from '@/components/ReviewEditModal';
 import ReviewFilters from '@/components/ReviewFilters';
@@ -191,13 +192,8 @@ export default function ReviewRoutePage() {
   if (authLoading || loading) {
     return (
       <ProtectedRoute>
-        <Layout>
-          <div className="flex items-center justify-center min-h-screen bg-[#0f0a1a]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6b4ce6] mx-auto"></div>
-              <p className="mt-4 text-[#cbd5e1]">Loading transactions...</p>
-            </div>
-          </div>
+        <Layout title="Review Route - Finance Buddy" description="Review and manage extracted transactions">
+          <LoadingScreen message="Loading transactions..." />
         </Layout>
       </ProtectedRoute>
     );
