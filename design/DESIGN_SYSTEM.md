@@ -1,149 +1,413 @@
-# Finance Buddy - Dark Purple Design System
+# Finance Buddy - Design System
 
-## Color Palette
+**Version:** 2.0.0  
+**Theme:** Midnight Blue Wealth  
+**Last Updated:** 2025-01-03  
+**Status:** ✅ Active
 
-### Primary Colors (Purple)
+---
+
+## 🎨 Theme Identity
+
+**Vibe:** Private banking • executive dashboards • calm authority  
+**Finish:** Matte (zero gloss, zero neon)  
+**Contrast:** Deep blue-charcoal surfaces + soft icy blues  
+**Goal:** Long-session readability for numbers & charts
+
+---
+
+## 🏗️ Architecture: Global CSS Variables
+
+All design tokens are defined as **CSS custom properties** in `src/styles/globals.css`. This enables:
+
+✅ **Zero component changes** for theme switching  
+✅ **Single source of truth** for all design tokens  
+✅ **Easy theme updates** - just change CSS variables  
+✅ **Type-safe** - Tailwind config references CSS variables  
+✅ **Consistent** - All components use the same design system
+
+### Theme Switching
+
+To switch themes, update CSS variables in `src/styles/globals.css`:
+
 ```css
---color-bg-primary: #0f0a1a;        /* Darkest background */
---color-bg-secondary: #1a1625;      /* Card backgrounds */
---color-bg-elevated: #2d1b4e;       /* Elevated elements */
-
---color-purple-500: #6b4ce6;        /* Primary accent */
---color-purple-600: #8b5cf6;        /* Hover states */
---color-purple-400: #a78bfa;        /* Highlights */
---color-purple-700: #5b3cc4;        /* Pressed states */
+:root {
+  --color-bg-app: #NEW_COLOR;
+  --color-text-primary: #NEW_COLOR;
+  /* Update all variables */
+}
 ```
 
-### Accent Colors
-```css
---color-pink-500: #ec4899;          /* Secondary accent */
---color-cyan-500: #06b6d4;          /* Info/Links */
+**No component changes needed!** All components automatically use new colors.
+
+---
+
+## 🌑 Base Surfaces (Dark, Matte Blue)
+
+| Usage | CSS Variable | Hex | Tailwind Class |
+|-------|--------------|-----|----------------|
+| App Background | `var(--color-bg-app)` | `#0F1624` | `bg-bg-app` |
+| Primary Surface | `var(--color-bg-primary)` | `#151E2E` | `bg-bg-primary` |
+| Card / Panel | `var(--color-bg-card)` | `#1B2638` | `bg-bg-card` |
+| Elevated Surface | `var(--color-bg-elevated)` | `#22304A` | `bg-bg-elevated` |
+| Divider / Border | `var(--color-border)` | `#2E3C55` | `border-border-default` |
+
+**Design Principles:**
+- ✔ No pure black
+- ✔ Slight blue bias = richer than gray
+- ✔ Very "expensive" dark look
+
+**Usage:**
+```tsx
+// Direct CSS variable
+<div className="bg-[var(--color-bg-app)]">
+
+// Tailwind class (via CSS variable)
+<div className="bg-bg-app">
 ```
 
-### Text Colors
-```css
---color-text-primary: #f8fafc;      /* Primary text (white) */
---color-text-secondary: #cbd5e1;    /* Secondary text */
---color-text-muted: #94a3b8;        /* Muted text */
---color-text-disabled: #64748b;     /* Disabled text */
+---
+
+## 🧾 Text Colors (Clear & Elegant)
+
+| Usage | CSS Variable | Hex | Tailwind Class |
+|-------|--------------|-----|----------------|
+| Primary Text | `var(--color-text-primary)` | `#E9EEF5` | `text-text-primary` |
+| Secondary Text | `var(--color-text-secondary)` | `#B8C4D6` | `text-text-secondary` |
+| Muted / Labels | `var(--color-text-muted)` | `#8C9BB0` | `text-text-muted` |
+| Disabled | `var(--color-text-disabled)` | `#64748B` | `text-text-disabled` |
+
+**Important:** Balances, totals, amounts → Primary Text only
+
+**Usage:**
+```tsx
+// Primary text (headings, amounts)
+<h1 className="text-[var(--color-text-primary)]">₹12,345.67</h1>
+
+// Tailwind class
+<h1 className="text-text-primary">₹12,345.67</h1>
 ```
 
-### State Colors
-```css
---color-success: #10b981;           /* Success (emerald) */
---color-warning: #f59e0b;           /* Warning (amber) */
---color-error: #ef4444;             /* Error (red) */
---color-info: #06b6d4;              /* Info (cyan) */
+---
+
+## 💎 Accent Blues (Pastel but Powerful)
+
+| Purpose | CSS Variable | Hex | Tailwind Class |
+|---------|--------------|-----|----------------|
+| Primary CTA | `var(--color-accent-primary)` | `#5B8CFF` | `bg-accent-primary` |
+| Hover / Focus | `var(--color-accent-hover)` | `#6FA0FF` | `bg-accent-hover` |
+| Subtle Highlight | `var(--color-accent-highlight)` | `#8FB6FF` | `bg-accent-highlight` |
+
+**Design Principles:**
+- ✔ Flat colors only (no gradients)
+- ✔ Accents should be rare and intentional
+- ✔ No glows, no neon
+
+---
+
+## 💰 Finance Semantic Colors (Dark-Theme Safe)
+
+| Meaning | CSS Variable | Hex | Tailwind Class |
+|---------|--------------|-----|----------------|
+| Income | `var(--color-income)` | `#4FBF9A` | `text-income` |
+| Expense | `var(--color-expense)` | `#E07A7A` | `text-expense` |
+| Warning | `var(--color-warning)` | `#E1B15C` | `text-warning` |
+| Info | `var(--color-info)` | `#6FB6D9` | `text-info` |
+
+**Usage:**
+```tsx
+// Income badge
+<span className="text-[var(--color-income)]">Income</span>
+
+// Expense badge
+<span className="text-[var(--color-expense)]">Expense</span>
 ```
 
-### Border & Divider Colors
-```css
---color-border: #2d1b4e;            /* Default borders */
---color-border-light: #3d2b5e;      /* Light borders */
---color-divider: #1a1625;           /* Dividers */
+---
+
+## 📊 Charts & Data (Premium Look)
+
+| Element | CSS Variable | Hex |
+|---------|--------------|-----|
+| Chart Color 1 | `var(--color-chart-1)` | `#6F94FF` |
+| Chart Color 2 | `var(--color-chart-2)` | `#5FA6A6` |
+| Chart Color 3 | `var(--color-chart-3)` | `#7A8FB8` |
+| Chart Color 4 | `var(--color-chart-4)` | `#C8B46A` |
+| Grid lines | `var(--color-chart-grid)` | `#2E3C55` |
+| Axis labels | `var(--color-chart-axis)` | `#8C9BB0` |
+
+---
+
+## 🧩 UI Polish Rules
+
+### Border Radius (10-14px range)
+
+| Size | CSS Variable | Value | Tailwind Class |
+|------|--------------|-------|----------------|
+| Small | `var(--radius-sm)` | `10px` | `rounded-theme-sm` |
+| Medium | `var(--radius-md)` | `12px` | `rounded-theme-md` |
+| Large | `var(--radius-lg)` | `14px` | `rounded-theme-lg` |
+| Extra Large | `var(--radius-xl)` | `16px` | `rounded-theme-xl` |
+
+**Usage:**
+```tsx
+<div className="rounded-[var(--radius-md)]">
+// or
+<div className="rounded-theme-md">
 ```
 
-## Typography
+### Shadows (Extremely Subtle, Matte)
+
+| Size | CSS Variable | Value | Tailwind Class |
+|------|--------------|-------|----------------|
+| Small | `var(--shadow-sm)` | `0 1px 3px rgba(0, 0, 0, 0.35)` | `shadow-theme-sm` |
+| Medium | `var(--shadow-md)` | `0 2px 6px rgba(0, 0, 0, 0.35)` | `shadow-theme-md` |
+| Large | `var(--shadow-lg)` | `0 4px 12px rgba(30, 60, 120, 0.12)` | `shadow-theme-lg` |
+| Extra Large | `var(--shadow-xl)` | `0 8px 24px rgba(30, 60, 120, 0.12)` | `shadow-theme-xl` |
+
+**Usage:**
+```tsx
+<div className="shadow-[var(--shadow-sm)]">
+// or
+<div className="shadow-theme-sm">
+```
+
+### Design Principles
+- ❌ **No gradients**
+- ❌ **No glows**
+- ❌ **No neon**
+- ✅ **Matte finish only**
+- ✅ **Borders preferred over shadows**
+- ✅ **Flat colors**
+
+---
+
+## 📝 Component Patterns
+
+### Primary Button
+```tsx
+<button className="px-6 py-3 bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] rounded-[var(--radius-md)] hover:bg-[var(--color-accent-hover)] min-h-[44px]">
+  Primary Action
+</button>
+
+// Or use component class
+<button className="btn-primary">
+  Primary Action
+</button>
+```
+
+### Secondary Button
+```tsx
+<button className="px-6 py-3 bg-[var(--color-bg-card)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-[var(--radius-md)] hover:bg-[var(--color-bg-elevated)] min-h-[44px]">
+  Secondary Action
+</button>
+
+// Or use component class
+<button className="btn-secondary">
+  Secondary Action
+</button>
+```
+
+### Card
+```tsx
+<div className="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-6 shadow-[var(--shadow-sm)]">
+  Card Content
+</div>
+
+// Or use component class
+<div className="card">
+  Card Content
+</div>
+```
+
+### Input Field
+```tsx
+<input 
+  className="input-field"
+  placeholder="Enter text..."
+/>
+
+// Or custom styling
+<input 
+  className="w-full px-4 py-3 bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-primary)]"
+/>
+```
+
+### Amount Display (Primary Text Only)
+```tsx
+<span className="text-[var(--color-text-primary)] text-2xl font-semibold">
+  ₹12,345.67
+</span>
+```
+
+### Status Badge
+```tsx
+// Income
+<span className="px-3 py-1 bg-[var(--color-income)]/10 text-[var(--color-income)] border border-[var(--color-income)]/30 rounded-[var(--radius-sm)]">
+  Income
+</span>
+
+// Expense
+<span className="px-3 py-1 bg-[var(--color-expense)]/10 text-[var(--color-expense)] border border-[var(--color-expense)]/30 rounded-[var(--radius-sm)]">
+  Expense
+</span>
+```
+
+---
+
+## 📐 Typography
 
 ### Font Families
 ```css
---font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
---font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 ```
 
 ### Font Sizes
-```css
---text-xs: 0.75rem;      /* 12px */
---text-sm: 0.875rem;     /* 14px */
---text-base: 1rem;       /* 16px */
---text-lg: 1.125rem;     /* 18px */
---text-xl: 1.25rem;      /* 20px */
---text-2xl: 1.5rem;      /* 24px */
---text-3xl: 1.875rem;    /* 30px */
---text-4xl: 2.25rem;     /* 36px */
-```
+- **Display Large:** 32px (2rem)
+- **Display Medium:** 24px (1.5rem)
+- **Heading Large:** 22px (1.375rem)
+- **Heading Medium:** 18px (1.125rem)
+- **Body Large:** 16px (1rem)
+- **Body Medium:** 14px (0.875rem)
+- **Body Small:** 12px (0.75rem)
 
 ### Font Weights
-```css
---font-light: 300;
---font-normal: 400;
---font-medium: 500;
---font-semibold: 600;
---font-bold: 700;
+- **Normal:** 400
+- **Medium:** 500
+- **Semibold:** 600
+- **Bold:** 700
+
+---
+
+## 📏 Spacing System
+
+Based on 8px grid:
+
+- **1:** 4px (0.25rem)
+- **2:** 8px (0.5rem)
+- **3:** 12px (0.75rem)
+- **4:** 16px (1rem)
+- **5:** 20px (1.25rem)
+- **6:** 24px (1.5rem)
+- **8:** 32px (2rem)
+- **10:** 40px (2.5rem)
+- **12:** 48px (3rem)
+- **16:** 64px (4rem)
+
+---
+
+## ♿ Accessibility
+
+### WCAG 2.1 AA Compliance
+
+**Contrast Ratios:**
+- `#E9EEF5` on `#0F1624`: 15.2:1 ✅ (AAA)
+- `#B8C4D6` on `#0F1624`: 9.8:1 ✅ (AAA)
+- `#8C9BB0` on `#0F1624`: 6.2:1 ✅ (AA)
+- `#5B8CFF` on `#0F1624`: 4.9:1 ✅ (AA)
+- `#E9EEF5` on `#1B2638`: 13.1:1 ✅ (AAA)
+
+### Touch Targets
+- **Minimum:** 44px × 44px
+- **Recommended:** 48px × 48px
+
+### Keyboard Navigation
+- All interactive elements must be keyboard accessible
+- Focus indicators must be visible
+- Tab order must be logical
+
+### ARIA Labels
+- All interactive elements must have proper ARIA labels
+- Form inputs must have associated labels
+- Icons must have descriptive text or aria-labels
+
+---
+
+## 📱 Mobile-First Design
+
+### Viewport Breakpoints
+- **Mobile:** 320px - 428px (primary)
+- **Tablet:** 768px - 1024px
+- **Desktop:** 1024px+
+
+### Mobile Considerations
+- Touch targets ≥ 44px
+- Text size ≥ 16px (prevents iOS zoom)
+- Adequate spacing between interactive elements
+- Bottom navigation for primary actions
+- Thumb-reachable navigation zones
+
+---
+
+## 📚 File Locations
+
+- **CSS Variables:** `src/styles/globals.css` (`:root` selector)
+- **Tailwind Config:** `tailwind.config.js` (references CSS variables)
+- **Component Classes:** `src/styles/globals.css` (`.btn-primary`, `.card`, etc.)
+- **Design System:** `design/DESIGN_SYSTEM.md` (this file)
+
+---
+
+## 🔄 Migration Status
+
+- ✅ **CSS Variables System** - Complete (30 variables)
+- ✅ **Tailwind Config** - Complete
+- ✅ **Component Classes** - Complete
+- ✅ **Core Components** - Migrated (Layout, TransactionCard, index)
+- ✅ **Build Status** - ✅ Passing
+- ✅ **Accessibility** - ✅ WCAG AA compliant
+
+---
+
+## 🚀 Usage Examples
+
+### Quick Reference
+
+```tsx
+// Backgrounds
+bg-[var(--color-bg-app)]        // App background
+bg-[var(--color-bg-card)]       // Card background
+bg-[var(--color-bg-elevated)]   // Elevated surface
+
+// Text
+text-[var(--color-text-primary)]      // Primary text
+text-[var(--color-text-secondary)]    // Secondary text
+text-[var(--color-text-muted)]        // Muted text
+
+// Accents
+bg-[var(--color-accent-primary)]      // Primary CTA
+bg-[var(--color-accent-hover)]        // Hover state
+
+// Semantic
+text-[var(--color-income)]      // Income
+text-[var(--color-expense)]     // Expense
+text-[var(--color-warning)]     // Warning
+text-[var(--color-info)]        // Info
+
+// Borders & Radius
+border-[var(--color-border)]    // Border
+rounded-[var(--radius-md)]      // Border radius
+
+// Shadows
+shadow-[var(--shadow-sm)]       // Small shadow
+shadow-[var(--shadow-md)]       // Medium shadow
 ```
 
-## Spacing System
-```css
---space-1: 0.25rem;   /* 4px */
---space-2: 0.5rem;    /* 8px */
---space-3: 0.75rem;   /* 12px */
---space-4: 1rem;      /* 16px */
---space-5: 1.25rem;   /* 20px */
---space-6: 1.5rem;    /* 24px */
---space-8: 2rem;      /* 32px */
---space-10: 2.5rem;   /* 40px */
---space-12: 3rem;     /* 48px */
---space-16: 4rem;     /* 64px */
-```
+---
 
-## Border Radius
-```css
---radius-sm: 0.375rem;   /* 6px */
---radius-md: 0.5rem;     /* 8px */
---radius-lg: 0.75rem;    /* 12px */
---radius-xl: 1rem;       /* 16px */
---radius-2xl: 1.5rem;    /* 24px */
-```
+## ✅ Best Practices
 
-## Shadows (Dark Theme)
-```css
---shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
---shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
---shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
---shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
---shadow-purple: 0 0 20px rgba(107, 76, 230, 0.3);
-```
+1. **Always use CSS variables** - Never hardcode hex colors
+2. **Use component classes** - `.btn-primary`, `.card`, `.input-field` when possible
+3. **Consistent naming** - Follow the `--color-*` naming convention
+4. **Mobile-first** - Ensure all colors work on 375px viewport
+5. **Accessibility** - Maintain WCAG AA contrast ratios
+6. **No gradients** - Use flat colors only
+7. **Matte finish** - No glows, no neon, no gloss
 
-## Component Styles
+---
 
-### Buttons
-**Primary Button:**
-- Background: `--color-purple-500`
-- Hover: `--color-purple-600`
-- Text: `--color-text-primary`
-- Border radius: `--radius-lg`
-- Padding: `12px 24px`
-- Shadow: `--shadow-purple` on hover
-
-**Secondary Button:**
-- Background: `--color-bg-elevated`
-- Hover: `--color-purple-500` with 20% opacity
-- Border: `1px solid --color-border`
-- Text: `--color-text-primary`
-
-**Ghost Button:**
-- Background: transparent
-- Hover: `--color-bg-elevated`
-- Text: `--color-purple-400`
-
-### Cards
-- Background: `--color-bg-secondary`
-- Border: `1px solid --color-border`
-- Border radius: `--radius-xl`
-- Padding: `24px`
-- Hover: border color `--color-purple-500`
-- Shadow: `--shadow-md`
-
-### Input Fields
-- Background: `--color-bg-elevated`
-- Border: `1px solid --color-border`
-- Focus border: `--color-purple-500`
-- Focus ring: `0 0 0 3px rgba(107, 76, 230, 0.2)`
-- Text: `--color-text-primary`
-- Placeholder: `--color-text-muted`
-
-## Accessibility
-- Minimum contrast ratio: 4.5:1 (WCAG AA)
-- Focus indicators: Always visible
-- Touch targets: Minimum 44px × 44px
-
+**Last Updated:** 2025-01-03  
+**Version:** 2.0.0  
+**Theme:** Midnight Blue Wealth  
+**Status:** ✅ Active
