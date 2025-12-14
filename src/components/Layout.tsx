@@ -7,6 +7,7 @@ import { useMockAI } from '@/contexts/MockAIContext';
 import NotificationBell from './NotificationBell';
 import NotificationPermissionPrompt from './NotificationPermissionPrompt';
 import PWAInstallPrompt from './PWAInstallPrompt';
+import PWAInstallButton from './PWAInstallButton';
 import { useNotifications } from '@/hooks/useNotifications';
 import {
   TABLE_EMAILS_FETCHED,
@@ -226,6 +227,11 @@ export function Layout({ children, title, description }: LayoutProps) {
                     {/* Notification Bell */}
                     <div className="flex-shrink-0">
                       <NotificationBell />
+                    </div>
+
+                    {/* PWA Install Button - Temporary */}
+                    <div className="flex-shrink-0">
+                      <PWAInstallButton />
                     </div>
 
                     {/* User email - Hidden on mobile, truncated on tablet */}
