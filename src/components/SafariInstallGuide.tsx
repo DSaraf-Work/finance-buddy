@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SafariInstallGuideProps {
   isOpen: boolean;
@@ -12,6 +12,20 @@ interface SafariInstallGuideProps {
  */
 export default function SafariInstallGuide({ isOpen, onClose, platform }: SafariInstallGuideProps) {
   const [currentStep, setCurrentStep] = useState(0);
+
+  // Log when guide opens
+  useEffect(() => {
+    if (isOpen && currentStep === 0 && typeof window !== 'undefined') {
+      console.log('📱 [SafariInstallGuide] Install guide opened', {
+        platform,
+        userAgent: navigator.userAgent,
+        isSafari: /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      });
+      console.log('ℹ️ [SafariInstallGuide] Safari requires manual installation via Share menu');
+      console.log('⚠️ [SafariInstallGuide] iOS Safari does NOT support programmatic PWA installation');
+      console.log('📋 [SafariInstallGuide] User must manually: Share > Add to Home Screen');
+    }
+  }, [isOpen, currentStep, platform]);
 
   if (!isOpen) return null;
 
@@ -71,8 +85,10 @@ export default function SafariInstallGuide({ isOpen, onClose, platform }: Safari
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      console.log(`📱 [SafariInstallGuide] Moved to step ${currentStep + 2} of ${steps.length}`);
     } else {
       // Last step - close and mark as shown
+      console.log('✅ [SafariInstallGuide] User completed install guide');
       onClose();
     }
   };

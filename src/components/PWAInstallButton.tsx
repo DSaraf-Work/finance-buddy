@@ -23,21 +23,35 @@ export default function PWAInstallButton() {
 
     const installed = checkInstalled();
     setIsInstalled(installed);
+    
+    console.log('🔍 [PWAInstallButton] Initial check:', {
+      isInstalled: installed,
+      isStandalone: window.matchMedia('(display-mode: standalone)').matches,
+      isIOSStandalone: (window.navigator as any).standalone,
+      userAgent: navigator.userAgent
+    });
 
     // Listen for beforeinstallprompt event (Chrome/Edge only)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      console.log('📱 [PWAInstallButton] beforeinstallprompt event received!');
+      console.log('✅ [PWAInstallButton] Programmatic install available');
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     // Listen for app installed event
     const handleAppInstalled = () => {
+      console.log('🎉 [PWAInstallButton] App installed successfully!');
       setIsInstalled(true);
       setDeferredPrompt(null);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+    
+    // Log if we're waiting for beforeinstallprompt
+    console.log('👂 [PWAInstallButton] Listening for beforeinstallprompt event...');
+    console.log('ℹ️ [PWAInstallButton] Note: Safari does not fire beforeinstallprompt');
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -46,28 +60,92 @@ export default function PWAInstallButton() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) {
-      // For Safari and browsers without beforeinstallprompt, show interactive guide
+    if (typeof window === 'undefined') return;
+    
+    const platform = getPlatform();
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || 
+                     /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    console.log('🔵 [PWAInstallButton] Install button clicked', {
+      platform,
+      isSafari,
+      hasDeferredPrompt: !!deferredPrompt,
+      userAgent: navigator.userAgent,
+      standalone: (window.navigator as any).standalone,
+      displayMode: window.matchMedia('(display-mode: standalone)').matches,
+      hasWebShare: 'share' in navigator
+    });
+
+    // For Safari/iOS - try to use Web Share API to open share sheet
+    if ((isSafari || platform === 'ios') && !deferredPrompt) {
+      console.log('📱 [PWAInstallButton] Safari/iOS detected - attempting Web Share API');
+      
+      if ('share' in navigator) {
+        try {
+          console.log('🚀 [PWAInstallButton] Attempting to trigger Web Share API...');
+          await navigator.share({
+            title: 'Install Finance Buddy',
+            text: 'Add Finance Buddy to your home screen',
+            url: window.location.href
+          });
+          console.log('✅ [PWAInstallButton] Web Share API triggered successfully');
+          console.log('ℹ️ [PWAInstallButton] User can now select "Add to Home Screen" from share menu');
+          return;
+        } catch (error: any) {
+          // User cancelled or error occurred
+          if (error.name === 'AbortError') {
+            console.log('ℹ️ [PWAInstallButton] User cancelled share dialog');
+            return;
+          }
+          console.error('❌ [PWAInstallButton] Web Share API error:', error);
+          console.log('🔄 [PWAInstallButton] Falling back to install guide');
+        }
+      } else {
+        console.log('⚠️ [PWAInstallButton] Web Share API not available');
+      }
+      
+      // Fallback to guide
+      console.log('📱 [PWAInstallButton] Showing install guide');
+      console.log('ℹ️ [PWAInstallButton] Safari does not support programmatic PWA installation');
+      console.log('ℹ️ [PWAInstallButton] User must manually use Share > Add to Home Screen');
       setShowInstallGuide(true);
       return;
     }
 
-    try {
-      await deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      if (outcome === 'accepted') {
-        console.log('✅ User accepted PWA install prompt');
-      } else {
-        console.log('❌ User dismissed PWA install prompt');
+    // For browsers with beforeinstallprompt (Chrome/Edge)
+    if (deferredPrompt) {
+      try {
+        console.log('🚀 [PWAInstallButton] Attempting to trigger install prompt...');
+        await deferredPrompt.prompt();
+        console.log('✅ [PWAInstallButton] Install prompt shown successfully');
+        
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('📊 [PWAInstallButton] User choice:', outcome);
+        
+        if (outcome === 'accepted') {
+          console.log('✅ [PWAInstallButton] User accepted PWA install prompt');
+        } else {
+          console.log('❌ [PWAInstallButton] User dismissed PWA install prompt');
+        }
+        
+        setDeferredPrompt(null);
+      } catch (error) {
+        console.error('❌ [PWAInstallButton] Error showing install prompt:', error);
+        console.error('📋 [PWAInstallButton] Error details:', {
+          message: (error as Error).message,
+          stack: (error as Error).stack,
+          name: (error as Error).name
+        });
+        // Fallback to guide if prompt fails
+        console.log('🔄 [PWAInstallButton] Falling back to install guide');
+        setShowInstallGuide(true);
       }
-      
-      setDeferredPrompt(null);
-    } catch (error) {
-      console.error('Error showing install prompt:', error);
-      // Fallback to guide if prompt fails
-      setShowInstallGuide(true);
+      return;
     }
+
+    // Fallback for other browsers
+    console.log('⚠️ [PWAInstallButton] No install method available - showing guide');
+    setShowInstallGuide(true);
   };
 
   // Detect platform for install guide
