@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMockAI } from '@/contexts/MockAIContext';
 import NotificationBell from './NotificationBell';
 import NotificationPermissionPrompt from './NotificationPermissionPrompt';
+import PWAInstallPrompt from './PWAInstallPrompt';
 import { useNotifications } from '@/hooks/useNotifications';
 import {
   TABLE_EMAILS_FETCHED,
@@ -395,6 +396,9 @@ export function Layout({ children, title, description }: LayoutProps) {
 
         {/* Notification Permission Prompt */}
         {user && <NotificationPermissionPrompt />}
+
+        {/* PWA Install Prompt - Show on app launch if not installed */}
+        <PWAInstallPrompt />
       </div>
     </>
   );

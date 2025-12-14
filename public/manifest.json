@@ -4,8 +4,8 @@
   "description": "AI-powered financial email automation and transaction tracking",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "background_color": "#0F1624",
+  "theme_color": "#5B8CFF",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [

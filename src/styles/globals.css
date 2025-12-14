@@ -207,6 +207,22 @@ body {
   animation: fade-in-down 0.2s ease-out;
 }
 
+/* Slide up animation for prompts */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
 /* Line clamp utilities */
 .line-clamp-1 {
   display: -webkit-box;

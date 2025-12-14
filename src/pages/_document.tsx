@@ -12,7 +12,7 @@ export default function Document() {
         <meta name="description" content="AI-powered financial email automation and transaction tracking" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#3b82f6" />
+        <meta name="theme-color" content="#5B8CFF" />
 
         {/* Apple Touch Icons */}
         <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
@@ -28,10 +28,10 @@ export default function Document() {
         <link rel="manifest" href="/manifest.json" />
 
         {/* Safari Pinned Tab */}
-        <link rel="mask-icon" href="/icons/icon-192x192.png" color="#3b82f6" />
+        <link rel="mask-icon" href="/icons/icon-192x192.png" color="#5B8CFF" />
 
         {/* MS Tile */}
-        <meta name="msapplication-TileColor" content="#3b82f6" />
+        <meta name="msapplication-TileColor" content="#5B8CFF" />
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </Head>
