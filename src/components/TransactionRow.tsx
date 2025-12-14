@@ -415,10 +415,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-[#cbd5e1]">User Notes</dt>
-                  <dd className="text-sm text-[#f8fafc] mt-1">
+                  <dt className="text-sm font-medium text-[var(--color-text-secondary)]">User Notes</dt>
+                  <dd className="text-sm text-[var(--color-text-primary)] mt-1">
                     {transaction.user_notes || (
-                      <span className="text-gray-400 italic">No user notes</span>
+                      <span className="text-[var(--color-text-muted)] italic">No user notes</span>
                     )}
                   </dd>
                 </div>
