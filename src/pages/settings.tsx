@@ -124,102 +124,102 @@ const SettingsPage: NextPage = () => {
         <div className="py-6 sm:py-8 lg:py-10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-8">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-airbnb-red rounded-airbnb-lg flex items-center justify-center shadow-airbnb-md min-h-[44px] min-w-[44px]">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                   <span className="text-xl sm:text-2xl">⚙️</span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-airbnb-text-primary">Settings</h1>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Settings</h1>
               </div>
-              <p className="mt-1 text-sm sm:text-base text-airbnb-text-secondary">
+              <p className="mt-1 text-sm sm:text-base text-[#cbd5e1]">
                 Manage your account settings and preferences
               </p>
             </div>
 
             <div className="space-y-6 sm:space-y-8">
               {/* Account Information */}
-              <div className="bg-airbnb-white shadow-airbnb-md border border-airbnb-border-light rounded-airbnb-lg">
-                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light">
-                  <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary flex items-center gap-2">
-                    <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     Account Information
                   </h3>
                 </div>
-                <div className="px-4 sm:px-6 py-4">
+                <div className="px-6 py-4">
                   <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                     <div>
-                      <dt className="text-xs sm:text-sm font-medium text-airbnb-text-secondary uppercase tracking-wide">Email Address</dt>
-                      <dd className="mt-1 text-sm sm:text-base text-airbnb-text-primary break-all">{user?.email}</dd>
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">Email Address</dt>
+                      <dd className="mt-1 text-sm sm:text-base text-[#f8fafc]">{user?.email}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs sm:text-sm font-medium text-airbnb-text-secondary uppercase tracking-wide">Account Created</dt>
-                      <dd className="mt-1 text-sm sm:text-base text-airbnb-text-primary">
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">Account Created</dt>
+                      <dd className="mt-1 text-sm sm:text-base text-[#f8fafc]">
                         {user?.created_at ? formatDate(user.created_at) : 'N/A'}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-xs sm:text-sm font-medium text-airbnb-text-secondary uppercase tracking-wide">Email Confirmed</dt>
-                      <dd className="mt-1 text-sm sm:text-base text-airbnb-text-primary">
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">Email Confirmed</dt>
+                      <dd className="mt-1 text-sm sm:text-base text-[#f8fafc]">
                         {user?.email_confirmed_at ? 'Yes' : 'No'}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-xs sm:text-sm font-medium text-airbnb-text-secondary uppercase tracking-wide">User ID</dt>
-                      <dd className="mt-1 text-xs sm:text-sm text-airbnb-text-secondary font-mono break-all">{user?.id}</dd>
+                      <dt className="text-xs sm:text-sm font-medium text-[#94a3b8] uppercase tracking-wide">User ID</dt>
+                      <dd className="mt-1 text-xs sm:text-sm text-[#cbd5e1] font-mono break-all">{user?.id}</dd>
                     </div>
                   </dl>
                 </div>
               </div>
 
               {/* Password Update */}
-              <div className="bg-airbnb-white shadow-airbnb-md border border-airbnb-border-light rounded-airbnb-lg">
-                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light">
-                  <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary flex items-center gap-2">
-                    <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     Change Password
                   </h3>
                 </div>
-                <div className="px-4 sm:px-6 py-4">
+                <div className="px-6 py-4">
                   <form onSubmit={handlePasswordUpdate} className="space-y-4">
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-airbnb-text-primary mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         New Password
                       </label>
                       <input
                         type="password"
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                        className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 min-h-[44px]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                         placeholder="Enter new password"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-airbnb-text-primary mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Confirm New Password
                       </label>
                       <input
                         type="password"
                         value={passwordForm.confirmPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 min-h-[44px]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                         placeholder="Confirm new password"
                         required
                       />
                     </div>
                     {passwordMessage && (
-                      <div className={`text-sm p-3 rounded-airbnb-md ${passwordMessage.includes('successfully') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                      <div className={`text-sm p-3 rounded-lg ${passwordMessage.includes('successfully') ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'}`}>
                         {passwordMessage}
                       </div>
                     )}
                     <button
                       type="submit"
                       disabled={passwordLoading}
-                      className="w-full sm:w-auto px-6 py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {passwordLoading ? 'Updating...' : 'Update Password'}
                     </button>
@@ -228,55 +228,55 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Push Notifications */}
-              <div className="bg-airbnb-white shadow-airbnb-md border border-airbnb-border-light rounded-airbnb-lg">
-                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light">
-                  <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary flex items-center gap-2">
-                    <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
                     Push Notifications
                   </h3>
-                  <p className="mt-1 text-sm text-airbnb-text-secondary">
+                  <p className="mt-1 text-sm text-[#cbd5e1]">
                     Get notified when new transactions are extracted
                   </p>
                 </div>
-                <div className="px-4 sm:px-6 py-4">
+                <div className="px-6 py-4">
                   <PushNotificationPrompt />
                 </div>
               </div>
 
               {/* Connected Accounts */}
-              <div className="bg-airbnb-white shadow-airbnb-md border border-airbnb-border-light rounded-airbnb-lg">
-                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary flex items-center gap-2">
-                      <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                      <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       Connected Gmail Accounts
                     </h3>
                     <button
                       onClick={handleConnect}
-                      className="w-full sm:w-auto px-5 py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm min-h-[44px]"
+                      className="w-full sm:w-auto px-5 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                     >
                       Connect Account
                     </button>
                   </div>
                 </div>
-                <div className="px-4 sm:px-6 py-4">
+                <div className="px-6 py-4">
                   {loading ? (
                     <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-airbnb-red mx-auto"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF] mx-auto"></div>
                     </div>
                   ) : connections.length === 0 ? (
                     <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-airbnb-red rounded-airbnb-lg flex items-center justify-center mx-auto mb-4 shadow-airbnb-md min-h-[64px] min-w-[64px]">
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                         <span className="text-3xl">📧</span>
                       </div>
-                      <p className="text-airbnb-text-secondary mb-4">No Gmail accounts connected</p>
+                      <p className="text-[#cbd5e1] mb-4">No Gmail accounts connected</p>
                       <button
                         onClick={handleConnect}
-                        className="px-6 py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm min-h-[44px]"
+                        className="px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                       >
                         Connect Your First Account
                       </button>
@@ -284,30 +284,30 @@ const SettingsPage: NextPage = () => {
                   ) : (
                     <div className="space-y-4">
                       {connections.map((connection) => (
-                        <div key={connection.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-airbnb-border-light rounded-airbnb-md bg-airbnb-gray-light hover:border-airbnb-red hover:bg-airbnb-gray-hover transition-all duration-200 gap-4">
+                        <div key={connection.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-[#2d1b4e] rounded-lg bg-[#0f0a1a]/50 hover:border-[#6b4ce6] hover:bg-[#2d1b4e]/20 transition-all duration-200 gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-airbnb-red rounded-airbnb-md flex items-center justify-center shadow-airbnb-sm min-h-[40px] min-w-[40px]">
+                              <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
                                 <span className="text-lg">📧</span>
                               </div>
                               <div>
-                                <p className="text-sm font-medium text-airbnb-text-primary break-all">{connection.email_address}</p>
-                                <p className="text-xs text-airbnb-text-secondary">
+                                <p className="text-sm font-medium text-[#f8fafc]">{connection.email_address}</p>
+                                <p className="text-xs text-[#94a3b8]">
                                   Connected: {formatDate(connection.created_at)}
                                 </p>
-                                <p className="text-xs text-airbnb-text-secondary">
+                                <p className="text-xs text-[#94a3b8]">
                                   Last sync: {formatDate(connection.last_sync_at)}
                                 </p>
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 w-full sm:w-auto">
-                            <span className="inline-flex px-3 py-1.5 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200 min-h-[32px]">
+                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30">
                               Connected
                             </span>
                             <button
                               onClick={() => handleDisconnect(connection.id)}
-                              className="px-4 py-2 text-sm text-airbnb-error hover:text-opacity-80 hover:bg-red-50 rounded-airbnb-md border border-transparent hover:border-red-200 transition-all duration-200 min-h-[44px]"
+                              className="px-3 py-1.5 text-sm text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200"
                             >
                               Disconnect
                             </button>
@@ -320,81 +320,81 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Preferences */}
-              <div className="bg-airbnb-white shadow-airbnb-md border border-airbnb-border-light rounded-airbnb-lg">
-                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light">
-                  <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary flex items-center gap-2">
-                    <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+                <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
                     Preferences
                   </h3>
                 </div>
-                <div className="px-4 sm:px-6 py-4">
+                <div className="px-6 py-4">
                   <div className="space-y-6">
                     <div>
-                      <label className="flex items-center cursor-pointer min-h-[44px]">
+                      <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           checked={preferences.emailNotifications}
                           onChange={(e) => setPreferences(prev => ({ ...prev, emailNotifications: e.target.checked }))}
-                          className="rounded border-airbnb-border-light bg-airbnb-white text-airbnb-red focus:ring-airbnb-red focus:ring-2 w-5 h-5 cursor-pointer"
+                          className="rounded border-[#2d1b4e] bg-[#0f0a1a] text-[#6b4ce6] focus:ring-[#6b4ce6] focus:ring-offset-[#1a1625] w-4 h-4"
                         />
-                        <span className="ml-2 text-sm text-airbnb-text-primary">Email notifications</span>
+                        <span className="ml-2 text-sm text-[#f8fafc]">Email notifications</span>
                       </label>
-                      <p className="mt-1 text-xs text-airbnb-text-secondary ml-7">Receive email notifications for sync status and errors</p>
+                      <p className="mt-1 text-xs text-[#94a3b8] ml-6">Receive email notifications for sync status and errors</p>
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-airbnb-text-primary mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Sync Frequency
                       </label>
                       <select
                         value={preferences.syncFrequency}
                         onChange={(e) => setPreferences(prev => ({ ...prev, syncFrequency: e.target.value }))}
-                        className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 cursor-pointer min-h-[44px]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
-                        <option value="manual">Manual only</option>
-                        <option value="hourly">Every hour</option>
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
+                        <option value="manual" className="bg-[#1a1625]">Manual only</option>
+                        <option value="hourly" className="bg-[#1a1625]">Every hour</option>
+                        <option value="daily" className="bg-[#1a1625]">Daily</option>
+                        <option value="weekly" className="bg-[#1a1625]">Weekly</option>
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-airbnb-text-primary mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Data Retention
                       </label>
                       <select
                         value={preferences.dataRetention}
                         onChange={(e) => setPreferences(prev => ({ ...prev, dataRetention: e.target.value }))}
-                        className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 cursor-pointer min-h-[44px]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
-                        <option value="3months">3 months</option>
-                        <option value="6months">6 months</option>
-                        <option value="1year">1 year</option>
-                        <option value="2years">2 years</option>
-                        <option value="forever">Forever</option>
+                        <option value="3months" className="bg-[#1a1625]">3 months</option>
+                        <option value="6months" className="bg-[#1a1625]">6 months</option>
+                        <option value="1year" className="bg-[#1a1625]">1 year</option>
+                        <option value="2years" className="bg-[#1a1625]">2 years</option>
+                        <option value="forever" className="bg-[#1a1625]">Forever</option>
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-airbnb-text-primary mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-[#cbd5e1] mb-2 uppercase tracking-wide">
                         Export Format
                       </label>
                       <select
                         value={preferences.exportFormat}
                         onChange={(e) => setPreferences(prev => ({ ...prev, exportFormat: e.target.value }))}
-                        className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 cursor-pointer min-h-[44px]"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
-                        <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
-                        <option value="xlsx">Excel (XLSX)</option>
+                        <option value="csv" className="bg-[#1a1625]">CSV</option>
+                        <option value="json" className="bg-[#1a1625]">JSON</option>
+                        <option value="xlsx" className="bg-[#1a1625]">Excel (XLSX)</option>
                       </select>
                     </div>
 
                     <button
                       onClick={() => alert('Preferences saved! (This is a demo - actual saving would be implemented)')}
-                      className="w-full sm:w-auto px-6 py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm min-h-[44px]"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                     >
                       Save Preferences
                     </button>

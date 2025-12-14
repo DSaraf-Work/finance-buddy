@@ -112,19 +112,19 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
   const getUsageBadgeColor = (category: string) => {
     switch (category) {
       case 'frequent':
-        return 'bg-green-50 text-green-700';
+        return 'bg-[#10b981]/10 text-[#10b981]';
       case 'common':
         return 'bg-blue-100 text-blue-800';
       case 'rare':
-        return 'bg-airbnb-gray-light/30 text-gray-800';
+        return 'bg-[#2d1b4e]/30 text-gray-800';
       default:
-        return 'bg-airbnb-gray-light/30 text-gray-800';
+        return 'bg-[#2d1b4e]/30 text-gray-800';
     }
   };
 
   if (loading) {
     return (
-      <div className={`bg-airbnb-white rounded-airbnb-md shadow p-6 ${className}`}>
+      <div className={`bg-[#1a1625] rounded-lg shadow p-6 ${className}`}>
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
@@ -138,9 +138,9 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
   }
 
   return (
-    <div className={`bg-airbnb-white rounded-airbnb-md shadow ${className}`}>
-      <div className="px-6 py-4 border-b border-airbnb-border-light">
-        <h2 className="text-lg font-medium text-airbnb-text-primary flex items-center">
+    <div className={`bg-[#1a1625] rounded-lg shadow ${className}`}>
+      <div className="px-6 py-4 border-b border-[#2d1b4e]">
+        <h2 className="text-lg font-medium text-[#f8fafc] flex items-center">
           <span className="mr-2">🏷️</span>
           Transaction Keywords
         </h2>
@@ -151,11 +151,11 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
 
       <div className="p-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-airbnb-md">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
             <p className="text-sm text-red-600">{error}</p>
             <button
               onClick={() => setError(null)}
-              className="text-red-600 hover:text-red-700 text-xs underline mt-1"
+              className="text-red-600 hover:text-[#ef4444] text-xs underline mt-1"
             >
               Dismiss
             </button>
@@ -170,13 +170,13 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
               placeholder="Enter new keyword..."
-              className="flex-1 px-3 py-2 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isAdding}
             />
             <button
               type="submit"
               disabled={isAdding || !newKeyword.trim()}
-              className="px-4 py-2 bg-airbnb-red text-white rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[#6b4ce6] text-white rounded-md hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isAdding ? 'Adding...' : 'Add'}
             </button>
@@ -193,10 +193,10 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
             keywords.map((keyword) => (
               <div
                 key={keyword.id}
-                className="flex items-center justify-between p-3 border border-airbnb-border-light rounded-airbnb-md hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border border-[#2d1b4e] rounded-md hover:bg-gray-50"
               >
                 <div className="flex items-center space-x-3">
-                  <span className="font-medium text-airbnb-text-primary">
+                  <span className="font-medium text-[#f8fafc]">
                     {keyword.keyword}
                   </span>
                   <span
@@ -212,7 +212,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
                     </span>
                   )}
                   {!keyword.is_active && (
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-700">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#ef4444]/10 text-[#ef4444]">
                       Inactive
                     </span>
                   )}
@@ -220,17 +220,17 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleToggleKeyword(keyword.id, keyword.is_active)}
-                    className={`px-3 py-1 text-xs font-medium rounded-airbnb-md ${
+                    className={`px-3 py-1 text-xs font-medium rounded-md ${
                       keyword.is_active
                         ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                        : 'bg-green-50 text-green-700 hover:bg-green-200'
+                        : 'bg-[#10b981]/10 text-[#10b981] hover:bg-green-200'
                     }`}
                   >
                     {keyword.is_active ? 'Deactivate' : 'Activate'}
                   </button>
                   <button
                     onClick={() => handleDeleteKeyword(keyword.id)}
-                    className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded-airbnb-md hover:bg-red-50"
+                    className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded-md hover:bg-[#ef4444]/10"
                   >
                     Delete
                   </button>
@@ -242,28 +242,28 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
 
         {/* Statistics */}
         {keywords.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-airbnb-border-light">
+          <div className="mt-6 pt-6 border-t border-[#2d1b4e]">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-airbnb-text-primary">
+                <div className="text-2xl font-bold text-[#f8fafc]">
                   {keywords.filter(k => k.is_active).length}
                 </div>
                 <div className="text-sm text-gray-500">Active</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-airbnb-text-primary">
+                <div className="text-2xl font-bold text-[#f8fafc]">
                   {keywords.filter(k => k.auto_generated).length}
                 </div>
                 <div className="text-sm text-gray-500">AI Generated</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-airbnb-text-primary">
+                <div className="text-2xl font-bold text-[#f8fafc]">
                   {keywords.filter(k => k.usage_category === 'frequent').length}
                 </div>
                 <div className="text-sm text-gray-500">Frequent</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-airbnb-text-primary">
+                <div className="text-2xl font-bold text-[#f8fafc]">
                   {keywords.reduce((sum, k) => sum + k.usage_count, 0)}
                 </div>
                 <div className="text-sm text-gray-500">Total Uses</div>

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Finance Buddy Global Styles - Airbnb Design Language */
+/* Finance Buddy Global Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,40 +8,35 @@
 }
 
 html {
-  font-family: Circular, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
-  background-color: #FFFFFF;
-  color: #222222;
-  line-height: 1.5;
-  font-size: 16px;
-  font-weight: 400;
+  background-color: #f9fafb;
+  color: #111827;
+  line-height: 1.6;
 }
 
-/* Airbnb Design Language Component Classes */
+/* Custom Component Classes */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  background-color: #FF5A5F;
+  padding: 0.5rem 1rem;
+  background-color: #9333ea;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.375rem;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 0.875rem;
   font-weight: 500;
-  font-family: inherit;
   text-decoration: none;
-  transition: background-color 0.2s ease;
-  min-height: 44px;
+  transition: background-color 0.2s;
+  min-height: 2.5rem;
 }
 
 .btn-primary:hover {
-  background-color: #E04A4F;
+  background-color: #7e22ce;
   text-decoration: none;
   color: white;
 }
@@ -55,55 +50,45 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  background-color: white;
-  color: #222222;
-  border: 1px solid #DDDDDD;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 0.875rem;
   font-weight: 500;
-  font-family: inherit;
   text-decoration: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  min-height: 44px;
+  transition: background-color 0.2s;
+  min-height: 2.5rem;
 }
 
 .btn-secondary:hover {
-  background-color: #F7F7F7;
-  border-color: #C4C4C4;
+  background-color: #4b5563;
   text-decoration: none;
-  color: #222222;
+  color: white;
 }
 
 .input-field {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #DDDDDD;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: inherit;
-  color: #222222;
-  background-color: white;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #FF5A5F;
-  box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.1);
-}
-
-.input-field::placeholder {
-  color: #B0B0B0;
+  border-color: #9333ea;
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
 }
 
 .card {
   background-color: white;
-  border-radius: 12px;
-  border: 1px solid #DDDDDD;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 24px;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
 }
 
 /* Improved spacing for action buttons */
@@ -168,23 +153,21 @@ body {
   overflow: hidden;
 }
 
-/* Focus visible styles for accessibility - Airbnb */
+/* Focus visible styles for accessibility */
 *:focus-visible {
-  outline: 2px solid #FF5A5F;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
-/* Skip to main content link for accessibility - Airbnb */
+/* Skip to main content link for accessibility */
 .skip-to-main {
   position: absolute;
   left: -9999px;
   z-index: 999;
   padding: 1rem;
-  background-color: #FF5A5F;
+  background-color: #3b82f6;
   color: white;
   text-decoration: none;
-  border-radius: 8px;
 }
 
 .skip-to-main:focus {

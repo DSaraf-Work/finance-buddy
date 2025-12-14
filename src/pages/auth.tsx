@@ -75,10 +75,10 @@ const AuthPage: NextPage = () => {
   // Show loading if checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-airbnb-red mx-auto mb-4"></div>
-          <p className="text-airbnb-text-secondary">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5D5FEF] mx-auto mb-4"></div>
+          <p className="text-[#B2B4C2]">Loading...</p>
         </div>
       </div>
     );
@@ -96,45 +96,45 @@ const AuthPage: NextPage = () => {
         <meta name="description" content={`${isSignUp ? 'Create an account' : 'Sign in'} to access Finance Buddy`} />
       </Head>
 
-      <div className="min-h-screen bg-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#0A0B0D] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-airbnb-red rounded-2xl shadow-airbnb-lg mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] rounded-2xl shadow-[0_0_30px_rgba(93,95,239,0.4)] mb-4">
               <span className="text-3xl">💰</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-airbnb-text-primary mb-2">Finance Buddy</h1>
-            <p className="text-airbnb-text-secondary">Gmail Financial Email Automation</p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#F0F1F5] mb-2">Finance Buddy</h1>
+            <p className="text-[#B2B4C2]">Gmail Financial Email Automation</p>
           </div>
 
-          <div className="bg-white py-8 px-4 shadow-airbnb-xl border border-airbnb-border-light rounded-airbnb-lg sm:px-10">
+          <div className="bg-[#15161A] py-8 px-4 shadow-[0_8px_30px_rgba(0,0,0,0.4)] border border-[#2A2C35] rounded-xl sm:px-10">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-airbnb-text-primary text-center">
+              <h2 className="text-2xl font-bold text-[#F0F1F5] text-center">
                 {isSignUp ? 'Create your account' : 'Sign in to your account'}
               </h2>
-              <p className="mt-2 text-center text-sm text-airbnb-text-secondary">
+              <p className="mt-2 text-center text-sm text-[#B2B4C2]">
                 {isSignUp ? 'Get started with Finance Buddy' : 'Welcome back to Finance Buddy'}
               </p>
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
               {(formError || error) && (
-                <div className="bg-airbnb-error/10 border border-airbnb-error/30 rounded-airbnb-md p-4 flex items-start gap-3">
-                  <svg className="w-5 h-5 text-airbnb-error flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-[#F45C63]/10 border border-[#F45C63]/30 rounded-lg p-4 flex items-start gap-3">
+                  <svg className="w-5 h-5 text-[#F45C63] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <div className="text-sm text-airbnb-error">
+                  <div className="text-sm text-[#F45C63]">
                     {formError || error}
                   </div>
                 </div>
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-airbnb-text-secondary mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[#B2B4C2] mb-2">
                   Email address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-[#6F7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                     </svg>
                   </div>
@@ -146,19 +146,19 @@ const AuthPage: NextPage = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 min-h-[44px]"
+                    className="w-full pl-10 pr-4 py-3 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all duration-200"
                     placeholder="Enter your email"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-airbnb-text-secondary mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-[#B2B4C2] mb-2">
                   Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-[#6F7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -170,7 +170,7 @@ const AuthPage: NextPage = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 min-h-[44px]"
+                    className="w-full pl-10 pr-4 py-3 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all duration-200"
                     placeholder="Enter your password"
                   />
                 </div>
@@ -178,12 +178,12 @@ const AuthPage: NextPage = () => {
 
               {isSignUp && (
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-airbnb-text-secondary mb-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#B2B4C2] mb-2">
                     Confirm Password
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-5 w-5 text-[#6F7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -195,7 +195,7 @@ const AuthPage: NextPage = () => {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all duration-200 min-h-[44px]"
+                      className="w-full pl-10 pr-4 py-3 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all duration-200"
                       placeholder="Confirm your password"
                     />
                   </div>
@@ -206,7 +206,7 @@ const AuthPage: NextPage = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full px-6 py-3 bg-airbnb-red text-white font-semibold rounded-airbnb-md hover:bg-airbnb-red/90 hover:shadow-airbnb-lg focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                  className="w-full px-6 py-3 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white font-semibold rounded-lg hover:shadow-xl hover:shadow-[#5D5FEF]/30 focus:outline-none focus:ring-2 focus:ring-[#5D5FEF] focus:ring-offset-2 focus:ring-offset-[#15161A] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
@@ -226,7 +226,7 @@ const AuthPage: NextPage = () => {
                 <div className="text-center">
                   <a
                     href="/auth/forgot-password"
-                    className="text-sm text-airbnb-red hover:text-airbnb-red/80 transition-colors duration-200"
+                    className="text-sm text-[#a78bfa] hover:text-[#6b4ce6] transition-colors duration-200"
                   >
                     Forgot your password?
                   </a>
@@ -237,17 +237,17 @@ const AuthPage: NextPage = () => {
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-airbnb-border-light"></div>
+                  <div className="w-full border-t border-[#2d1b4e]"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-airbnb-text-secondary">or</span>
+                  <span className="px-2 bg-[#1a1625] text-[#94a3b8]">or</span>
                 </div>
               </div>
               <div className="mt-6 text-center">
                 <button
                   type="button"
                   onClick={toggleMode}
-                  className="text-sm text-airbnb-red hover:text-airbnb-red/80 transition-colors duration-200 font-medium min-h-[44px]"
+                  className="text-sm text-[#a78bfa] hover:text-[#6b4ce6] transition-colors duration-200 font-medium"
                 >
                   {isSignUp
                     ? 'Already have an account? Sign in'
@@ -258,30 +258,30 @@ const AuthPage: NextPage = () => {
             </div>
 
             {isSignUp && (
-              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-airbnb-md p-4">
-                <div className="text-sm text-airbnb-text-secondary">
-                  <p className="font-semibold mb-2 text-airbnb-text-primary">After creating your account, you'll be able to:</p>
+              <div className="mt-6 bg-[#6b4ce6]/10 border border-[#6b4ce6]/30 rounded-lg p-4">
+                <div className="text-sm text-[#cbd5e1]">
+                  <p className="font-semibold mb-2 text-[#f8fafc]">After creating your account, you'll be able to:</p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <svg className="w-5 h-5 text-airbnb-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-[#10b981] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       <span>Connect multiple Gmail accounts via OAuth</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <svg className="w-5 h-5 text-airbnb-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-[#10b981] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       <span>Sync financial emails with manual control</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <svg className="w-5 h-5 text-airbnb-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-[#10b981] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       <span>Review and manage email data with advanced filtering</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <svg className="w-5 h-5 text-airbnb-success flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-[#10b981] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       <span>Access comprehensive testing and admin tools</span>

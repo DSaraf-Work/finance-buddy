@@ -371,10 +371,10 @@ export default function TransactionsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-airbnb-gray-light flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-airbnb-red mx-auto mb-4"></div>
-          <p className="text-airbnb-text-secondary">Loading transactions...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading transactions...</p>
         </div>
       </div>
     );
@@ -382,13 +382,13 @@ export default function TransactionsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-airbnb-gray-light flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-airbnb-error text-xl mb-4">⚠️ Error</div>
-          <p className="text-airbnb-text-secondary mb-4">{error}</p>
+          <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
+          <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => searchTransactions()}
-            className="px-6 py-3 bg-airbnb-red text-airbnb-white rounded-airbnb-md hover:bg-opacity-90 transition-colors min-h-[44px]"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Retry
           </button>
@@ -403,17 +403,17 @@ export default function TransactionsPage() {
         title="Finance Buddy - Transactions"
         description="AI-extracted financial transactions with smart insights"
       >
-        {/* Airbnb Light Background */}
-        <div className="min-h-screen bg-airbnb-gray-light py-6 sm:py-8 lg:py-10">
+        {/* Purple + Slate Gray Background */}
+        <div className="min-h-screen bg-[#0A0B0D] py-8 sm:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="mb-6 sm:mb-8">
-              <div className="flex items-center justify-between pb-4 sm:pb-6">
+            <div className="mb-8 sm:mb-12">
+              <div className="flex items-center justify-between pb-6">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-airbnb-text-primary mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-bold text-[#F0F1F5] mb-2">
                     Transactions
                   </h1>
-                  <p className="text-sm sm:text-base text-airbnb-text-secondary">
+                  <p className="text-sm sm:text-base text-[#B2B4C2]">
                     Track and manage your financial activity
                   </p>
                 </div>
@@ -430,7 +430,7 @@ export default function TransactionsPage() {
 
             {/* Section 2: Filters - Distinct background with spacing */}
             <div className="mb-6 sm:mb-8">
-              <div className="bg-airbnb-white rounded-airbnb-lg p-4 sm:p-6 border border-airbnb-border-light shadow-airbnb-md">
+              <div className="bg-[#0F1014] rounded-2xl p-4 sm:p-6 border border-[#2A2C35]/50 shadow-lg">
                 <TransactionFilters
                   filters={filters}
                   categories={categories}
@@ -448,11 +448,11 @@ export default function TransactionsPage() {
               {!loading && transactions.length > 0 && (
                 <div className="flex items-center justify-between mb-4 sm:mb-5">
                   <div className="flex items-center gap-2">
-                    <div className="w-1 h-6 bg-airbnb-red rounded-full"></div>
-                    <h2 className="text-base sm:text-lg font-semibold text-airbnb-text-primary">
+                    <div className="w-1 h-6 bg-gradient-to-b from-[#5D5FEF] to-[#888BFF] rounded-full"></div>
+                    <h2 className="text-base sm:text-lg font-semibold text-[#F0F1F5]">
                       Transactions
                     </h2>
-                    <span className="text-xs sm:text-sm text-airbnb-text-secondary ml-1">
+                    <span className="text-xs sm:text-sm text-[#6F7280] ml-1">
                       ({transactions.length} {transactions.length === 1 ? 'result' : 'results'})
                     </span>
                   </div>
@@ -480,18 +480,21 @@ export default function TransactionsPage() {
         {/* Pagination Controls */}
         {transactions.length > 0 && (
           <nav
-            className="mt-8 sm:mt-10 bg-airbnb-white rounded-airbnb-lg p-4 sm:p-6 shadow-airbnb-md border border-airbnb-border-light"
+            className="mt-10 sm:mt-12 bg-[#15161A] rounded-2xl p-6 shadow-sm border border-[#2A2C35]"
             aria-label="Transaction pagination"
           >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+            {/* Purple Top Border */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] rounded-t-2xl"></div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               {/* Pagination Info */}
-              <div className="flex items-center gap-4 sm:gap-6">
-                <span className="text-sm text-airbnb-text-secondary" aria-live="polite">
-                  <span className="text-airbnb-text-primary font-semibold">{pagination.total}</span> transactions
+              <div className="flex items-center gap-6">
+                <span className="text-sm text-[#B2B4C2]" aria-live="polite">
+                  <span className="text-[#F0F1F5] font-semibold">{pagination.total}</span> transactions
                 </span>
-                <div className="h-4 w-px bg-airbnb-border-light"></div>
-                <span className="text-sm text-airbnb-text-secondary" aria-current="page">
-                  Page <span className="text-airbnb-text-primary font-semibold">{pagination.page}</span> of <span className="text-airbnb-text-primary font-semibold">{pagination.totalPages}</span>
+                <div className="h-4 w-px bg-[#2A2C35]"></div>
+                <span className="text-sm text-[#B2B4C2]" aria-current="page">
+                  Page <span className="text-[#F0F1F5] font-semibold">{pagination.page}</span> of <span className="text-[#F0F1F5] font-semibold">{pagination.totalPages}</span>
                 </span>
               </div>
 
@@ -500,7 +503,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="px-4 sm:px-5 py-2.5 text-sm font-medium text-airbnb-text-primary bg-airbnb-white border-2 border-airbnb-border-light rounded-airbnb-md hover:border-airbnb-red hover:text-airbnb-red disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-airbnb-border-light disabled:hover:text-airbnb-text-primary transition-all duration-300 min-h-[44px]"
+                  className="px-5 py-2.5 text-sm font-medium text-[#B2B4C2] bg-[#1E2026] border-2 border-[#2A2C35] rounded-xl hover:border-[#5D5FEF] hover:text-[#888BFF] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#2A2C35] disabled:hover:text-[#B2B4C2] transition-all duration-300"
                   aria-label="Go to previous page"
                 >
                   <span className="flex items-center gap-2">
@@ -512,8 +515,8 @@ export default function TransactionsPage() {
                 </button>
 
                 {/* Current Page Indicator */}
-                <div className="px-4 py-2.5 bg-airbnb-red rounded-airbnb-md shadow-airbnb-sm min-h-[44px] flex items-center">
-                  <span className="text-sm font-bold text-airbnb-white">
+                <div className="px-4 py-2.5 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] rounded-xl shadow-md">
+                  <span className="text-sm font-bold text-white">
                     {pagination.page}
                   </span>
                 </div>
@@ -521,7 +524,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-4 sm:px-5 py-2.5 text-sm font-medium text-airbnb-text-primary bg-airbnb-white border-2 border-airbnb-border-light rounded-airbnb-md hover:border-airbnb-red hover:text-airbnb-red disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-airbnb-border-light disabled:hover:text-airbnb-text-primary transition-all duration-300 min-h-[44px]"
+                  className="px-5 py-2.5 text-sm font-medium text-[#B2B4C2] bg-[#1E2026] border-2 border-[#2A2C35] rounded-xl hover:border-[#5D5FEF] hover:text-[#888BFF] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#2A2C35] disabled:hover:text-[#B2B4C2] transition-all duration-300"
                   aria-label="Go to next page"
                 >
                   <span className="flex items-center gap-2">

@@ -37,11 +37,11 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
   const getStatusColor = (status: TransactionStatus) => {
     switch (status) {
-      case 'REVIEW': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-      case 'APPROVED': return 'bg-green-50 text-green-700 border-green-200';
-      case 'INVALID': return 'bg-airbnb-gray-light text-airbnb-text-secondary border-airbnb-border-light';
-      case 'REJECTED': return 'bg-red-50 text-red-700 border-red-200';
-      default: return 'bg-airbnb-gray-light text-airbnb-text-secondary border-airbnb-border-light';
+      case 'REVIEW': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'APPROVED': return 'bg-[#10b981]/10 text-[#10b981] border-green-200';
+      case 'INVALID': return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
+      case 'REJECTED': return 'bg-[#ef4444]/10 text-[#ef4444] border-red-200';
+      default: return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
     }
   };
 
@@ -75,19 +75,19 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
   const getDirectionColor = (direction?: string | null) => {
     switch (direction) {
-      case 'debit': return 'bg-red-50 text-red-700 border-red-200';
-      case 'credit': return 'bg-green-50 text-green-700 border-green-200';
-      case 'transfer': return 'bg-blue-50 text-blue-700 border-blue-200';
-      default: return 'bg-airbnb-gray-light text-airbnb-text-secondary border-airbnb-border-light';
+      case 'debit': return 'bg-[#ef4444]/10 text-[#ef4444] border-red-200';
+      case 'credit': return 'bg-[#10b981]/10 text-[#10b981] border-green-200';
+      case 'transfer': return 'bg-blue-100 text-blue-800 border-blue-200';
+      default: return 'bg-[#2d1b4e]/30 text-gray-800 border-[#2d1b4e]';
     }
   };
 
   const getConfidenceColor = (confidence?: string | null) => {
-    if (!confidence) return 'bg-airbnb-gray-light text-airbnb-text-secondary';
+    if (!confidence) return 'bg-[#2d1b4e]/30 text-gray-800';
     const conf = parseFloat(confidence);
-    if (conf >= 0.8) return 'bg-green-50 text-green-700';
-    if (conf >= 0.6) return 'bg-yellow-50 text-yellow-700';
-    return 'bg-red-50 text-red-700';
+    if (conf >= 0.8) return 'bg-[#10b981]/10 text-[#10b981]';
+    if (conf >= 0.6) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-[#ef4444]/10 text-[#ef4444]';
   };
 
   const getCategoryIcon = (category?: string | null) => {
@@ -112,29 +112,29 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
   };
 
   return (
-    <div className={`transition-all duration-300 ${isExpanded ? 'bg-blue-50 shadow-airbnb-md' : 'bg-airbnb-white hover:bg-airbnb-gray-hover border border-airbnb-border-light'}`}>
+    <div className={`transition-all duration-300 ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md' : 'bg-[#1a1625] hover:bg-gray-50'}`}>
       {/* Main Row */}
-      <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-4 sm:space-x-6 flex-1 min-w-0">
+      <div className="px-8 py-6 flex items-center justify-between">
+        <div className="flex items-center space-x-6 flex-1">
           {/* Category Icon */}
-          <div className="text-2xl sm:text-3xl p-2 bg-airbnb-gray-light rounded-airbnb-md hover:bg-airbnb-gray-hover transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+          <div className="text-3xl p-2 bg-[#2d1b4e]/30 rounded-xl hover:bg-gray-200 transition-colors">
             {getCategoryIcon(transaction.category)}
           </div>
 
           {/* Transaction Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
-              <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary truncate">
+            <div className="flex items-center space-x-4 mb-2">
+              <h3 className="text-lg font-semibold text-[#f8fafc] truncate">
                 {transaction.merchant_name || 'Unknown Merchant'}
               </h3>
-              <span className={`inline-flex px-3 py-1.5 text-xs font-semibold rounded-full border-2 min-h-[32px] ${getDirectionColor(transaction.direction)}`}>
+              <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${getDirectionColor(transaction.direction)}`}>
                 {transaction.direction || 'unknown'}
               </span>
-              <span className={`inline-flex px-3 py-1.5 text-xs font-semibold rounded-full border-2 min-h-[32px] ${getStatusColor(transaction.status)}`}>
+              <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border-2 ${getStatusColor(transaction.status)}`}>
                 {getStatusLabel(transaction.status)}
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-airbnb-text-secondary">
+            <div className="flex items-center space-x-6 text-sm text-[#cbd5e1]">
               <div className="flex items-center space-x-1">
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -167,12 +167,12 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
           </div>
 
           {/* Amount */}
-          <div className="text-right sm:text-left sm:ml-auto">
-            <div className="text-xl sm:text-2xl font-bold text-airbnb-text-primary mb-1">
+          <div className="text-right">
+            <div className="text-2xl font-bold text-[#f8fafc] mb-1">
               {formatAmount(transaction.amount, transaction.currency)}
             </div>
-            <div className="flex items-center justify-end sm:justify-start space-x-2">
-              <span className={`inline-flex px-3 py-1.5 text-xs font-semibold rounded-full min-h-[32px] ${getConfidenceColor(transaction.confidence)}`}>
+            <div className="flex items-center justify-end space-x-2">
+              <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getConfidenceColor(transaction.confidence)}`}>
                 {transaction.confidence ? `${Math.round(parseFloat(transaction.confidence) * 100)}%` : 'N/A'}
               </span>
             </div>
@@ -180,10 +180,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
         </div>
 
         {/* Actions */}
-        <div className="flex items-center flex-wrap gap-2 sm:gap-2 w-full sm:w-auto">
+        <div className="flex items-center space-x-2 ml-6">
           <button
             onClick={onEdit}
-            className="p-3 text-airbnb-text-tertiary hover:text-airbnb-teal hover:bg-airbnb-gray-hover rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-200 transform hover:scale-105"
             title="Edit transaction"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,10 +195,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             <button
               onClick={handleReExtract}
               disabled={isReExtracting}
-              className={`p-3 rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+              className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                 isReExtracting
-                  ? 'text-airbnb-text-tertiary bg-airbnb-gray-light cursor-not-allowed'
-                  : 'text-airbnb-text-tertiary hover:text-airbnb-teal hover:bg-airbnb-gray-hover'
+                  ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                  : 'text-gray-400 hover:text-purple-600 hover:bg-purple-100'
               }`}
               title="Re-extract with AI"
             >
@@ -222,10 +222,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('APPROVED')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-airbnb-text-tertiary bg-airbnb-gray-light cursor-not-allowed'
-                      : 'text-airbnb-text-tertiary hover:text-green-700 hover:bg-green-50'
+                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-green-600 hover:bg-[#10b981]/10'
                   }`}
                   title="Approve transaction"
                 >
@@ -239,10 +239,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('REJECTED')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-airbnb-text-tertiary bg-airbnb-gray-light cursor-not-allowed'
-                      : 'text-airbnb-text-tertiary hover:text-red-700 hover:bg-red-50'
+                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-red-600 hover:bg-[#ef4444]/10'
                   }`}
                   title="Reject transaction"
                 >
@@ -256,10 +256,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('INVALID')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-airbnb-text-tertiary bg-airbnb-gray-light cursor-not-allowed'
-                      : 'text-airbnb-text-tertiary hover:text-airbnb-text-secondary hover:bg-airbnb-gray-hover'
+                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-200'
                   }`}
                   title="Mark as invalid"
                 >
@@ -273,10 +273,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('REVIEW')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
-                      ? 'text-airbnb-text-tertiary bg-airbnb-gray-light cursor-not-allowed'
-                      : 'text-airbnb-text-tertiary hover:text-yellow-700 hover:bg-yellow-50'
+                      ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-100'
                   }`}
                   title="Mark for review"
                 >
@@ -291,10 +291,10 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`p-3 rounded-airbnb-md transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+            className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
               isExpanded
-                ? 'text-airbnb-teal bg-airbnb-gray-hover shadow-airbnb-sm'
-                : 'text-airbnb-text-tertiary hover:text-airbnb-text-secondary hover:bg-airbnb-gray-hover'
+                ? 'text-blue-600 bg-blue-100 shadow-md'
+                : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-100'
             }`}
             title={isExpanded ? 'Collapse details' : 'Expand details'}
           >
@@ -312,47 +312,47 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
       {/* Expanded Details */}
       {isExpanded && (
-        <div className="px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 border-t border-airbnb-border-light bg-airbnb-gray-light">
-          <div className="pt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="px-8 pb-8 border-t border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="pt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Transaction Details */}
-            <div className="bg-airbnb-white rounded-airbnb-lg p-4 sm:p-6 shadow-airbnb-sm">
-              <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
+              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Transaction Details
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Reference ID</dt>
-                  <dd className="text-sm text-airbnb-text-primary font-mono bg-airbnb-gray-light px-2 py-1 rounded-airbnb-sm mt-1 break-all">{transaction.reference_id || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Reference ID</dt>
+                  <dd className="text-sm text-[#f8fafc] font-mono bg-[#0f0a1a]/50 px-2 py-1 rounded mt-1">{transaction.reference_id || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Account Hint</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1">{transaction.account_hint || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Account Hint</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.account_hint || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Location</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1">{transaction.location || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Location</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.location || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Account Type</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1">
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Account Type</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">
                     {transaction.account_type ? (
-                      <span className="inline-block px-3 py-1.5 text-xs bg-blue-50 text-blue-700 rounded-full">
+                      <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
                         {transaction.account_type.replace(/_/g, ' ')}
                       </span>
                     ) : 'N/A'}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Transaction Type</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1">
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Transaction Type</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">
                     {transaction.transaction_type ? (
-                      <span className={`inline-block px-3 py-1.5 text-xs rounded-full ${
+                      <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                         transaction.transaction_type === 'Dr'
-                          ? 'bg-red-50 text-red-700'
-                          : 'bg-green-50 text-green-700'
+                          ? 'bg-[#ef4444]/10 text-red-700'
+                          : 'bg-[#10b981]/10 text-green-700'
                       }`}>
                         {transaction.transaction_type === 'Dr' ? 'Dr (Debit)' : 'Cr (Credit)'}
                       </span>
@@ -363,62 +363,62 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             </div>
 
             {/* Merchant Info */}
-            <div className="bg-airbnb-white rounded-airbnb-lg p-4 sm:p-6 shadow-airbnb-sm">
-              <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-airbnb-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
+              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 Merchant Info
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Original Name</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1 break-all">{transaction.merchant_name || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Original Name</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.merchant_name || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Normalized</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1 break-all">{transaction.merchant_normalized || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Normalized</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">{transaction.merchant_normalized || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">Category</dt>
-                  <dd className="text-sm text-airbnb-text-primary capitalize mt-1">{transaction.category || 'Uncategorized'}</dd>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">Category</dt>
+                  <dd className="text-sm text-[#f8fafc] capitalize mt-1">{transaction.category || 'Uncategorized'}</dd>
                 </div>
               </dl>
             </div>
 
             {/* AI & User Notes */}
-            <div className="bg-airbnb-white rounded-airbnb-lg p-4 sm:p-6 shadow-airbnb-sm">
-              <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
+              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Notes
               </h4>
               <dl className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">AI Keywords</dt>
+                  <dt className="text-sm font-medium text-[#cbd5e1]">AI Keywords</dt>
                   <dd className="mt-2">
                     {transaction.ai_notes ? (
                       <div className="flex flex-wrap gap-2">
                         {transaction.ai_notes.split(',').map((note, index) => (
                           <span
                             key={index}
-                            className="inline-block px-3 py-1.5 text-xs bg-purple-50 text-purple-700 rounded-full font-medium"
+                            className="inline-block px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded-full font-medium"
                           >
                             {note.trim()}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-airbnb-text-tertiary italic text-sm">No AI notes available</span>
+                      <span className="text-gray-400 italic text-sm">No AI notes available</span>
                     )}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-airbnb-text-secondary">User Notes</dt>
-                  <dd className="text-sm text-airbnb-text-primary mt-1">
+                  <dt className="text-sm font-medium text-[#cbd5e1]">User Notes</dt>
+                  <dd className="text-sm text-[#f8fafc] mt-1">
                     {transaction.user_notes || (
-                      <span className="text-airbnb-text-tertiary italic">No user notes</span>
+                      <span className="text-gray-400 italic">No user notes</span>
                     )}
                   </dd>
                 </div>
@@ -427,9 +427,9 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
           </div>
 
           {/* Metadata & Actions */}
-          <div className="mt-6 sm:mt-8 pt-6 border-t border-airbnb-border-light">
+          <div className="mt-8 pt-6 border-t border-blue-200">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-airbnb-text-secondary">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-[#cbd5e1]">
                 <div className="flex items-center space-x-1">
                   <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -449,14 +449,14 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                   <span>Created: {formatDate(transaction.created_at)}</span>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <button className="px-4 py-2.5 text-sm font-medium text-airbnb-teal bg-airbnb-gray-light rounded-airbnb-md hover:bg-airbnb-gray-hover transition-colors min-h-[44px]">
+              <div className="flex items-center space-x-3">
+                <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
                   Re-extract
                 </button>
-                <button className="px-4 py-2.5 text-sm font-medium text-green-700 bg-green-50 rounded-airbnb-md hover:bg-green-100 transition-colors min-h-[44px]">
+                <button className="px-4 py-2 text-sm font-medium text-green-600 bg-[#10b981]/10 rounded-lg hover:bg-green-200 transition-colors">
                   Approve
                 </button>
-                <button className="px-4 py-2.5 text-sm font-medium text-red-700 bg-red-50 rounded-airbnb-md hover:bg-red-100 transition-colors min-h-[44px]">
+                <button className="px-4 py-2 text-sm font-medium text-red-600 bg-[#ef4444]/10 rounded-lg hover:bg-red-200 transition-colors">
                   Reject
                 </button>
               </div>

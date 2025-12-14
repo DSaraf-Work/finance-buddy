@@ -74,28 +74,28 @@ export default function NotificationsPage() {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="min-h-screen bg-airbnb-gray-light">
-      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-airbnb-text-primary">Notifications</h1>
-          <p className="mt-2 text-sm sm:text-base text-airbnb-text-secondary">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#f8fafc]">Notifications</h1>
+          <p className="mt-2 text-[#cbd5e1]">
             Stay updated with your transaction alerts
           </p>
         </div>
 
         {/* Filters */}
-        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex space-x-2">
             <button
               onClick={() => {
                 setFilter('all');
                 setPage(1);
               }}
-              className={`px-4 py-3 rounded-airbnb-md font-medium min-h-[44px] transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium ${
                 filter === 'all'
-                  ? 'bg-airbnb-red text-airbnb-white'
-                  : 'bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary hover:bg-airbnb-gray-hover'
+                  ? 'bg-[#6b4ce6] text-white'
+                  : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
               }`}
             >
               All
@@ -105,10 +105,10 @@ export default function NotificationsPage() {
                 setFilter('unread');
                 setPage(1);
               }}
-              className={`px-4 py-3 rounded-airbnb-md font-medium min-h-[44px] transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium ${
                 filter === 'unread'
-                  ? 'bg-airbnb-red text-airbnb-white'
-                  : 'bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary hover:bg-airbnb-gray-hover'
+                  ? 'bg-[#6b4ce6] text-white'
+                  : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
               }`}
             >
               Unread
@@ -118,10 +118,10 @@ export default function NotificationsPage() {
                 setFilter('read');
                 setPage(1);
               }}
-              className={`px-4 py-3 rounded-airbnb-md font-medium min-h-[44px] transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium ${
                 filter === 'read'
-                  ? 'bg-airbnb-red text-airbnb-white'
-                  : 'bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary hover:bg-airbnb-gray-hover'
+                  ? 'bg-[#6b4ce6] text-white'
+                  : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
               }`}
             >
               Read
@@ -138,7 +138,7 @@ export default function NotificationsPage() {
                 // });
                 fetchNotifications();
               }}
-              className="text-sm text-airbnb-teal hover:text-airbnb-teal-dark font-medium min-h-[44px] px-4 py-2"
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
             >
               Mark all as read
             </button>
@@ -148,13 +148,13 @@ export default function NotificationsPage() {
         {/* Notifications List */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-airbnb-red"></div>
-            <p className="mt-2 text-airbnb-text-secondary">Loading notifications...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
+            <p className="mt-2 text-[#B2B4C2]">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-12 bg-airbnb-white rounded-airbnb-lg border border-airbnb-border-light">
+          <div className="text-center py-12 bg-[#0f0a1a]/50 rounded-lg">
             <svg
-              className="mx-auto h-12 w-12 text-airbnb-text-tertiary"
+              className="mx-auto h-12 w-12 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -166,24 +166,24 @@ export default function NotificationsPage() {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <p className="mt-4 text-airbnb-text-secondary">No notifications found</p>
+            <p className="mt-4 text-[#cbd5e1]">No notifications found</p>
           </div>
         ) : (
           <div className="space-y-4">
             {notifications.map(notification => (
               <div
                 key={notification.id}
-                className={`bg-airbnb-white rounded-airbnb-lg shadow-airbnb-sm p-4 sm:p-6 border border-airbnb-border-light ${
-                  !notification.read ? 'border-l-4 border-l-airbnb-red' : ''
+                className={`bg-[#1a1625] rounded-lg shadow p-6 ${
+                  !notification.read ? 'border-l-4 border-blue-600' : ''
                 }`}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base sm:text-lg font-semibold text-airbnb-text-primary">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-[#f8fafc]">
                       {notification.title}
                     </h3>
-                    <p className="mt-2 text-sm sm:text-base text-airbnb-text-secondary">{notification.message}</p>
-                    <p className="mt-2 text-xs sm:text-sm text-airbnb-text-tertiary">
+                    <p className="mt-2 text-[#cbd5e1]">{notification.message}</p>
+                    <p className="mt-2 text-sm text-gray-500">
                       {formatDate(notification.created_at)}
                     </p>
                     {notification.action_url && (
@@ -192,17 +192,17 @@ export default function NotificationsPage() {
                           markAsRead(notification.id);
                           router.push(notification.action_url!);
                         }}
-                        className="mt-4 inline-flex items-center px-4 py-2.5 bg-airbnb-red text-airbnb-white rounded-airbnb-md hover:bg-opacity-90 font-medium min-h-[44px] transition-colors"
+                        className="mt-4 inline-flex items-center px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
                       >
                         {notification.action_label || 'View'}
                       </button>
                     )}
                   </div>
-                  <div className="ml-4 flex flex-col sm:flex-row gap-2 flex-shrink-0">
+                  <div className="ml-4 flex space-x-2">
                     {!notification.read && (
                       <button
                         onClick={() => markAsRead(notification.id)}
-                        className="text-airbnb-teal hover:text-airbnb-teal-dark min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
+                        className="text-blue-600 hover:text-blue-800"
                         title="Mark as read"
                       >
                         <svg
@@ -220,7 +220,7 @@ export default function NotificationsPage() {
                     )}
                     <button
                       onClick={() => deleteNotification(notification.id)}
-                      className="text-airbnb-error hover:text-opacity-80 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
+                      className="text-red-600 hover:text-[#ef4444]"
                       title="Delete"
                     >
                       <svg
@@ -244,21 +244,21 @@ export default function NotificationsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="mt-8 flex items-center justify-between">
             <button
               onClick={() => setPage(prev => Math.max(1, prev - 1))}
               disabled={page === 1}
-              className="px-4 py-2.5 bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary rounded-airbnb-md hover:bg-airbnb-gray-hover disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] transition-colors"
+              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
-            <span className="text-airbnb-text-secondary">
+            <span className="text-[#cbd5e1]">
               Page {page} of {totalPages}
             </span>
             <button
               onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2.5 bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary rounded-airbnb-md hover:bg-airbnb-gray-hover disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] transition-colors"
+              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

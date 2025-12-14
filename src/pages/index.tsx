@@ -140,10 +140,10 @@ const HomePage: NextPage = () => {
   if (loading) {
     return (
       <Layout title="Finance Buddy - Loading...">
-        <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-airbnb-red mx-auto mb-4"></div>
-            <p className="text-airbnb-text-secondary">Loading Finance Buddy...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5D5FEF] mx-auto mb-4"></div>
+            <p className="text-[#B2B4C2]">Loading Finance Buddy...</p>
           </div>
         </div>
       </Layout>
@@ -195,28 +195,24 @@ const HomePage: NextPage = () => {
                   href="/auth"
                   style={{
                     padding: '0.75rem 2rem',
-                    backgroundColor: '#FF5A5F',
+                    backgroundColor: '#9333ea',
                     color: 'white',
                     textDecoration: 'none',
                     borderRadius: '0.5rem',
                     fontWeight: '600',
                     fontSize: '1.1rem',
                     transition: 'all 0.2s',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    minHeight: '44px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    boxShadow: '0 4px 6px rgba(147, 51, 234, 0.25)'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#E04A4F';
+                    e.currentTarget.style.backgroundColor = '#7e22ce';
                     e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+                    e.currentTarget.style.boxShadow = '0 6px 12px rgba(147, 51, 234, 0.35)';
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = '#FF5A5F';
+                    e.currentTarget.style.backgroundColor = '#9333ea';
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(147, 51, 234, 0.25)';
                   }}
                 >
                   Sign In
@@ -227,26 +223,22 @@ const HomePage: NextPage = () => {
                   style={{
                     padding: '0.75rem 2rem',
                     backgroundColor: 'white',
-                    color: '#FF5A5F',
+                    color: '#9333ea',
                     textDecoration: 'none',
                     borderRadius: '0.5rem',
                     fontWeight: '600',
                     fontSize: '1.1rem',
-                    border: '1px solid #DDDDDD',
-                    transition: 'all 0.2s',
-                    minHeight: '44px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    border: '2px solid #9333ea',
+                    transition: 'all 0.2s'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#F7F7F7';
-                    e.currentTarget.style.borderColor = '#FF5A5F';
+                    e.currentTarget.style.backgroundColor = '#9333ea';
+                    e.currentTarget.style.color = 'white';
                     e.currentTarget.style.transform = 'translateY(-1px)';
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.backgroundColor = 'white';
-                    e.currentTarget.style.borderColor = '#DDDDDD';
+                    e.currentTarget.style.color = '#9333ea';
                     e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
@@ -330,196 +322,196 @@ const HomePage: NextPage = () => {
       title="Finance Buddy - Dashboard"
       description="Finance Buddy dashboard with overview and quick actions"
     >
-      <div className="min-h-screen bg-white py-6 sm:py-8 lg:py-12">
+      <div className="min-h-screen bg-[#0f0a1a] py-8 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header - Airbnb Design */}
-          <div className="mb-6 sm:mb-8 lg:mb-12">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-6 border-b border-airbnb-border-light">
+          {/* Welcome Header - Dark Purple Theme */}
+          <div className="mb-8 sm:mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-6 border-b border-[#2d1b4e]">
               <div>
-                <p className="text-xs sm:text-sm font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-2">
+                <p className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-2">
                   Dashboard
                 </p>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-airbnb-text-primary tracking-tight">
+                <h1 className="text-3xl sm:text-4xl font-light text-[#f8fafc] tracking-tight">
                   Welcome back
                 </h1>
               </div>
               <div className="flex items-center space-x-2 mt-3 sm:mt-0">
-                <div className="w-1.5 h-1.5 bg-airbnb-success rounded-full animate-pulse"></div>
-                <span className="text-xs font-medium text-airbnb-text-secondary tracking-wide">ACTIVE</span>
+                <div className="w-1.5 h-1.5 bg-[#10b981] rounded-full animate-pulse"></div>
+                <span className="text-xs font-medium text-[#cbd5e1] tracking-wide">ACTIVE</span>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards - Airbnb Design */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+          {/* Stats Cards - Dark Purple Theme */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-16">
             {/* Total Emails Card */}
-            <div className="group bg-white rounded-airbnb-lg border border-airbnb-border-light p-5 sm:p-6 hover:border-airbnb-red hover:shadow-airbnb-lg transition-all duration-300">
+            <div className="group bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-blue-50 rounded-airbnb-md flex items-center justify-center">
-                  <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#6b4ce6]/10 rounded-lg flex items-center justify-center ring-1 ring-[#6b4ce6]/20">
+                  <svg className="w-5 h-5 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
-              <p className="text-xs font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-2">
+              <p className="text-xs font-medium text-[#94a3b8] tracking-wide uppercase mb-2">
                 Emails
               </p>
-              <p className="text-3xl sm:text-4xl font-semibold text-airbnb-text-primary mb-1 tracking-tight">
+              <p className="text-3xl sm:text-4xl font-light text-[#f8fafc] mb-1 tracking-tight">
                 {loadingStats ? (
-                  <span className="text-airbnb-text-tertiary">—</span>
+                  <span className="text-[#64748b]">—</span>
                 ) : (
                   stats.totalEmails.toLocaleString()
                 )}
               </p>
-              <p className="text-xs text-airbnb-text-secondary">
+              <p className="text-xs text-[#cbd5e1]">
                 Synced from Gmail
               </p>
             </div>
 
             {/* Total Transactions Card */}
-            <div className="group bg-white rounded-airbnb-lg border border-airbnb-border-light p-5 sm:p-6 hover:border-airbnb-success hover:shadow-airbnb-lg transition-all duration-300">
+            <div className="group bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 hover:border-[#10b981] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-airbnb-success/10 rounded-airbnb-md flex items-center justify-center">
-                  <svg className="w-5 h-5 text-airbnb-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#10b981]/10 rounded-lg flex items-center justify-center ring-1 ring-[#10b981]/20">
+                  <svg className="w-5 h-5 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
-              <p className="text-xs font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-2">
+              <p className="text-xs font-medium text-[#94a3b8] tracking-wide uppercase mb-2">
                 Transactions
               </p>
-              <p className="text-3xl sm:text-4xl font-semibold text-airbnb-text-primary mb-1 tracking-tight">
+              <p className="text-3xl sm:text-4xl font-light text-[#f8fafc] mb-1 tracking-tight">
                 {loadingStats ? (
-                  <span className="text-airbnb-text-tertiary">—</span>
+                  <span className="text-[#64748b]">—</span>
                 ) : (
                   stats.totalTransactions.toLocaleString()
                 )}
               </p>
-              <p className="text-xs text-airbnb-text-secondary">
+              <p className="text-xs text-[#cbd5e1]">
                 AI-extracted
               </p>
             </div>
 
             {/* Connected Accounts Card */}
-            <div className="group bg-white rounded-airbnb-lg border border-airbnb-border-light p-5 sm:p-6 hover:border-airbnb-teal hover:shadow-airbnb-lg transition-all duration-300 sm:col-span-2 lg:col-span-1">
+            <div className="group bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6 hover:border-[#ec4899] hover:shadow-[0_0_20px_rgba(236,72,153,0.2)] transition-all duration-300 sm:col-span-2 lg:col-span-1">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-airbnb-teal/10 rounded-airbnb-md flex items-center justify-center">
-                  <svg className="w-5 h-5 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-[#ec4899]/10 rounded-lg flex items-center justify-center ring-1 ring-[#ec4899]/20">
+                  <svg className="w-5 h-5 text-[#ec4899]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
               </div>
-              <p className="text-xs font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-2">
+              <p className="text-xs font-medium text-[#94a3b8] tracking-wide uppercase mb-2">
                 Accounts
               </p>
-              <p className="text-3xl sm:text-4xl font-semibold text-airbnb-text-primary mb-1 tracking-tight">
+              <p className="text-3xl sm:text-4xl font-light text-[#f8fafc] mb-1 tracking-tight">
                 {loadingStats ? (
-                  <span className="text-airbnb-text-tertiary">—</span>
+                  <span className="text-[#64748b]">—</span>
                 ) : (
                   stats.totalConnections
                 )}
               </p>
-              <p className="text-xs text-airbnb-text-secondary">
+              <p className="text-xs text-[#cbd5e1]">
                 Connected
               </p>
             </div>
           </div>
 
-          {/* Quick Actions & Connection Status - Airbnb Design */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
+          {/* Quick Actions & Connection Status - Dark Purple Theme */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {/* Quick Actions */}
-            <div className="bg-white rounded-airbnb-lg border border-airbnb-border-light p-5 sm:p-6">
-              <h3 className="text-xs sm:text-sm font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-4 sm:mb-6">
+            <div className="bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6">
+              <h3 className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-4 sm:mb-6">
                 Quick Actions
               </h3>
               <div className="space-y-2">
                 <button
                   onClick={handleConnect}
-                  className="group w-full text-left py-3 px-4 rounded-airbnb-md border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-200 flex items-center justify-between min-h-[44px]"
+                  className="group w-full text-left py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-airbnb-text-primary">Connect Gmail Account</span>
-                  <svg className="w-4 h-4 text-airbnb-text-secondary group-hover:text-airbnb-red group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Connect Gmail Account</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
                 <a
                   href="/admin"
-                  className="group w-full block py-3 px-4 rounded-airbnb-md border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-200 flex items-center justify-between min-h-[44px]"
+                  className="group w-full block py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-airbnb-text-primary">Manage Connections</span>
-                  <svg className="w-4 h-4 text-airbnb-text-secondary group-hover:text-airbnb-red group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Manage Connections</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/emails"
-                  className="group w-full block py-3 px-4 rounded-airbnb-md border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-200 flex items-center justify-between min-h-[44px]"
+                  className="group w-full block py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-airbnb-text-primary">Browse Emails</span>
-                  <svg className="w-4 h-4 text-airbnb-text-secondary group-hover:text-airbnb-red group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Browse Emails</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <a
                   href="/transactions"
-                  className="group w-full block py-3 px-4 rounded-airbnb-md border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-200 flex items-center justify-between min-h-[44px]"
+                  className="group w-full block py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between"
                 >
-                  <span className="text-sm font-medium text-airbnb-text-primary">Review Transactions</span>
-                  <svg className="w-4 h-4 text-airbnb-text-secondary group-hover:text-airbnb-red group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium text-[#f8fafc]">Review Transactions</span>
+                  <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
                 <button
                   onClick={handleCheckPriorityEmails}
                   disabled={checkingPriorityEmails}
-                  className="group w-full text-left py-3 px-4 rounded-airbnb-md border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-airbnb-border-light disabled:hover:bg-transparent min-h-[44px]"
+                  className="group w-full text-left py-3 px-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/10 transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[#2d1b4e] disabled:hover:bg-transparent"
                 >
-                  <span className="text-sm font-medium text-airbnb-text-primary">
+                  <span className="text-sm font-medium text-[#f8fafc]">
                     {checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails'}
                   </span>
                   {checkingPriorityEmails ? (
-                    <svg className="animate-spin h-4 w-4 text-airbnb-red" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-4 w-4 text-[#a78bfa]" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 text-airbnb-text-secondary group-hover:text-airbnb-red group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[#94a3b8] group-hover:text-[#a78bfa] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   )}
                 </button>
               </div>
 
-              {/* Priority Email Result - Airbnb Design */}
+              {/* Priority Email Result - Dark Theme */}
               {priorityEmailResult && (
-                <div className={`mt-6 rounded-airbnb-lg p-4 border ${
+                <div className={`mt-6 rounded-xl p-4 border ${
                   priorityEmailResult.success
-                    ? 'bg-airbnb-success/10 border-airbnb-success/30'
-                    : 'bg-airbnb-error/10 border-airbnb-error/30'
+                    ? 'bg-[#10b981]/10 border-[#10b981]/30'
+                    : 'bg-[#ef4444]/10 border-[#ef4444]/30'
                 }`}>
                   <p className={`text-xs font-medium tracking-wide uppercase mb-3 ${
-                    priorityEmailResult.success ? 'text-airbnb-success' : 'text-airbnb-error'
+                    priorityEmailResult.success ? 'text-[#10b981]' : 'text-[#ef4444]'
                   }`}>
                     {priorityEmailResult.success ? '✓ Success' : '✕ Error'}
                   </p>
                   {priorityEmailResult.success && priorityEmailResult.result && (
                     <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <span className="text-xs text-airbnb-text-secondary">Found</span>
-                        <p className="text-lg font-semibold text-airbnb-text-primary">{priorityEmailResult.result.emailsFound}</p>
+                        <span className="text-xs text-[#94a3b8]">Found</span>
+                        <p className="text-lg font-semibold text-[#f8fafc]">{priorityEmailResult.result.emailsFound}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-airbnb-text-secondary">Processed</span>
-                        <p className="text-lg font-semibold text-airbnb-text-primary">{priorityEmailResult.result.emailsProcessed}</p>
+                        <span className="text-xs text-[#94a3b8]">Processed</span>
+                        <p className="text-lg font-semibold text-[#f8fafc]">{priorityEmailResult.result.emailsProcessed}</p>
                       </div>
                       <div>
-                        <span className="text-xs text-airbnb-text-secondary">Connections</span>
-                        <p className="text-lg font-semibold text-airbnb-text-primary">{priorityEmailResult.result.connectionsProcessed}</p>
+                        <span className="text-xs text-[#94a3b8]">Connections</span>
+                        <p className="text-lg font-semibold text-[#f8fafc]">{priorityEmailResult.result.connectionsProcessed}</p>
                       </div>
                     </div>
                   )}
                   {priorityEmailResult.error && (
-                    <p className="text-xs text-airbnb-error">
+                    <p className="text-xs text-[#ef4444]">
                       {priorityEmailResult.error}
                     </p>
                   )}
@@ -527,22 +519,22 @@ const HomePage: NextPage = () => {
               )}
             </div>
 
-            {/* Connection Status - Airbnb Design */}
-            <div className="bg-white rounded-airbnb-lg border border-airbnb-border-light p-5 sm:p-6">
-              <h3 className="text-xs sm:text-sm font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-4 sm:mb-6">
+            {/* Connection Status - Dark Theme */}
+            <div className="bg-[#1a1625] rounded-xl border border-[#2d1b4e] p-5 sm:p-6">
+              <h3 className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-4 sm:mb-6">
                 Connected Accounts
               </h3>
               {connections.length === 0 ? (
                 <div className="text-center py-8 sm:py-12">
-                  <div className="w-12 h-12 bg-airbnb-gray-light rounded-airbnb-md flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6 text-airbnb-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-12 h-12 bg-[#2d1b4e] rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-6 h-6 text-[#94a3b8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                     </svg>
                   </div>
-                  <p className="text-sm text-airbnb-text-secondary mb-4">No accounts connected</p>
+                  <p className="text-sm text-[#cbd5e1] mb-4">No accounts connected</p>
                   <button
                     onClick={handleConnect}
-                    className="inline-flex items-center px-4 py-2 bg-airbnb-red text-white text-sm font-medium rounded-airbnb-md hover:bg-airbnb-red/90 transition-all duration-200 shadow-airbnb-md min-h-[44px]"
+                    className="inline-flex items-center px-4 py-2 bg-[#6b4ce6] text-[#f8fafc] text-sm font-medium rounded-lg hover:bg-[#8b5cf6] transition-all duration-200 shadow-[0_0_20px_rgba(107,76,230,0.3)]"
                   >
                     Connect Account
                   </button>
@@ -552,23 +544,23 @@ const HomePage: NextPage = () => {
                   {connections.map((connection) => (
                     <div
                       key={connection.id}
-                      className="group p-4 rounded-airbnb-md border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-200"
+                      className="group p-4 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/5 transition-all duration-200"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3 min-w-0 flex-1">
-                          <div className="w-8 h-8 bg-blue-50 rounded-airbnb-md flex items-center justify-center flex-shrink-0">
-                            <svg className="w-4 h-4 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-8 h-8 bg-[#6b4ce6]/10 rounded-lg flex items-center justify-center flex-shrink-0 ring-1 ring-[#6b4ce6]/20">
+                            <svg className="w-4 h-4 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-airbnb-text-primary truncate">{connection.email_address}</p>
-                            <p className="text-xs text-airbnb-text-secondary mt-0.5">
+                            <p className="text-sm font-medium text-[#f8fafc] truncate">{connection.email_address}</p>
+                            <p className="text-xs text-[#cbd5e1] mt-0.5">
                               {connection.last_sync_at ? new Date(connection.last_sync_at).toLocaleDateString() : 'Never synced'}
                             </p>
                           </div>
                         </div>
-                        <div className="w-2 h-2 bg-airbnb-success rounded-full flex-shrink-0 animate-pulse"></div>
+                        <div className="w-2 h-2 bg-[#10b981] rounded-full flex-shrink-0 animate-pulse"></div>
                       </div>
                     </div>
                   ))}
@@ -577,81 +569,81 @@ const HomePage: NextPage = () => {
             </div>
           </div>
 
-          {/* Features Overview - Airbnb Design */}
-          <div className="border-t border-airbnb-border-light pt-8 sm:pt-12">
-            <h3 className="text-xs sm:text-sm font-medium text-airbnb-text-tertiary tracking-wide uppercase mb-6 sm:mb-8">
+          {/* Features Overview - Dark Theme */}
+          <div className="border-t border-[#2d1b4e] pt-12 sm:pt-16">
+            <h3 className="text-xs sm:text-sm font-medium text-[#a78bfa] tracking-wide uppercase mb-8 sm:mb-12">
               Features
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              <div className="group p-5 rounded-airbnb-lg border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-blue-50 rounded-airbnb-md flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="group p-5 rounded-xl border border-[#2d1b4e] hover:border-[#6b4ce6] hover:bg-[#6b4ce6]/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-[#6b4ce6]/10 rounded-lg flex items-center justify-center mb-4 ring-1 ring-[#6b4ce6]/20">
+                  <svg className="w-5 h-5 text-[#a78bfa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
-                <h4 className="text-sm font-semibold text-airbnb-text-primary mb-2">Secure OAuth</h4>
-                <p className="text-xs text-airbnb-text-secondary leading-relaxed">
+                <h4 className="text-sm font-semibold text-[#f8fafc] mb-2">Secure OAuth</h4>
+                <p className="text-xs text-[#cbd5e1] leading-relaxed">
                   Gmail integration with industry-standard PKCE security
                 </p>
               </div>
 
-              <div className="group p-5 rounded-airbnb-lg border border-airbnb-border-light hover:border-airbnb-success hover:bg-airbnb-success/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-airbnb-success/10 rounded-airbnb-md flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-airbnb-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="group p-5 rounded-xl border border-[#2d1b4e] hover:border-[#10b981] hover:bg-[#10b981]/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-[#10b981]/10 rounded-lg flex items-center justify-center mb-4 ring-1 ring-[#10b981]/20">
+                  <svg className="w-5 h-5 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
-                <h4 className="text-sm font-semibold text-airbnb-text-primary mb-2">Smart Email Sync</h4>
-                <p className="text-xs text-airbnb-text-secondary leading-relaxed">
+                <h4 className="text-sm font-semibold text-[#f8fafc] mb-2">Smart Email Sync</h4>
+                <p className="text-xs text-[#cbd5e1] leading-relaxed">
                   Manual sync with date ranges and intelligent deduplication
                 </p>
               </div>
 
-              <div className="group p-5 rounded-airbnb-lg border border-airbnb-border-light hover:border-airbnb-teal hover:bg-airbnb-teal/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-airbnb-teal/10 rounded-airbnb-md flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="group p-5 rounded-xl border border-[#2d1b4e] hover:border-[#ec4899] hover:bg-[#ec4899]/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-[#ec4899]/10 rounded-lg flex items-center justify-center mb-4 ring-1 ring-[#ec4899]/20">
+                  <svg className="w-5 h-5 text-[#ec4899]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <h4 className="text-sm font-semibold text-airbnb-text-primary mb-2">Advanced Search</h4>
-                <p className="text-xs text-airbnb-text-secondary leading-relaxed">
+                <h4 className="text-sm font-semibold text-[#f8fafc] mb-2">Advanced Search</h4>
+                <p className="text-xs text-[#cbd5e1] leading-relaxed">
                   Powerful filtering and search capabilities
                 </p>
               </div>
 
-              <div className="group p-5 rounded-airbnb-lg border border-airbnb-border-light hover:border-airbnb-warning hover:bg-airbnb-warning/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-airbnb-warning/10 rounded-airbnb-md flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-airbnb-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="group p-5 rounded-xl border border-[#2d1b4e] hover:border-[#f59e0b] hover:bg-[#f59e0b]/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-[#f59e0b]/10 rounded-lg flex items-center justify-center mb-4 ring-1 ring-[#f59e0b]/20">
+                  <svg className="w-5 h-5 text-[#f59e0b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                 </div>
-                <h4 className="text-sm font-semibold text-airbnb-text-primary mb-2">AI Extraction</h4>
-                <p className="text-xs text-airbnb-text-secondary leading-relaxed">
+                <h4 className="text-sm font-semibold text-[#f8fafc] mb-2">AI Extraction</h4>
+                <p className="text-xs text-[#cbd5e1] leading-relaxed">
                   Automated financial transaction data parsing
                 </p>
               </div>
 
-              <div className="group p-5 rounded-airbnb-lg border border-airbnb-border-light hover:border-airbnb-teal hover:bg-airbnb-teal/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-airbnb-teal/10 rounded-airbnb-md flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="group p-5 rounded-xl border border-[#2d1b4e] hover:border-[#06b6d4] hover:bg-[#06b6d4]/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-[#06b6d4]/10 rounded-lg flex items-center justify-center mb-4 ring-1 ring-[#06b6d4]/20">
+                  <svg className="w-5 h-5 text-[#06b6d4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <h4 className="text-sm font-semibold text-airbnb-text-primary mb-2">Admin Tools</h4>
-                <p className="text-xs text-airbnb-text-secondary leading-relaxed">
+                <h4 className="text-sm font-semibold text-[#f8fafc] mb-2">Admin Tools</h4>
+                <p className="text-xs text-[#cbd5e1] leading-relaxed">
                   Comprehensive system health monitoring
                 </p>
               </div>
 
-              <div className="group p-5 rounded-airbnb-lg border border-airbnb-border-light hover:border-airbnb-red hover:bg-airbnb-red/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-blue-50 rounded-airbnb-md flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="group p-5 rounded-xl border border-[#2d1b4e] hover:border-[#8b5cf6] hover:bg-[#8b5cf6]/5 transition-all duration-300">
+                <div className="w-10 h-10 bg-[#8b5cf6]/10 rounded-lg flex items-center justify-center mb-4 ring-1 ring-[#8b5cf6]/20">
+                  <svg className="w-5 h-5 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <h4 className="text-sm font-semibold text-airbnb-text-primary mb-2">RLS Security</h4>
-                <p className="text-xs text-airbnb-text-secondary leading-relaxed">
+                <h4 className="text-sm font-semibold text-[#f8fafc] mb-2">RLS Security</h4>
+                <p className="text-xs text-[#cbd5e1] leading-relaxed">
                   Row-level security data protection
                 </p>
               </div>

@@ -127,8 +127,8 @@ const ReportsPage: NextPage = () => {
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-airbnb-red mx-auto mb-4"></div>
-                <p className="text-airbnb-text-secondary">Loading reports...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-[#cbd5e1]">Loading reports...</p>
               </div>
             </div>
           </div>
@@ -146,27 +146,27 @@ const ReportsPage: NextPage = () => {
             <div className="mb-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold text-airbnb-text-primary">Reports & Analytics</h1>
-                  <p className="mt-1 text-sm text-airbnb-text-secondary">
+                  <h1 className="text-2xl font-bold text-[#f8fafc]">Reports & Analytics</h1>
+                  <p className="mt-1 text-sm text-gray-500">
                     Insights and analytics for your financial email data
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2 sm:gap-3">
+                <div className="flex space-x-2">
                   <button
                     onClick={() => exportReport('csv')}
-                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary font-medium rounded-airbnb-md hover:bg-airbnb-gray-hover focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm min-h-[44px]"
+                    className="btn-secondary"
                   >
                     Export CSV
                   </button>
                   <button
                     onClick={() => exportReport('json')}
-                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary font-medium rounded-airbnb-md hover:bg-airbnb-gray-hover focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm min-h-[44px]"
+                    className="btn-secondary"
                   >
                     Export JSON
                   </button>
                   <button
                     onClick={() => exportReport('pdf')}
-                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all duration-200 shadow-airbnb-sm min-h-[44px]"
+                    className="btn-primary"
                   >
                     Export PDF
                   </button>
@@ -175,25 +175,25 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Date Range Filter */}
-            <div className="bg-airbnb-white shadow-airbnb-md rounded-airbnb-md p-4 sm:p-6 mb-6 sm:mb-8">
-              <h3 className="text-base sm:text-lg font-medium text-airbnb-text-primary mb-4">Date Range</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg p-6 mb-8">
+              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Date Range</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">From Date</label>
+                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">From Date</label>
                   <input
                     type="date"
                     value={dateRange.from}
                     onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-                    className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
+                    className="input-field"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">To Date</label>
+                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">To Date</label>
                   <input
                     type="date"
                     value={dateRange.to}
                     onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-                    className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
+                    className="input-field"
                   />
                 </div>
                 <div className="flex items-end">
@@ -209,7 +209,7 @@ const ReportsPage: NextPage = () => {
 
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-airbnb-white overflow-hidden shadow rounded-airbnb-md">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -218,7 +218,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Emails</dt>
-                        <dd className="text-lg font-medium text-airbnb-text-primary">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {reportData.emailStats.totalEmails.toLocaleString()}
                         </dd>
                       </dl>
@@ -227,7 +227,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-airbnb-white overflow-hidden shadow rounded-airbnb-md">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -236,7 +236,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Transactions</dt>
-                        <dd className="text-lg font-medium text-airbnb-text-primary">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {reportData.transactionStats.totalTransactions.toLocaleString()}
                         </dd>
                       </dl>
@@ -245,7 +245,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-airbnb-white overflow-hidden shadow rounded-airbnb-md">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -254,7 +254,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Amount</dt>
-                        <dd className="text-lg font-medium text-airbnb-text-primary">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {formatCurrency(reportData.transactionStats.totalAmount)}
                         </dd>
                       </dl>
@@ -263,7 +263,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-airbnb-white overflow-hidden shadow rounded-airbnb-md">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -272,7 +272,7 @@ const ReportsPage: NextPage = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Sync Success Rate</dt>
-                        <dd className="text-lg font-medium text-airbnb-text-primary">
+                        <dd className="text-lg font-medium text-[#f8fafc]">
                           {Math.round((reportData.syncStats.successfulSyncs / reportData.syncStats.totalSyncs) * 100)}%
                         </dd>
                       </dl>
@@ -285,22 +285,22 @@ const ReportsPage: NextPage = () => {
             {/* Charts and Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               {/* Email Status Distribution */}
-              <div className="bg-airbnb-white shadow rounded-airbnb-md p-6">
-                <h3 className="text-lg font-medium text-airbnb-text-primary mb-4">Email Status Distribution</h3>
+              <div className="bg-[#1a1625] shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Email Status Distribution</h3>
                 <div className="space-y-3">
                   {reportData.emailStats.emailsByStatus.map((item) => (
                     <div key={item.status} className="flex items-center justify-between">
-                      <span className="text-sm text-airbnb-text-secondary">{item.status}</span>
+                      <span className="text-sm text-[#cbd5e1]">{item.status}</span>
                       <div className="flex items-center">
                         <div className="w-32 bg-gray-200 rounded-full h-2 mr-3">
                           <div
-                            className="bg-airbnb-red h-2 rounded-full"
+                            className="bg-[#6b4ce6] h-2 rounded-full"
                             style={{
                               width: `${(item.count / reportData.emailStats.totalEmails) * 100}%`
                             }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-airbnb-text-primary">{item.count}</span>
+                        <span className="text-sm font-medium text-[#f8fafc]">{item.count}</span>
                       </div>
                     </div>
                   ))}
@@ -308,12 +308,12 @@ const ReportsPage: NextPage = () => {
               </div>
 
               {/* Transaction Direction */}
-              <div className="bg-airbnb-white shadow rounded-airbnb-md p-6">
-                <h3 className="text-lg font-medium text-airbnb-text-primary mb-4">Transaction Direction</h3>
+              <div className="bg-[#1a1625] shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Transaction Direction</h3>
                 <div className="space-y-3">
                   {reportData.transactionStats.transactionsByDirection.map((item) => (
                     <div key={item.direction} className="flex items-center justify-between">
-                      <span className="text-sm text-airbnb-text-secondary capitalize">{item.direction}</span>
+                      <span className="text-sm text-[#cbd5e1] capitalize">{item.direction}</span>
                       <div className="flex items-center">
                         <div className="w-32 bg-gray-200 rounded-full h-2 mr-3">
                           <div
@@ -323,7 +323,7 @@ const ReportsPage: NextPage = () => {
                             }}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium text-airbnb-text-primary">
+                        <span className="text-sm font-medium text-[#f8fafc]">
                           {item.count} ({formatCurrency(item.amount)})
                         </span>
                       </div>
@@ -334,8 +334,8 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Top Senders */}
-            <div className="bg-airbnb-white shadow rounded-airbnb-md p-6 mb-8">
-              <h3 className="text-lg font-medium text-airbnb-text-primary mb-4">Top Email Senders</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg p-6 mb-8">
+              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Email Senders</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -351,16 +351,16 @@ const ReportsPage: NextPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-airbnb-white divide-y divide-gray-200">
+                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
                     {reportData.emailStats.topSenders.map((sender, index) => (
                       <tr key={sender.sender}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {sender.sender}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {sender.count}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {Math.round((sender.count / reportData.emailStats.totalEmails) * 100)}%
                         </td>
                       </tr>
@@ -371,8 +371,8 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Transaction Categories */}
-            <div className="bg-airbnb-white shadow rounded-airbnb-md p-6">
-              <h3 className="text-lg font-medium text-airbnb-text-primary mb-4">Top Transaction Categories</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg p-6">
+              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Transaction Categories</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -391,19 +391,19 @@ const ReportsPage: NextPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-airbnb-white divide-y divide-gray-200">
+                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
                     {reportData.transactionStats.transactionsByCategory.map((category) => (
                       <tr key={category.category}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {category.category}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {category.count}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {formatCurrency(category.amount)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {formatCurrency(category.amount / category.count)}
                         </td>
                       </tr>

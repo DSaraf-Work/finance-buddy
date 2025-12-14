@@ -173,15 +173,15 @@ const TransactionWorkbenchPage: NextPage = () => {
     switch (direction) {
       case 'debit': return 'text-red-600';
       case 'credit': return 'text-green-600';
-      default: return 'text-airbnb-text-secondary';
+      default: return 'text-[#cbd5e1]';
     }
   };
 
   const getConfidenceColor = (confidence?: number) => {
-    if (!confidence) return 'bg-airbnb-gray-light/30 text-gray-800';
-    if (confidence >= 0.8) return 'bg-green-50 text-green-700';
+    if (!confidence) return 'bg-[#2d1b4e]/30 text-gray-800';
+    if (confidence >= 0.8) return 'bg-[#10b981]/10 text-[#10b981]';
     if (confidence >= 0.6) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-red-50 text-red-700';
+    return 'bg-[#ef4444]/10 text-[#ef4444]';
   };
 
   return (
@@ -194,21 +194,21 @@ const TransactionWorkbenchPage: NextPage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-airbnb-text-primary">Transaction Workbench</h1>
+              <h1 className="text-2xl font-bold text-[#f8fafc]">Transaction Workbench</h1>
               <p className="mt-1 text-sm text-gray-500">
                 Advanced transaction review with confidence scoring and bulk operations
               </p>
             </div>
 
             {/* Filters */}
-            <div className="bg-airbnb-white shadow rounded-airbnb-md mb-6">
-              <div className="px-6 py-4 border-b border-airbnb-border-light">
-                <h3 className="text-lg font-medium text-airbnb-text-primary">Filters</h3>
+            <div className="bg-[#1a1625] shadow rounded-lg mb-6">
+              <div className="px-6 py-4 border-b border-[#2d1b4e]">
+                <h3 className="text-lg font-medium text-[#f8fafc]">Filters</h3>
               </div>
               <div className="px-6 py-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">From Date</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">From Date</label>
                     <input
                       type="date"
                       value={filters.date_from || ''}
@@ -217,7 +217,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">To Date</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">To Date</label>
                     <input
                       type="date"
                       value={filters.date_to || ''}
@@ -226,7 +226,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Direction</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Direction</label>
                     <select
                       value={filters.direction || ''}
                       onChange={(e) => handleFilterChange('direction', e.target.value)}
@@ -238,7 +238,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Category</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Category</label>
                     <input
                       type="text"
                       value={filters.category || ''}
@@ -248,7 +248,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Merchant</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Merchant</label>
                     <input
                       type="text"
                       value={filters.merchant || ''}
@@ -258,7 +258,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Min Amount</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Min Amount</label>
                     <input
                       type="number"
                       step="0.01"
@@ -269,7 +269,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Max Amount</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Max Amount</label>
                     <input
                       type="number"
                       step="0.01"
@@ -280,7 +280,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Min Confidence</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Min Confidence</label>
                     <input
                       type="number"
                       step="0.1"
@@ -297,7 +297,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                 {/* Pagination Controls */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Page Number</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Page Number</label>
                     <input
                       type="number"
                       min="1"
@@ -313,7 +313,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-airbnb-text-secondary mb-1">Page Size</label>
+                    <label className="block text-sm font-medium text-[#cbd5e1] mb-1">Page Size</label>
                     <input
                       type="number"
                       min="1"
@@ -345,7 +345,7 @@ const TransactionWorkbenchPage: NextPage = () => {
 
             {/* Bulk Actions */}
             {selectedTransactions.size > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-airbnb-md p-4 mb-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-blue-700">
                     {selectedTransactions.size} transaction(s) selected
@@ -381,7 +381,7 @@ const TransactionWorkbenchPage: NextPage = () => {
             )}
 
             {/* Transaction Grid */}
-            <div className="bg-airbnb-white shadow rounded-airbnb-md overflow-hidden">
+            <div className="bg-[#1a1625] shadow rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -391,7 +391,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                           type="checkbox"
                           checked={transactions.length > 0 && selectedTransactions.size === transactions.length}
                           onChange={handleSelectAll}
-                          className="rounded border-airbnb-border-light"
+                          className="rounded border-[#2d1b4e]"
                         />
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -417,7 +417,7 @@ const TransactionWorkbenchPage: NextPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-airbnb-white divide-y divide-gray-200">
+                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
                     {transactions.map((transaction) => (
                       <tr key={transaction.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
@@ -425,10 +425,10 @@ const TransactionWorkbenchPage: NextPage = () => {
                             type="checkbox"
                             checked={selectedTransactions.has(transaction.id)}
                             onChange={() => handleSelectTransaction(transaction.id)}
-                            className="rounded border-airbnb-border-light"
+                            className="rounded border-[#2d1b4e]"
                           />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {formatDate(transaction.txn_time)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -436,15 +436,15 @@ const TransactionWorkbenchPage: NextPage = () => {
                             {formatAmount(transaction.amount, transaction.currency)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           <span className={`capitalize ${getDirectionColor(transaction.direction)}`}>
                             {transaction.direction || 'N/A'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-airbnb-text-primary max-w-xs truncate">
+                        <td className="px-6 py-4 text-sm text-[#f8fafc] max-w-xs truncate">
                           {transaction.merchant_name || transaction.merchant_normalized || 'N/A'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
                           {transaction.category || 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -471,9 +471,9 @@ const TransactionWorkbenchPage: NextPage = () => {
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <div className="bg-airbnb-white px-4 py-3 border-t border-airbnb-border-light sm:px-6">
+                <div className="bg-[#1a1625] px-4 py-3 border-t border-[#2d1b4e] sm:px-6">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm text-airbnb-text-secondary">
+                    <div className="text-sm text-[#cbd5e1]">
                       Showing page {pagination.page} of {pagination.totalPages}
                     </div>
                     <div className="flex space-x-2">
@@ -503,13 +503,13 @@ const TransactionWorkbenchPage: NextPage = () => {
         {showDrawer && selectedTransaction && (
           <div className="fixed inset-0 z-50 overflow-hidden">
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowDrawer(false)} />
-            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-airbnb-white shadow-xl">
+            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-[#1a1625] shadow-xl">
               <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between p-6 border-b border-airbnb-border-light">
-                  <h2 className="text-lg font-medium text-airbnb-text-primary">Transaction Details</h2>
+                <div className="flex items-center justify-between p-6 border-b border-[#2d1b4e]">
+                  <h2 className="text-lg font-medium text-[#f8fafc]">Transaction Details</h2>
                   <button
                     onClick={() => setShowDrawer(false)}
-                    className="text-gray-400 hover:text-airbnb-text-secondary"
+                    className="text-gray-400 hover:text-[#cbd5e1]"
                   >
                     ✕
                   </button>
@@ -518,11 +518,11 @@ const TransactionWorkbenchPage: NextPage = () => {
                 <div className="flex-1 overflow-y-auto p-6">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Transaction Information</h3>
+                      <h3 className="text-sm font-medium text-[#f8fafc] mb-2">Transaction Information</h3>
                       <dl className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Transaction Time</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{formatDate(selectedTransaction.txn_time)}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{formatDate(selectedTransaction.txn_time)}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Amount</dt>
@@ -538,31 +538,31 @@ const TransactionWorkbenchPage: NextPage = () => {
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Currency</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.currency || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.currency || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Merchant Name</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.merchant_name || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.merchant_name || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Merchant (Normalized)</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.merchant_normalized || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.merchant_normalized || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Category</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.category || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.category || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Account Hint</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.account_hint || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.account_hint || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Reference ID</dt>
-                          <dd className="text-sm text-airbnb-text-primary font-mono">{selectedTransaction.reference_id || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc] font-mono">{selectedTransaction.reference_id || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Location</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.location || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.location || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Confidence Score</dt>
@@ -574,33 +574,33 @@ const TransactionWorkbenchPage: NextPage = () => {
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Extraction Version</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{selectedTransaction.extraction_version || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{selectedTransaction.extraction_version || 'N/A'}</dd>
                         </div>
                       </dl>
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Metadata</h3>
+                      <h3 className="text-sm font-medium text-[#f8fafc] mb-2">Metadata</h3>
                       <dl className="grid grid-cols-1 gap-x-4 gap-y-3">
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Email Row ID</dt>
-                          <dd className="text-sm text-airbnb-text-primary font-mono">{selectedTransaction.email_row_id}</dd>
+                          <dd className="text-sm text-[#f8fafc] font-mono">{selectedTransaction.email_row_id}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Google User ID</dt>
-                          <dd className="text-sm text-airbnb-text-primary font-mono">{selectedTransaction.google_user_id}</dd>
+                          <dd className="text-sm text-[#f8fafc] font-mono">{selectedTransaction.google_user_id}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Connection ID</dt>
-                          <dd className="text-sm text-airbnb-text-primary font-mono">{selectedTransaction.connection_id || 'N/A'}</dd>
+                          <dd className="text-sm text-[#f8fafc] font-mono">{selectedTransaction.connection_id || 'N/A'}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{formatDate(selectedTransaction.created_at)}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{formatDate(selectedTransaction.created_at)}</dd>
                         </div>
                         <div>
                           <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                          <dd className="text-sm text-airbnb-text-primary">{formatDate(selectedTransaction.updated_at)}</dd>
+                          <dd className="text-sm text-[#f8fafc]">{formatDate(selectedTransaction.updated_at)}</dd>
                         </div>
                       </dl>
                     </div>
