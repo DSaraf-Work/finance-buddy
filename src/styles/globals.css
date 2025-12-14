@@ -1,6 +1,59 @@
 @import "tailwindcss";
 
-/* Finance Buddy Global Styles */
+/* ============================================
+   MIDNIGHT BLUE WEALTH THEME - CSS VARIABLES
+   ============================================
+   All colors are defined as CSS custom properties
+   for easy theme switching without code changes.
+   ============================================ */
+
+:root {
+  /* Base Surfaces (Dark, Matte Blue) */
+  --color-bg-app: #0F1624;              /* Midnight Navy - App Background */
+  --color-bg-primary: #151E2E;          /* Deep Blue Charcoal - Primary Surface */
+  --color-bg-card: #1B2638;             /* Muted Ink Blue - Card / Panel */
+  --color-bg-elevated: #22304A;         /* Soft Slate Blue - Elevated Surface */
+  --color-border: #2E3C55;              /* Smoky Blue Gray - Divider / Border */
+  
+  /* Text Colors (Clear & Elegant) */
+  --color-text-primary: #E9EEF5;        /* Soft Off-White - Primary Text */
+  --color-text-secondary: #B8C4D6;     /* Cool Mist Blue - Secondary Text */
+  --color-text-muted: #8C9BB0;         /* Dusty Steel Blue - Muted / Labels */
+  --color-text-disabled: #64748B;      /* Cool Ash Blue - Disabled */
+  
+  /* Accent Blues (Pastel but Powerful) */
+  --color-accent-primary: #5B8CFF;      /* Rich Pastel Blue - Primary CTA */
+  --color-accent-hover: #6FA0FF;        /* Soft Royal Blue - Hover / Focus */
+  --color-accent-highlight: #8FB6FF;    /* Icy Powder Blue - Subtle Highlight */
+  
+  /* Finance Semantic Colors (Dark-Theme Safe) */
+  --color-income: #4FBF9A;              /* Muted Emerald - Income */
+  --color-expense: #E07A7A;             /* Soft Rose Red - Expense */
+  --color-warning: #E1B15C;             /* Desaturated Amber - Warning */
+  --color-info: #6FB6D9;                /* Calm Cyan - Info */
+  
+  /* Chart Colors (Premium Look) */
+  --color-chart-1: #6F94FF;             /* Pastel Blue */
+  --color-chart-2: #5FA6A6;             /* Steel Teal */
+  --color-chart-3: #7A8FB8;             /* Dusty Indigo */
+  --color-chart-4: #C8B46A;             /* Muted Gold */
+  --color-chart-grid: #2E3C55;          /* Grid lines */
+  --color-chart-axis: #8C9BB0;          /* Axis labels */
+  
+  /* Border Radius (10-14px range) */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  
+  /* Shadows (Extremely Subtle, Matte) */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 4px 12px rgba(30, 60, 120, 0.12);
+  --shadow-xl: 0 8px 24px rgba(30, 60, 120, 0.12);
+}
+
+/* Finance Buddy Global Styles - Midnight Blue Wealth Theme */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,87 +61,103 @@
 }
 
 html {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background-color: #f9fafb;
-  color: #111827;
-  line-height: 1.6;
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  font-size: 16px;
+  font-weight: 400;
 }
 
-/* Custom Component Classes */
+/* Component Classes - Using CSS Variables */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
-  background-color: #9333ea;
-  color: white;
+  padding: 12px 24px;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 16px;
   font-weight: 500;
+  font-family: inherit;
   text-decoration: none;
-  transition: background-color 0.2s;
-  min-height: 2.5rem;
+  transition: background-color 0.2s ease;
+  min-height: 44px;
 }
 
 .btn-primary:hover {
-  background-color: #7e22ce;
+  background-color: var(--color-accent-hover);
   text-decoration: none;
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background-color: var(--color-text-disabled);
 }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
-  background-color: #6b7280;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
+  padding: 12px 24px;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 16px;
   font-weight: 500;
+  font-family: inherit;
   text-decoration: none;
-  transition: background-color 0.2s;
-  min-height: 2.5rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  min-height: 44px;
 }
 
 .btn-secondary:hover {
-  background-color: #4b5563;
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-accent-primary);
   text-decoration: none;
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .input-field {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #9333ea;
-  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, 0.12);
+}
+
+.input-field::placeholder {
+  color: var(--color-text-muted);
 }
 
 .card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
 }
 
 /* Improved spacing for action buttons */
@@ -155,8 +224,9 @@ body {
 
 /* Focus visible styles for accessibility */
 *:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 /* Skip to main content link for accessibility */
@@ -165,9 +235,10 @@ body {
   left: -9999px;
   z-index: 999;
   padding: 1rem;
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
   text-decoration: none;
+  border-radius: var(--radius-md);
 }
 
 .skip-to-main:focus {

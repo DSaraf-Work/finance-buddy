@@ -68,7 +68,7 @@ export default function NotificationBell() {
       {/* Bell Icon - Dark Purple Theme */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-lg border border-transparent hover:border-[#2d1b4e] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
+        className="relative p-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-[var(--radius-md)] border border-transparent hover:border-[#2d1b4e] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
         aria-label="Notifications"
       >
         <svg
@@ -103,7 +103,7 @@ export default function NotificationBell() {
           />
 
           {/* Dropdown Content - Dark Purple Theme */}
-          <div className="absolute right-0 z-20 mt-3 w-80 sm:w-96 bg-[#1a1625] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-[#2d1b4e] overflow-hidden">
+          <div className="absolute right-0 z-20 mt-3 w-80 sm:w-96 bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-[#2d1b4e] overflow-hidden">
             {/* Header */}
             <div className="px-4 py-3 border-b border-[#2d1b4e] bg-[#0f0a1a]/50">
               <div className="flex items-center justify-between">
@@ -131,8 +131,8 @@ export default function NotificationBell() {
             {/* Notifications List */}
             <div className="max-h-96 overflow-y-auto">
               {loading ? (
-                <div className="px-4 py-8 text-center text-[#6F7280]">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
+                <div className="px-4 py-8 text-center text-[var(--color-text-muted)]">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)]"></div>
                   <p className="mt-2 text-sm">Loading...</p>
                 </div>
               ) : notifications.length === 0 ? (

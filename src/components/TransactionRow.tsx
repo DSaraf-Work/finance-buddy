@@ -112,12 +112,12 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
   };
 
   return (
-    <div className={`transition-all duration-300 ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md' : 'bg-[#1a1625] hover:bg-gray-50'}`}>
+    <div className={`transition-all duration-300 ${isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50 shadow-[var(--shadow-md)]' : 'bg-[#1a1625] hover:bg-gray-50'}`}>
       {/* Main Row */}
       <div className="px-8 py-6 flex items-center justify-between">
         <div className="flex items-center space-x-6 flex-1">
           {/* Category Icon */}
-          <div className="text-3xl p-2 bg-[#2d1b4e]/30 rounded-xl hover:bg-gray-200 transition-colors">
+          <div className="text-3xl p-2 bg-[#2d1b4e]/30 rounded-[var(--radius-lg)] hover:bg-gray-200 transition-colors">
             {getCategoryIcon(transaction.category)}
           </div>
 
@@ -183,7 +183,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
         <div className="flex items-center space-x-2 ml-6">
           <button
             onClick={onEdit}
-            className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-200 transform hover:scale-105"
+            className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105"
             title="Edit transaction"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,7 +195,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             <button
               onClick={handleReExtract}
               disabled={isReExtracting}
-              className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+              className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                 isReExtracting
                   ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
                   : 'text-gray-400 hover:text-purple-600 hover:bg-purple-100'
@@ -222,7 +222,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('APPROVED')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                  className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
                       ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
                       : 'text-gray-400 hover:text-green-600 hover:bg-[#10b981]/10'
@@ -239,7 +239,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('REJECTED')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                  className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
                       ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
                       : 'text-gray-400 hover:text-red-600 hover:bg-[#ef4444]/10'
@@ -256,7 +256,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('INVALID')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                  className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
                       ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
                       : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-200'
@@ -273,7 +273,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 <button
                   onClick={() => handleStatusUpdate('REVIEW')}
                   disabled={isUpdatingStatus}
-                  className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+                  className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
                     isUpdatingStatus
                       ? 'text-gray-400 bg-[#2d1b4e]/30 cursor-not-allowed'
                       : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-100'
@@ -291,9 +291,9 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`p-3 rounded-xl transition-all duration-200 transform hover:scale-105 ${
+            className={`p-3 rounded-[var(--radius-lg)] transition-all duration-200 transform hover:scale-105 ${
               isExpanded
-                ? 'text-blue-600 bg-blue-100 shadow-md'
+                ? 'text-blue-600 bg-blue-100 shadow-[var(--shadow-md)]'
                 : 'text-gray-400 hover:text-[#cbd5e1] hover:bg-gray-100'
             }`}
             title={isExpanded ? 'Collapse details' : 'Expand details'}
@@ -315,7 +315,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
         <div className="px-8 pb-8 border-t border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="pt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Transaction Details */}
-            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
+            <div className="bg-[#1a1625] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-sm)]">
               <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -363,7 +363,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             </div>
 
             {/* Merchant Info */}
-            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
+            <div className="bg-[#1a1625] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-sm)]">
               <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -387,7 +387,7 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
             </div>
 
             {/* AI & User Notes */}
-            <div className="bg-[#1a1625] rounded-xl p-6 shadow-sm">
+            <div className="bg-[#1a1625] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-sm)]">
               <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
                 <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -450,13 +450,13 @@ export default function TransactionRow({ transaction, onEdit, onReExtract, onSta
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-[var(--radius-md)] hover:bg-blue-200 transition-colors">
                   Re-extract
                 </button>
-                <button className="px-4 py-2 text-sm font-medium text-green-600 bg-[#10b981]/10 rounded-lg hover:bg-green-200 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-green-600 bg-[#10b981]/10 rounded-[var(--radius-md)] hover:bg-green-200 transition-colors">
                   Approve
                 </button>
-                <button className="px-4 py-2 text-sm font-medium text-red-600 bg-[#ef4444]/10 rounded-lg hover:bg-red-200 transition-colors">
+                <button className="px-4 py-2 text-sm font-medium text-red-600 bg-[#ef4444]/10 rounded-[var(--radius-md)] hover:bg-red-200 transition-colors">
                   Reject
                 </button>
               </div>

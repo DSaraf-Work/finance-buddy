@@ -99,7 +99,7 @@ export default function KeywordTagInput({
 
   return (
     <div className={`relative ${className}`}>
-      <div className="w-full min-h-[42px] px-3 py-2 border border-[#2d1b4e] rounded-md focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-colors">
+      <div className="w-full min-h-[42px] px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-colors">
         <div className="flex flex-wrap gap-1 items-center">
           {/* Current Tags */}
           {currentTags.map((tag, index) => (
@@ -135,7 +135,7 @@ export default function KeywordTagInput({
 
       {/* Suggestions Dropdown */}
       {showSuggestions && filteredSuggestions.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-[#1a1625] border border-[#2d1b4e] rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-1 bg-[#1a1625] border border-[#2d1b4e] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] max-h-60 overflow-y-auto">
           {filteredSuggestions.map((keyword) => (
             <button
               key={keyword.id}

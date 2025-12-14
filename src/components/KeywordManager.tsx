@@ -124,7 +124,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
 
   if (loading) {
     return (
-      <div className={`bg-[#1a1625] rounded-lg shadow p-6 ${className}`}>
+      <div className={`bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6 ${className}`}>
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
@@ -138,7 +138,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
   }
 
   return (
-    <div className={`bg-[#1a1625] rounded-lg shadow ${className}`}>
+    <div className={`bg-[#1a1625] rounded-[var(--radius-md)] shadow ${className}`}>
       <div className="px-6 py-4 border-b border-[#2d1b4e]">
         <h2 className="text-lg font-medium text-[#f8fafc] flex items-center">
           <span className="mr-2">🏷️</span>
@@ -151,7 +151,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
 
       <div className="p-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-[var(--radius-md)]">
             <p className="text-sm text-red-600">{error}</p>
             <button
               onClick={() => setError(null)}
@@ -170,13 +170,13 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
               placeholder="Enter new keyword..."
-              className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isAdding}
             />
             <button
               type="submit"
               disabled={isAdding || !newKeyword.trim()}
-              className="px-4 py-2 bg-[#6b4ce6] text-white rounded-md hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isAdding ? 'Adding...' : 'Add'}
             </button>
@@ -193,7 +193,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
             keywords.map((keyword) => (
               <div
                 key={keyword.id}
-                className="flex items-center justify-between p-3 border border-[#2d1b4e] rounded-md hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border border-[#2d1b4e] rounded-[var(--radius-md)] hover:bg-gray-50"
               >
                 <div className="flex items-center space-x-3">
                   <span className="font-medium text-[#f8fafc]">
@@ -220,7 +220,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleToggleKeyword(keyword.id, keyword.is_active)}
-                    className={`px-3 py-1 text-xs font-medium rounded-md ${
+                    className={`px-3 py-1 text-xs font-medium rounded-[var(--radius-md)] ${
                       keyword.is_active
                         ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
                         : 'bg-[#10b981]/10 text-[#10b981] hover:bg-green-200'
@@ -230,7 +230,7 @@ export default function KeywordManager({ className = '' }: KeywordManagerProps) 
                   </button>
                   <button
                     onClick={() => handleDeleteKeyword(keyword.id)}
-                    className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded-md hover:bg-[#ef4444]/10"
+                    className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded-[var(--radius-md)] hover:bg-[#ef4444]/10"
                   >
                     Delete
                   </button>

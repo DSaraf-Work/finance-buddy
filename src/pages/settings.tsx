@@ -126,7 +126,7 @@ const SettingsPage: NextPage = () => {
             {/* Header */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                   <span className="text-xl sm:text-2xl">⚙️</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Settings</h1>
@@ -138,7 +138,7 @@ const SettingsPage: NextPage = () => {
 
             <div className="space-y-6 sm:space-y-8">
               {/* Account Information */}
-              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)]">
                 <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                     <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +174,7 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Password Update */}
-              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)]">
                 <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                     <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,7 +193,7 @@ const SettingsPage: NextPage = () => {
                         type="password"
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                         placeholder="Enter new password"
                         required
                       />
@@ -206,20 +206,20 @@ const SettingsPage: NextPage = () => {
                         type="password"
                         value={passwordForm.confirmPassword}
                         onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                         placeholder="Confirm new password"
                         required
                       />
                     </div>
                     {passwordMessage && (
-                      <div className={`text-sm p-3 rounded-lg ${passwordMessage.includes('successfully') ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'}`}>
+                      <div className={`text-sm p-3 rounded-[var(--radius-md)] ${passwordMessage.includes('successfully') ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'}`}>
                         {passwordMessage}
                       </div>
                     )}
                     <button
                       type="submit"
                       disabled={passwordLoading}
-                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {passwordLoading ? 'Updating...' : 'Update Password'}
                     </button>
@@ -228,7 +228,7 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Push Notifications */}
-              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)]">
                 <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                     <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +246,7 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Connected Accounts */}
-              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)]">
                 <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
@@ -257,7 +257,7 @@ const SettingsPage: NextPage = () => {
                     </h3>
                     <button
                       onClick={handleConnect}
-                      className="w-full sm:w-auto px-5 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
+                      className="w-full sm:w-auto px-5 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                     >
                       Connect Account
                     </button>
@@ -266,17 +266,17 @@ const SettingsPage: NextPage = () => {
                 <div className="px-6 py-4">
                   {loading ? (
                     <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF] mx-auto"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)] mx-auto"></div>
                     </div>
                   ) : connections.length === 0 ? (
                     <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                         <span className="text-3xl">📧</span>
                       </div>
                       <p className="text-[#cbd5e1] mb-4">No Gmail accounts connected</p>
                       <button
                         onClick={handleConnect}
-                        className="px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
+                        className="px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                       >
                         Connect Your First Account
                       </button>
@@ -284,10 +284,10 @@ const SettingsPage: NextPage = () => {
                   ) : (
                     <div className="space-y-4">
                       {connections.map((connection) => (
-                        <div key={connection.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-[#2d1b4e] rounded-lg bg-[#0f0a1a]/50 hover:border-[#6b4ce6] hover:bg-[#2d1b4e]/20 transition-all duration-200 gap-4">
+                        <div key={connection.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-[#2d1b4e] rounded-[var(--radius-md)] bg-[#0f0a1a]/50 hover:border-[#6b4ce6] hover:bg-[#2d1b4e]/20 transition-all duration-200 gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
+                              <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-md)] flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
                                 <span className="text-lg">📧</span>
                               </div>
                               <div>
@@ -307,7 +307,7 @@ const SettingsPage: NextPage = () => {
                             </span>
                             <button
                               onClick={() => handleDisconnect(connection.id)}
-                              className="px-3 py-1.5 text-sm text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200"
+                              className="px-3 py-1.5 text-sm text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-[var(--radius-md)] border border-transparent hover:border-[#ef4444] transition-all duration-200"
                             >
                               Disconnect
                             </button>
@@ -320,7 +320,7 @@ const SettingsPage: NextPage = () => {
               </div>
 
               {/* Preferences */}
-              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl">
+              <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)]">
                 <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <h3 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                     <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -351,7 +351,7 @@ const SettingsPage: NextPage = () => {
                       <select
                         value={preferences.syncFrequency}
                         onChange={(e) => setPreferences(prev => ({ ...prev, syncFrequency: e.target.value }))}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
                         <option value="manual" className="bg-[#1a1625]">Manual only</option>
                         <option value="hourly" className="bg-[#1a1625]">Every hour</option>
@@ -367,7 +367,7 @@ const SettingsPage: NextPage = () => {
                       <select
                         value={preferences.dataRetention}
                         onChange={(e) => setPreferences(prev => ({ ...prev, dataRetention: e.target.value }))}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
                         <option value="3months" className="bg-[#1a1625]">3 months</option>
                         <option value="6months" className="bg-[#1a1625]">6 months</option>
@@ -384,7 +384,7 @@ const SettingsPage: NextPage = () => {
                       <select
                         value={preferences.exportFormat}
                         onChange={(e) => setPreferences(prev => ({ ...prev, exportFormat: e.target.value }))}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200 cursor-pointer"
                       >
                         <option value="csv" className="bg-[#1a1625]">CSV</option>
                         <option value="json" className="bg-[#1a1625]">JSON</option>
@@ -394,7 +394,7 @@ const SettingsPage: NextPage = () => {
 
                     <button
                       onClick={() => alert('Preferences saved! (This is a demo - actual saving would be implemented)')}
-                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                     >
                       Save Preferences
                     </button>

@@ -159,12 +159,12 @@ export default function TransactionDetailPage() {
   if (error || !transaction) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <div className="bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-6">
           <h2 className="text-xl font-semibold text-[#ef4444]">Error</h2>
           <p className="mt-2 text-red-600">{error || 'Transaction not found'}</p>
           <button
             onClick={() => router.push('/transactions')}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-[var(--radius-md)] hover:bg-red-700"
           >
             Back to Transactions
           </button>
@@ -203,13 +203,13 @@ export default function TransactionDetailPage() {
               <>
                 <button
                   onClick={() => setEditing(true)}
-                  className="px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
+                  className="px-4 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] font-medium"
                 >
                   Edit
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                  className="px-4 py-2 bg-red-600 text-white rounded-[var(--radius-md)] hover:bg-red-700 font-medium"
                 >
                   Delete
                 </button>
@@ -219,7 +219,7 @@ export default function TransactionDetailPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50"
+                  className="px-4 py-2 bg-green-600 text-white rounded-[var(--radius-md)] hover:bg-green-700 font-medium disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -228,7 +228,7 @@ export default function TransactionDetailPage() {
                     setEditing(false);
                     setEditedData(transaction);
                   }}
-                  className="px-4 py-2 bg-gray-300 text-[#cbd5e1] rounded-lg hover:bg-gray-400 font-medium"
+                  className="px-4 py-2 bg-gray-300 text-[#cbd5e1] rounded-[var(--radius-md)] hover:bg-gray-400 font-medium"
                 >
                   Cancel
                 </button>
@@ -241,13 +241,13 @@ export default function TransactionDetailPage() {
           {/* Main Content - 2 columns */}
           <div className="lg:col-span-2 space-y-6">
             {/* Transaction Summary Card */}
-            <div className="bg-[#1a1625] rounded-lg shadow-lg p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">
                 Transaction Summary
               </h2>
               
               {/* Amount - Large Display */}
-              <div className="mb-6 text-center py-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+              <div className="mb-6 text-center py-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-[var(--radius-md)]">
                 <p className="text-sm text-[#cbd5e1] mb-2">Amount</p>
                 {editing ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -255,14 +255,14 @@ export default function TransactionDetailPage() {
                       type="text"
                       value={editedData.currency || 'INR'}
                       onChange={(e) => setEditedData({ ...editedData, currency: e.target.value })}
-                      className="w-20 px-3 py-2 border border-[#2d1b4e] rounded-lg"
+                      className="w-20 px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)]"
                     />
                     <input
                       type="number"
                       step="0.01"
                       value={editedData.amount || ''}
                       onChange={(e) => setEditedData({ ...editedData, amount: parseFloat(e.target.value) })}
-                      className="w-40 px-3 py-2 border border-[#2d1b4e] rounded-lg text-3xl font-bold"
+                      className="w-40 px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] text-3xl font-bold"
                     />
                   </div>
                 ) : (
@@ -283,7 +283,7 @@ export default function TransactionDetailPage() {
                       type="text"
                       value={editedData.merchant_name || ''}
                       onChange={(e) => setEditedData({ ...editedData, merchant_name: e.target.value })}
-                      className="w-full px-3 py-2 border border-[#2d1b4e] rounded-lg"
+                      className="w-full px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)]"
                     />
                   ) : (
                     <p className="text-lg font-semibold text-[#f8fafc]">
@@ -300,7 +300,7 @@ export default function TransactionDetailPage() {
                       type="datetime-local"
                       value={editedData.txn_time ? new Date(editedData.txn_time).toISOString().slice(0, 16) : ''}
                       onChange={(e) => setEditedData({ ...editedData, txn_time: new Date(e.target.value).toISOString() })}
-                      className="w-full px-3 py-2 border border-[#2d1b4e] rounded-lg"
+                      className="w-full px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)]"
                     />
                   ) : (
                     <p className="text-lg text-[#f8fafc]">
@@ -315,7 +315,7 @@ export default function TransactionDetailPage() {
           {/* Sidebar - 1 column */}
           <div className="space-y-6">
             {/* AI Confidence */}
-            <div className="bg-[#1a1625] rounded-lg shadow-lg p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
               <h3 className="text-lg font-semibold text-[#f8fafc] mb-3">
                 AI Confidence
               </h3>
@@ -335,7 +335,7 @@ export default function TransactionDetailPage() {
             </div>
 
             {/* Source Email */}
-            <div className="bg-[#1a1625] rounded-lg shadow-lg p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] p-6">
               <h3 className="text-lg font-semibold text-[#f8fafc] mb-3">
                 Source Email
               </h3>

@@ -155,7 +155,7 @@ const TestPage: NextPage = () => {
 
           {/* Health Status */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-[#f8fafc]">System Health</h2>
                 <button
@@ -209,7 +209,7 @@ const TestPage: NextPage = () => {
             </div>
 
             {/* API Testing Controls */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">API Testing</h2>
               
               <div className="space-y-4">
@@ -264,7 +264,7 @@ const TestPage: NextPage = () => {
           </div>
 
           {/* Manual Sync Testing */}
-          <div className="bg-[#1a1625] rounded-lg shadow p-6 mb-8">
+          <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6 mb-8">
             <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Manual Sync Testing</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -274,7 +274,7 @@ const TestPage: NextPage = () => {
                   type="text"
                   value={syncForm.connection_id}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, connection_id: e.target.value }))}
-                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] text-sm"
                   placeholder="test-connection-id"
                 />
               </div>
@@ -285,7 +285,7 @@ const TestPage: NextPage = () => {
                   type="date"
                   value={syncForm.date_from}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, date_from: e.target.value }))}
-                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] text-sm"
                 />
               </div>
               
@@ -295,7 +295,7 @@ const TestPage: NextPage = () => {
                   type="date"
                   value={syncForm.date_to}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, date_to: e.target.value }))}
-                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] text-sm"
                 />
               </div>
               
@@ -304,7 +304,7 @@ const TestPage: NextPage = () => {
                 <select
                   value={syncForm.pageSize}
                   onChange={(e) => setSyncForm(prev => ({ ...prev, pageSize: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] text-sm"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -323,12 +323,12 @@ const TestPage: NextPage = () => {
           </div>
 
           {/* Additional Testing Tools */}
-          <div className="bg-[#1a1625] rounded-lg shadow p-6 mb-8">
+          <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6 mb-8">
             <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Additional Testing Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <a
                 href="/test/auth"
-                className="block p-4 border border-[#2d1b4e] rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                className="block p-4 border border-[#2d1b4e] rounded-[var(--radius-md)] hover:border-blue-300 hover:bg-blue-50 transition-colors"
               >
                 <div className="flex items-center">
                   <div className="text-2xl mr-3">🔐</div>
@@ -339,7 +339,7 @@ const TestPage: NextPage = () => {
                 </div>
               </a>
 
-              <div className="p-4 border border-[#2d1b4e] rounded-lg bg-gray-50">
+              <div className="p-4 border border-[#2d1b4e] rounded-[var(--radius-md)] bg-gray-50">
                 <div className="flex items-center">
                   <div className="text-2xl mr-3">🚧</div>
                   <div>
@@ -352,7 +352,7 @@ const TestPage: NextPage = () => {
           </div>
 
           {/* Test Results */}
-          <div className="bg-[#1a1625] rounded-lg shadow">
+          <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow">
             <div className="px-6 py-4 border-b border-[#2d1b4e]">
               <h2 className="text-xl font-semibold text-[#f8fafc]">Recent Test Results</h2>
             </div>

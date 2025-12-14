@@ -31,7 +31,7 @@ const TestAuthPage: NextPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Sign In/Up */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Sign In / Sign Up</h2>
               <p className="text-[#cbd5e1] mb-4">
                 Main authentication page with toggle between sign-in and sign-up modes.
@@ -45,7 +45,7 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Forgot Password */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Forgot Password</h2>
               <p className="text-[#cbd5e1] mb-4">
                 Password reset flow - enter email to receive reset link.
@@ -59,7 +59,7 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Reset Password */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Reset Password</h2>
               <p className="text-[#cbd5e1] mb-4">
                 Password reset completion - requires valid session from email link.
@@ -76,7 +76,7 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Protected Routes */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Protected Routes</h2>
               <p className="text-[#cbd5e1] mb-4">
                 Test route protection - should redirect to auth if not signed in.
@@ -98,7 +98,7 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Authentication Flow */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Authentication Flow</h2>
               <div className="text-sm text-[#cbd5e1] space-y-2">
                 <div className="flex items-center">
@@ -121,7 +121,7 @@ const TestAuthPage: NextPage = () => {
             </div>
 
             {/* Password Reset Flow */}
-            <div className="bg-[#1a1625] rounded-lg shadow p-6">
+            <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
               <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Password Reset Flow</h2>
               <div className="text-sm text-[#cbd5e1] space-y-2">
                 <div className="flex items-center">
@@ -149,7 +149,7 @@ const TestAuthPage: NextPage = () => {
           </div>
 
           {/* Quick Test Form */}
-          <div className="mt-8 bg-[#1a1625] rounded-lg shadow p-6">
+          <div className="mt-8 bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
             <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Quick Test Form</h2>
             <p className="text-[#cbd5e1] mb-4">
               Test form validation and UI components without actual authentication.

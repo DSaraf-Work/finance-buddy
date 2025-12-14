@@ -87,7 +87,7 @@ export default function CategoriesManager({ className = '' }: CategoriesManagerP
   };
 
   return (
-    <div className={`bg-[#1a1625] shadow rounded-lg ${className}`}>
+    <div className={`bg-[#1a1625] shadow rounded-[var(--radius-md)] ${className}`}>
       <div className="px-6 py-4 border-b border-[#2d1b4e]">
         <h2 className="text-lg font-medium text-[#f8fafc]">🏷️ Transaction Categories</h2>
         <p className="mt-1 text-sm text-gray-500">
@@ -109,13 +109,13 @@ export default function CategoriesManager({ className = '' }: CategoriesManagerP
               onChange={(e) => setNewCategory(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addCategory()}
               placeholder="e.g., groceries"
-              className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="flex-1 px-3 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={loading}
             />
             <button
               onClick={addCategory}
               disabled={loading || !newCategory.trim()}
-              className="px-4 py-2 bg-[#6b4ce6] text-white rounded-md hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Adding...' : 'Add'}
             </button>
@@ -134,7 +134,7 @@ export default function CategoriesManager({ className = '' }: CategoriesManagerP
             Current Categories ({categories.length})
           </h3>
           {categories.length === 0 ? (
-            <div className="text-center py-8 bg-[#0f0a1a]/50 rounded-lg">
+            <div className="text-center py-8 bg-[#0f0a1a]/50 rounded-[var(--radius-md)]">
               <span className="text-4xl mb-2 block">🏷️</span>
               <p className="text-gray-500 text-sm">No categories configured</p>
               <p className="text-gray-400 text-xs mt-1">Add your first category above</p>
@@ -144,7 +144,7 @@ export default function CategoriesManager({ className = '' }: CategoriesManagerP
               {categories.map((category) => (
                 <div
                   key={category}
-                  className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-lg hover:bg-[#2d1b4e]/30 transition-colors"
+                  className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-[var(--radius-md)] hover:bg-[#2d1b4e]/30 transition-colors"
                 >
                   <div className="flex items-center">
                     <span className="text-xl mr-2">🏷️</span>

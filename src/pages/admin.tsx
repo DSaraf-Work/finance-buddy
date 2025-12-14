@@ -140,7 +140,7 @@ const AdminPage: NextPage = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                     <span className="text-xl sm:text-2xl">⚙️</span>
                   </div>
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Admin Dashboard</h1>
@@ -151,7 +151,7 @@ const AdminPage: NextPage = () => {
               </div>
               <button
                 onClick={handleConnect}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#0f0a1a] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] w-full sm:w-auto"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#0f0a1a] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] w-full sm:w-auto"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -161,7 +161,7 @@ const AdminPage: NextPage = () => {
             </div>
 
             {/* Mock AI Configuration */}
-            <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl mb-8">
+            <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)] mb-8">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex-1">
@@ -179,7 +179,7 @@ const AdminPage: NextPage = () => {
                   <div className="flex items-center gap-3">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                       mockAIEnabled
-                        ? 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30'
+                        ? 'bg-[var(--color-warning)]/10 text-[var(--color-warning)] border border-[var(--color-warning)]/30'
                         : 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30'
                     }`}>
                       {mockAIEnabled ? 'Mock AI' : 'Real AI'}
@@ -199,10 +199,10 @@ const AdminPage: NextPage = () => {
                   </div>
                 </div>
                 {mockAIEnabled && (
-                  <div className="mt-4 p-3 bg-[#f59e0b]/10 border border-[#f59e0b]/30 rounded-lg">
+                  <div className="mt-4 p-3 bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/30 rounded-[var(--radius-md)]">
                     <div className="flex gap-3">
                       <div className="flex-shrink-0">
-                        <span className="text-[#f59e0b] text-lg">⚠️</span>
+                        <span className="text-[var(--color-warning)] text-lg">⚠️</span>
                       </div>
                       <div>
                         <p className="text-sm text-[#cbd5e1]">
@@ -218,10 +218,10 @@ const AdminPage: NextPage = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
-              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)] hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
                       <span className="text-2xl">📧</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -234,10 +234,10 @@ const AdminPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)] hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#10b981] to-[#059669] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#10b981] to-[#059669] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                       <span className="text-2xl">💰</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -250,10 +250,10 @@ const AdminPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+              <div className="bg-[#1a1625] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)] hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#ec4899] to-[#db2777] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(236,72,153,0.3)]">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#ec4899] to-[#db2777] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_15px_rgba(236,72,153,0.3)]">
                       <span className="text-2xl">🔄</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -270,7 +270,7 @@ const AdminPage: NextPage = () => {
             </div>
 
             {/* Gmail Connections */}
-            <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-xl mb-8">
+            <div className="bg-[#1a1625] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] rounded-[var(--radius-lg)] mb-8">
               <div className="px-6 py-4 border-b border-[#2d1b4e]">
                 <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -281,14 +281,14 @@ const AdminPage: NextPage = () => {
               </div>
               {connections.length === 0 ? (
                 <div className="text-center py-12 px-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                     <span className="text-3xl">📧</span>
                   </div>
                   <h3 className="text-lg font-semibold text-[#f8fafc] mb-2">No Gmail accounts connected</h3>
                   <p className="text-[#cbd5e1] mb-6 max-w-md mx-auto">Connect your first Gmail account to start syncing financial emails</p>
                   <button
                     onClick={handleConnect}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)]"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -326,7 +326,7 @@ const AdminPage: NextPage = () => {
                         const status = getConnectionStatus(connection);
                         const statusConfig = {
                           error: { bg: 'bg-[#ef4444]/10', color: 'text-[#ef4444]', border: 'border-[#ef4444]/30' },
-                          stale: { bg: 'bg-[#f59e0b]/10', color: 'text-[#f59e0b]', border: 'border-[#f59e0b]/30' },
+                          stale: { bg: 'bg-[var(--color-warning)]/10', color: 'text-[var(--color-warning)]', border: 'border-[var(--color-warning)]/30' },
                           active: { bg: 'bg-[#10b981]/10', color: 'text-[#10b981]', border: 'border-[#10b981]/30' },
                           new: { bg: 'bg-[#6b4ce6]/10', color: 'text-[#a78bfa]', border: 'border-[#6b4ce6]/30' },
                         };
@@ -336,7 +336,7 @@ const AdminPage: NextPage = () => {
                           <tr key={connection.id} className="hover:bg-[#2d1b4e]/20 transition-all duration-200 border-b border-[#2d1b4e]">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-3">
-                                <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
+                                <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-md)] flex items-center justify-center shadow-[0_0_10px_rgba(107,76,230,0.3)]">
                                   <span className="text-lg">📧</span>
                                 </div>
                                 <div>
@@ -374,7 +374,7 @@ const AdminPage: NextPage = () => {
                               <button
                                 onClick={() => handleDisconnect(connection.id)}
                                 disabled={loading}
-                                className="px-3 py-1.5 text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-1.5 text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-[var(--radius-md)] border border-transparent hover:border-[#ef4444] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 Disconnect
                               </button>
@@ -402,7 +402,7 @@ const AdminPage: NextPage = () => {
 
             {/* System Information */}
             {health && (
-              <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e]">
+              <div className="bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e]">
                 <div className="px-6 py-4 border-b border-[#2d1b4e]">
                   <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] flex items-center gap-2">
                     <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -417,7 +417,7 @@ const AdminPage: NextPage = () => {
                       <h3 className="text-sm font-semibold text-[#f8fafc] mb-3 uppercase tracking-wide">Environment Variables</h3>
                       <div className="space-y-2">
                         {Object.entries(health.environment).map(([key, value]) => (
-                          <div key={key} className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                          <div key={key} className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-[var(--radius-md)] border border-[#2d1b4e]">
                             <span className="text-sm text-[#cbd5e1]">{key}</span>
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                               value ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'
@@ -432,7 +432,7 @@ const AdminPage: NextPage = () => {
                     <div>
                       <h3 className="text-sm font-semibold text-[#f8fafc] mb-3 uppercase tracking-wide">Database Status</h3>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                        <div className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-[var(--radius-md)] border border-[#2d1b4e]">
                           <span className="text-sm text-[#cbd5e1]">Connection</span>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             health.database.connected ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30'
@@ -440,15 +440,15 @@ const AdminPage: NextPage = () => {
                             {health.database.connected ? 'Connected' : 'Failed'}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                        <div className="flex items-center justify-between p-2 bg-[#0f0a1a]/50 rounded-[var(--radius-md)] border border-[#2d1b4e]">
                           <span className="text-sm text-[#cbd5e1]">RLS Active</span>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            health.database.rls_active ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30'
+                            health.database.rls_active ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30' : 'bg-[var(--color-warning)]/10 text-[var(--color-warning)] border border-[var(--color-warning)]/30'
                           }`}>
                             {health.database.rls_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        <div className="mt-3 p-2 bg-[#0f0a1a]/50 rounded-lg border border-[#2d1b4e]">
+                        <div className="mt-3 p-2 bg-[#0f0a1a]/50 rounded-[var(--radius-md)] border border-[#2d1b4e]">
                           <span className="text-sm text-[#cbd5e1] font-medium">Tables:</span>
                           <div className="text-xs text-[#94a3b8] mt-1">
                             {health.database.tables.join(', ')}

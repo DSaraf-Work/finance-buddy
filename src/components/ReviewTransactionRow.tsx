@@ -92,7 +92,7 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
   // Format status badge
   const formatStatus = (status: string) => {
     const statusConfig = {
-      REVIEW: { bg: 'bg-[#f59e0b]/10', color: 'text-[#f59e0b]', border: 'border-[#f59e0b]/30', label: 'Review' },
+      REVIEW: { bg: 'bg-[var(--color-warning)]/10', color: 'text-[var(--color-warning)]', border: 'border-[var(--color-warning)]/30', label: 'Review' },
       APPROVED: { bg: 'bg-[#10b981]/10', color: 'text-[#10b981]', border: 'border-[#10b981]/30', label: 'Approved' },
       REJECTED: { bg: 'bg-[#ef4444]/10', color: 'text-[#ef4444]', border: 'border-[#ef4444]/30', label: 'Rejected' },
       INVALID: { bg: 'bg-[#94a3b8]/10', color: 'text-[#94a3b8]', border: 'border-[#94a3b8]/30', label: 'Invalid' },
@@ -126,7 +126,7 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
     // Mobile Card Layout - Dark Purple Theme
     return (
       <>
-        <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-4 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
+        <div className="bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-4 hover:border-[#6b4ce6] hover:shadow-[0_0_20px_rgba(107,76,230,0.2)] transition-all duration-300">
           {/* First Line: Merchant + Category + Amount */}
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1 min-w-0 mr-3">
@@ -172,7 +172,7 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => onEdit(transaction)}
-                className="px-3 py-1.5 text-xs font-medium text-[#a78bfa] hover:text-[#6b4ce6] hover:bg-[#6b4ce6]/10 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6] transition-all duration-200"
+                className="px-3 py-1.5 text-xs font-medium text-[#a78bfa] hover:text-[#6b4ce6] hover:bg-[#6b4ce6]/10 rounded-[var(--radius-md)] border border-[#2d1b4e] hover:border-[#6b4ce6] transition-all duration-200"
                 aria-label={`Edit transaction ${transaction.id}`}
               >
                 Edit
@@ -180,7 +180,7 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
               {transaction.status !== 'REJECTED' && (
                 <button
                   onClick={handleRejectClick}
-                  className="px-3 py-1.5 text-xs font-medium text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-lg border border-[#2d1b4e] hover:border-[#ef4444] transition-all duration-200"
+                  className="px-3 py-1.5 text-xs font-medium text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 rounded-[var(--radius-md)] border border-[#2d1b4e] hover:border-[#ef4444] transition-all duration-200"
                   aria-label={`Reject transaction ${transaction.id}`}
                 >
                   Reject
@@ -193,9 +193,9 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
         {/* Reject Modal - Dark Purple Theme */}
         {showRejectModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-[#1a1625] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] p-6 max-w-md w-full">
+            <div className="bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] p-6 max-w-md w-full">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-[#ef4444]/10 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-[#ef4444]/10 rounded-[var(--radius-md)] flex items-center justify-center">
                   <svg className="w-5 h-5 text-[#ef4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
@@ -209,19 +209,19 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
                 value={rejectNotes}
                 onChange={(e) => setRejectNotes(e.target.value)}
                 placeholder="e.g., Not a real expense, duplicate transaction, etc."
-                className="w-full px-4 py-3 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#ef4444] focus:border-[#ef4444] mb-4 resize-none transition-all duration-200"
+                className="w-full px-4 py-3 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#ef4444] focus:border-[#ef4444] mb-4 resize-none transition-all duration-200"
                 rows={4}
               />
               <div className="flex justify-end gap-3">
                 <button
                   onClick={handleRejectCancel}
-                  className="px-4 py-2 text-sm font-medium text-[#cbd5e1] bg-[#2d1b4e]/30 hover:bg-[#2d1b4e]/50 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6]/50 transition-all duration-200"
+                  className="px-4 py-2 text-sm font-medium text-[#cbd5e1] bg-[#2d1b4e]/30 hover:bg-[#2d1b4e]/50 rounded-[var(--radius-md)] border border-[#2d1b4e] hover:border-[#6b4ce6]/50 transition-all duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleRejectConfirm}
-                  className="px-4 py-2 text-sm font-medium text-white bg-[#ef4444] hover:bg-[#dc2626] rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all duration-200"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#ef4444] hover:bg-[#dc2626] rounded-[var(--radius-md)] shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all duration-200"
                 >
                   Reject Transaction
                 </button>
@@ -258,7 +258,7 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
           <div className="flex items-center justify-end gap-2">
             <button
               onClick={() => onEdit(transaction)}
-              className="px-3 py-1.5 text-[#a78bfa] hover:text-[#6b4ce6] hover:bg-[#6b4ce6]/10 font-medium rounded-lg border border-transparent hover:border-[#6b4ce6] transition-all duration-200"
+              className="px-3 py-1.5 text-[#a78bfa] hover:text-[#6b4ce6] hover:bg-[#6b4ce6]/10 font-medium rounded-[var(--radius-md)] border border-transparent hover:border-[#6b4ce6] transition-all duration-200"
               aria-label={`Edit transaction ${transaction.id}`}
             >
               Edit
@@ -266,7 +266,7 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
             {transaction.status !== 'REJECTED' && (
               <button
                 onClick={handleRejectClick}
-                className="px-3 py-1.5 text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 font-medium rounded-lg border border-transparent hover:border-[#ef4444] transition-all duration-200"
+                className="px-3 py-1.5 text-[#ef4444] hover:text-[#dc2626] hover:bg-[#ef4444]/10 font-medium rounded-[var(--radius-md)] border border-transparent hover:border-[#ef4444] transition-all duration-200"
                 aria-label={`Reject transaction ${transaction.id}`}
               >
                 Reject
@@ -281,9 +281,9 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
         <tr>
           <td colSpan={8}>
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-              <div className="bg-[#1a1625] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] p-6 max-w-md w-full">
+              <div className="bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] p-6 max-w-md w-full">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-[#ef4444]/10 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-[#ef4444]/10 rounded-[var(--radius-md)] flex items-center justify-center">
                     <svg className="w-5 h-5 text-[#ef4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
@@ -297,19 +297,19 @@ const ReviewTransactionRow: React.FC<ReviewTransactionRowProps> = ({
                   value={rejectNotes}
                   onChange={(e) => setRejectNotes(e.target.value)}
                   placeholder="e.g., Not a real expense, duplicate transaction, etc."
-                  className="w-full px-4 py-3 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#ef4444] focus:border-[#ef4444] mb-4 resize-none transition-all duration-200"
+                  className="w-full px-4 py-3 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#ef4444] focus:border-[#ef4444] mb-4 resize-none transition-all duration-200"
                   rows={4}
                 />
                 <div className="flex justify-end gap-3">
                   <button
                     onClick={handleRejectCancel}
-                    className="px-4 py-2 text-sm font-medium text-[#cbd5e1] bg-[#2d1b4e]/30 hover:bg-[#2d1b4e]/50 rounded-lg border border-[#2d1b4e] hover:border-[#6b4ce6]/50 transition-all duration-200"
+                    className="px-4 py-2 text-sm font-medium text-[#cbd5e1] bg-[#2d1b4e]/30 hover:bg-[#2d1b4e]/50 rounded-[var(--radius-md)] border border-[#2d1b4e] hover:border-[#6b4ce6]/50 transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleRejectConfirm}
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#ef4444] hover:bg-[#dc2626] rounded-lg shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all duration-200"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#ef4444] hover:bg-[#dc2626] rounded-[var(--radius-md)] shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all duration-200"
                   >
                     Reject Transaction
                   </button>

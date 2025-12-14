@@ -27,7 +27,7 @@ export function PushNotificationPrompt() {
   // Show blocked state if permission denied
   if (permission === 'denied') {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-[var(--radius-md)] p-4">
         <p className="text-sm text-yellow-800">
           Push notifications are blocked. Please enable them in your browser settings.
         </p>
@@ -63,7 +63,7 @@ export function PushNotificationPrompt() {
     };
 
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+      <div className="bg-green-50 border border-green-200 rounded-[var(--radius-md)] p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className="text-green-600">✓</span>
@@ -89,7 +89,7 @@ export function PushNotificationPrompt() {
         <button
           onClick={handleTestNotification}
           disabled={loading}
-          className="w-full bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
+          className="w-full bg-green-600 text-white px-4 py-2 rounded-[var(--radius-md)] text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
         >
           {loading ? 'Sending...' : '🔔 Send Test Notification'}
         </button>
@@ -99,7 +99,7 @@ export function PushNotificationPrompt() {
 
   // Show prompt to enable notifications
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div className="bg-blue-50 border border-blue-200 rounded-[var(--radius-md)] p-4">
       <div className="flex items-start gap-3">
         <span className="text-2xl">🔔</span>
         <div className="flex-1">
@@ -122,7 +122,7 @@ export function PushNotificationPrompt() {
               }
             }}
             disabled={loading}
-            className="bg-[#6b4ce6] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#8b5cf6] disabled:opacity-50 transition-colors"
+            className="bg-[#6b4ce6] text-white px-4 py-2 rounded-[var(--radius-md)] text-sm font-medium hover:bg-[#8b5cf6] disabled:opacity-50 transition-colors"
           >
             {loading ? 'Enabling...' : 'Enable Notifications'}
           </button>

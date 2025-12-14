@@ -96,7 +96,7 @@ const ResetPasswordPage: NextPage = () => {
             <p className="text-[#cbd5e1] mb-8">Gmail Financial Email Automation</p>
           </div>
           
-          <div className="bg-[#1a1625] py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-[#1a1625] py-8 px-4 shadow sm:rounded-[var(--radius-md)] sm:px-10">
             {!isCompleted ? (
               <>
                 <div className="mb-6">
@@ -110,7 +110,7 @@ const ResetPasswordPage: NextPage = () => {
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   {(formError || error) && (
-                    <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                    <div className="bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-4">
                       <div className="text-sm text-red-700">
                         {formError || error}
                       </div>
@@ -203,7 +203,7 @@ const ResetPasswordPage: NextPage = () => {
                   Your password has been updated. You'll be redirected to your dashboard shortly.
                 </p>
                 
-                <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+                <div className="bg-green-50 border border-green-200 rounded-[var(--radius-md)] p-4 mb-6">
                   <div className="text-sm text-green-700">
                     <p className="font-medium mb-2">What's next:</p>
                     <ul className="list-disc list-inside space-y-1">

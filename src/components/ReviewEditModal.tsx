@@ -88,12 +88,12 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-[#1a1625] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="relative bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#2d1b4e] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 bg-[#0f0a1a]/95 backdrop-blur-sm border-b border-[#2d1b4e] px-6 py-4 rounded-t-xl z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-md)] flex items-center justify-center shadow-[0_0_15px_rgba(107,76,230,0.3)]">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
@@ -104,7 +104,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
               </div>
               <button
                 onClick={onClose}
-                className="text-[#94a3b8] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 p-2 rounded-lg transition-all duration-200"
+                className="text-[#94a3b8] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 p-2 rounded-[var(--radius-md)] transition-all duration-200"
                 aria-label="Close modal"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -142,7 +142,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     min="0"
                     value={formData.amount}
                     onChange={e => handleChange('amount', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     required
                   />
                 </div>
@@ -157,7 +157,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.currency || ''}
                     onChange={e => handleChange('currency', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="INR"
                   />
                 </div>
@@ -171,7 +171,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleChange('direction', 'debit')}
-                      className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                      className={`flex-1 px-4 py-2.5 rounded-[var(--radius-md)] font-medium transition-all duration-200 ${
                         formData.direction === 'debit'
                           ? 'bg-[#ef4444] text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] border border-[#ef4444]'
                           : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-[#2d1b4e]/50 border border-[#2d1b4e] hover:border-[#ef4444]/50'
@@ -182,7 +182,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleChange('direction', 'credit')}
-                      className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+                      className={`flex-1 px-4 py-2.5 rounded-[var(--radius-md)] font-medium transition-all duration-200 ${
                         formData.direction === 'credit'
                           ? 'bg-[#10b981] text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-[#10b981]'
                           : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-[#2d1b4e]/50 border border-[#2d1b4e] hover:border-[#10b981]/50'
@@ -203,7 +203,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="datetime-local"
                     value={formData.txn_time ? formData.txn_time.slice(0, 16) : ''}
                     onChange={e => handleChange('txn_time', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     required
                   />
                 </div>
@@ -218,7 +218,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.merchant_name || ''}
                     onChange={e => handleChange('merchant_name', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     maxLength={200}
                   />
                 </div>
@@ -233,7 +233,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.merchant_normalized || ''}
                     onChange={e => handleChange('merchant_normalized', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     maxLength={200}
                   />
                 </div>
@@ -248,7 +248,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.category || ''}
                     onChange={e => handleChange('category', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="e.g., Food, Transport, Shopping"
                     maxLength={200}
                   />
@@ -274,7 +274,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.account_hint || ''}
                     onChange={e => handleChange('account_hint', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="e.g., HDFC ****1234"
                   />
                 </div>
@@ -287,7 +287,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.account_type || ''}
                     onChange={e => handleChange('account_type', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     placeholder="e.g., Savings, Credit Card"
                   />
                 </div>
@@ -312,7 +312,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.reference_id || ''}
                     onChange={e => handleChange('reference_id', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                   />
                 </div>
                 <div>
@@ -324,7 +324,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.location || ''}
                     onChange={e => handleChange('location', e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -336,12 +336,12 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       type="text"
                       value={formData.email_row_id}
                       readOnly
-                      className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] cursor-not-allowed"
+                      className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] cursor-not-allowed"
                     />
                     <button
                       type="button"
                       onClick={() => copyToClipboard(formData.email_row_id)}
-                      className="px-3 py-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-lg transition-all duration-200"
+                      className="px-3 py-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-[var(--radius-md)] transition-all duration-200"
                       aria-label="Copy email row ID"
                       title="Copy to clipboard"
                     >
@@ -382,7 +382,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       step="0.01"
                       value={formData.confidence || 0}
                       onChange={e => handleChange('confidence', e.target.value)}
-                      className="flex-1 h-2 bg-[#2d1b4e] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#6b4ce6] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(107,76,230,0.5)]"
+                      className="flex-1 h-2 bg-[#2d1b4e] rounded-[var(--radius-md)] appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#6b4ce6] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(107,76,230,0.5)]"
                     />
                     <input
                       type="number"
@@ -391,7 +391,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       step="0.01"
                       value={formData.confidence || 0}
                       onChange={e => handleChange('confidence', e.target.value)}
-                      className="w-20 px-3 py-2 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
+                      className="w-20 px-3 py-2 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -406,7 +406,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     value={formData.ai_notes || 'No AI notes available'}
                     readOnly
                     rows={3}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] resize-none cursor-not-allowed"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] resize-none cursor-not-allowed"
                   />
                 </div>
 
@@ -420,7 +420,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     value={formData.user_notes || ''}
                     onChange={e => handleChange('user_notes', e.target.value)}
                     rows={3}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] resize-none transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#f8fafc] placeholder-[#94a3b8] focus:ring-2 focus:ring-[#6b4ce6] focus:border-[#6b4ce6] resize-none transition-all duration-200"
                     placeholder="Add your notes here..."
                   />
                 </div>
@@ -443,12 +443,12 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                       type="text"
                       value={formData.id}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
+                      className="flex-1 px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                     />
                     <button
                       type="button"
                       onClick={() => copyToClipboard(formData.id)}
-                      className="px-3 py-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-lg transition-all duration-200"
+                      className="px-3 py-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-[var(--radius-md)] transition-all duration-200"
                       aria-label="Copy ID"
                       title="Copy to clipboard"
                     >
@@ -469,7 +469,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.google_user_id}
                     readOnly
-                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -478,7 +478,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.connection_id || 'N/A'}
                     readOnly
-                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -487,7 +487,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={formData.extraction_version || 'N/A'}
                     readOnly
-                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -496,7 +496,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={new Date(formData.created_at).toLocaleString()}
                     readOnly
-                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
                 <div>
@@ -505,7 +505,7 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                     type="text"
                     value={new Date(formData.updated_at).toLocaleString()}
                     readOnly
-                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
+                    className="w-full px-3 py-2 bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] text-[#94a3b8] text-xs sm:text-sm cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -529,14 +529,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
                   <span className="ml-3 text-[#cbd5e1]">Loading email body...</span>
                 </div>
               ) : emailBody ? (
-                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg p-4 max-h-96 overflow-y-auto">
+                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] p-4 max-h-96 overflow-y-auto">
                   <div
                     className="prose prose-sm max-w-none text-[#cbd5e1] whitespace-pre-wrap [&_a]:text-[#6b4ce6] [&_a:hover]:text-[#8b5cf6]"
                     dangerouslySetInnerHTML={{ __html: emailBody }}
                   />
                 </div>
               ) : (
-                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-lg p-4 text-center">
+                <div className="bg-[#0f0a1a] border border-[#2d1b4e] rounded-[var(--radius-md)] p-4 text-center">
                   <svg className="w-12 h-12 mx-auto mb-2 text-[#2d1b4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                   </svg>
@@ -550,14 +550,14 @@ const ReviewEditModal: React.FC<ReviewEditModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 border border-[#2d1b4e] text-[#cbd5e1] font-medium rounded-lg hover:bg-[#2d1b4e]/30 hover:border-[#6b4ce6]/50 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
+                className="px-6 py-2.5 border border-[#2d1b4e] text-[#cbd5e1] font-medium rounded-[var(--radius-md)] hover:bg-[#2d1b4e]/30 hover:border-[#6b4ce6]/50 focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
                 disabled={isSaving}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-lg hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                className="px-6 py-2.5 bg-[#6b4ce6] text-white font-medium rounded-[var(--radius-md)] hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200 shadow-[0_0_15px_rgba(107,76,230,0.3)] hover:shadow-[0_0_20px_rgba(107,76,230,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                 disabled={isSaving}
               >
                 {isSaving ? (

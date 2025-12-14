@@ -388,7 +388,7 @@ export default function TransactionsPage() {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => searchTransactions()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-[var(--radius-md)] hover:bg-blue-700 transition-colors"
           >
             Retry
           </button>
@@ -404,16 +404,16 @@ export default function TransactionsPage() {
         description="AI-extracted financial transactions with smart insights"
       >
         {/* Purple + Slate Gray Background */}
-        <div className="min-h-screen bg-[#0A0B0D] py-8 sm:py-12">
+        <div className="min-h-screen bg-[var(--color-bg-app)] py-8 sm:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
             <div className="mb-8 sm:mb-12">
               <div className="flex items-center justify-between pb-6">
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-bold text-[#F0F1F5] mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] mb-2">
                     Transactions
                   </h1>
-                  <p className="text-sm sm:text-base text-[#B2B4C2]">
+                  <p className="text-sm sm:text-base text-[var(--color-text-secondary)]">
                     Track and manage your financial activity
                   </p>
                 </div>
@@ -430,7 +430,7 @@ export default function TransactionsPage() {
 
             {/* Section 2: Filters - Distinct background with spacing */}
             <div className="mb-6 sm:mb-8">
-              <div className="bg-[#0F1014] rounded-2xl p-4 sm:p-6 border border-[#2A2C35]/50 shadow-lg">
+              <div className="bg-[#0F1014] rounded-[var(--radius-lg)] p-4 sm:p-6 border border-[var(--color-border)]/50 shadow-[var(--shadow-lg)]">
                 <TransactionFilters
                   filters={filters}
                   categories={categories}
@@ -449,10 +449,10 @@ export default function TransactionsPage() {
                 <div className="flex items-center justify-between mb-4 sm:mb-5">
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-[#5D5FEF] to-[#888BFF] rounded-full"></div>
-                    <h2 className="text-base sm:text-lg font-semibold text-[#F0F1F5]">
+                    <h2 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)]">
                       Transactions
                     </h2>
-                    <span className="text-xs sm:text-sm text-[#6F7280] ml-1">
+                    <span className="text-xs sm:text-sm text-[var(--color-text-muted)] ml-1">
                       ({transactions.length} {transactions.length === 1 ? 'result' : 'results'})
                     </span>
                   </div>
@@ -480,7 +480,7 @@ export default function TransactionsPage() {
         {/* Pagination Controls */}
         {transactions.length > 0 && (
           <nav
-            className="mt-10 sm:mt-12 bg-[#15161A] rounded-2xl p-6 shadow-sm border border-[#2A2C35]"
+            className="mt-10 sm:mt-12 bg-[var(--color-bg-primary)] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-sm)] border border-[var(--color-border)]"
             aria-label="Transaction pagination"
           >
             {/* Purple Top Border */}
@@ -489,12 +489,12 @@ export default function TransactionsPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               {/* Pagination Info */}
               <div className="flex items-center gap-6">
-                <span className="text-sm text-[#B2B4C2]" aria-live="polite">
-                  <span className="text-[#F0F1F5] font-semibold">{pagination.total}</span> transactions
+                <span className="text-sm text-[var(--color-text-secondary)]" aria-live="polite">
+                  <span className="text-[var(--color-text-primary)] font-semibold">{pagination.total}</span> transactions
                 </span>
-                <div className="h-4 w-px bg-[#2A2C35]"></div>
-                <span className="text-sm text-[#B2B4C2]" aria-current="page">
-                  Page <span className="text-[#F0F1F5] font-semibold">{pagination.page}</span> of <span className="text-[#F0F1F5] font-semibold">{pagination.totalPages}</span>
+                <div className="h-4 w-px bg-[var(--color-border)]"></div>
+                <span className="text-sm text-[var(--color-text-secondary)]" aria-current="page">
+                  Page <span className="text-[var(--color-text-primary)] font-semibold">{pagination.page}</span> of <span className="text-[var(--color-text-primary)] font-semibold">{pagination.totalPages}</span>
                 </span>
               </div>
 
@@ -503,7 +503,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="px-5 py-2.5 text-sm font-medium text-[#B2B4C2] bg-[#1E2026] border-2 border-[#2A2C35] rounded-xl hover:border-[#5D5FEF] hover:text-[#888BFF] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#2A2C35] disabled:hover:text-[#B2B4C2] transition-all duration-300"
+                  className="px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-card)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-hover)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:text-[var(--color-text-secondary)] transition-all duration-300"
                   aria-label="Go to previous page"
                 >
                   <span className="flex items-center gap-2">
@@ -515,7 +515,7 @@ export default function TransactionsPage() {
                 </button>
 
                 {/* Current Page Indicator */}
-                <div className="px-4 py-2.5 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] rounded-xl shadow-md">
+                <div className="px-4 py-2.5 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] rounded-[var(--radius-lg)] shadow-[var(--shadow-md)]">
                   <span className="text-sm font-bold text-white">
                     {pagination.page}
                   </span>
@@ -524,7 +524,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="px-5 py-2.5 text-sm font-medium text-[#B2B4C2] bg-[#1E2026] border-2 border-[#2A2C35] rounded-xl hover:border-[#5D5FEF] hover:text-[#888BFF] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#2A2C35] disabled:hover:text-[#B2B4C2] transition-all duration-300"
+                  className="px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-card)] border-2 border-[var(--color-border)] rounded-[var(--radius-lg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-hover)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:text-[var(--color-text-secondary)] transition-all duration-300"
                   aria-label="Go to next page"
                 >
                   <span className="flex items-center gap-2">

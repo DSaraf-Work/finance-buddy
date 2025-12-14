@@ -92,7 +92,7 @@ export default function NotificationsPage() {
                 setFilter('all');
                 setPage(1);
               }}
-              className={`px-4 py-2 rounded-lg font-medium ${
+              className={`px-4 py-2 rounded-[var(--radius-md)] font-medium ${
                 filter === 'all'
                   ? 'bg-[#6b4ce6] text-white'
                   : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
@@ -105,7 +105,7 @@ export default function NotificationsPage() {
                 setFilter('unread');
                 setPage(1);
               }}
-              className={`px-4 py-2 rounded-lg font-medium ${
+              className={`px-4 py-2 rounded-[var(--radius-md)] font-medium ${
                 filter === 'unread'
                   ? 'bg-[#6b4ce6] text-white'
                   : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
@@ -118,7 +118,7 @@ export default function NotificationsPage() {
                 setFilter('read');
                 setPage(1);
               }}
-              className={`px-4 py-2 rounded-lg font-medium ${
+              className={`px-4 py-2 rounded-[var(--radius-md)] font-medium ${
                 filter === 'read'
                   ? 'bg-[#6b4ce6] text-white'
                   : 'bg-[#2d1b4e]/30 text-[#cbd5e1] hover:bg-gray-200'
@@ -148,11 +148,11 @@ export default function NotificationsPage() {
         {/* Notifications List */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
-            <p className="mt-2 text-[#B2B4C2]">Loading notifications...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)]"></div>
+            <p className="mt-2 text-[var(--color-text-secondary)]">Loading notifications...</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-12 bg-[#0f0a1a]/50 rounded-lg">
+          <div className="text-center py-12 bg-[#0f0a1a]/50 rounded-[var(--radius-md)]">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
               fill="none"
@@ -173,7 +173,7 @@ export default function NotificationsPage() {
             {notifications.map(notification => (
               <div
                 key={notification.id}
-                className={`bg-[#1a1625] rounded-lg shadow p-6 ${
+                className={`bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6 ${
                   !notification.read ? 'border-l-4 border-blue-600' : ''
                 }`}
               >
@@ -192,7 +192,7 @@ export default function NotificationsPage() {
                           markAsRead(notification.id);
                           router.push(notification.action_url!);
                         }}
-                        className="mt-4 inline-flex items-center px-4 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
+                        className="mt-4 inline-flex items-center px-4 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] font-medium"
                       >
                         {notification.action_label || 'View'}
                       </button>
@@ -248,7 +248,7 @@ export default function NotificationsPage() {
             <button
               onClick={() => setPage(prev => Math.max(1, prev - 1))}
               disabled={page === 1}
-              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-[var(--radius-md)] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
@@ -258,7 +258,7 @@ export default function NotificationsPage() {
             <button
               onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-[#2d1b4e]/30 text-[#cbd5e1] rounded-[var(--radius-md)] hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

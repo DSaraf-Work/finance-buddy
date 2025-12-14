@@ -201,7 +201,7 @@ const TransactionWorkbenchPage: NextPage = () => {
             </div>
 
             {/* Filters */}
-            <div className="bg-[#1a1625] shadow rounded-lg mb-6">
+            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] mb-6">
               <div className="px-6 py-4 border-b border-[#2d1b4e]">
                 <h3 className="text-lg font-medium text-[#f8fafc]">Filters</h3>
               </div>
@@ -345,7 +345,7 @@ const TransactionWorkbenchPage: NextPage = () => {
 
             {/* Bulk Actions */}
             {selectedTransactions.size > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-[var(--radius-md)] p-4 mb-6">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-blue-700">
                     {selectedTransactions.size} transaction(s) selected
@@ -381,7 +381,7 @@ const TransactionWorkbenchPage: NextPage = () => {
             )}
 
             {/* Transaction Grid */}
-            <div className="bg-[#1a1625] shadow rounded-lg overflow-hidden">
+            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -503,7 +503,7 @@ const TransactionWorkbenchPage: NextPage = () => {
         {showDrawer && selectedTransaction && (
           <div className="fixed inset-0 z-50 overflow-hidden">
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowDrawer(false)} />
-            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-[#1a1625] shadow-xl">
+            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-[#1a1625] shadow-[var(--shadow-xl)]">
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-6 border-b border-[#2d1b4e]">
                   <h2 className="text-lg font-medium text-[#f8fafc]">Transaction Details</h2>

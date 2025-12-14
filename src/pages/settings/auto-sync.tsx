@@ -113,7 +113,7 @@ export default function AutoSyncSettingsPage() {
         <div className="mb-6">
           <button
             onClick={testCron}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+            className="px-4 py-2 bg-purple-600 text-white rounded-[var(--radius-md)] hover:bg-purple-700 font-medium"
           >
             🧪 Test Cron Job Manually
           </button>
@@ -123,7 +123,7 @@ export default function AutoSyncSettingsPage() {
         </div>
 
         {/* Info Box */}
-        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-[var(--radius-md)] p-4">
           <h3 className="font-semibold text-blue-900 mb-2">How Auto-Sync Works</h3>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Runs automatically every 15 minutes</li>
@@ -141,7 +141,7 @@ export default function AutoSyncSettingsPage() {
             <p className="mt-2 text-[#cbd5e1]">Loading connections...</p>
           </div>
         ) : connections.length === 0 ? (
-          <div className="text-center py-12 bg-[#1a1625] rounded-lg shadow">
+          <div className="text-center py-12 bg-[#1a1625] rounded-[var(--radius-md)] shadow">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
               fill="none"
@@ -165,7 +165,7 @@ export default function AutoSyncSettingsPage() {
             {connections.map(connection => (
               <div
                 key={connection.id}
-                className="bg-[#1a1625] rounded-lg shadow p-6"
+                className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -205,7 +205,7 @@ export default function AutoSyncSettingsPage() {
                         )
                       }
                       disabled={updating === connection.id}
-                      className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                      className={`px-6 py-3 rounded-[var(--radius-md)] font-medium transition-colors ${
                         connection.auto_sync_enabled
                           ? 'bg-red-600 hover:bg-red-700 text-white'
                           : 'bg-green-600 hover:bg-green-700 text-white'
@@ -221,7 +221,7 @@ export default function AutoSyncSettingsPage() {
                 </div>
 
                 {connection.auto_sync_enabled && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-[var(--radius-md)]">
                     <p className="text-sm text-[#10b981]">
                       ✅ Auto-sync is active. New emails will be automatically
                       synced and processed every 15 minutes.
@@ -234,7 +234,7 @@ export default function AutoSyncSettingsPage() {
         )}
 
         {/* Cron Schedule Info */}
-        <div className="mt-8 bg-[#2d1b4e]/30 rounded-lg p-4">
+        <div className="mt-8 bg-[#2d1b4e]/30 rounded-[var(--radius-md)] p-4">
           <h3 className="font-semibold text-[#f8fafc] mb-2">Cron Schedule</h3>
           <div className="text-sm text-[#cbd5e1] space-y-1">
             <p>
@@ -255,7 +255,7 @@ export default function AutoSyncSettingsPage() {
         </div>
 
         {/* Debug Info */}
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-[var(--radius-md)] p-4">
           <h3 className="font-semibold text-yellow-900 mb-2">
             🔧 Developer Info
           </h3>

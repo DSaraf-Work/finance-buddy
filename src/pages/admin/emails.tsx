@@ -151,10 +151,10 @@ export default function AdminEmailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5D5FEF]"></div>
-          <p className="mt-2 text-[#B2B4C2]">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent-primary)]"></div>
+          <p className="mt-2 text-[var(--color-text-secondary)]">Loading...</p>
         </div>
       </div>
     );
@@ -172,7 +172,7 @@ export default function AdminEmailsPage() {
         </div>
 
         {/* Whitelisted Senders Section */}
-        <div className="bg-[#1a1625] rounded-lg shadow p-6 mb-6">
+        <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6 mb-6">
           <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Whitelisted Senders</h2>
           
           {/* Add Sender Form */}
@@ -182,12 +182,12 @@ export default function AdminEmailsPage() {
               value={newSender}
               onChange={(e) => setNewSender(e.target.value)}
               placeholder="Enter email address (e.g., alerts@bank.com)"
-              className="flex-1 px-4 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               onKeyPress={(e) => e.key === 'Enter' && addSender()}
             />
             <button
               onClick={addSender}
-              className="px-6 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium"
+              className="px-6 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] font-medium"
             >
               Add Sender
             </button>
@@ -201,7 +201,7 @@ export default function AdminEmailsPage() {
               whitelistedSenders.map((sender) => (
                 <div
                   key={sender}
-                  className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-[var(--radius-md)]"
                 >
                   <span className="text-[#f8fafc] font-mono text-sm">{sender}</span>
                   <button
@@ -217,12 +217,12 @@ export default function AdminEmailsPage() {
         </div>
 
         {/* Email Actions Section */}
-        <div className="bg-[#1a1625] rounded-lg shadow p-6">
+        <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6">
           <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Email Actions</h2>
 
           <div className="space-y-4">
             {/* Refresh Emails Button */}
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <h3 className="font-semibold text-[#f8fafc] mb-2">Refresh Emails from Gmail</h3>
               <p className="text-sm text-[#cbd5e1] mb-3">
                 Fetches new emails from all connected Gmail accounts for whitelisted senders
@@ -230,13 +230,13 @@ export default function AdminEmailsPage() {
               <button
                 onClick={refreshEmails}
                 disabled={refreshing}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-green-600 text-white rounded-[var(--radius-md)] hover:bg-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {refreshing ? 'Refreshing...' : '🔄 Refresh Emails from Gmail'}
               </button>
 
               {refreshStats && (
-                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-[var(--radius-md)]">
                   <h4 className="font-semibold text-green-900 mb-2">Refresh Results:</h4>
                   <ul className="text-sm text-[#10b981] space-y-1">
                     <li>✅ Total Fetched: {refreshStats.totalFetched}</li>
@@ -251,7 +251,7 @@ export default function AdminEmailsPage() {
             </div>
 
             {/* Process All Fetched Emails Button */}
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <h3 className="font-semibold text-[#f8fafc] mb-2">Process All Fetched Emails</h3>
               <p className="text-sm text-[#cbd5e1] mb-3">
                 Processes all fetched emails with AI to extract transactions (batch size: 10)
@@ -259,13 +259,13 @@ export default function AdminEmailsPage() {
               <button
                 onClick={processAllFetchedEmails}
                 disabled={processing}
-                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-purple-600 text-white rounded-[var(--radius-md)] hover:bg-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {processing ? 'Starting...' : '🤖 Process All Fetched Emails'}
               </button>
 
               {processingStats && (
-                <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-[var(--radius-md)]">
                   <h4 className="font-semibold text-purple-900 mb-2">Processing Started:</h4>
                   <p className="text-sm text-purple-800">
                     {processingStats.total} emails queued for AI processing

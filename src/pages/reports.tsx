@@ -175,7 +175,7 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Date Range Filter */}
-            <div className="bg-[#1a1625] shadow rounded-lg p-6 mb-8">
+            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6 mb-8">
               <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Date Range</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -209,7 +209,7 @@ const ReportsPage: NextPage = () => {
 
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -227,7 +227,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -245,7 +245,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -263,7 +263,7 @@ const ReportsPage: NextPage = () => {
                 </div>
               </div>
 
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-lg">
+              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -285,7 +285,7 @@ const ReportsPage: NextPage = () => {
             {/* Charts and Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               {/* Email Status Distribution */}
-              <div className="bg-[#1a1625] shadow rounded-lg p-6">
+              <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6">
                 <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Email Status Distribution</h3>
                 <div className="space-y-3">
                   {reportData.emailStats.emailsByStatus.map((item) => (
@@ -308,7 +308,7 @@ const ReportsPage: NextPage = () => {
               </div>
 
               {/* Transaction Direction */}
-              <div className="bg-[#1a1625] shadow rounded-lg p-6">
+              <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6">
                 <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Transaction Direction</h3>
                 <div className="space-y-3">
                   {reportData.transactionStats.transactionsByDirection.map((item) => (
@@ -334,7 +334,7 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Top Senders */}
-            <div className="bg-[#1a1625] shadow rounded-lg p-6 mb-8">
+            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6 mb-8">
               <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Email Senders</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -371,7 +371,7 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Transaction Categories */}
-            <div className="bg-[#1a1625] shadow rounded-lg p-6">
+            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6">
               <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Transaction Categories</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">

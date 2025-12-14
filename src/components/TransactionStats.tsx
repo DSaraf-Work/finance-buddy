@@ -57,26 +57,26 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
 
   if (loading) {
     return (
-      <div className="sticky top-0 z-40 bg-[#0A0B0D]/95 backdrop-blur-md border-b border-[#2A2C35] mb-4">
+      <div className="sticky top-0 z-40 bg-[var(--color-bg-app)]/95 backdrop-blur-md border-b border-[var(--color-border)] mb-4">
         <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 animate-pulse">
           {/* Skeleton 1 */}
           <div className="flex items-center gap-2 sm:gap-3 flex-1">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#1E2026] rounded-lg flex-shrink-0"></div>
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[var(--color-bg-card)] rounded-[var(--radius-md)] flex-shrink-0"></div>
             <div className="flex-1 space-y-1.5">
-              <div className="h-2 bg-[#1E2026] rounded w-16"></div>
-              <div className="h-4 bg-[#1E2026] rounded w-20"></div>
+              <div className="h-2 bg-[var(--color-bg-card)] rounded w-16"></div>
+              <div className="h-4 bg-[var(--color-bg-card)] rounded w-20"></div>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="h-10 w-px bg-[#2A2C35]"></div>
+          <div className="h-10 w-px bg-[var(--color-border)]"></div>
 
           {/* Skeleton 2 */}
           <div className="flex items-center gap-2 sm:gap-3 flex-1">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#1E2026] rounded-lg flex-shrink-0"></div>
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[var(--color-bg-card)] rounded-[var(--radius-md)] flex-shrink-0"></div>
             <div className="flex-1 space-y-1.5">
-              <div className="h-2 bg-[#1E2026] rounded w-16"></div>
-              <div className="h-4 bg-[#1E2026] rounded w-20"></div>
+              <div className="h-2 bg-[var(--color-bg-card)] rounded w-16"></div>
+              <div className="h-4 bg-[var(--color-bg-card)] rounded w-20"></div>
             </div>
           </div>
         </div>
@@ -85,41 +85,41 @@ const TransactionStats = memo(function TransactionStats({ total, totalAmount, av
   }
 
   return (
-    <div className="sticky top-0 z-40 bg-[#0A0B0D]/95 backdrop-blur-md border-b border-[#2A2C35] mb-4">
+    <div className="sticky top-0 z-40 bg-[var(--color-bg-app)]/95 backdrop-blur-md border-b border-[var(--color-border)] mb-4">
       {/* Ultra-Compact Sticky Stats Bar */}
       <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5">
         {/* Total Transactions - Inline */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-md)] bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-sm)]">
             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] sm:text-xs font-medium text-[#6F7280] leading-tight">
+            <p className="text-[10px] sm:text-xs font-medium text-[var(--color-text-muted)] leading-tight">
               Transactions
             </p>
-            <p className="text-base sm:text-lg font-bold text-[#F0F1F5] tracking-tight truncate">
+            <p className="text-base sm:text-lg font-bold text-[var(--color-text-primary)] tracking-tight truncate">
               {total.toLocaleString()}
             </p>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="h-10 w-px bg-[#2A2C35] flex-shrink-0"></div>
+        <div className="h-10 w-px bg-[var(--color-border)] flex-shrink-0"></div>
 
         {/* Total Amount - Inline */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#4ECF9E] flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[var(--radius-md)] bg-[var(--color-income)] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-sm)]">
             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] sm:text-xs font-medium text-[#6F7280] leading-tight">
+            <p className="text-[10px] sm:text-xs font-medium text-[var(--color-text-muted)] leading-tight">
               Total Amount
             </p>
-            <p className="text-base sm:text-lg font-bold text-[#F0F1F5] tracking-tight truncate">
+            <p className="text-base sm:text-lg font-bold text-[var(--color-text-primary)] tracking-tight truncate">
               {formatCurrency(totalAmount)}
             </p>
           </div>

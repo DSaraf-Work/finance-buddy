@@ -25,7 +25,7 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
       case 'error':
         return 'bg-[#ef4444]/10 border-[#ef4444]/30 text-[#ef4444]';
       case 'warning':
-        return 'bg-[#f59e0b]/10 border-[#f59e0b]/30 text-[#f59e0b]';
+        return 'bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)]';
       case 'info':
       default:
         return 'bg-[#6b4ce6]/10 border-[#6b4ce6]/30 text-[#6b4ce6]';
@@ -48,7 +48,7 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
         );
       case 'warning':
         return (
-          <svg className="w-5 h-5 text-[#f59e0b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-[var(--color-warning)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         );
@@ -64,7 +64,7 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-sm ${getToastStyles()} animate-slide-in-right`}
+      className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-[var(--radius-lg)] border shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-sm ${getToastStyles()} animate-slide-in-right`}
       role="alert"
       aria-live="polite"
     >

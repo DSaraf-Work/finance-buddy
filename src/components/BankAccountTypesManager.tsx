@@ -89,7 +89,7 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
   };
 
   return (
-    <div className={`bg-[#1a1625] rounded-lg shadow p-6 ${className}`}>
+    <div className={`bg-[#1a1625] rounded-[var(--radius-md)] shadow p-6 ${className}`}>
       <div className="mb-4">
         <h2 className="text-xl font-semibold text-[#f8fafc] mb-2">
           🏦 Bank Account Types
@@ -108,14 +108,14 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
             value={newAccountType}
             onChange={(e) => setNewAccountType(e.target.value)}
             placeholder="Enter bank email (e.g., alerts@bank.com)"
-            className="flex-1 px-4 py-2 border border-[#2d1b4e] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-4 py-2 border border-[#2d1b4e] rounded-[var(--radius-md)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             onKeyPress={(e) => e.key === 'Enter' && !loading && addAccountType()}
             disabled={loading}
           />
           <button
             onClick={addAccountType}
             disabled={loading}
-            className="px-6 py-2 bg-[#6b4ce6] text-white rounded-lg hover:bg-[#8b5cf6] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-[#6b4ce6] text-white rounded-[var(--radius-md)] hover:bg-[#8b5cf6] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Adding...' : 'Add'}
           </button>
@@ -137,7 +137,7 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
             {accountTypes.map((accountType) => (
               <div
                 key={accountType}
-                className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-lg hover:bg-[#2d1b4e]/30 transition-colors"
+                className="flex items-center justify-between p-3 bg-[#0f0a1a]/50 rounded-[var(--radius-md)] hover:bg-[#2d1b4e]/30 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">📧</span>
@@ -146,7 +146,7 @@ export default function BankAccountTypesManager({ className = '' }: BankAccountT
                 <button
                   onClick={() => removeAccountType(accountType)}
                   disabled={loading}
-                  className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-[var(--radius-md)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Remove
                 </button>

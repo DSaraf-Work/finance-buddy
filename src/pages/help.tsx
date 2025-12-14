@@ -129,7 +129,7 @@ const HelpPage: NextPage = () => {
         </p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-[var(--radius-md)] p-6">
         <h3 className="text-lg font-medium text-blue-900 mb-2">🔐 Security First</h3>
         <p className="text-blue-800">
           Finance Buddy uses OAuth 2.0 with PKCE (Proof Key for Code Exchange) for maximum security. 
@@ -180,7 +180,7 @@ const HelpPage: NextPage = () => {
       </div>
 
       <div className="space-y-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <div className="bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-6">
           <h3 className="text-lg font-medium text-red-900 mb-2">🚨 Connection Failed</h3>
           <p className="text-[#ef4444] mb-3">
             If your Gmail connection fails, try these steps:
@@ -193,7 +193,7 @@ const HelpPage: NextPage = () => {
           </ul>
         </div>
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-[var(--radius-md)] p-6">
           <h3 className="text-lg font-medium text-yellow-900 mb-2">⚠️ Sync Issues</h3>
           <p className="text-yellow-800 mb-3">
             If email syncing isn't working properly:
@@ -206,7 +206,7 @@ const HelpPage: NextPage = () => {
           </ul>
         </div>
 
-        <div className="bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg p-6">
+        <div className="bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] p-6">
           <h3 className="text-lg font-medium text-[#f8fafc] mb-2">🔍 No Emails Found</h3>
           <p className="text-[#cbd5e1] mb-3">
             If no emails are being synced:
@@ -231,7 +231,7 @@ const HelpPage: NextPage = () => {
         </p>
       </div>
 
-      <div className="bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-lg p-6">
+      <div className="bg-[#0f0a1a]/50 border border-[#2d1b4e] rounded-[var(--radius-md)] p-6">
         <h3 className="text-lg font-medium text-[#f8fafc] mb-3">Authentication</h3>
         <p className="text-[#cbd5e1] mb-3">
           All API requests require authentication via session cookies. Make sure you're signed in to Finance Buddy.
@@ -245,7 +245,7 @@ const HelpPage: NextPage = () => {
         <div>
           <h3 className="text-lg font-medium text-[#f8fafc] mb-3">Gmail Endpoints</h3>
           <div className="space-y-4">
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <div className="flex items-center mb-2">
                 <span className="bg-[#10b981]/10 text-[#10b981] px-2 py-1 rounded text-sm font-medium mr-3">GET</span>
                 <code className="text-sm">/api/gmail/connections</code>
@@ -253,7 +253,7 @@ const HelpPage: NextPage = () => {
               <p className="text-[#cbd5e1] text-sm">List all connected Gmail accounts</p>
             </div>
 
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <div className="flex items-center mb-2">
                 <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-3">POST</span>
                 <code className="text-sm">/api/gmail/manual-sync</code>
@@ -261,7 +261,7 @@ const HelpPage: NextPage = () => {
               <p className="text-[#cbd5e1] text-sm">Trigger manual email sync for a specific date range</p>
             </div>
 
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <div className="flex items-center mb-2">
                 <span className="bg-[#ef4444]/10 text-[#ef4444] px-2 py-1 rounded text-sm font-medium mr-3">POST</span>
                 <code className="text-sm">/api/gmail/disconnect</code>
@@ -274,7 +274,7 @@ const HelpPage: NextPage = () => {
         <div>
           <h3 className="text-lg font-medium text-[#f8fafc] mb-3">Search Endpoints</h3>
           <div className="space-y-4">
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <div className="flex items-center mb-2">
                 <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-3">POST</span>
                 <code className="text-sm">/api/emails/search</code>
@@ -282,7 +282,7 @@ const HelpPage: NextPage = () => {
               <p className="text-[#cbd5e1] text-sm">Search and filter emails with pagination</p>
             </div>
 
-            <div className="border border-[#2d1b4e] rounded-lg p-4">
+            <div className="border border-[#2d1b4e] rounded-[var(--radius-md)] p-4">
               <div className="flex items-center mb-2">
                 <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-3">POST</span>
                 <code className="text-sm">/api/transactions/search</code>
@@ -306,7 +306,7 @@ const HelpPage: NextPage = () => {
 
       <div className="space-y-4">
         {faqs.map((faq) => (
-          <div key={faq.id} className="border border-[#2d1b4e] rounded-lg">
+          <div key={faq.id} className="border border-[#2d1b4e] rounded-[var(--radius-md)]">
             <button
               onClick={() => toggleFAQ(faq.id)}
               className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50"
@@ -364,7 +364,7 @@ const HelpPage: NextPage = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center ${
+                    className={`w-full text-left px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium flex items-center ${
                       activeTab === tab.id
                         ? 'bg-blue-100 text-blue-700'
                         : 'text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-gray-50'
@@ -378,7 +378,7 @@ const HelpPage: NextPage = () => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 bg-[#1a1625] shadow rounded-lg p-8">
+            <div className="flex-1 bg-[#1a1625] shadow rounded-[var(--radius-md)] p-8">
               {renderContent()}
             </div>
           </div>

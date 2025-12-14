@@ -157,7 +157,7 @@ export default function RejectedEmailsPage() {
           </div>
 
           {/* Rejected Emails Table */}
-          <div className="bg-[#1a1625] rounded-lg shadow overflow-hidden">
+          <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-[#2d1b4e]">
               <h2 className="text-lg font-medium text-[#f8fafc]">
                 {selectedStatus === 'REVIEW' ? 'Emails Under Review' : 'Invalid Emails'}

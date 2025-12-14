@@ -601,7 +601,7 @@ const EmailsPage: NextPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
                       <span className="text-xl sm:text-2xl">📧</span>
                     </div>
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Email Management</h1>
@@ -616,7 +616,7 @@ const EmailsPage: NextPage = () => {
               </div>
             </div>
           {/* Filters */}
-          <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-6 mb-6">
+          <div className="bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-6 mb-6">
             <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
               <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -840,7 +840,7 @@ const EmailsPage: NextPage = () => {
           </div>
 
           {/* Email Grid */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white rounded-[var(--radius-md)] shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-medium text-gray-900">Emails</h2>
             </div>
@@ -1039,7 +1039,7 @@ const EmailsPage: NextPage = () => {
         {showDrawer && selectedEmail && (
           <div className="fixed inset-0 z-50 overflow-hidden">
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={closeEmailDrawer}></div>
-            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-xl">
+            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-[var(--shadow-xl)]">
               <div className="flex flex-col h-full">
                 <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                   <h2 className="text-lg font-medium text-gray-900">Email Details</h2>
@@ -1200,7 +1200,7 @@ const EmailsPage: NextPage = () => {
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex items-center justify-center min-h-screen px-4">
               <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeStatusModal}></div>
-              <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full">
+              <div className="relative bg-white rounded-[var(--radius-md)] shadow-[var(--shadow-xl)] max-w-md w-full">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h3 className="text-lg font-medium text-gray-900">
                     {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}
@@ -1224,7 +1224,7 @@ const EmailsPage: NextPage = () => {
                     <select
                       value={newStatus}
                       onChange={(e) => setNewStatus(e.target.value as 'REJECT' | 'UNREJECT')}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="REJECT">Reject Email</option>
                       <option value="UNREJECT">Unreject Email</option>
@@ -1242,7 +1242,7 @@ const EmailsPage: NextPage = () => {
                       value={statusRemarks}
                       onChange={(e) => setStatusRemarks(e.target.value)}
                       rows={3}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-gray-300 rounded-[var(--radius-md)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={newStatus === 'UNREJECT' ? 'Enter reason for unrejecting this email...' : 'Enter reason for rejecting this email...'}
                     />
                   </div>
@@ -1251,13 +1251,13 @@ const EmailsPage: NextPage = () => {
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
                   <button
                     onClick={closeStatusModal}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-[var(--radius-md)]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleStatusUpdate}
-                    className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
+                    className={`px-4 py-2 text-sm font-medium text-white rounded-[var(--radius-md)] ${
                       newStatus === 'UNREJECT'
                         ? 'bg-green-600 hover:bg-green-700'
                         : 'bg-red-600 hover:bg-red-700'
