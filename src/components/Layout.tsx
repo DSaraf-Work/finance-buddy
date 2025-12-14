@@ -98,7 +98,7 @@ export function Layout({ children, title, description }: LayoutProps) {
 
       <div className="min-h-screen bg-[var(--color-bg-app)]">
         {/* Navigation Header - Midnight Blue Wealth Theme */}
-        <nav className="sticky top-0 z-50 bg-[var(--color-bg-primary)] shadow-[var(--shadow-[var(--shadow-md)])] border-b border-[var(--color-border)]" role="navigation" aria-label="Main navigation">
+        <nav className="sticky top-0 z-50 bg-[var(--color-bg-primary)] shadow-[var(--shadow-md)] border-b border-[var(--color-border)]" role="navigation" aria-label="Main navigation">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
             <div className="flex justify-between items-center h-14 sm:h-16 lg:h-[72px]">
               {/* Logo and primary navigation */}
@@ -110,7 +110,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                     aria-label="Finance Buddy Home"
                   >
                     {/* Logo Icon */}
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] flex items-center justify-center shadow-[var(--shadow-[var(--shadow-sm)])] group-hover:shadow-[var(--shadow-[var(--shadow-md)])] transition-all duration-300">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] flex items-center justify-center shadow-[var(--shadow-sm)] group-hover:shadow-[var(--shadow-md)] transition-all duration-300">
                       <span className="text-lg sm:text-xl lg:text-2xl font-bold text-[var(--color-text-primary)]">₹</span>
                     </div>
                     {/* Logo Text */}
@@ -131,7 +131,7 @@ export function Layout({ children, title, description }: LayoutProps) {
                 <div className="hidden lg:block relative">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="inline-flex items-center px-4 py-2.5 border border-[var(--color-border)] rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-card)] hover:bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)] transition-all duration-200 min-h-[44px] shadow-[var(--shadow-[var(--shadow-sm)])]"
+                    className="inline-flex items-center px-4 py-2.5 border border-[var(--color-border)] rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-card)] hover:bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg-primary)] transition-all duration-200 min-h-[44px] shadow-[var(--shadow-sm)]"
                     aria-expanded={dropdownOpen}
                     aria-haspopup="true"
                     aria-label="Navigation menu"
@@ -165,7 +165,7 @@ export function Layout({ children, title, description }: LayoutProps) {
 
                       {/* Dropdown content - Purple + Slate Gray */}
                       <div
-                        className="absolute left-0 mt-3 w-80 rounded-[var(--radius-lg)] shadow-[var(--shadow-[var(--shadow-xl)])] bg-[var(--color-bg-card)] border border-[var(--color-border)] z-20 animate-fade-in-down overflow-hidden"
+                        className="absolute left-0 mt-3 w-80 rounded-[var(--radius-lg)] shadow-[var(--shadow-xl)] bg-[var(--color-bg-card)] border border-[var(--color-border)] z-20 animate-fade-in-down overflow-hidden"
                         role="menu"
                         aria-orientation="vertical"
                       >
@@ -273,13 +273,13 @@ export function Layout({ children, title, description }: LayoutProps) {
 
           {/* Mobile menu - Purple + Slate Gray */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-[var(--color-border)] bg-[var(--color-bg-primary)] animate-fade-in-down shadow-[var(--shadow-[var(--shadow-lg)])]">
+            <div className="lg:hidden border-t border-[var(--color-border)] bg-[var(--color-bg-primary)] animate-fade-in-down shadow-[var(--shadow-lg)]">
               {/* User info section - Mobile only */}
               {user && (
                 <div className="px-4 py-4 border-b border-[var(--color-border)] bg-[var(--color-bg-card)]/50">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] flex items-center justify-center shadow-[var(--shadow-[var(--shadow-sm)])] flex-shrink-0">
+                      <div className="w-10 h-10 bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] flex items-center justify-center shadow-[var(--shadow-sm)] flex-shrink-0">
                         <svg className="w-5 h-5 text-[var(--color-text-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>

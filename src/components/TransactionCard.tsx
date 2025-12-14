@@ -133,7 +133,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   return (
     <article
-      className="group relative bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] p-4 hover:shadow-[var(--shadow-[var(--shadow-lg)])] active:scale-[0.98] transition-all duration-200 overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-[var(--shadow-sm)])] cursor-pointer"
+      className="group relative bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] p-4 hover:shadow-[var(--shadow-lg)] active:scale-[0.98] transition-all duration-200 overflow-hidden border border-[var(--color-border)] shadow-[var(--shadow-sm)] cursor-pointer"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={onQuickEdit}
@@ -148,7 +148,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
         {/* Header: Icon, Merchant, Status - Single Row */}
         <div className="flex items-center gap-3 mb-3">
           {/* Category Icon - Smaller, More Compact */}
-          <div className={`w-9 h-9 rounded-[var(--radius-md)] ${getCardColor(transaction.category)} flex items-center justify-center shadow-[var(--shadow-[var(--shadow-sm)])] flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
+          <div className={`w-9 h-9 rounded-[var(--radius-md)] ${getCardColor(transaction.category)} flex items-center justify-center shadow-[var(--shadow-sm)] flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
             <div className="text-[var(--color-text-primary)]">
               {getCategoryIcon(transaction.category)}
             </div>
@@ -203,7 +203,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
           <a
             href={`/transactions/edit/${transaction.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="w-8 h-8 flex items-center justify-center text-[var(--color-text-primary)] bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] hover:shadow-[var(--shadow-[var(--shadow-md)])] hover:bg-[var(--color-accent-hover)] active:scale-95 transition-all duration-200 flex-shrink-0 group-hover:scale-110"
+            className="w-8 h-8 flex items-center justify-center text-[var(--color-text-primary)] bg-[var(--color-accent-primary)] rounded-[var(--radius-md)] hover:shadow-[var(--shadow-md)] hover:bg-[var(--color-accent-hover)] active:scale-95 transition-all duration-200 flex-shrink-0 group-hover:scale-110"
             aria-label={`Edit transaction for ${transaction.merchant_name}`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
