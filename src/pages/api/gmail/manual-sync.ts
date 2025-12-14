@@ -88,7 +88,33 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           .eq('id', connection_id);
       } catch (refreshError) {
         console.error('Token refresh error:', refreshError);
-        return res.status(401).json({ error: 'Token refresh failed' });
+        
+        const { isInvalidGrantError, parseGmailOAuthError } = await import('@/lib/gmail/error-handler');
+        const { resetGmailConnection } = await import('@/lib/gmail/connection-reset');
+        
+        const parsedError = parseGmailOAuthError(refreshError);
+        
+        // Handle invalid_grant error - return 401 (Unauthorized)
+        if (isInvalidGrantError(refreshError)) {
+          console.log('🔒 Invalid grant error, resetting connection...');
+          await resetGmailConnection((connection as any).id, refreshError);
+          
+          return res.status(401).json({ 
+            success: false,
+            error: 'GMAIL_REAUTH_REQUIRED',
+            message: 'Your Gmail connection has expired. Please reconnect your Gmail account.',
+            requiresReconnection: true,
+            code: 'GMAIL_REAUTH_REQUIRED',
+          });
+        }
+        
+        // Network or server errors - return 500 (Internal Server Error)
+        return res.status(500).json({ 
+          success: false,
+          error: 'TOKEN_REFRESH_FAILED',
+          message: `Failed to refresh token: ${parsedError.message}`,
+          code: 'TOKEN_REFRESH_FAILED',
+        });
       }
     }
 

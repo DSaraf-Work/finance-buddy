@@ -31,22 +31,48 @@ export class SyncExecutor {
       // Step 1: Refresh token if needed
       let accessToken = connection.access_token;
       if (new Date(connection.token_expiry) <= new Date()) {
-        console.log('🔑 Refreshing access token...');
-        const newTokens = await refreshAccessToken(connection.refresh_token);
-        accessToken = newTokens.access_token!;
+        try {
+          console.log('🔑 Refreshing access token...');
+          // refreshAccessToken now has built-in retry logic
+          const newTokens = await refreshAccessToken(connection.refresh_token);
+          accessToken = newTokens.access_token!;
 
-        // Set token expiry to 1 year from now
-        const newExpiry = new Date();
-        newExpiry.setFullYear(newExpiry.getFullYear() + 1);
+          // Set token expiry to 1 year from now
+          const newExpiry = new Date();
+          newExpiry.setFullYear(newExpiry.getFullYear() + 1);
 
-        // Update token in database
-        await (supabaseAdmin as any)
-          .from(TABLE_GMAIL_CONNECTIONS)
-          .update({
-            access_token: accessToken,
-            token_expiry: newExpiry.toISOString(),
-          })
-          .eq('id', connection.id);
+          // Update token in database
+          await (supabaseAdmin as any)
+            .from(TABLE_GMAIL_CONNECTIONS)
+            .update({
+              access_token: accessToken,
+              token_expiry: newExpiry.toISOString(),
+            })
+            .eq('id', connection.id);
+        } catch (refreshError) {
+          console.error('❌ Token refresh failed:', refreshError);
+          
+          const { isInvalidGrantError, parseGmailOAuthError } = await import('../gmail/error-handler');
+          const { resetGmailConnection } = await import('../gmail/connection-reset');
+          
+          const parsedError = parseGmailOAuthError(refreshError);
+          
+          // Handle invalid_grant error (push notification sent by resetGmailConnection)
+          if (isInvalidGrantError(refreshError)) {
+            console.log('🔒 Invalid grant error, resetting connection...');
+            await resetGmailConnection(connection.id, refreshError);
+            
+            result.errors.push('Gmail connection expired. Please reconnect your account.');
+            result.success = false;
+            return result;
+          }
+          
+          // Network or server errors - log and continue (don't fail entire sync)
+          console.error('⚠️ Token refresh failed (non-critical):', parsedError.message);
+          result.errors.push(`Token refresh failed: ${parsedError.message}`);
+          result.success = false;
+          return result;
+        }
       }
 
       // Step 2: Calculate sync window

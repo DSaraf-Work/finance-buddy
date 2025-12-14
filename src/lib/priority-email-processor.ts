@@ -401,6 +401,7 @@ async function getValidAccessToken(connection: any): Promise<string> {
   console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address} (${reason})`);
 
   try {
+    // refreshAccessToken now has built-in retry logic
     const tokens = await refreshAccessToken(connection.refresh_token);
 
     // Calculate token expiry from expires_in (in seconds, usually 3600 = 1 hour)
@@ -431,24 +432,19 @@ async function getValidAccessToken(connection: any): Promise<string> {
       connectionId: connection.id,
     });
 
-    // Mark connection as invalid if credentials are revoked
-    if (error.message?.includes('Invalid Credentials') ||
-        error.message?.includes('invalid_grant') ||
-        error.message?.includes('Token has been expired or revoked')) {
+    // Use centralized error detection and reset
+    const { isInvalidGrantError } = await import('./gmail/error-handler');
+    const { resetGmailConnection } = await import('./gmail/connection-reset');
 
-      console.log(`🔒 [PriorityEmailProcessor] Marking connection as invalid (credentials revoked): ${connection.email_address}`);
-
-      await (supabaseAdmin as any)
-        .from(TABLE_GMAIL_CONNECTIONS)
-        .update({
-          status: 'invalid',
-          last_error: error.message,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', connection.id);
+    if (isInvalidGrantError(error)) {
+      console.log(`🔒 [PriorityEmailProcessor] Invalid grant error detected, resetting connection: ${connection.email_address}`);
+      
+      await resetGmailConnection(connection.id, error);
+      
+      throw new Error(`Failed to refresh access token: ${error.message}`);
     }
 
-    // Re-throw the error to be handled by the caller
+    // Re-throw other errors
     throw new Error(`Failed to refresh access token: ${error.message}`);
   }
 }

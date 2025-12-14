@@ -40,33 +40,96 @@ export async function exchangeCodeForTokens(code: string): Promise<OAuthTokens> 
   return tokens as OAuthTokens;
 }
 
-export async function refreshAccessToken(refreshToken: string): Promise<OAuthTokens> {
-  try {
-    console.log('🔑 Attempting to refresh access token...');
+/**
+ * Sleep utility for retry delays
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    if (!refreshToken) {
-      throw new Error('Refresh token is required');
+/**
+ * Refresh access token with automatic retry on transient errors
+ * 
+ * @param refreshToken - The refresh token to use
+ * @param retries - Number of retries (default: 2)
+ * @param baseDelay - Base delay in ms for exponential backoff (default: 1000)
+ * @returns OAuth tokens
+ */
+export async function refreshAccessToken(
+  refreshToken: string,
+  retries: number = 2,
+  baseDelay: number = 1000
+): Promise<OAuthTokens> {
+  let lastError: any = null;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      if (attempt > 0) {
+        // Exponential backoff: 1s, 2s, 4s
+        const delay = baseDelay * Math.pow(2, attempt - 1);
+        console.log(`🔄 Retrying token refresh (attempt ${attempt + 1}/${retries + 1}) after ${delay}ms...`);
+        await sleep(delay);
+      }
+
+      console.log(`🔑 Attempting to refresh access token (attempt ${attempt + 1}/${retries + 1})...`);
+
+      if (!refreshToken) {
+        throw new Error('Refresh token is required');
+      }
+
+      const oauth2Client = createOAuth2Client();
+      oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+      const { credentials } = await oauth2Client.refreshAccessToken();
+
+      console.log('✅ Access token refreshed successfully', {
+        has_access_token: !!credentials.access_token,
+        expires_in: (credentials as any).expires_in,
+        token_type: credentials.token_type,
+        attempt: attempt + 1,
+      });
+
+      return credentials as OAuthTokens;
+    } catch (error) {
+      lastError = error;
+      
+      // Import error handler dynamically to avoid circular dependencies
+      const { parseGmailOAuthError } = await import('./gmail/error-handler');
+      const parsedError = parseGmailOAuthError(error);
+      
+      // Don't retry on invalid_grant (client error - requires reconnection)
+      if (parsedError.type === 'invalid_grant') {
+        console.error('❌ Invalid grant error - not retrying:', parsedError.message);
+        throw new Error(`Token refresh failed: invalid_grant - ${parsedError.message}`);
+      }
+      
+      // Don't retry on invalid_client (configuration error)
+      if (parsedError.type === 'invalid_client') {
+        console.error('❌ Invalid client error - not retrying:', parsedError.message);
+        throw new Error(`Token refresh failed: invalid_client - ${parsedError.message}`);
+      }
+      
+      // Retry on network errors or unknown errors (if attempts remaining)
+      if (attempt < retries) {
+        console.warn(`⚠️ Token refresh failed (attempt ${attempt + 1}/${retries + 1}), will retry:`, {
+          error: parsedError.message,
+          type: parsedError.type,
+        });
+        continue;
+      }
+      
+      // All retries exhausted
+      console.error(`❌ Failed to refresh access token after ${retries + 1} attempts:`, parsedError.message);
+      
+      if (error instanceof Error) {
+        throw new Error(`Token refresh failed after ${retries + 1} attempts: ${error.message}`);
+      }
+      throw error;
     }
-
-    const oauth2Client = createOAuth2Client();
-    oauth2Client.setCredentials({ refresh_token: refreshToken });
-
-    const { credentials } = await oauth2Client.refreshAccessToken();
-
-    console.log('✅ Access token refreshed successfully', {
-      has_access_token: !!credentials.access_token,
-      expires_in: (credentials as any).expires_in,
-      token_type: credentials.token_type
-    });
-
-    return credentials as OAuthTokens;
-  } catch (error) {
-    console.error('❌ Failed to refresh access token:', error);
-    if (error instanceof Error) {
-      throw new Error(`Token refresh failed: ${error.message}`);
-    }
-    throw error;
   }
+
+  // Should never reach here, but TypeScript needs it
+  throw lastError || new Error('Token refresh failed: Unknown error');
 }
 
 export async function revokeToken(token: string): Promise<void> {

@@ -64,21 +64,44 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         const tokenExpiry = new Date(connection.token_expiry);
         
         if (tokenExpiry <= new Date()) {
-          const refreshed = await refreshAccessToken(connection.refresh_token);
-          accessToken = refreshed.access_token;
+          try {
+            // refreshAccessToken now has built-in retry logic
+            const refreshed = await refreshAccessToken(connection.refresh_token);
+            accessToken = refreshed.access_token;
 
-          // Set token expiry to 1 year from now
-          const newExpiry = new Date();
-          newExpiry.setFullYear(newExpiry.getFullYear() + 1);
+            // Set token expiry to 1 year from now
+            const newExpiry = new Date();
+            newExpiry.setFullYear(newExpiry.getFullYear() + 1);
 
-          // Update token in database
-          await (supabaseAdmin as any)
-            .from(TABLE_GMAIL_CONNECTIONS)
-            .update({
-              access_token: accessToken,
-              token_expiry: newExpiry.toISOString(),
-            })
-            .eq('id', connection.id);
+            // Update token in database
+            await (supabaseAdmin as any)
+              .from(TABLE_GMAIL_CONNECTIONS)
+              .update({
+                access_token: accessToken,
+                token_expiry: newExpiry.toISOString(),
+              })
+              .eq('id', connection.id);
+          } catch (refreshError) {
+            console.error('Token refresh error:', refreshError);
+            
+            const { isInvalidGrantError, parseGmailOAuthError } = await import('@/lib/gmail/error-handler');
+            const { resetGmailConnection } = await import('@/lib/gmail/connection-reset');
+            
+            const parsedError = parseGmailOAuthError(refreshError);
+            
+            // Handle invalid_grant error - log and continue with other connections
+            if (isInvalidGrantError(refreshError)) {
+              console.log('🔒 Invalid grant error, resetting connection...');
+              await resetGmailConnection(connection.id, refreshError);
+              
+              stats.errors.push(`Connection ${connection.email_address}: Gmail connection expired. Please reconnect.`);
+              continue; // Skip this connection, continue with others
+            }
+            
+            // Network or server errors - log and continue
+            stats.errors.push(`Connection ${connection.email_address}: Token refresh failed - ${parsedError.message}`);
+            continue; // Skip this connection, continue with others
+          }
         }
 
         // Get last refresh timestamp
