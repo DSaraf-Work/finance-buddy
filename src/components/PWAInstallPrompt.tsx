@@ -11,6 +11,11 @@ export default function PWAInstallPrompt() {
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     // Check if app is already installed
     const checkInstalled = () => {
       // Check for standalone mode (PWA installed)
@@ -21,9 +26,57 @@ export default function PWAInstallPrompt() {
       return isStandalone || isIOSStandalone;
     };
 
-    setIsInstalled(checkInstalled());
+    const installed = checkInstalled();
+    setIsInstalled(installed);
 
-    // Listen for beforeinstallprompt event (Chrome/Edge)
+    // Detect browser type
+    const userAgent = window.navigator.userAgent;
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+    const isSafari = /Safari/i.test(userAgent) && !/Chrome|CriOS|FxiOS|Edg/i.test(userAgent);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+    const isDesktopChrome = /Chrome/i.test(userAgent) && !/Mobile/i.test(userAgent);
+    const isDesktopEdge = /Edg/i.test(userAgent) && !/Mobile/i.test(userAgent);
+
+    // Check if user has dismissed this before (persist across sessions)
+    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    const dismissedDate = dismissed ? new Date(dismissed) : null;
+    const daysSinceDismissed = dismissedDate 
+      ? Math.floor((Date.now() - dismissedDate.getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    // Show prompt logic
+    const shouldShowPrompt = () => {
+      // Don't show if already installed
+      if (installed) {
+        console.log('📱 [PWAInstallPrompt] App already installed, not showing prompt');
+        return false;
+      }
+
+      // Don't show if dismissed in last 7 days
+      if (dismissed && daysSinceDismissed !== null && daysSinceDismissed < 7) {
+        console.log('📱 [PWAInstallPrompt] Prompt dismissed recently, not showing');
+        return false;
+      }
+
+      // Show on mobile devices (iOS Safari, Android Chrome, etc.)
+      if (isMobile) {
+        return true;
+      }
+
+      // Show on desktop Chrome/Edge (supports beforeinstallprompt)
+      if (isDesktopChrome || isDesktopEdge) {
+        return true;
+      }
+
+      // Show on Safari (desktop or mobile) - Safari doesn't fire beforeinstallprompt
+      if (isSafari) {
+        return true;
+      }
+
+      return false;
+    };
+
+    // Listen for beforeinstallprompt event (Chrome/Edge only)
     const handleBeforeInstallPrompt = (e: Event) => {
       // Prevent the default browser install prompt
       e.preventDefault();
@@ -33,38 +86,24 @@ export default function PWAInstallPrompt() {
       // Store the event for later use
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
-      // Check if user has dismissed this before (persist across sessions)
-      const dismissed = localStorage.getItem('pwa-install-dismissed');
-      const dismissedDate = dismissed ? new Date(dismissed) : null;
-      const daysSinceDismissed = dismissedDate 
-        ? Math.floor((Date.now() - dismissedDate.getTime()) / (1000 * 60 * 60 * 24))
-        : null;
-      
-      // Show prompt if:
-      // 1. Not already installed
-      // 2. Not dismissed in the last 7 days
-      // 3. On mobile device OR desktop browser that supports PWA (Chrome/Edge)
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const isDesktopChrome = /Chrome/i.test(navigator.userAgent) && !/Mobile/i.test(navigator.userAgent);
-      const isDesktopEdge = /Edg/i.test(navigator.userAgent) && !/Mobile/i.test(navigator.userAgent);
-      const shouldShow = isMobile || isDesktopChrome || isDesktopEdge;
-      
-      if (!isInstalled && (!dismissed || (daysSinceDismissed !== null && daysSinceDismissed >= 7)) && shouldShow) {
-        console.log('📱 [PWAInstallPrompt] Conditions met, will show prompt in 2 seconds');
-        // Wait 2 seconds after page load before showing
+      // Show prompt if conditions are met
+      if (shouldShowPrompt()) {
+        console.log('📱 [PWAInstallPrompt] Conditions met (Chrome/Edge), will show prompt in 2 seconds');
         setTimeout(() => {
           console.log('📱 [PWAInstallPrompt] Showing install prompt');
           setShowPrompt(true);
         }, 2000);
-      } else {
-        console.log('📱 [PWAInstallPrompt] Conditions not met:', {
-          isInstalled,
-          dismissed,
-          daysSinceDismissed,
-          shouldShow
-        });
       }
     };
+
+    // For Safari (which doesn't fire beforeinstallprompt), show prompt directly
+    if (isSafari && shouldShowPrompt()) {
+      console.log('📱 [PWAInstallPrompt] Safari detected, will show prompt in 2 seconds');
+      setTimeout(() => {
+        console.log('📱 [PWAInstallPrompt] Showing install prompt (Safari)');
+        setShowPrompt(true);
+      }, 2000);
+    }
 
     // Listen for app installed event
     const handleAppInstalled = () => {
@@ -83,7 +122,7 @@ export default function PWAInstallPrompt() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [isInstalled]);
+  }, []);
 
   const handleInstall = async () => {
     if (!deferredPrompt) {
@@ -130,8 +169,17 @@ export default function PWAInstallPrompt() {
     localStorage.setItem('pwa-install-dismissed', new Date().toISOString());
   };
 
-  // Don't show if already installed or prompt not ready
-  if (isInstalled || !showPrompt || !deferredPrompt) {
+  // Don't show if already installed
+  if (isInstalled) {
+    return null;
+  }
+
+  // Don't show if prompt not ready
+  // For Safari, we show even without deferredPrompt (Safari doesn't support beforeinstallprompt)
+  const isSafari = typeof window !== 'undefined' && 
+    /Safari/i.test(navigator.userAgent) && 
+    !/Chrome|CriOS|FxiOS|Edg/i.test(navigator.userAgent);
+  if (!showPrompt || (!deferredPrompt && !isSafari)) {
     return null;
   }
 
