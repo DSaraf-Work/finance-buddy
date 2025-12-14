@@ -234,7 +234,7 @@ export default function AutoSyncSettingsPage() {
         {/* Cron Schedule Info */}
         <div className="mt-8 bg-[var(--color-border)]/30 rounded-[var(--radius-md)] p-4">
           <h3 className="font-semibold text-[var(--color-text-primary)] mb-2">Cron Schedule</h3>
-          <div className="text-sm text-[#cbd5e1] space-y-1">
+          <div className="text-sm text-[var(--color-text-secondary)] space-y-1">
             <p>
               <span className="font-medium">Schedule:</span> Every 15 minutes
             </p>
