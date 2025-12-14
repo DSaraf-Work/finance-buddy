@@ -103,8 +103,8 @@ export default function AutoSyncSettingsPage() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#f8fafc]">Auto-Sync Settings</h1>
-          <p className="mt-2 text-[#cbd5e1]">
+          <h1 className="text-3xl font-bold text-airbnb-text-primary">Auto-Sync Settings</h1>
+          <p className="mt-2 text-airbnb-text-secondary">
             Manage automatic email synchronization for your Gmail accounts
           </p>
         </div>
@@ -113,17 +113,17 @@ export default function AutoSyncSettingsPage() {
         <div className="mb-6">
           <button
             onClick={testCron}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+            className="px-4 py-2 bg-purple-600 text-white rounded-airbnb-md hover:bg-purple-700 font-medium"
           >
             🧪 Test Cron Job Manually
           </button>
-          <p className="mt-2 text-sm text-[#cbd5e1]">
+          <p className="mt-2 text-sm text-airbnb-text-secondary">
             Manually trigger the auto-sync cron job to test the system
           </p>
         </div>
 
         {/* Info Box */}
-        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-airbnb-md p-4">
           <h3 className="font-semibold text-blue-900 mb-2">How Auto-Sync Works</h3>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Runs automatically every 15 minutes</li>
@@ -138,10 +138,10 @@ export default function AutoSyncSettingsPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-[#cbd5e1]">Loading connections...</p>
+            <p className="mt-2 text-airbnb-text-secondary">Loading connections...</p>
           </div>
         ) : connections.length === 0 ? (
-          <div className="text-center py-12 bg-[#1a1625] rounded-lg shadow">
+          <div className="text-center py-12 bg-airbnb-white rounded-airbnb-md shadow">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
               fill="none"
@@ -155,7 +155,7 @@ export default function AutoSyncSettingsPage() {
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
-            <p className="mt-4 text-[#cbd5e1]">No Gmail connections found</p>
+            <p className="mt-4 text-airbnb-text-secondary">No Gmail connections found</p>
             <p className="mt-2 text-sm text-gray-500">
               Connect a Gmail account first to enable auto-sync
             </p>
@@ -165,14 +165,14 @@ export default function AutoSyncSettingsPage() {
             {connections.map(connection => (
               <div
                 key={connection.id}
-                className="bg-[#1a1625] rounded-lg shadow p-6"
+                className="bg-airbnb-white rounded-airbnb-md shadow p-6"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-[#f8fafc]">
+                    <h3 className="text-lg font-semibold text-airbnb-text-primary">
                       {connection.email_address}
                     </h3>
-                    <div className="mt-2 space-y-1 text-sm text-[#cbd5e1]">
+                    <div className="mt-2 space-y-1 text-sm text-airbnb-text-secondary">
                       <p>
                         <span className="font-medium">Status:</span>{' '}
                         <span
@@ -205,7 +205,7 @@ export default function AutoSyncSettingsPage() {
                         )
                       }
                       disabled={updating === connection.id}
-                      className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                      className={`px-6 py-3 rounded-airbnb-md font-medium transition-colors ${
                         connection.auto_sync_enabled
                           ? 'bg-red-600 hover:bg-red-700 text-white'
                           : 'bg-green-600 hover:bg-green-700 text-white'
@@ -221,8 +221,8 @@ export default function AutoSyncSettingsPage() {
                 </div>
 
                 {connection.auto_sync_enabled && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-[#10b981]">
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-airbnb-md">
+                    <p className="text-sm text-green-700">
                       ✅ Auto-sync is active. New emails will be automatically
                       synced and processed every 15 minutes.
                     </p>
@@ -234,20 +234,20 @@ export default function AutoSyncSettingsPage() {
         )}
 
         {/* Cron Schedule Info */}
-        <div className="mt-8 bg-[#2d1b4e]/30 rounded-lg p-4">
-          <h3 className="font-semibold text-[#f8fafc] mb-2">Cron Schedule</h3>
-          <div className="text-sm text-[#cbd5e1] space-y-1">
+        <div className="mt-8 bg-airbnb-gray-light/30 rounded-airbnb-md p-4">
+          <h3 className="font-semibold text-airbnb-text-primary mb-2">Cron Schedule</h3>
+          <div className="text-sm text-airbnb-text-secondary space-y-1">
             <p>
               <span className="font-medium">Schedule:</span> Every 15 minutes
             </p>
             <p>
               <span className="font-medium">Cron Expression:</span>{' '}
-              <code className="bg-[#1a1625] px-2 py-1 rounded">0 23 * * *</code>
+              <code className="bg-airbnb-white px-2 py-1 rounded">0 23 * * *</code>
             </p>
             <p>
               <span className="font-medium">Timezone:</span> UTC
             </p>
-            <p className="mt-2 text-[#cbd5e1]">
+            <p className="mt-2 text-airbnb-text-secondary">
               The cron job runs automatically on Vercel. You can also trigger it
               manually using the test button above.
             </p>
@@ -255,25 +255,25 @@ export default function AutoSyncSettingsPage() {
         </div>
 
         {/* Debug Info */}
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-airbnb-md p-4">
           <h3 className="font-semibold text-yellow-900 mb-2">
             🔧 Developer Info
           </h3>
           <div className="text-sm text-yellow-800 space-y-1">
             <p>
               <span className="font-medium">Cron Endpoint:</span>{' '}
-              <code className="bg-[#1a1625] px-2 py-1 rounded">
+              <code className="bg-airbnb-white px-2 py-1 rounded">
                 /api/cron/gmail-auto-sync
               </code>
             </p>
             <p>
               <span className="font-medium">Required Header:</span>{' '}
-              <code className="bg-[#1a1625] px-2 py-1 rounded">
+              <code className="bg-airbnb-white px-2 py-1 rounded">
                 Authorization: Bearer CRON_SECRET
               </code>
             </p>
             <p className="mt-2">
-              Make sure <code className="bg-[#1a1625] px-1 rounded">CRON_SECRET</code>{' '}
+              Make sure <code className="bg-airbnb-white px-1 rounded">CRON_SECRET</code>{' '}
               is set in your environment variables.
             </p>
           </div>

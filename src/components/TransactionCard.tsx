@@ -28,19 +28,19 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
   const getStatusColor = (status: TransactionStatus) => {
     switch (status) {
-      case 'REVIEW': return 'bg-[#6C85FF]/10 text-[#6C85FF] border border-[#6C85FF]/30';
-      case 'APPROVED': return 'bg-[#4ECF9E]/10 text-[#4ECF9E] border border-[#4ECF9E]/30';
-      case 'INVALID': return 'bg-[#6F7280]/10 text-[#6F7280] border border-[#6F7280]/30';
-      case 'REJECTED': return 'bg-[#F45C63]/10 text-[#F45C63] border border-[#F45C63]/30';
-      default: return 'bg-[#5D5FEF]/10 text-[#5D5FEF] border border-[#5D5FEF]/30';
+      case 'REVIEW': return 'bg-airbnb-info/10 text-airbnb-info border border-airbnb-info/30';
+      case 'APPROVED': return 'bg-airbnb-success/10 text-airbnb-success border border-airbnb-success/30';
+      case 'INVALID': return 'bg-airbnb-text-tertiary/10 text-airbnb-text-tertiary border border-airbnb-text-tertiary/30';
+      case 'REJECTED': return 'bg-airbnb-error/10 text-airbnb-error border border-airbnb-error/30';
+      default: return 'bg-blue-50 text-airbnb-red border border-blue-200';
     }
   };
 
   const getDirectionColor = (direction?: string | null) => {
     switch (direction) {
-      case 'debit': return 'text-[#F45C63]';
-      case 'credit': return 'text-[#4ECF9E]';
-      default: return 'text-[#B2B4C2]';
+      case 'debit': return 'text-airbnb-error';
+      case 'credit': return 'text-airbnb-success';
+      default: return 'text-airbnb-text-secondary';
     }
   };
 
@@ -105,42 +105,34 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
     }
   };
 
-  // Get palette-aligned card color based on category
+  // Get palette-aligned card color based on category - Airbnb Design
   const getCardColor = (category?: string | null) => {
     switch (category?.toLowerCase()) {
       case 'food':
       case 'dining':
-        // Error color (flat, no gradient)
-        return 'from-[#F45C63] to-[#F45C63]';
+        return 'bg-airbnb-error';
       case 'transport':
       case 'travel':
-        // Info gradient
-        return 'from-[#6C85FF] to-[#888BFF]';
+        return 'bg-airbnb-teal';
       case 'shopping':
-        // Brand gradient
-        return 'from-[#5D5FEF] to-[#888BFF]';
+        return 'bg-airbnb-red';
       case 'bills':
       case 'utilities':
-        // Info to brand gradient
-        return 'from-[#6C85FF] to-[#5D5FEF]';
+        return 'bg-airbnb-teal-dark';
       case 'finance':
-        // Success color (flat, no gradient)
-        return 'from-[#4ECF9E] to-[#4ECF9E]';
+        return 'bg-airbnb-success';
       case 'entertainment':
-        // Brand gradient (reversed)
-        return 'from-[#888BFF] to-[#5D5FEF]';
+        return 'bg-airbnb-red';
       case 'health':
-        // Error to brand gradient
-        return 'from-[#F45C63] to-[#888BFF]';
+        return 'bg-airbnb-warning';
       default:
-        // Default brand gradient
-        return 'from-[#5D5FEF] to-[#888BFF]';
+        return 'bg-airbnb-red';
     }
   };
 
   return (
     <article
-      className="group relative bg-[#15161A] rounded-2xl p-4 hover:shadow-2xl hover:shadow-[#5D5FEF]/10 active:scale-[0.98] transition-all duration-200 overflow-hidden border border-[#2A2C35] shadow-sm cursor-pointer"
+      className="group relative bg-white rounded-airbnb-lg p-4 hover:shadow-airbnb-lg active:scale-[0.98] transition-all duration-200 overflow-hidden border border-airbnb-border-light shadow-airbnb-sm cursor-pointer"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={onQuickEdit}
@@ -148,14 +140,14 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
       aria-label={`Transaction: ${transaction.merchant_name || 'Unknown Merchant'}, ${formatAmount(transaction.amount, transaction.currency)}`}
     >
       {/* Category-based Left Border - More Prominent */}
-      <div className={`absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b ${getCardColor(transaction.category)}`}></div>
+      <div className={`absolute top-0 left-0 bottom-0 w-1 ${getCardColor(transaction.category)}`}></div>
 
       {/* Content */}
       <div className="relative z-10 pl-2">
         {/* Header: Icon, Merchant, Status - Single Row */}
         <div className="flex items-center gap-3 mb-3">
           {/* Category Icon - Smaller, More Compact */}
-          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${getCardColor(transaction.category)} flex items-center justify-center shadow-sm flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
+          <div className={`w-9 h-9 rounded-airbnb-md ${getCardColor(transaction.category)} flex items-center justify-center shadow-airbnb-sm flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
             <div className="text-white">
               {getCategoryIcon(transaction.category)}
             </div>
@@ -163,17 +155,17 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
 
           {/* Merchant Name and Date - Stacked */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-[#F0F1F5] truncate leading-tight">
+            <h3 className="text-sm font-bold text-airbnb-text-primary truncate leading-tight">
               {transaction.merchant_name || 'Unknown Merchant'}
             </h3>
-            <p className="text-[10px] text-[#6F7280] mt-0.5 truncate">
+            <p className="text-[10px] text-airbnb-text-tertiary mt-0.5 truncate">
               {formatDate(transaction.txn_time)}
             </p>
           </div>
 
           {/* Status Badge - Compact */}
           {transaction.status && (
-            <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md ${getStatusColor(transaction.status)} flex-shrink-0 uppercase tracking-wide`}>
+            <span className={`px-2 py-0.5 text-[9px] font-bold rounded-airbnb-md ${getStatusColor(transaction.status)} flex-shrink-0 uppercase tracking-wide`}>
               {transaction.status}
             </span>
           )}
@@ -195,12 +187,12 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
           {/* Tags - Inline, Compact */}
           <div className="flex items-center gap-1.5 text-[10px] flex-1 min-w-0">
             {transaction.category && (
-              <span className="px-2 py-0.5 bg-[#1E2026]/50 text-[#B2B4C2] rounded-md capitalize font-medium truncate">
+              <span className="px-2 py-0.5 bg-airbnb-gray-light text-airbnb-text-secondary rounded-airbnb-md capitalize font-medium truncate">
                 {transaction.category}
               </span>
             )}
             {transaction.account_hint && (
-              <span className="px-2 py-0.5 bg-[#1E2026]/50 text-[#6F7280] rounded-md truncate max-w-[80px]">
+              <span className="px-2 py-0.5 bg-airbnb-gray-light text-airbnb-text-tertiary rounded-airbnb-md truncate max-w-[80px]">
                 {transaction.account_hint}
               </span>
             )}
@@ -210,7 +202,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
           <a
             href={`/transactions/edit/${transaction.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="w-8 h-8 flex items-center justify-center text-white bg-gradient-to-br from-[#5D5FEF] to-[#888BFF] rounded-lg hover:shadow-lg hover:shadow-[#5D5FEF]/40 active:scale-95 transition-all duration-200 flex-shrink-0 group-hover:scale-110"
+            className="w-8 h-8 flex items-center justify-center text-white bg-airbnb-red rounded-airbnb-md hover:shadow-airbnb-lg hover:bg-airbnb-red/90 active:scale-95 transition-all duration-200 flex-shrink-0 group-hover:scale-110"
             aria-label={`Edit transaction for ${transaction.merchant_name}`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +213,7 @@ const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit
       </div>
 
       {/* Hover Indicator - Subtle Glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#5D5FEF]/0 to-[#888BFF]/0 group-hover:from-[#5D5FEF]/5 group-hover:to-[#888BFF]/5 transition-all duration-300 pointer-events-none rounded-2xl"></div>
+      <div className="absolute inset-0 bg-airbnb-red/0 group-hover:bg-airbnb-red/5 transition-all duration-300 pointer-events-none rounded-airbnb-lg"></div>
     </article>
   );
 });

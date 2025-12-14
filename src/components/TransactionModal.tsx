@@ -202,7 +202,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* Background overlay */}
         <div
-          className="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity"
+          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
           onClick={onClose}
           aria-hidden="true"
         ></div>
@@ -211,15 +211,15 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
         {/* Modal */}
-        <div className="relative inline-block align-bottom bg-[#1a1625] rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+        <div className="relative inline-block align-bottom bg-airbnb-white rounded-airbnb-lg text-left overflow-hidden shadow-airbnb-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
           {/* Header */}
-          <div className="bg-[#1a1625] px-6 py-4 border-b border-[#2d1b4e]">
-            <div className="flex items-center justify-between">
+          <div className="bg-airbnb-white px-4 sm:px-6 py-4 border-b border-airbnb-border-light min-h-[60px]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 id="modal-title" className="text-lg font-semibold text-[#f8fafc]">
+                <h3 id="modal-title" className="text-lg font-semibold text-airbnb-text-primary">
                   Edit Transaction
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-airbnb-text-secondary mt-1">
                   Update transaction details and add your notes
                 </p>
               </div>
@@ -229,7 +229,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                   type="button"
                   onClick={handleReExtract}
                   disabled={isReExtracting}
-                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="inline-flex items-center px-4 py-2.5 text-sm font-medium text-airbnb-white bg-airbnb-teal border border-transparent rounded-airbnb-md hover:bg-airbnb-teal-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-airbnb-teal disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
                   title="Re-extract transaction data using AI"
                 >
                   {isReExtracting ? (
@@ -253,7 +253,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-md bg-[#1a1625] text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="rounded-airbnb-md bg-airbnb-white text-airbnb-text-tertiary hover:text-airbnb-text-primary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <span className="sr-only">Close</span>
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -265,13 +265,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="bg-white">
-            <div className="px-6 py-6 max-h-[70vh] overflow-y-auto">
-              <div className="space-y-8">
+          <form onSubmit={handleSubmit} className="bg-airbnb-white">
+            <div className="px-4 sm:px-6 py-4 sm:py-6 max-h-[70vh] overflow-y-auto">
+              <div className="space-y-6 sm:space-y-8">
                 {/* Transaction Details Section */}
-                <div className="bg-[#0f0a1a]/50 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-airbnb-gray-light rounded-airbnb-lg p-4 sm:p-6">
+                  <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                     Transaction Details
@@ -279,19 +279,19 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Transaction Date
                       </label>
                       <input
                         type="datetime-local"
                         value={formData.txn_time ? new Date(formData.txn_time).toISOString().slice(0, 16) : ''}
                         onChange={(e) => handleInputChange('txn_time', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Amount
                       </label>
                       <input
@@ -299,19 +299,19 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                         step="0.01"
                         value={formData.amount || ''}
                         onChange={(e) => handleInputChange('amount', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                         placeholder="0.00"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Currency
                       </label>
                       <select
                         value={formData.currency || ''}
                         onChange={(e) => handleInputChange('currency', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px] cursor-pointer"
                       >
                         <option value="">Select Currency</option>
                         <option value="INR">INR (₹)</option>
@@ -322,13 +322,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Direction
                       </label>
                       <select
                         value={formData.direction || ''}
                         onChange={(e) => handleInputChange('direction', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px] cursor-pointer"
                       >
                         <option value="">Select Direction</option>
                         {directions.map(direction => (
@@ -342,9 +342,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 </div>
 
                 {/* Merchant Information Section */}
-                <div className="bg-[#0f0a1a]/50 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-airbnb-gray-light rounded-airbnb-lg p-4 sm:p-6">
+                  <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-airbnb-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                     Merchant Information
@@ -352,39 +352,39 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Merchant Name
                       </label>
                       <input
                         type="text"
                         value={formData.merchant_name || ''}
                         onChange={(e) => handleInputChange('merchant_name', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                         placeholder="e.g., Starbucks Coffee #123"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Normalized Merchant
                       </label>
                       <input
                         type="text"
                         value={formData.merchant_normalized || ''}
                         onChange={(e) => handleInputChange('merchant_normalized', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                         placeholder="e.g., Starbucks"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Category
                       </label>
                       <select
                         value={formData.category || ''}
                         onChange={(e) => handleInputChange('category', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px] cursor-pointer"
                       >
                         <option value="">Select Category</option>
                         {categories.map(category => (
@@ -396,14 +396,14 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Location
                       </label>
                       <input
                         type="text"
                         value={formData.location || ''}
                         onChange={(e) => handleInputChange('location', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                         placeholder="e.g., New York, NY"
                       />
                     </div>
@@ -411,9 +411,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 </div>
 
                 {/* Additional Details Section */}
-                <div className="bg-[#0f0a1a]/50 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-airbnb-gray-light rounded-airbnb-lg p-4 sm:p-6">
+                  <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Additional Details
@@ -421,39 +421,39 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Reference ID
                       </label>
                       <input
                         type="text"
                         value={formData.reference_id || ''}
                         onChange={(e) => handleInputChange('reference_id', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                         placeholder="e.g., TXN123456"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Account Hint
                       </label>
                       <input
                         type="text"
                         value={formData.account_hint || ''}
                         onChange={(e) => handleInputChange('account_hint', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px]"
                         placeholder="e.g., ****1234"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Account Type
                       </label>
                       <select
                         value={formData.account_type || ''}
                         onChange={(e) => handleInputChange('account_type', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px] cursor-pointer"
                       >
                         <option value="">Select Account Type</option>
                         {accountTypes.map(type => (
@@ -465,13 +465,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Transaction Type
                       </label>
                       <select
                         value={formData.transaction_type || ''}
                         onChange={(e) => handleInputChange('transaction_type', e.target.value)}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors min-h-[44px] cursor-pointer"
                       >
                         <option value="">Select Transaction Type</option>
                         {transactionTypes.map(type => (
@@ -485,9 +485,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 </div>
 
                 {/* Notes Section */}
-                <div className="bg-[#0f0a1a]/50 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-airbnb-gray-light rounded-airbnb-lg p-4 sm:p-6">
+                  <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Notes & Comments
@@ -495,7 +495,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-3">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-3">
                         Transaction Keywords
                       </label>
                       <InteractiveKeywordSelector
@@ -505,20 +505,20 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                         transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
                         placeholder="Select keywords to categorize this transaction..."
                       />
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs text-airbnb-text-tertiary mt-2">
                         Select relevant keywords to help categorize and search for this transaction. Smart suggestions are provided based on the merchant.
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#cbd5e1] mb-2">
+                      <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                         Your Notes
                       </label>
                       <textarea
                         value={formData.user_notes || ''}
                         onChange={(e) => handleInputChange('user_notes', e.target.value)}
                         rows={4}
-                        className="w-full px-3 py-2 border border-[#2d1b4e] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                        className="w-full px-4 py-3 border border-airbnb-border-light rounded-airbnb-md focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-colors resize-none min-h-[100px]"
                         placeholder="Add your personal notes about this transaction..."
                       />
                     </div>
@@ -528,9 +528,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             </div>
 
             {/* Email Body Section */}
-            <div className="bg-[#0f0a1a]/50 rounded-lg p-6">
-              <h4 className="text-lg font-semibold text-[#f8fafc] mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-airbnb-gray-light rounded-airbnb-lg p-4 sm:p-6 mx-4 sm:mx-6 mb-4 sm:mb-6">
+              <h4 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Original Email Body
@@ -538,22 +538,22 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
               {loadingEmail ? (
                 <div className="flex items-center justify-center py-8">
-                  <svg className="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-8 w-8 text-airbnb-teal" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span className="ml-3 text-[#cbd5e1]">Loading email body...</span>
+                  <span className="ml-3 text-airbnb-text-secondary">Loading email body...</span>
                 </div>
               ) : emailBody ? (
-                <div className="bg-[#1a1625] border border-[#2d1b4e] rounded-lg p-4 max-h-96 overflow-y-auto">
+                <div className="bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md p-4 max-h-96 overflow-y-auto">
                   <div
-                    className="prose prose-sm max-w-none text-[#cbd5e1] whitespace-pre-wrap"
+                    className="prose prose-sm max-w-none text-airbnb-text-primary whitespace-pre-wrap"
                     dangerouslySetInnerHTML={{ __html: emailBody }}
                   />
                 </div>
               ) : (
-                <div className="bg-[#1a1625] border border-[#2d1b4e] rounded-lg p-4 text-center text-gray-500">
-                  <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md p-4 text-center text-airbnb-text-tertiary">
+                  <svg className="w-12 h-12 mx-auto mb-2 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                   </svg>
                   <p>No email body available</p>
@@ -562,34 +562,34 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             </div>
 
             {/* Footer */}
-            <div className="bg-[#0f0a1a]/50 px-6 py-4 border-t border-[#2d1b4e]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 text-sm text-[#cbd5e1]">
+            <div className="bg-airbnb-gray-light px-4 sm:px-6 py-4 border-t border-airbnb-border-light min-h-[80px]">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-4 text-sm text-airbnb-text-secondary">
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 mr-1 text-airbnb-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Confidence: {formData.confidence ? `${Math.round(parseFloat(formData.confidence) * 100)}%` : 'N/A'}
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 mr-1 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Last updated: {formData.updated_at ? new Date(formData.updated_at).toLocaleDateString() : 'Never'}
                   </div>
                 </div>
-                <div className="flex space-x-3">
+                <div className="flex flex-wrap gap-3 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 text-sm font-medium text-[#cbd5e1] bg-[#1a1625] border border-[#2d1b4e] rounded-md hover:bg-[#0f0a1a]/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    className="px-4 sm:px-6 py-2.5 text-sm font-medium text-airbnb-text-primary bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md hover:bg-airbnb-gray-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-airbnb-red transition-colors min-h-[44px]"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-6 py-2 text-sm font-medium text-white bg-[#6b4ce6] border border-transparent rounded-md hover:bg-[#8b5cf6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+                    className="px-6 py-2.5 text-sm font-medium text-airbnb-white bg-airbnb-red border border-transparent rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-airbnb-red disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center min-h-[44px]"
                   >
                     {isLoading ? (
                       <>

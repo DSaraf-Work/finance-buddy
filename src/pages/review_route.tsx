@@ -192,10 +192,10 @@ export default function ReviewRoutePage() {
     return (
       <ProtectedRoute>
         <Layout>
-          <div className="flex items-center justify-center min-h-screen bg-[#0f0a1a]">
+          <div className="flex items-center justify-center min-h-screen bg-airbnb-gray-light">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6b4ce6] mx-auto"></div>
-              <p className="mt-4 text-[#cbd5e1]">Loading transactions...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-airbnb-red mx-auto"></div>
+              <p className="mt-4 text-airbnb-text-secondary">Loading transactions...</p>
             </div>
           </div>
         </Layout>
@@ -210,12 +210,12 @@ export default function ReviewRoutePage() {
           {/* Header */}
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-airbnb-red rounded-airbnb-lg flex items-center justify-center shadow-airbnb-md">
                 <span className="text-xl sm:text-2xl">✅</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Transaction Review</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-airbnb-text-primary">Transaction Review</h1>
             </div>
-            <p className="text-[#cbd5e1] mt-2 text-sm sm:text-base">
+            <p className="text-airbnb-text-secondary mt-2 text-sm sm:text-base">
               Review and manage your extracted transactions
             </p>
           </div>
@@ -235,7 +235,7 @@ export default function ReviewRoutePage() {
 
           {/* Error State */}
           {error && (
-            <div className="bg-[#ef4444]/10 border border-[#ef4444]/30 text-[#ef4444] px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-airbnb-lg mb-6 flex items-center gap-3">
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -244,46 +244,46 @@ export default function ReviewRoutePage() {
           )}
 
           {/* Desktop Table */}
-          <div className="hidden md:block bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] overflow-hidden">
+          <div className="hidden md:block bg-airbnb-white rounded-airbnb-lg shadow-airbnb-md border border-airbnb-border-light overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full">
-                <thead className="bg-[#0f0a1a]/50 sticky top-0 border-b border-[#2d1b4e]">
+                <thead className="bg-airbnb-gray-light/50 sticky top-0 border-b border-airbnb-border-light">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Date/Time
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Merchant
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Category
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Account
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Confidence
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Amount
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-[#94a3b8] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-airbnb-text-secondary uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-[#1a1625]">
+                <tbody className="bg-airbnb-white">
                   {transactions.length === 0 ? (
                     <tr>
                       <td colSpan={8} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-3">
-                          <svg className="w-16 h-16 text-[#2d1b4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-16 h-16 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <p className="text-[#94a3b8]">No transactions found. Try adjusting your filters.</p>
+                          <p className="text-airbnb-text-secondary">No transactions found. Try adjusting your filters.</p>
                         </div>
                       </td>
                     </tr>
@@ -305,12 +305,12 @@ export default function ReviewRoutePage() {
           {/* Mobile Cards */}
           <div className="md:hidden space-y-4">
             {transactions.length === 0 ? (
-              <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] px-6 py-12 text-center">
+              <div className="bg-airbnb-white rounded-airbnb-lg shadow-airbnb-md border border-airbnb-border-light px-6 py-12 text-center">
                 <div className="flex flex-col items-center gap-3">
-                  <svg className="w-16 h-16 text-[#2d1b4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-16 h-16 text-airbnb-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <p className="text-[#94a3b8]">No transactions found. Try adjusting your filters.</p>
+                  <p className="text-airbnb-text-secondary">No transactions found. Try adjusting your filters.</p>
                 </div>
               </div>
             ) : (

@@ -161,9 +161,9 @@ export default function InteractiveKeywordSelector({
   };
 
   const getUsageBadge = (keyword: TransactionKeyword) => {
-    if (keyword.usage_count > 10) return { text: 'Popular', class: 'bg-[#10b981]/20 text-[#10b981]' };
+    if (keyword.usage_count > 10) return { text: 'Popular', class: 'bg-green-50/20 text-green-700' };
     if (keyword.usage_count > 3) return { text: 'Common', class: 'bg-[#5D5FEF]/20 text-[#888BFF]' };
-    return { text: 'New', class: 'bg-[#2A2C35] text-[#6F7280]' };
+    return { text: 'New', class: 'bg-[#2A2C35] text-airbnb-text-tertiary' };
   };
 
   const getSmartSuggestions = () => {
@@ -188,7 +188,7 @@ export default function InteractiveKeywordSelector({
   if (loading) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-32 bg-[#1E2026] rounded-lg"></div>
+        <div className="h-32 bg-airbnb-white rounded-airbnb-md"></div>
       </div>
     );
   }
@@ -197,14 +197,14 @@ export default function InteractiveKeywordSelector({
     <div className={`space-y-4 ${className}`}>
       {/* Selected Keywords Display */}
       {selectedKeywords.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-[#5D5FEF]/10 rounded-lg border border-[#5D5FEF]/30">
-          <span className="text-sm font-medium text-[#F0F1F5]">Selected:</span>
+        <div className="flex flex-wrap gap-2 p-3 bg-[#5D5FEF]/10 rounded-airbnb-md border border-[#5D5FEF]/30">
+          <span className="text-sm font-medium text-airbnb-text-primary">Selected:</span>
           {selectedKeywords.map((keyword, index) => {
             const keywordObj = keywords.find(k => k.keyword === keyword);
             return (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 text-sm bg-[#5D5FEF]/20 text-[#F0F1F5] rounded-full border border-[#5D5FEF]/40"
+                className="inline-flex items-center px-2 py-1 text-sm bg-[#5D5FEF]/20 text-airbnb-text-primary rounded-full border border-[#5D5FEF]/40"
                 style={{ backgroundColor: keywordObj?.color ? `${keywordObj.color}20` : undefined }}
               >
                 {keyword}
@@ -214,7 +214,7 @@ export default function InteractiveKeywordSelector({
                     const newSelected = selectedKeywords.filter(k => k !== keyword);
                     onChange(newSelected.join(', '));
                   }}
-                  className="ml-1 text-[#F0F1F5] hover:text-[#5D5FEF] transition-colors"
+                  className="ml-1 text-airbnb-text-primary hover:text-[#5D5FEF] transition-colors"
                 >
                   ×
                 </button>
@@ -226,9 +226,9 @@ export default function InteractiveKeywordSelector({
 
       {/* Smart Suggestions */}
       {merchantName && getSmartSuggestions().length > 0 && (
-        <div className="p-3 bg-[#888BFF]/10 rounded-lg border border-[#888BFF]/30">
+        <div className="p-3 bg-[#888BFF]/10 rounded-airbnb-md border border-[#888BFF]/30">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm font-medium text-[#F0F1F5]">💡 Smart suggestions for {merchantName}:</span>
+            <span className="text-sm font-medium text-airbnb-text-primary">💡 Smart suggestions for {merchantName}:</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {getSmartSuggestions().map(suggestion => {
@@ -238,7 +238,7 @@ export default function InteractiveKeywordSelector({
                   key={suggestion}
                   type="button"
                   onClick={() => toggleKeyword(keywordObj)}
-                  className="px-3 py-1 text-sm bg-[#888BFF]/20 text-[#F0F1F5] rounded-full hover:bg-[#888BFF]/30 transition-colors border border-[#888BFF]/40"
+                  className="px-3 py-1 text-sm bg-[#888BFF]/20 text-airbnb-text-primary rounded-full hover:bg-[#888BFF]/30 transition-colors border border-[#888BFF]/40"
                 >
                   + {suggestion}
                 </button>
@@ -256,12 +256,12 @@ export default function InteractiveKeywordSelector({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search keywords..."
-          className="w-full px-4 py-2 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+          className="w-full px-4 py-2 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="absolute right-3 top-2.5 text-[#6F7280] hover:text-[#F0F1F5] transition-colors"
+            className="absolute right-3 top-2.5 text-airbnb-text-tertiary hover:text-airbnb-text-primary transition-colors"
           >
             ×
           </button>
@@ -271,14 +271,14 @@ export default function InteractiveKeywordSelector({
       {/* Keyword Categories */}
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {categories.map(category => (
-          <div key={category.name} className="border border-[#2A2C35] rounded-lg overflow-hidden bg-[#15161A]">
+          <div key={category.name} className="border border-airbnb-border-light rounded-airbnb-md overflow-hidden bg-airbnb-white">
             <div
-              className="px-4 py-2 font-medium text-[#F0F1F5] text-sm"
+              className="px-4 py-2 font-medium text-airbnb-text-primary text-sm"
               style={{ backgroundColor: category.color }}
             >
               {category.name} ({category.keywords.length})
             </div>
-            <div className="p-3 bg-[#1E2026]">
+            <div className="p-3 bg-airbnb-white">
               <div className="flex flex-wrap gap-2">
                 {category.keywords.map(keyword => {
                   const isSelected = selectedKeywords.includes(keyword.keyword);
@@ -289,10 +289,10 @@ export default function InteractiveKeywordSelector({
                       key={keyword.id}
                       type="button"
                       onClick={() => toggleKeyword(keyword)}
-                      className={`relative inline-flex items-center px-3 py-2 text-sm rounded-lg border transition-all ${
+                      className={`relative inline-flex items-center px-3 py-2 text-sm rounded-airbnb-md border transition-all ${
                         isSelected
-                          ? 'bg-[#5D5FEF]/20 border-[#5D5FEF] text-[#F0F1F5] shadow-sm'
-                          : 'bg-[#15161A] border-[#2A2C35] text-[#B2B4C2] hover:bg-[#1E2026] hover:border-[#5D5FEF]/50'
+                          ? 'bg-[#5D5FEF]/20 border-[#5D5FEF] text-airbnb-text-primary shadow-sm'
+                          : 'bg-airbnb-white border-airbnb-border-light text-airbnb-text-secondary hover:bg-airbnb-white hover:border-[#5D5FEF]/50'
                       }`}
                     >
                       <span>{keyword.keyword}</span>
@@ -314,12 +314,12 @@ export default function InteractiveKeywordSelector({
       </div>
 
       {/* Add New Keyword */}
-      <div className="border-t border-[#2A2C35] pt-4">
+      <div className="border-t border-airbnb-border-light pt-4">
         {!showAddForm ? (
           <button
             type="button"
             onClick={() => setShowAddForm(true)}
-            className="w-full px-4 py-2 text-sm text-[#5D5FEF] border border-[#5D5FEF]/50 rounded-lg hover:bg-[#5D5FEF]/10 transition-colors"
+            className="w-full px-4 py-2 text-sm text-[#5D5FEF] border border-[#5D5FEF]/50 rounded-airbnb-md hover:bg-[#5D5FEF]/10 transition-colors"
           >
             + Add Custom Keyword
           </button>
@@ -331,13 +331,13 @@ export default function InteractiveKeywordSelector({
                 value={newKeyword}
                 onChange={(e) => setNewKeyword(e.target.value)}
                 placeholder="Enter new keyword..."
-                className="flex-1 px-3 py-2 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                className="flex-1 px-3 py-2 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                 autoFocus
               />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 bg-[#1E2026] border border-[#2A2C35] rounded-lg text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                className="px-3 py-2 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
               >
                 <option value="Food & Dining">Food & Dining</option>
                 <option value="Health & Fitness">Health & Fitness</option>
@@ -353,7 +353,7 @@ export default function InteractiveKeywordSelector({
               <button
                 type="submit"
                 disabled={!newKeyword.trim() || isAddingKeyword}
-                className="px-4 py-2 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-[#F0F1F5] rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-4 py-2 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-airbnb-text-primary rounded-airbnb-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {isAddingKeyword ? 'Adding...' : 'Add'}
               </button>
@@ -363,7 +363,7 @@ export default function InteractiveKeywordSelector({
                   setShowAddForm(false);
                   setNewKeyword('');
                 }}
-                className="px-4 py-2 text-[#B2B4C2] border border-[#2A2C35] rounded-lg hover:bg-[#1E2026] transition-colors"
+                className="px-4 py-2 text-airbnb-text-secondary border border-airbnb-border-light rounded-airbnb-md hover:bg-airbnb-white transition-colors"
               >
                 Cancel
               </button>

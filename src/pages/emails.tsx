@@ -494,17 +494,17 @@ const EmailsPage: NextPage = () => {
 
   const getStatusColor = (status: EmailStatus | string) => {
     switch (status) {
-      case 'Fetched': return 'bg-blue-100 text-blue-800';
-      case 'Processed': return 'bg-green-100 text-green-800';
-      case 'Failed': return 'bg-red-100 text-red-800';
-      case 'Invalid': return 'bg-gray-100 text-gray-800';
-      case 'NON_TRANSACTIONAL': return 'bg-yellow-100 text-yellow-800';
-      case 'REJECT': return 'bg-red-100 text-red-800';
+      case 'Fetched': return 'bg-blue-50 text-blue-700 border border-blue-200';
+      case 'Processed': return 'bg-green-50 text-green-700 border border-green-200';
+      case 'Failed': return 'bg-red-50 text-red-700 border border-red-200';
+      case 'Invalid': return 'bg-airbnb-gray-light text-airbnb-text-secondary border border-airbnb-border-light';
+      case 'NON_TRANSACTIONAL': return 'bg-yellow-50 text-yellow-700 border border-yellow-200';
+      case 'REJECT': return 'bg-red-50 text-red-700 border border-red-200';
       // Derived statuses from backend
-      case 'FETCHED': return 'bg-blue-100 text-blue-800';
-      case 'PROCESSED': return 'bg-green-100 text-green-800';
-      case 'REJECTED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'FETCHED': return 'bg-blue-50 text-blue-700 border border-blue-200';
+      case 'PROCESSED': return 'bg-green-50 text-green-700 border border-green-200';
+      case 'REJECTED': return 'bg-red-50 text-red-700 border border-red-200';
+      default: return 'bg-airbnb-gray-light text-airbnb-text-secondary border border-airbnb-border-light';
     }
   };
 
@@ -597,28 +597,28 @@ const EmailsPage: NextPage = () => {
         <div className="py-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
+            <div className="mb-6 sm:mb-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-airbnb-red rounded-airbnb-lg flex items-center justify-center shadow-airbnb-md min-h-[44px] min-w-[44px]">
                       <span className="text-xl sm:text-2xl">📧</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f8fafc]">Email Management</h1>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-airbnb-text-primary">Email Management</h1>
                   </div>
-                  <p className="mt-1 text-sm sm:text-base text-[#cbd5e1]">
+                  <p className="mt-1 text-sm sm:text-base text-airbnb-text-secondary">
                     Review and manage Gmail emails from connected accounts
                   </p>
                 </div>
-                <div className="text-sm text-[#94a3b8]">
+                <div className="text-sm text-airbnb-text-secondary">
                   {pagination.total} total emails
                 </div>
               </div>
             </div>
           {/* Filters */}
-          <div className="bg-[#1a1625] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#2d1b4e] p-6 mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-[#f8fafc] mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-[#6b4ce6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-airbnb-white rounded-airbnb-lg shadow-airbnb-md border border-airbnb-border-light p-4 sm:p-6 mb-6">
+            <h2 className="text-base sm:text-lg font-semibold text-airbnb-text-primary mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-airbnb-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
               Filters
@@ -626,64 +626,64 @@ const EmailsPage: NextPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Date From</label>
                 <input
                   type="date"
                   value={filters.date_from || ''}
                   onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Date To</label>
                 <input
                   type="date"
                   value={filters.date_to || ''}
                   onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Accounts <span className="text-red-500">*</span>
-                  <span className="text-xs text-gray-500 ml-1">
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">
+                  Accounts <span className="text-airbnb-error">*</span>
+                  <span className="text-xs text-airbnb-text-secondary ml-1">
                     ({filters.email_addresses?.length || 0} selected)
                   </span>
                 </label>
                 {loadingConnections ? (
-                  <div className="input-field bg-gray-50 text-gray-500">Loading connections...</div>
+                  <div className="w-full px-4 py-3 bg-airbnb-gray-light border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-secondary min-h-[44px] flex items-center">Loading connections...</div>
                 ) : connections.length === 0 ? (
-                  <div className="input-field bg-red-50 text-red-600">No Gmail connections found</div>
+                  <div className="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-airbnb-md text-airbnb-error min-h-[44px] flex items-center">No Gmail connections found</div>
                 ) : (
                   <div className="relative">
-                    <div className="input-field min-h-[2.5rem] max-h-24 overflow-y-auto">
+                    <div className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md min-h-[2.5rem] max-h-24 overflow-y-auto">
                       {connections.map((connection) => (
-                        <label key={connection.id} className="flex items-center space-x-2 py-1">
+                        <label key={connection.id} className="flex items-center space-x-2 py-2 min-h-[44px] cursor-pointer">
                           <input
                             type="checkbox"
                             checked={filters.email_addresses?.includes(connection.email_address) || false}
                             onChange={(e) => handleEmailAddressChange(connection.email_address, e.target.checked)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="w-5 h-5 rounded border-airbnb-border-light text-airbnb-red focus:ring-airbnb-red focus:ring-2 cursor-pointer"
                           />
-                          <span className="text-sm text-gray-700">{connection.email_address}</span>
+                          <span className="text-sm text-airbnb-text-primary">{connection.email_address}</span>
                         </label>
                       ))}
                     </div>
                     {filters.email_addresses?.length === 0 && (
-                      <div className="text-xs text-red-500 mt-1">Please select at least one account</div>
+                      <div className="text-xs text-airbnb-error mt-1">Please select at least one account</div>
                     )}
                   </div>
                 )}
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Status</label>
                 <select
                   value={filters.status || ''}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px] cursor-pointer"
                 >
                   <option value="">All Statuses</option>
                   <option value="Fetched">Fetched</option>
@@ -699,24 +699,24 @@ const EmailsPage: NextPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sender</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Sender</label>
                 <input
                   type="text"
                   value={filters.sender || ''}
                   onChange={(e) => handleFilterChange('sender', e.target.value)}
                   placeholder="sender@example.com"
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Search Query</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Search Query</label>
                 <input
                   type="text"
                   value={filters.q || ''}
                   onChange={(e) => handleFilterChange('q', e.target.value)}
                   placeholder="Search in subject and snippet..."
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
                 />
               </div>
             </div>
@@ -724,7 +724,7 @@ const EmailsPage: NextPage = () => {
             {/* Pagination Controls and Database Toggle */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Page Number</label>
                 <input
                   type="number"
                   min="1"
@@ -735,48 +735,48 @@ const EmailsPage: NextPage = () => {
                       handlePageChange(newPage);
                     }
                   }}
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
                   placeholder="1"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Page Size</label>
                 <input
                   type="number"
                   min="1"
                   max="100"
                   value={pagination.pageSize}
                   onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
-                  className="input-field"
+                  className="w-full px-4 py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-md text-airbnb-text-primary placeholder-airbnb-text-tertiary focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red transition-all min-h-[44px]"
                   placeholder="10"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data Source</label>
-                <div className="flex items-center space-x-3 mt-2">
-                  <label className="flex items-center">
+                <label className="block text-sm font-medium text-airbnb-text-primary mb-2 min-h-[44px] flex items-center">Data Source</label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mt-2">
+                  <label className="flex items-center min-h-[44px] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={filters.db_only || false}
                       onChange={(e) => handleBooleanFilterChange('db_only', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="w-5 h-5 text-airbnb-red focus:ring-airbnb-red border-airbnb-border-light rounded cursor-pointer"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Database Only</span>
+                    <span className="ml-2 text-sm text-airbnb-text-primary">Database Only</span>
                   </label>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-airbnb-text-secondary">
                     {filters.db_only ? 'Searching local database only' : 'Will fetch from Gmail if needed'}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleSearch}
                 disabled={loading}
-                className="btn-primary"
+                className="px-6 py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all min-h-[44px] min-w-[120px] disabled:opacity-50 disabled:cursor-not-allowed shadow-airbnb-sm"
               >
                 {loading ? 'Searching...' : 'Search'}
               </button>
@@ -802,7 +802,7 @@ const EmailsPage: NextPage = () => {
                   });
                   searchEmails(1);
                 }}
-                className="btn-secondary"
+                className="px-6 py-3 bg-airbnb-white border border-airbnb-border-light text-airbnb-text-primary font-medium rounded-airbnb-md hover:bg-airbnb-gray-hover focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all min-h-[44px] min-w-[120px] shadow-airbnb-sm"
               >
                 Clear Filters
               </button>
@@ -810,11 +810,11 @@ const EmailsPage: NextPage = () => {
               <button
                 onClick={handleGetAllFetched}
                 disabled={batchProcessing || loading}
-                className={`px-4 py-2 rounded font-medium transition-colors ${
+                className={`px-6 py-3 rounded-airbnb-md font-medium transition-all min-h-[44px] min-w-[140px] ${
                   batchProcessing || loading
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
-                }`}
+                    ? 'bg-airbnb-gray-light text-airbnb-text-tertiary cursor-not-allowed'
+                    : 'bg-airbnb-success text-airbnb-white hover:bg-opacity-90'
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-airbnb-sm`}
               >
                 {batchProcessing && batchProgress.total > 0
                   ? `Processing Batch ${batchProgress.current} of ${batchProgress.total}...`
@@ -825,11 +825,11 @@ const EmailsPage: NextPage = () => {
               <button
                 onClick={handleBulkProcess}
                 disabled={batchProcessing || loading}
-                className={`px-4 py-2 rounded font-medium transition-colors ${
+                className={`px-6 py-3 rounded-airbnb-md font-medium transition-all min-h-[44px] min-w-[120px] ${
                   batchProcessing || loading
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
-                }`}
+                    ? 'bg-airbnb-gray-light text-airbnb-text-tertiary cursor-not-allowed'
+                    : 'bg-airbnb-teal text-airbnb-white hover:bg-airbnb-teal-dark'
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-airbnb-sm`}
               >
                 {batchProcessing && batchProgress.total > 0 && batchProgress.current <= emails.length
                   ? `Processing ${batchProgress.current} of ${batchProgress.total}...`
@@ -840,65 +840,65 @@ const EmailsPage: NextPage = () => {
           </div>
 
           {/* Email Grid */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900">Emails</h2>
+          <div className="bg-airbnb-white rounded-airbnb-lg shadow-airbnb-md overflow-hidden">
+            <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light">
+              <h2 className="text-lg font-medium text-airbnb-text-primary">Emails</h2>
             </div>
             
             {loading ? (
               <div className="px-6 py-8 text-center">
-                <div className="text-gray-500">Loading emails...</div>
+                <div className="text-airbnb-text-secondary">Loading emails...</div>
               </div>
             ) : emails.length === 0 ? (
               <div className="px-6 py-8 text-center">
-                <div className="text-gray-500">No emails found. Try adjusting your filters.</div>
+                <div className="text-airbnb-text-secondary">No emails found. Try adjusting your filters.</div>
               </div>
             ) : (
               <>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-airbnb-border-light">
+                    <thead className="bg-airbnb-gray-light">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider min-h-[44px]">
                           Date
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider min-h-[44px]">
                           From
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider min-h-[44px]">
                           Subject
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider min-h-[44px]">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider min-h-[44px]">
                           Account
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider min-h-[44px]">
                           Remarks
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-airbnb-text-secondary uppercase tracking-wider sticky right-0 bg-airbnb-gray-light min-h-[44px]">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-airbnb-white divide-y divide-airbnb-border-light">
                       {emails.map((email) => (
-                        <tr key={email.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <tr key={email.id} className="hover:bg-airbnb-gray-hover transition-colors">
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
                             {formatDateTime(email.internal_date)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
                             <div className="truncate max-w-xs" title={email.from_address || 'N/A'}>
                               {email.from_address || 'N/A'}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-4 sm:px-6 py-4 text-sm text-airbnb-text-primary">
                             <div className="truncate max-w-md" title={email.subject || 'No Subject'}>
                               {email.subject || 'No Subject'}
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                             {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && email.fb_extracted_transactions && email.fb_extracted_transactions.length > 0 ? (
                               <button
                                 onClick={() => {
@@ -906,7 +906,7 @@ const EmailsPage: NextPage = () => {
                                   navigator.clipboard.writeText(txnId);
                                   alert(`Transaction ID copied: ${txnId}`);
                                 }}
-                                className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(email.status)}`}
+                                className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 transition-opacity min-h-[32px] min-w-[32px] ${getStatusColor(email.status)}`}
                                 title="Click to copy transaction ID"
                               >
                                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -915,7 +915,7 @@ const EmailsPage: NextPage = () => {
                                 {email.status}
                               </button>
                             ) : (
-                              <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(email.status)}`}>
+                              <span className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full min-h-[32px] ${getStatusColor(email.status)}`}>
                                 {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && (
                                   <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -925,24 +925,24 @@ const EmailsPage: NextPage = () => {
                               </span>
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-airbnb-text-primary">
                             <div className="truncate max-w-xs" title={email.email_address}>
                               {email.email_address}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-4 sm:px-6 py-4 text-sm text-airbnb-text-primary">
                             <div className="truncate max-w-xs" title={email.remarks || 'No remarks'}>
                               {email.remarks || '-'}
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-white">
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-airbnb-white">
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={() => openEmailDrawer(email)}
-                                className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                                className="text-airbnb-teal hover:text-airbnb-teal-dark transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 title="View Details"
                               >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
@@ -954,18 +954,18 @@ const EmailsPage: NextPage = () => {
                                   disabled={processingEmails.has(email.id)}
                                   className={`${
                                     processingEmails.has(email.id)
-                                      ? 'text-blue-500 cursor-not-allowed'
-                                      : 'text-green-600 hover:text-green-900'
-                                  } transition-colors duration-200`}
+                                      ? 'text-airbnb-text-tertiary cursor-not-allowed'
+                                      : 'text-airbnb-success hover:text-airbnb-teal-dark'
+                                  } transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center`}
                                   title={processingEmails.has(email.id) ? "Processing..." : "Process Email with AI"}
                                 >
                                   {processingEmails.has(email.id) ? (
-                                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                   ) : (
-                                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
@@ -976,7 +976,7 @@ const EmailsPage: NextPage = () => {
                               {(email.status !== 'REJECT') && (
                                 <button
                                   onClick={() => handleRejectEmail(email)}
-                                  className="text-red-600 hover:text-red-900"
+                                  className="text-airbnb-error hover:text-opacity-80 min-h-[44px] min-w-[44px] flex items-center justify-center"
                                   title="Reject Email"
                                 >
                                   ❌
@@ -986,7 +986,7 @@ const EmailsPage: NextPage = () => {
                               {(email.status === 'REJECT') && (
                                 <button
                                   onClick={() => openStatusModal(email)}
-                                  className="text-blue-600 hover:text-blue-900"
+                                  className="text-airbnb-teal hover:text-airbnb-teal-dark min-h-[44px] min-w-[44px] flex items-center justify-center"
                                   title="Unreject Email"
                                 >
                                   🔄
@@ -1001,8 +1001,8 @@ const EmailsPage: NextPage = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
+                <div className="px-4 sm:px-6 py-4 border-t border-airbnb-border-light flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-sm text-airbnb-text-secondary">
                     Showing {((pagination.page - 1) * pagination.pageSize) + 1} to{' '}
                     {Math.min(pagination.page * pagination.pageSize, pagination.total)} of{' '}
                     {pagination.total} results
@@ -1012,19 +1012,19 @@ const EmailsPage: NextPage = () => {
                     <button
                       onClick={() => handlePageChange(pagination.page - 1)}
                       disabled={!pagination.hasPrev}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
+                      className="px-4 py-2 border border-airbnb-border-light rounded-airbnb-md text-sm text-airbnb-text-primary hover:bg-airbnb-gray-hover disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] transition-colors"
                     >
                       Previous
                     </button>
                     
-                    <span className="px-3 py-1 text-sm">
+                    <span className="px-4 py-2 text-sm text-airbnb-text-primary flex items-center min-h-[44px]">
                       Page {pagination.page} of {pagination.totalPages}
                     </span>
                     
                     <button
                       onClick={() => handlePageChange(pagination.page + 1)}
                       disabled={!pagination.hasNext}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
+                      className="px-4 py-2 border border-airbnb-border-light rounded-airbnb-md text-sm text-airbnb-text-primary hover:bg-airbnb-gray-hover disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] transition-colors"
                     >
                       Next
                     </button>
@@ -1039,13 +1039,13 @@ const EmailsPage: NextPage = () => {
         {showDrawer && selectedEmail && (
           <div className="fixed inset-0 z-50 overflow-hidden">
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={closeEmailDrawer}></div>
-            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-xl">
+            <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-airbnb-white shadow-airbnb-xl">
               <div className="flex flex-col h-full">
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                  <h2 className="text-lg font-medium text-gray-900">Email Details</h2>
+                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light flex items-center justify-between min-h-[60px]">
+                  <h2 className="text-lg font-medium text-airbnb-text-primary">Email Details</h2>
                   <button
                     onClick={closeEmailDrawer}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-airbnb-text-tertiary hover:text-airbnb-text-primary min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
                   >
                     <span className="sr-only">Close</span>
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1054,27 +1054,27 @@ const EmailsPage: NextPage = () => {
                   </button>
                 </div>
                 
-                <div className="flex-1 overflow-y-auto p-6">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Basic Information</h3>
+                      <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Basic Information</h3>
                       <dl className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Message ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedEmail.message_id}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Message ID</dt>
+                          <dd className="text-sm text-airbnb-text-primary font-mono break-all">{selectedEmail.message_id}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Thread ID</dt>
-                          <dd className="text-sm text-gray-900 font-mono">{selectedEmail.thread_id}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Thread ID</dt>
+                          <dd className="text-sm text-airbnb-text-primary font-mono break-all">{selectedEmail.thread_id}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Internal Date</dt>
-                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.internal_date)}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Internal Date</dt>
+                          <dd className="text-sm text-airbnb-text-primary">{formatDateTime(selectedEmail.internal_date)}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Status</dt>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Status</dt>
                           <dd>
-                            <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedEmail.status)}`}>
+                            <span className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full ${getStatusColor(selectedEmail.status)}`}>
                               {(selectedEmail.status === 'Processed' || (selectedEmail.status as string) === 'PROCESSED') && (
                                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -1088,56 +1088,56 @@ const EmailsPage: NextPage = () => {
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Email Headers</h3>
+                      <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Email Headers</h3>
                       <dl className="space-y-3">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">From</dt>
-                          <dd className="text-sm text-gray-900">{selectedEmail.from_address || 'N/A'}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">From</dt>
+                          <dd className="text-sm text-airbnb-text-primary break-all">{selectedEmail.from_address || 'N/A'}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">To</dt>
-                          <dd className="text-sm text-gray-900">
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">To</dt>
+                          <dd className="text-sm text-airbnb-text-primary break-all">
                             {selectedEmail.to_addresses?.join(', ') || 'N/A'}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Subject</dt>
-                          <dd className="text-sm text-gray-900">{selectedEmail.subject || 'No Subject'}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Subject</dt>
+                          <dd className="text-sm text-airbnb-text-primary">{selectedEmail.subject || 'No Subject'}</dd>
                         </div>
                       </dl>
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Snippet</h3>
-                      <div className="bg-gray-50 rounded p-3 text-sm text-gray-700">
+                      <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Snippet</h3>
+                      <div className="bg-airbnb-gray-light rounded-airbnb-md p-3 text-sm text-airbnb-text-primary">
                         {selectedEmail.snippet || 'No snippet available'}
                       </div>
                     </div>
                     
                     {selectedEmail.error_reason && (
                       <div>
-                        <h3 className="text-sm font-medium text-gray-900 mb-2">Error Reason</h3>
-                        <div className="bg-red-50 border border-red-200 rounded p-3 text-sm text-red-700">
+                        <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Error Reason</h3>
+                        <div className="bg-red-50 border border-red-200 rounded-airbnb-md p-3 text-sm text-red-700">
                           {selectedEmail.error_reason}
                         </div>
                       </div>
                     )}
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900 mb-2">Timestamps</h3>
+                      <h3 className="text-sm font-medium text-airbnb-text-primary mb-2">Timestamps</h3>
                       <dl className="space-y-2">
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.created_at)}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Created At</dt>
+                          <dd className="text-sm text-airbnb-text-primary">{formatDateTime(selectedEmail.created_at)}</dd>
                         </div>
                         <div>
-                          <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                          <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.updated_at)}</dd>
+                          <dt className="text-sm font-medium text-airbnb-text-secondary">Updated At</dt>
+                          <dd className="text-sm text-airbnb-text-primary">{formatDateTime(selectedEmail.updated_at)}</dd>
                         </div>
                         {selectedEmail.processed_at && (
                           <div>
-                            <dt className="text-sm font-medium text-gray-500">Processed At</dt>
-                            <dd className="text-sm text-gray-900">{formatDateTime(selectedEmail.processed_at)}</dd>
+                            <dt className="text-sm font-medium text-airbnb-text-secondary">Processed At</dt>
+                            <dd className="text-sm text-airbnb-text-primary">{formatDateTime(selectedEmail.processed_at)}</dd>
                           </div>
                         )}
                       </dl>
@@ -1145,7 +1145,7 @@ const EmailsPage: NextPage = () => {
                   </div>
                 </div>
                 
-                <div className="px-6 py-4 border-t border-gray-200 flex gap-3">
+                <div className="px-4 sm:px-6 py-4 border-t border-airbnb-border-light flex flex-wrap gap-3 min-h-[80px]">
                   {selectedEmail && (selectedEmail.status === 'Fetched' || (selectedEmail.status as string) === 'FETCHED') && (
                     <button
                       onClick={() => {
@@ -1153,7 +1153,7 @@ const EmailsPage: NextPage = () => {
                         closeEmailDrawer();
                       }}
                       disabled={processingEmails.has(selectedEmail.id)}
-                      className={`btn-primary ${
+                      className={`px-6 py-3 bg-airbnb-red text-airbnb-white font-medium rounded-airbnb-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:ring-offset-2 transition-all min-h-[44px] ${
                         processingEmails.has(selectedEmail.id)
                           ? 'opacity-50 cursor-not-allowed'
                           : ''
@@ -1184,7 +1184,7 @@ const EmailsPage: NextPage = () => {
                         handleRejectEmail(selectedEmail);
                         closeEmailDrawer();
                       }}
-                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                      className="px-6 py-3 bg-airbnb-error text-airbnb-white rounded-airbnb-md hover:bg-opacity-90 min-h-[44px] transition-colors"
                     >
                       Reject Email
                     </button>
@@ -1200,67 +1200,67 @@ const EmailsPage: NextPage = () => {
           <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex items-center justify-center min-h-screen px-4">
               <div className="fixed inset-0 bg-black bg-opacity-50" onClick={closeStatusModal}></div>
-              <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">
+              <div className="relative bg-airbnb-white rounded-airbnb-lg shadow-airbnb-xl max-w-md w-full">
+                <div className="px-4 sm:px-6 py-4 border-b border-airbnb-border-light min-h-[60px] flex items-center">
+                  <h3 className="text-lg font-medium text-airbnb-text-primary">
                     {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}
                   </h3>
                 </div>
 
-                <div className="px-6 py-4 space-y-4">
+                <div className="px-4 sm:px-6 py-4 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                       Email Subject
                     </label>
-                    <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                    <p className="text-sm text-airbnb-text-secondary bg-airbnb-gray-light p-3 rounded-airbnb-md">
                       {statusModalEmail.subject || 'No Subject'}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                       Action
                     </label>
                     <select
                       value={newStatus}
                       onChange={(e) => setNewStatus(e.target.value as 'REJECT' | 'UNREJECT')}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-airbnb-border-light rounded-airbnb-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red min-h-[44px] cursor-pointer"
                     >
                       <option value="REJECT">Reject Email</option>
                       <option value="UNREJECT">Unreject Email</option>
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-airbnb-text-tertiary mt-1">
                       Note: Status is now automatically derived. Use the Process button (⚙️) to process emails with AI.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-airbnb-text-primary mb-2">
                       {newStatus === 'UNREJECT' ? 'Unreject Reason' : 'Rejection Reason'}
                     </label>
                     <textarea
                       value={statusRemarks}
                       onChange={(e) => setStatusRemarks(e.target.value)}
                       rows={3}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-airbnb-border-light rounded-airbnb-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-airbnb-red focus:border-airbnb-red min-h-[100px]"
                       placeholder={newStatus === 'UNREJECT' ? 'Enter reason for unrejecting this email...' : 'Enter reason for rejecting this email...'}
                     />
                   </div>
                 </div>
 
-                <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <div className="px-4 sm:px-6 py-4 border-t border-airbnb-border-light flex flex-wrap justify-end gap-3 min-h-[80px]">
                   <button
                     onClick={closeStatusModal}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                    className="px-6 py-3 text-sm font-medium text-airbnb-text-primary bg-airbnb-gray-light hover:bg-airbnb-gray-hover rounded-airbnb-md min-h-[44px] transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleStatusUpdate}
-                    className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
+                    className={`px-6 py-3 text-sm font-medium text-airbnb-white rounded-airbnb-md min-h-[44px] transition-colors ${
                       newStatus === 'UNREJECT'
-                        ? 'bg-green-600 hover:bg-green-700'
-                        : 'bg-red-600 hover:bg-red-700'
+                        ? 'bg-airbnb-success hover:bg-opacity-90'
+                        : 'bg-airbnb-error hover:bg-opacity-90'
                     }`}
                   >
                     {newStatus === 'UNREJECT' ? 'Unreject Email' : 'Reject Email'}

@@ -57,10 +57,10 @@ const ForgotPasswordPage: NextPage = () => {
   // Show loading if checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f0a1a]/50 flex items-center justify-center">
+      <div className="min-h-screen bg-airbnb-gray-light/50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-[#cbd5e1]">Loading...</p>
+          <p className="text-airbnb-text-secondary">Loading...</p>
         </div>
       </div>
     );
@@ -78,28 +78,28 @@ const ForgotPasswordPage: NextPage = () => {
         <meta name="description" content="Reset your Finance Buddy password" />
       </Head>
 
-      <div className="min-h-screen bg-[#0f0a1a]/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-airbnb-gray-light/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-[#f8fafc] mb-2">Finance Buddy</h1>
-            <p className="text-[#cbd5e1] mb-8">Gmail Financial Email Automation</p>
+            <h1 className="text-3xl font-bold text-airbnb-text-primary mb-2">Finance Buddy</h1>
+            <p className="text-airbnb-text-secondary mb-8">Gmail Financial Email Automation</p>
           </div>
           
-          <div className="bg-[#1a1625] py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-airbnb-white py-8 px-4 shadow sm:rounded-airbnb-md sm:px-10">
             {!isSubmitted ? (
               <>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-[#f8fafc] text-center">
+                  <h2 className="text-2xl font-bold text-airbnb-text-primary text-center">
                     Forgot your password?
                   </h2>
-                  <p className="mt-2 text-center text-sm text-[#cbd5e1]">
+                  <p className="mt-2 text-center text-sm text-airbnb-text-secondary">
                     Enter your email address and we'll send you a link to reset your password.
                   </p>
                 </div>
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   {(formError || error) && (
-                    <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                    <div className="bg-red-50 border border-red-200 rounded-airbnb-md p-4">
                       <div className="text-sm text-red-700">
                         {formError || error}
                       </div>
@@ -107,7 +107,7 @@ const ForgotPasswordPage: NextPage = () => {
                   )}
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-[#cbd5e1]">
+                    <label htmlFor="email" className="block text-sm font-medium text-airbnb-text-secondary">
                       Email address
                     </label>
                     <div className="mt-1">
@@ -156,21 +156,21 @@ const ForgotPasswordPage: NextPage = () => {
               </>
             ) : (
               <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#10b981]/10 mb-4">
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-50 mb-4">
                   <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 
-                <h2 className="text-2xl font-bold text-[#f8fafc] mb-4">
+                <h2 className="text-2xl font-bold text-airbnb-text-primary mb-4">
                   Check your email
                 </h2>
                 
-                <p className="text-[#cbd5e1] mb-6">
+                <p className="text-airbnb-text-secondary mb-6">
                   We've sent a password reset link to <strong>{email}</strong>
                 </p>
                 
-                <div className="bg-purple-50 border border-purple-200 rounded-md p-4 mb-6">
+                <div className="bg-purple-50 border border-purple-200 rounded-airbnb-md p-4 mb-6">
                   <div className="text-sm text-purple-700">
                     <p className="font-medium mb-2">Next steps:</p>
                     <ol className="list-decimal list-inside space-y-1">

@@ -255,11 +255,11 @@ export default function TransactionEditPage() {
       <ProtectedRoute>
         <Layout title="Error" description="Failed to load transaction">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <div className="bg-red-50 border border-red-200 rounded-airbnb-md p-6 text-center">
               <p className="text-red-800 font-medium">Error: {error || 'Transaction not found'}</p>
               <button
                 onClick={() => router.push('/transactions')}
-                className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                className="mt-4 px-4 py-2 bg-red-600 text-white rounded-airbnb-md hover:bg-red-700"
               >
                 Back to Transactions
               </button>
@@ -279,7 +279,7 @@ export default function TransactionEditPage() {
         {/* Toast Notifications */}
         {showSuccessToast && (
           <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
-            <div className="bg-[#4ECF9E] text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <div className="bg-[#4ECF9E] text-white px-6 py-3 rounded-airbnb-md shadow-lg flex items-center gap-3">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
@@ -290,7 +290,7 @@ export default function TransactionEditPage() {
 
         {showErrorToast && (
           <div className="fixed top-4 right-4 z-50 animate-fade-in-down">
-            <div className="bg-[#F45C63] text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <div className="bg-[#F45C63] text-white px-6 py-3 rounded-airbnb-md shadow-lg flex items-center gap-3">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -299,7 +299,7 @@ export default function TransactionEditPage() {
           </div>
         )}
 
-        <div className="min-h-screen bg-[#0A0B0D]">
+        <div className="min-h-screen bg-airbnb-gray-light">
           {/* Modern Header with Purple Gradient */}
           <div className="bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white px-4 sm:px-6 lg:px-8 py-6 sm:py-8 shadow-lg">
             <div className="max-w-7xl mx-auto">
@@ -307,7 +307,7 @@ export default function TransactionEditPage() {
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => router.push('/transactions')}
-                    className="p-2 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
+                    className="p-2 hover:bg-white/20 rounded-airbnb-md transition-colors flex-shrink-0"
                     aria-label="Back to transactions"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +329,7 @@ export default function TransactionEditPage() {
                   <button
                     onClick={handleReExtract}
                     disabled={reExtracting}
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm font-medium disabled:opacity-50"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-airbnb-md transition-colors text-sm font-medium disabled:opacity-50"
                     title="Re-extract with AI"
                   >
                     {reExtracting ? (
@@ -357,8 +357,8 @@ export default function TransactionEditPage() {
           {/* Main Content */}
           <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 pb-32 space-y-4 sm:space-y-6">
             {/* Transaction Details Card */}
-            <div className="bg-[#15161A] rounded-xl shadow-sm border border-[#2A2C35] p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-[#F0F1F5] mb-4 sm:mb-6 flex items-center">
+            <div className="bg-airbnb-white rounded-airbnb-lg shadow-sm border border-airbnb-border-light p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-airbnb-text-primary mb-4 sm:mb-6 flex items-center">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-[#5D5FEF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -368,11 +368,11 @@ export default function TransactionEditPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {/* 1. Amount with Currency Symbol - PRIMARY */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-[#B2B4C2] mb-1.5 sm:mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-airbnb-text-secondary mb-1.5 sm:mb-2">
                     Amount <span className="text-[#F45C63]">*</span>
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6F7280] font-medium">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-airbnb-text-tertiary font-medium">
                       {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : '₹'}
                     </span>
                     <input
@@ -380,7 +380,7 @@ export default function TransactionEditPage() {
                       step="0.01"
                       value={formData.amount || ''}
                       onChange={(e) => handleChange('amount', parseFloat(e.target.value))}
-                      className={`w-full pl-8 pr-4 py-2.5 sm:py-3 text-base bg-[#1E2026] border ${validationErrors.amount ? 'border-[#F45C63]' : 'border-[#2A2C35]'} rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
+                      className={`w-full pl-8 pr-4 py-2.5 sm:py-3 text-base bg-airbnb-white border ${validationErrors.amount ? 'border-[#F45C63]' : 'border-airbnb-border-light'} rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
                       placeholder="0.00"
                     />
                   </div>
@@ -396,13 +396,13 @@ export default function TransactionEditPage() {
 
                 {/* Currency */}
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Currency <span className="text-[#F45C63]">*</span>
                   </label>
                   <select
                     value={formData.currency || 'INR'}
                     onChange={(e) => handleChange('currency', e.target.value)}
-                    className={`w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border ${validationErrors.currency ? 'border-[#F45C63]' : 'border-[#2A2C35]'} rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
+                    className={`w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border ${validationErrors.currency ? 'border-[#F45C63]' : 'border-airbnb-border-light'} rounded-airbnb-lg text-airbnb-text-primary focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
                   >
                     <option value="INR">INR (₹)</option>
                     <option value="USD">USD ($)</option>
@@ -416,14 +416,14 @@ export default function TransactionEditPage() {
 
                 {/* 2. Category - CLASSIFICATION */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Category
-                    <span className="ml-2 text-xs text-[#6F7280]">(Helps organize your transactions)</span>
+                    <span className="ml-2 text-xs text-airbnb-text-tertiary">(Helps organize your transactions)</span>
                   </label>
                   <select
                     value={formData.category || ''}
                     onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] capitalize focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary capitalize focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                   >
                     <option value="">Select category</option>
                     {categories.map((cat) => (
@@ -436,14 +436,14 @@ export default function TransactionEditPage() {
 
                 {/* 3. Merchant Name */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Merchant Name <span className="text-[#F45C63]">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.merchant_name || ''}
                     onChange={(e) => handleChange('merchant_name', e.target.value)}
-                    className={`w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border ${validationErrors.merchant_name ? 'border-[#F45C63]' : 'border-[#2A2C35]'} rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
+                    className={`w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border ${validationErrors.merchant_name ? 'border-[#F45C63]' : 'border-airbnb-border-light'} rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
                     placeholder="Enter merchant name"
                   />
                   {validationErrors.merchant_name && (
@@ -453,42 +453,42 @@ export default function TransactionEditPage() {
 
                 {/* 4. Merchant Normalized */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Merchant (Normalized)
-                    <span className="ml-2 text-xs text-[#6F7280]">(Standardized merchant name)</span>
+                    <span className="ml-2 text-xs text-airbnb-text-tertiary">(Standardized merchant name)</span>
                   </label>
                   <input
                     type="text"
                     value={formData.merchant_normalized || ''}
                     onChange={(e) => handleChange('merchant_normalized', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                     placeholder="Normalized merchant name"
                   />
                 </div>
 
                 {/* 5. Account Details - INTEGRATED */}
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Account Hint
-                    <span className="ml-2 text-xs text-[#6F7280]">(e.g., Last 4 digits)</span>
+                    <span className="ml-2 text-xs text-airbnb-text-tertiary">(e.g., Last 4 digits)</span>
                   </label>
                   <input
                     type="text"
                     value={formData.account_hint || ''}
                     onChange={(e) => handleChange('account_hint', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                     placeholder="e.g., ****1234"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Account Type
                   </label>
                   <select
                     value={formData.account_type || ''}
                     onChange={(e) => handleChange('account_type', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                   >
                     <option value="">Select account type</option>
                     <option value="CREDIT_CARD">💳 Credit Card</option>
@@ -502,14 +502,14 @@ export default function TransactionEditPage() {
 
                 {/* 6. Type (Direction) */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Transaction Type
-                    <span className="ml-2 text-xs text-[#6F7280]">(Debit or Credit)</span>
+                    <span className="ml-2 text-xs text-airbnb-text-tertiary">(Debit or Credit)</span>
                   </label>
                   <select
                     value={formData.direction || ''}
                     onChange={(e) => handleChange('direction', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                   >
                     <option value="">Select type</option>
                     <option value="debit">💸 Debit (Expense)</option>
@@ -519,21 +519,21 @@ export default function TransactionEditPage() {
 
                 {/* 7. Keywords - IMPROVED */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2 flex items-center gap-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2 flex items-center gap-2">
                     <svg className="w-4 h-4 text-[#5D5FEF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                     <span>Keywords</span>
-                    <span className="text-xs text-[#6F7280] font-normal">(Add tags to help find this transaction later)</span>
+                    <span className="text-xs text-airbnb-text-tertiary font-normal">(Add tags to help find this transaction later)</span>
                   </label>
-                  <div className="bg-[#1E2026]/50 border border-[#2A2C35] rounded-xl p-3">
+                  <div className="bg-airbnb-white/50 border border-airbnb-border-light rounded-airbnb-lg p-3">
                     <InteractiveKeywordSelector
                       value={formData.ai_notes || ''}
                       onChange={(value) => handleChange('ai_notes', value)}
                       merchantName={formData.merchant_name || undefined}
                       transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
                     />
-                    <p className="mt-2 text-xs text-[#6F7280] flex items-center gap-1.5">
+                    <p className="mt-2 text-xs text-airbnb-text-tertiary flex items-center gap-1.5">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -544,14 +544,14 @@ export default function TransactionEditPage() {
 
                 {/* 8. Other Details - SECONDARY */}
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Transaction Date <span className="text-[#F45C63]">*</span>
                   </label>
                   <input
                     type="datetime-local"
                     value={formData.txn_time ? new Date(formData.txn_time).toISOString().slice(0, 16) : ''}
                     onChange={(e) => handleChange('txn_time', e.target.value)}
-                    className={`w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border ${validationErrors.txn_time ? 'border-[#F45C63]' : 'border-[#2A2C35]'} rounded-xl text-[#F0F1F5] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
+                    className={`w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border ${validationErrors.txn_time ? 'border-[#F45C63]' : 'border-airbnb-border-light'} rounded-airbnb-lg text-airbnb-text-primary focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all`}
                   />
                   {validationErrors.txn_time && (
                     <p className="mt-1 text-xs text-[#F45C63]">{validationErrors.txn_time}</p>
@@ -559,56 +559,56 @@ export default function TransactionEditPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Payment Method
-                    <span className="ml-2 text-xs text-[#6F7280]">(e.g., UPI, Card)</span>
+                    <span className="ml-2 text-xs text-airbnb-text-tertiary">(e.g., UPI, Card)</span>
                   </label>
                   <input
                     type="text"
                     value={formData.transaction_type || ''}
                     onChange={(e) => handleChange('transaction_type', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                     placeholder="e.g., UPI, Credit Card"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Reference ID
                   </label>
                   <input
                     type="text"
                     value={formData.reference_id || ''}
                     onChange={(e) => handleChange('reference_id', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                     placeholder="Transaction reference"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Location
                   </label>
                   <input
                     type="text"
                     value={formData.location || ''}
                     onChange={(e) => handleChange('location', e.target.value)}
-                    className="w-full px-4 py-2.5 sm:py-3 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
+                    className="w-full px-4 py-2.5 sm:py-3 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all"
                     placeholder="Transaction location"
                   />
                 </div>
 
                 {/* User Notes - Full Width */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-[#B2B4C2] mb-2">
+                  <label className="block text-sm font-medium text-airbnb-text-secondary mb-2">
                     Personal Notes
-                    <span className="ml-2 text-xs text-[#6F7280]">(Private notes for yourself)</span>
+                    <span className="ml-2 text-xs text-airbnb-text-tertiary">(Private notes for yourself)</span>
                   </label>
                   <textarea
                     value={formData.user_notes || ''}
                     onChange={(e) => handleChange('user_notes', e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-2.5 bg-[#1E2026] border border-[#2A2C35] rounded-xl text-[#F0F1F5] placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all resize-none"
+                    className="w-full px-4 py-2.5 bg-airbnb-white border border-airbnb-border-light rounded-airbnb-lg text-airbnb-text-primary placeholder-[#6F7280] focus:ring-2 focus:ring-[#5D5FEF] focus:border-[#5D5FEF] transition-all resize-none"
                     placeholder="Add your personal notes here..."
                   />
                 </div>
@@ -616,7 +616,7 @@ export default function TransactionEditPage() {
             </div>
 
             {/* Confidence & Status Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white rounded-airbnb-md shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
                 Confidence & Status
               </h2>
@@ -651,7 +651,7 @@ export default function TransactionEditPage() {
                   <select
                     value={formData.status || 'pending'}
                     onChange={(e) => handleChange('status', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-airbnb-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
@@ -668,7 +668,7 @@ export default function TransactionEditPage() {
                     type="text"
                     value={formData.extraction_version || ''}
                     onChange={(e) => handleChange('extraction_version', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-airbnb-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
                     placeholder="AI extraction version"
                   />
                 </div>
@@ -676,7 +676,7 @@ export default function TransactionEditPage() {
             </div>
 
             {/* Notes Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white rounded-airbnb-md shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
                 Notes
               </h2>
@@ -691,7 +691,7 @@ export default function TransactionEditPage() {
                     value={formData.ai_notes || ''}
                     onChange={(e) => handleChange('ai_notes', e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-airbnb-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
                     placeholder="AI-generated notes and observations"
                   />
                 </div>
@@ -705,7 +705,7 @@ export default function TransactionEditPage() {
                     value={formData.user_notes || ''}
                     onChange={(e) => handleChange('user_notes', e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-airbnb-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Add your own notes here..."
                   />
                 </div>
@@ -714,7 +714,7 @@ export default function TransactionEditPage() {
 
             {/* Email Body Card */}
             {email.email_fetched && (
-              <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="bg-white rounded-airbnb-md shadow-lg p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">
                   Related Email Body
                 </h2>
@@ -749,7 +749,7 @@ export default function TransactionEditPage() {
                   {/* Email Body */}
                   <div>
                     <p className="text-sm font-medium text-gray-700 mb-2">Email Content</p>
-                    <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
+                    <div className="bg-gray-50 rounded-airbnb-md p-4 max-h-96 overflow-y-auto">
                       <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
                         {email.email_fetched.plain_body || 'No email body available'}
                       </pre>
@@ -761,7 +761,7 @@ export default function TransactionEditPage() {
           </div>
 
           {/* Sticky Action Bar - Mobile Optimized with Safe Area */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#15161A]/95 backdrop-blur-md border-t border-[#2A2C35] shadow-[0_-8px_32px_rgba(0,0,0,0.4)] z-50 pb-safe">
+          <div className="fixed bottom-0 left-0 right-0 bg-airbnb-white/95 backdrop-blur-md border-t border-airbnb-border-light shadow-[0_-8px_32px_rgba(0,0,0,0.4)] z-50 pb-safe">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
               {/* Primary Actions - Prominent */}
               <div className="flex flex-col gap-3 mb-3">
@@ -769,7 +769,7 @@ export default function TransactionEditPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving || reExtracting}
-                  className="w-full min-h-[56px] px-6 py-4 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white rounded-xl hover:shadow-2xl hover:shadow-[#5D5FEF]/40 active:scale-[0.98] font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
+                  className="w-full min-h-[56px] px-6 py-4 bg-gradient-to-r from-[#5D5FEF] to-[#888BFF] text-white rounded-airbnb-lg hover:shadow-2xl hover:shadow-[#5D5FEF]/40 active:scale-[0.98] font-bold text-base disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
                 >
                   {saving ? (
                     <>
@@ -793,7 +793,7 @@ export default function TransactionEditPage() {
                 <button
                   onClick={handleReExtract}
                   disabled={reExtracting || saving}
-                  className="w-full min-h-[52px] px-6 py-3.5 bg-[#1E2026] text-[#F0F1F5] rounded-xl hover:bg-[#2A2C35] active:scale-[0.98] font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2.5 border border-[#2A2C35] hover:border-[#5D5FEF]/50"
+                  className="w-full min-h-[52px] px-6 py-3.5 bg-airbnb-white text-airbnb-text-primary rounded-airbnb-lg hover:bg-[#2A2C35] active:scale-[0.98] font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2.5 border border-airbnb-border-light hover:border-[#5D5FEF]/50"
                   title="Re-extract transaction data from email using AI"
                 >
                   {reExtracting ? (
@@ -818,7 +818,7 @@ export default function TransactionEditPage() {
               {/* Back Button - Tertiary Action */}
               <button
                 onClick={() => router.push('/transactions')}
-                className="w-full min-h-[44px] px-4 py-2.5 bg-transparent text-[#B2B4C2] rounded-lg hover:bg-[#1E2026] active:scale-[0.98] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
+                className="w-full min-h-[44px] px-4 py-2.5 bg-transparent text-airbnb-text-secondary rounded-airbnb-md hover:bg-airbnb-white active:scale-[0.98] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
