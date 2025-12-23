@@ -15,16 +15,12 @@ Finance Buddy is a comprehensive financial email management platform that connec
 - [Project Structure](#project-structure)
 - [Database Schema](#database-schema)
 - [API Endpoints](#api-endpoints)
-- [Features Deep Dive](#features-deep-dive)
-- [Setup & Installation](#setup--installation)
-- [Configuration](#configuration)
-- [Development](#development)
-- [Deployment](#deployment)
+- [Documentation](#documentation)
+- [Setup & Installation](./ONBOARDING.md)
+- [Deployment](./DEPLOYMENT.md)
 - [Security](#security)
-- [Performance](#performance)
 - [Testing](#testing)
 - [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -571,233 +567,22 @@ CREATE INDEX fb_notifications_user_read_idx ON fb_notifications(user_id, read, c
 
 ---
 
-## 🔌 API Endpoints
+---
 
-### Authentication
+## 🚀 Getting Started
 
-#### `POST /api/auth/session`
-Get current user session.
+To get started with Finance Buddy, please follow our [Onboarding & Setup Guide](./ONBOARDING.md).
 
-**Response:**
-```json
-{
-  "user": {
-    "id": "uuid",
-    "email": "user@example.com"
-  }
-}
-```
+## 🌍 Deployment
 
-### Gmail Integration
+For information on deploying Finance Buddy to production, see our [Deployment Guide](./DEPLOYMENT.md).
 
-#### `GET /api/gmail/connect`
-Initiate Gmail OAuth flow (PKCE).
+## 🛠️ Performance & Security
 
-**Query Params:**
-- None
+- **Security**: Detailed security documentation can be found in [SECURITY.md](./docs/SECURITY.md).
+- **Authentication**: Authentication implementation notes are in [AUTHENTICATION.md](./docs/AUTHENTICATION.md).
 
-**Response:**
-- Redirects to Google OAuth consent screen
-
-#### `GET /api/gmail/callback`
-Handle OAuth callback from Google.
-
-**Query Params:**
-- `code`: Authorization code
-- `state`: CSRF token
-
-**Response:**
-- Redirects to dashboard with connection established
-
-#### `GET /api/gmail/connections`
-List user's Gmail connections.
-
-**Response:**
-```json
-{
-  "connections": [
-    {
-      "id": "uuid",
-      "email_address": "user@gmail.com",
-      "last_sync_at": "2025-11-02T10:00:00Z",
-      "created_at": "2025-10-01T10:00:00Z"
-    }
-  ]
-}
-```
-
-#### `POST /api/gmail/disconnect`
-Disconnect a Gmail account.
-
-**Request:**
-```json
-{
-  "connection_id": "uuid",
-  "revoke": true
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Connection disconnected"
-}
-```
-
-#### `POST /api/gmail/manual-sync`
-Manually sync emails for a date range.
-
-**Request:**
-```json
-{
-  "connection_id": "uuid",
-  "date_from": "2024-01-01",
-  "date_to": "2024-01-31",
-  "senders": ["bank@example.com"],
-  "page": 1,
-  "pageSize": 50,
-  "sort": "asc"
-}
-```
-
-**Response:**
-```json
-{
-  "items": [...],
-  "nextPageToken": "page_2",
-  "stats": {
-    "probed": 50,
-    "fetched": 25,
-    "upserts": 25
-  }
-}
-```
-
-#### `POST /api/gmail/backfill`
-Create a backfill job for large date ranges.
-
-**Request:**
-```json
-{
-  "connection_id": "uuid",
-  "date_from": "2023-01-01",
-  "date_to": "2024-12-31"
-}
-```
-
-**Response:**
-```json
-{
-  "job_id": "uuid",
-  "status": "queued"
-}
-```
-
-### Email Management
-
-#### `POST /api/emails/search`
-Search emails with filters.
-
-**Request:**
-```json
-{
-  "date_from": "2024-01-01",
-  "date_to": "2024-12-31",
-  "sender": "bank@example.com",
-  "status": "processed",
-  "q": "transaction",
-  "page": 1,
-  "pageSize": 25,
-  "sort": "desc"
-}
-```
-
-**Response:**
-```json
-{
-  "items": [
-    {
-      "id": "uuid",
-      "from_address": "bank@example.com",
-      "subject": "Transaction Alert",
-      "internal_date": "2024-10-30T10:00:00Z",
-      "status": "processed"
-    }
-  ],
-  "total": 100,
-  "page": 1,
-  "pageSize": 25
-}
-```
-
-#### `GET /api/emails/[id]`
-Get email by ID.
-
-**Response:**
-```json
-{
-  "id": "uuid",
-  "from_address": "bank@example.com",
-  "subject": "Transaction Alert",
-  "plain_body": "Your account was debited...",
-  "headers": {...},
-  "status": "processed"
-}
-```
-
-#### `POST /api/emails/process`
-Process emails with AI extraction.
-
-**Request:**
-```json
-{
-  "email_ids": ["uuid1", "uuid2"],
-  "batch_size": 10
-}
-```
-
-**Response:**
-```json
-{
-  "processed": 2,
-  "success": 2,
-  "failed": 0,
-  "results": [...]
-}
-```
-
-### Transaction Management
-
-#### `POST /api/transactions/search`
-Search transactions with filters.
-
-**Request:**
-```json
-{
-  "date_from": "2024-01-01",
-  "date_to": "2024-12-31",
-  "direction": "debit",
-  "category": "Food",
-  "merchant": "Starbucks",
-  "min_amount": 10,
-  "max_amount": 100,
-  "review_state": "review",
-  "keywords": ["coffee", "breakfast"],
-  "page": 1,
-  "pageSize": 25,
-  "sort": "desc"
-}
-```
-
-**Response:**
-```json
-{
-  "items": [
-    {
-      "id": "uuid",
-      "txn_time": "2024-10-30T10:00:00Z",
-      "amount": 25.50,
+---
       "currency": "INR",
       "direction": "debit",
       "merchant_name": "Starbucks",
@@ -1826,14 +1611,19 @@ docs(readme): update setup instructions
 
 - **README.md**: This file (overview and setup)
 - **AGENTS.md**: AI agent development guidelines
-- **docs/Finance-Buddy-PRD-Tech.md**: Product requirements and technical design
-- **docs/Finance-Buddy-ADRs.md**: Architecture decision records
-- **docs/Finance-Buddy-DB-UI-Spec.md**: Database and UI specifications
-- **docs/AUTHENTICATION.md**: Authentication flow details
-- **docs/SECURITY.md**: Security best practices
-- **docs/AUTO_SYNC_*.md**: Auto-sync implementation docs
-- **docs/GMAIL_AUTO_SYNC_*.md**: Gmail auto-sync architecture
-- **openapi/finance-buddy-openapi.yaml**: OpenAPI specification
+### 📖 Documentation
+
+Consolidated documentation guides for features and technical setup:
+
+| Category | Documentation Guide |
+| :--- | :--- |
+| **Getting Started** | [Onboarding](./ONBOARDING.md), [Deployment](./DEPLOYMENT.md) |
+| **Core Features** | [Gmail Sync](./docs/GMAIL_SYNC.md), [Transaction Management](./docs/TRANSACTION_MANAGEMENT.md), [Notifications](./docs/NOTIFICATIONS.md) |
+| **Smart Systems** | [Smart Keywords](./docs/KEYWORDS.md), [AI Setup & Strategies](./docs/AI_SETUP.md) |
+| **Administration** | [Admin Dashboard](./docs/ADMIN_DASHBOARD.md), [Admin Management](./docs/ADMIN_MANAGEMENT.md), [Cron Management](./docs/CRON_MANAGEMENT.md) |
+| **Technical** | [Developer Tools](./docs/DEVELOPER_TOOLS.md), [Authentication](./docs/AUTHENTICATION.md), [Security](./docs/SECURITY.md) |
+| **Reference** | [ADRs](./docs/Finance-Buddy-ADRs.md), [PRD](./docs/Finance-Buddy-PRD-Tech.md), [Agents Guide](./AGENTS.md) |
+
 
 ### Additional Resources
 

@@ -103,15 +103,27 @@ The AI extracts these fields from emails:
 ## 🎛️ Configuration Options
 
 ### **Model Selection Strategies**
-- `hierarchy`: Try primary → secondary → tertiary
-- `load_balance`: Distribute across available models
-- `cost_optimize`: Use cheapest available model
-- `quality_first`: Use highest quality model
+The `AIModelManager` supports several strategies for selecting the active model:
 
-### **Rate Limiting**
-- Automatic rate limit detection
-- Fallback to secondary models on rate limits
-- Configurable retry delays and max attempts
+| Strategy | Behavior | Use Case |
+| :--- | :--- | :--- |
+| **`hierarchy`** (Default) | Tries models in a fixed order: GPT-4 → Claude 3 → GPT-3.5. | Stability & reliability. |
+| **`load_balance`** | Randomly selects an available model from the pool. | Avoiding rate limits on a single provider. |
+| **`cost_optimize`** | Prioritizes cheaper models (GPT-3.5, Claude Haiku) first. | High-volume batch processing. |
+| **`quality_first`** | Always attempts the most capable model (GPT-4) first. | Complex financial statements. |
+
+### **Supported Providers**
+- **OpenAI**: GPT-4, GPT-3.5 Turbo
+- **Anthropic**: Claude 3 (Opus, Sonnet, Haiku)
+- **Google**: Gemini Pro
+- **Perplexity**: Llama 3 (via Perplexity API)
+- **Mock AI**: Local mock system for testing.
+
+### **Retry & Error Handling**
+The system includes robust error handling to ensure high extraction rates:
+- **Exponential Backoff**: Automatic retries with increasing delays on `429` (Rate Limit) errors.
+- **Provider Switching**: If one provider (e.g., OpenAI) is down or failing, the manager automatically rolls over to the next configured provider in the hierarchy.
+- **Max Retries**: Configurable limit (default: 3) before marking an email as `Failed`.
 
 ### **Confidence Scoring**
 - AI-generated confidence scores (0.0 - 1.0)
