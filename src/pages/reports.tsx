@@ -2,6 +2,8 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   FilterChip,
   DateRangePicker,
@@ -158,121 +160,49 @@ const ReportsPage: NextPage = () => {
     <ProtectedRoute>
       <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
         <ReportStyles />
-        <div style={{
-          minHeight: 'calc(100vh - 72px)',
-          background: '#09090B',
-          padding: '32px 20px',
-        }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
+          <div className="max-w-[1200px] mx-auto">
             {/* Header */}
-            <div style={{ marginBottom: '32px' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingBottom: '20px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-              }}>
+            <div className="mb-8">
+              <div className="flex items-center justify-between pb-5 border-b border-border/50">
                 <div>
-                  <h1 style={{
-                    fontSize: '32px',
-                    fontWeight: '600',
-                    color: '#FAFAFA',
-                    marginBottom: '4px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                  <h1 className="text-3xl font-semibold text-foreground mb-1">
                     Reports & Analytics
                   </h1>
-                  <p style={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                  <p className="text-sm text-muted-foreground">
                     Insights and analytics for your financial data
                   </p>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
+                <div className="flex gap-2">
+                  <Button
                     onClick={() => exportReport('csv')}
-                    className="export-button"
-                    style={{
-                      padding: '10px 20px',
-                      background: 'transparent',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      fontFamily: 'Outfit, sans-serif',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                      e.currentTarget.style.background = 'transparent';
-                    }}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
                   >
                     Export CSV
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => exportReport('json')}
-                    className="export-button"
-                    style={{
-                      padding: '10px 20px',
-                      background: 'transparent',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      fontFamily: 'Outfit, sans-serif',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                      e.currentTarget.style.background = 'transparent';
-                    }}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
                   >
                     Export JSON
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => exportReport('pdf')}
-                    className="export-button"
-                    style={{
-                      padding: '10px 20px',
-                      background: '#6366F1',
-                      border: 'none',
-                      borderRadius: '10px',
-                      color: '#FAFAFA',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      fontFamily: 'Outfit, sans-serif',
-                      boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)',
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                    size="sm"
+                    className="text-xs shadow-[0_0_20px_rgba(99,102,241,0.3)]"
                   >
                     Export PDF
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
 
             {/* Filter Chips */}
-            <div style={{
-              display: 'flex',
-              gap: '8px',
-              marginBottom: '24px',
-              flexWrap: 'wrap',
-            }}>
+            <div className="flex gap-2 mb-6 flex-wrap">
               <FilterChip
                 label="All Time"
                 active={activeFilters.includes('all-time')}
@@ -302,7 +232,7 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Date Range Filter */}
-            <div style={{ marginBottom: '32px' }}>
+            <div className="mb-8">
               <DateRangePicker
                 from={dateRange.from}
                 to={dateRange.to}
@@ -313,12 +243,7 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Overview Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '20px',
-              marginBottom: '32px',
-            }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
               <ReportCard
                 icon="📧"
                 label="Total Emails"
@@ -350,26 +275,10 @@ const ReportsPage: NextPage = () => {
             </div>
 
             {/* Charts Section */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-              gap: '20px',
-              marginBottom: '32px',
-            }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
               {/* Email Status Distribution */}
-              <div className="chart-section" style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '14px',
-                padding: '24px',
-              }}>
-                <h3 style={{
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  color: '#FAFAFA',
-                  marginBottom: '24px',
-                  fontFamily: 'Outfit, sans-serif',
-                }}>
+              <Card className="bg-card/50 border-border/50 p-6">
+                <h3 className="text-[15px] font-semibold text-foreground mb-6">
                   Email Status Distribution
                 </h3>
                 <div>
@@ -388,22 +297,11 @@ const ReportsPage: NextPage = () => {
                     />
                   ))}
                 </div>
-              </div>
+              </Card>
 
               {/* Transaction Direction */}
-              <div className="chart-section" style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '14px',
-                padding: '24px',
-              }}>
-                <h3 style={{
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  color: '#FAFAFA',
-                  marginBottom: '24px',
-                  fontFamily: 'Outfit, sans-serif',
-                }}>
+              <Card className="bg-card/50 border-border/50 p-6">
+                <h3 className="text-[15px] font-semibold text-foreground mb-6">
                   Transaction Flow
                 </h3>
                 <div>
@@ -418,23 +316,11 @@ const ReportsPage: NextPage = () => {
                     />
                   ))}
                 </div>
-              </div>
+              </Card>
 
               {/* Transaction Categories */}
-              <div className="chart-section" style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '14px',
-                padding: '24px',
-                gridColumn: 'span 2',
-              }}>
-                <h3 style={{
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  color: '#FAFAFA',
-                  marginBottom: '24px',
-                  fontFamily: 'Outfit, sans-serif',
-                }}>
+              <Card className="bg-card/50 border-border/50 p-6 col-span-2">
+                <h3 className="text-[15px] font-semibold text-foreground mb-6">
                   Top Transaction Categories
                 </h3>
                 <div>
@@ -452,15 +338,11 @@ const ReportsPage: NextPage = () => {
                     );
                   })}
                 </div>
-              </div>
+              </Card>
             </div>
 
             {/* Data Tables */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
-              gap: '20px',
-            }}>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
               {/* Top Email Senders */}
               <div className="table-section">
                 <DataTable

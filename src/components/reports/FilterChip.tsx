@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface FilterChipProps {
   label: string;
@@ -18,47 +20,25 @@ export const FilterChip = memo(function FilterChip({
   color = '#6366F1',
 }: FilterChipProps) {
   return (
-    <div
+    <Badge
+      variant={active ? "default" : "outline"}
+      className={cn(
+        "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all cursor-pointer",
+        "hover:border-muted-foreground/20 hover:bg-muted/20",
+        active && "hover:opacity-90"
+      )}
       style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '6px 12px',
-        borderRadius: '10px',
-        border: `1px solid ${active ? color : 'rgba(255, 255, 255, 0.08)'}`,
-        background: active ? `${color}15` : 'transparent',
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'all 0.2s ease-out',
-        fontFamily: 'Outfit, sans-serif',
+        borderColor: active ? color : undefined,
+        backgroundColor: active ? `${color}15` : undefined,
+        color: active ? color : undefined,
       }}
       onClick={onClick}
-      onMouseEnter={(e) => {
-        if (onClick && !active) {
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (onClick && !active) {
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-          e.currentTarget.style.background = 'transparent';
-        }
-      }}
     >
-      <span style={{
-        fontSize: '12px',
-        fontWeight: active ? '600' : '500',
-        color: active ? color : 'rgba(255, 255, 255, 0.7)',
-      }}>
+      <span className={active ? "font-semibold" : "font-medium"}>
         {label}
       </span>
       {value !== undefined && (
-        <span style={{
-          fontSize: '12px',
-          fontWeight: '600',
-          color: active ? color : 'rgba(255, 255, 255, 0.5)',
-          fontFamily: 'JetBrains Mono, monospace',
-        }}>
+        <span className="font-semibold font-mono">
           {value}
         </span>
       )}
@@ -68,25 +48,7 @@ export const FilterChip = memo(function FilterChip({
             e.stopPropagation();
             onRemove();
           }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '16px',
-            height: '16px',
-            borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            transition: 'background 0.2s ease-out',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-          }}
+          className="ml-1 flex items-center justify-center w-4 h-4 rounded-full bg-muted-foreground/10 hover:bg-muted-foreground/20 transition-colors"
         >
           <svg
             width="10"
@@ -104,6 +66,6 @@ export const FilterChip = memo(function FilterChip({
           </svg>
         </button>
       )}
-    </div>
+    </Badge>
   );
 });

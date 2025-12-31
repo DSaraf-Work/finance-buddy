@@ -1,4 +1,14 @@
 import React, { memo } from 'react';
+import { Card } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
 interface Column {
   key: string;
@@ -24,127 +34,75 @@ export const DataTable = memo(function DataTable({
   hoverable = true,
 }: DataTableProps) {
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.03)',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      borderRadius: '14px',
-      padding: '24px',
-      overflow: 'hidden',
-    }}>
+    <Card className="bg-card/50 border-border/50 p-6 overflow-hidden">
       {title && (
-        <h3 style={{
-          fontSize: '15px',
-          fontWeight: '600',
-          color: '#FAFAFA',
-          marginBottom: '20px',
-          fontFamily: 'Outfit, sans-serif',
-        }}>
+        <h3 className="text-[15px] font-semibold text-foreground mb-5">
           {title}
         </h3>
       )}
 
-      <div style={{
-        overflowX: 'auto',
-        margin: '-24px',
-        marginTop: title ? '0' : '-24px',
-      }}>
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: '13px',
-          fontFamily: 'Outfit, sans-serif',
-        }}>
-          <thead>
-            <tr style={{
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-              background: 'rgba(255, 255, 255, 0.02)',
-            }}>
+      <div className="-m-6 mt-0">
+        <Table>
+          <TableHeader className="bg-muted/20">
+            <TableRow className="border-border/50 hover:bg-transparent">
               {columns.map((column) => (
-                <th
+                <TableHead
                   key={column.key}
-                  style={{
-                    padding: '12px 24px',
-                    textAlign: column.align || 'left',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                    whiteSpace: 'nowrap',
-                    width: column.width,
-                  }}
+                  className={cn(
+                    "text-[11px] font-semibold text-muted-foreground/50 uppercase tracking-wider px-6",
+                    column.align === 'center' && 'text-center',
+                    column.align === 'right' && 'text-right'
+                  )}
+                  style={{ width: column.width }}
                 >
                   {column.label}
-                </th>
+                </TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.map((row, rowIndex) => (
-              <tr
+              <TableRow
                 key={rowIndex}
-                style={{
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                  background: striped && rowIndex % 2 === 1
-                    ? 'rgba(255, 255, 255, 0.01)'
-                    : 'transparent',
-                  transition: hoverable ? 'background 0.2s ease-out' : 'none',
-                  cursor: hoverable ? 'pointer' : 'default',
-                }}
-                onMouseEnter={(e) => {
-                  if (hoverable) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (hoverable) {
-                    e.currentTarget.style.background = striped && rowIndex % 2 === 1
-                      ? 'rgba(255, 255, 255, 0.01)'
-                      : 'transparent';
-                  }
-                }}
+                className={cn(
+                  "border-border/25",
+                  striped && rowIndex % 2 === 1 && "bg-muted/5",
+                  hoverable && "cursor-pointer hover:bg-muted/30 transition-colors duration-200"
+                )}
               >
                 {columns.map((column) => (
-                  <td
+                  <TableCell
                     key={column.key}
-                    style={{
-                      padding: '16px 24px',
-                      textAlign: column.align || 'left',
-                      color: '#FAFAFA',
-                      fontSize: '13px',
-                      fontFamily: column.format || column.key.includes('amount') || column.key.includes('count')
-                        ? 'JetBrains Mono, monospace'
-                        : 'Outfit, sans-serif',
-                      whiteSpace: 'nowrap',
-                    }}
+                    className={cn(
+                      "text-foreground text-[13px] px-6 py-4",
+                      column.align === 'center' && 'text-center',
+                      column.align === 'right' && 'text-right',
+                      (column.format || column.key.includes('amount') || column.key.includes('count'))
+                        ? 'font-mono'
+                        : ''
+                    )}
                   >
                     {column.format
                       ? column.format(row[column.key])
                       : row[column.key]}
-                  </td>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))}
 
             {data.length === 0 && (
-              <tr>
-                <td
+              <TableRow>
+                <TableCell
                   colSpan={columns.length}
-                  style={{
-                    padding: '48px',
-                    textAlign: 'center',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontSize: '14px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}
+                  className="text-center py-12 text-muted-foreground text-sm"
                 >
                   No data available
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
-    </div>
+    </Card>
   );
 });

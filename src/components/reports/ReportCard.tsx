@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { Card } from '@/components/ui/card';
 
 interface ReportCardProps {
   icon: string;
@@ -19,97 +20,39 @@ export const ReportCard = memo(function ReportCard({
   trend,
 }: ReportCardProps) {
   return (
-    <div
-      className="report-card"
-      style={{
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '14px',
-        padding: '20px',
-        transition: 'all 0.3s ease-out',
-        cursor: 'pointer',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-        e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-        <div style={{
-          width: '44px',
-          height: '44px',
-          background: iconBg,
-          borderRadius: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
-          flexShrink: 0,
-        }}>
+    <Card className="report-card p-5 cursor-pointer transition-all duration-300 bg-card/50 border-border/50 hover:-translate-y-0.5 hover:border-muted-foreground/20 hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+      <div className="flex items-start gap-4">
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+          style={{ background: iconBg }}
+        >
           {icon}
         </div>
 
-        <div style={{ flex: 1 }}>
-          <div style={{
-            fontSize: '11px',
-            fontWeight: '500',
-            color: 'rgba(255, 255, 255, 0.5)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginBottom: '4px',
-            fontFamily: 'Outfit, sans-serif',
-          }}>
+        <div className="flex-1">
+          <div className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1">
             {label}
           </div>
 
-          <div style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            color: '#FAFAFA',
-            fontFamily: 'JetBrains Mono, monospace',
-            lineHeight: '1',
-          }}>
+          <div className="text-2xl font-semibold text-foreground font-mono leading-none">
             {typeof value === 'number' ? value.toLocaleString('en-IN') : value}
           </div>
 
           {trend && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              marginTop: '8px',
-            }}>
-              <span style={{
-                fontSize: '10px',
-                color: trend.isPositive ? '#22C55E' : '#F87171',
-              }}>
+            <div className="flex items-center gap-1 mt-2">
+              <span className={`text-[10px] ${trend.isPositive ? 'text-success' : 'text-destructive'}`}>
                 {trend.isPositive ? '↑' : '↓'}
               </span>
-              <span style={{
-                fontSize: '11px',
-                fontWeight: '500',
-                color: trend.isPositive ? '#22C55E' : '#F87171',
-                fontFamily: 'JetBrains Mono, monospace',
-              }}>
+              <span className={`text-[11px] font-medium font-mono ${trend.isPositive ? 'text-success' : 'text-destructive'}`}>
                 {Math.abs(trend.value)}%
               </span>
-              <span style={{
-                fontSize: '11px',
-                color: 'rgba(255, 255, 255, 0.35)',
-                fontFamily: 'Outfit, sans-serif',
-              }}>
+              <span className="text-[11px] text-muted-foreground/35">
                 vs last period
               </span>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 });
