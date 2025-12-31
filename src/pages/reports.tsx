@@ -2,7 +2,15 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
-import LoadingScreen from '@/components/LoadingScreen';
+import {
+  FilterChip,
+  DateRangePicker,
+  ProgressBar,
+  ReportCard,
+  DataTable,
+  ReportLoadingSkeleton,
+  ReportStyles,
+} from '@/components/reports';
 
 interface ReportData {
   emailStats: {
@@ -29,11 +37,12 @@ interface ReportData {
 
 const ReportsPage: NextPage = () => {
   const [reportData, setReportData] = useState<ReportData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
-    from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days ago
-    to: new Date().toISOString().split('T')[0], // today
+    from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    to: new Date().toISOString().split('T')[0],
   });
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   useEffect(() => {
     loadReportData();
@@ -42,9 +51,7 @@ const ReportsPage: NextPage = () => {
   const loadReportData = async () => {
     setLoading(true);
     try {
-      // In a real implementation, this would call actual analytics APIs
-      // For now, we'll simulate the data
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       const mockData: ReportData = {
         emailStats: {
@@ -66,26 +73,28 @@ const ReportsPage: NextPage = () => {
             { sender: 'alerts@creditcard.com', count: 134 },
             { sender: 'statements@investment.com', count: 98 },
             { sender: 'notifications@paypal.com', count: 87 },
+            { sender: 'transactions@stripe.com', count: 76 },
           ],
         },
         transactionStats: {
           totalTransactions: 456,
-          totalAmount: 45678.90,
+          totalAmount: 4567890,
           transactionsByDirection: [
-            { direction: 'debit', count: 298, amount: 32456.78 },
-            { direction: 'credit', count: 158, amount: 13222.12 },
+            { direction: 'Debit', count: 298, amount: 3245678 },
+            { direction: 'Credit', count: 158, amount: 1322212 },
           ],
           transactionsByCategory: [
-            { category: 'Groceries', count: 89, amount: 2345.67 },
-            { category: 'Gas', count: 67, amount: 1876.54 },
-            { category: 'Restaurants', count: 54, amount: 1234.56 },
-            { category: 'Shopping', count: 43, amount: 987.65 },
+            { category: 'Food & Dining', count: 89, amount: 234567 },
+            { category: 'Transport', count: 67, amount: 187654 },
+            { category: 'Shopping', count: 54, amount: 456789 },
+            { category: 'Utilities', count: 43, amount: 98765 },
+            { category: 'Entertainment', count: 38, amount: 65432 },
           ],
           transactionsByMonth: [
-            { month: '2024-01', count: 89, amount: 8765.43 },
-            { month: '2024-02', count: 123, amount: 12345.67 },
-            { month: '2024-03', count: 134, amount: 15432.10 },
-            { month: '2024-04', count: 110, amount: 9135.70 },
+            { month: '2024-01', count: 89, amount: 876543 },
+            { month: '2024-02', count: 123, amount: 1234567 },
+            { month: '2024-03', count: 134, amount: 1543210 },
+            { month: '2024-04', count: 110, amount: 913570 },
           ],
         },
         syncStats: {
@@ -106,26 +115,40 @@ const ReportsPage: NextPage = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
+    if (amount >= 10000000) {
+      return `₹${(amount / 10000000).toFixed(2)} Cr`;
+    } else if (amount >= 100000) {
+      return `₹${(amount / 100000).toFixed(2)} L`;
+    }
+    return `₹${amount.toLocaleString('en-IN')}`;
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   };
 
   const exportReport = (format: 'csv' | 'json' | 'pdf') => {
-    // In a real implementation, this would generate and download the report
     alert(`Exporting report as ${format.toUpperCase()}... (This is a demo)`);
+  };
+
+  const toggleFilter = (filter: string) => {
+    setActiveFilters(prev =>
+      prev.includes(filter)
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
   };
 
   if (loading || !reportData) {
     return (
       <ProtectedRoute>
         <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
-          <LoadingScreen message="Loading reports..." fullScreen={false} />
+          <ReportStyles />
+          <ReportLoadingSkeleton />
         </Layout>
       </ProtectedRoute>
     );
@@ -134,33 +157,108 @@ const ReportsPage: NextPage = () => {
   return (
     <ProtectedRoute>
       <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
-        <div className="py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ReportStyles />
+        <div style={{
+          minHeight: 'calc(100vh - 72px)',
+          background: '#09090B',
+          padding: '32px 20px',
+        }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingBottom: '20px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              }}>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#f8fafc]">Reports & Analytics</h1>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Insights and analytics for your financial email data
+                  <h1 style={{
+                    fontSize: '32px',
+                    fontWeight: '600',
+                    color: '#FAFAFA',
+                    marginBottom: '4px',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    Reports & Analytics
+                  </h1>
+                  <p style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    Insights and analytics for your financial data
                   </p>
                 </div>
-                <div className="flex space-x-2">
+                <div style={{ display: 'flex', gap: '8px' }}>
                   <button
                     onClick={() => exportReport('csv')}
-                    className="btn-secondary"
+                    className="export-button"
+                    style={{
+                      padding: '10px 20px',
+                      background: 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      fontFamily: 'Outfit, sans-serif',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.background = 'transparent';
+                    }}
                   >
                     Export CSV
                   </button>
                   <button
                     onClick={() => exportReport('json')}
-                    className="btn-secondary"
+                    className="export-button"
+                    style={{
+                      padding: '10px 20px',
+                      background: 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      fontFamily: 'Outfit, sans-serif',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.background = 'transparent';
+                    }}
                   >
                     Export JSON
                   </button>
                   <button
                     onClick={() => exportReport('pdf')}
-                    className="btn-primary"
+                    className="export-button"
+                    style={{
+                      padding: '10px 20px',
+                      background: '#6366F1',
+                      border: 'none',
+                      borderRadius: '10px',
+                      color: '#FAFAFA',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      fontFamily: 'Outfit, sans-serif',
+                      boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                   >
                     Export PDF
                   </button>
@@ -168,242 +266,250 @@ const ReportsPage: NextPage = () => {
               </div>
             </div>
 
+            {/* Filter Chips */}
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              marginBottom: '24px',
+              flexWrap: 'wrap',
+            }}>
+              <FilterChip
+                label="All Time"
+                active={activeFilters.includes('all-time')}
+                onClick={() => toggleFilter('all-time')}
+              />
+              <FilterChip
+                label="Processed"
+                value={reportData.emailStats.emailsByStatus[0].count}
+                active={activeFilters.includes('processed')}
+                onClick={() => toggleFilter('processed')}
+                color="#22C55E"
+              />
+              <FilterChip
+                label="Failed"
+                value={reportData.emailStats.emailsByStatus[2].count}
+                active={activeFilters.includes('failed')}
+                onClick={() => toggleFilter('failed')}
+                color="#F87171"
+              />
+              <FilterChip
+                label="Sync Rate"
+                value={`${Math.round((reportData.syncStats.successfulSyncs / reportData.syncStats.totalSyncs) * 100)}%`}
+                active={activeFilters.includes('sync-rate')}
+                onClick={() => toggleFilter('sync-rate')}
+                color="#4285F4"
+              />
+            </div>
+
             {/* Date Range Filter */}
-            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6 mb-8">
-              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Date Range</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">From Date</label>
-                  <input
-                    type="date"
-                    value={dateRange.from}
-                    onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-                    className="input-field"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cbd5e1] mb-1">To Date</label>
-                  <input
-                    type="date"
-                    value={dateRange.to}
-                    onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-                    className="input-field"
-                  />
-                </div>
-                <div className="flex items-end">
-                  <button
-                    onClick={loadReportData}
-                    className="btn-primary w-full"
-                  >
-                    Update Report
-                  </button>
-                </div>
-              </div>
+            <div style={{ marginBottom: '32px' }}>
+              <DateRangePicker
+                from={dateRange.from}
+                to={dateRange.to}
+                onFromChange={(date) => setDateRange(prev => ({ ...prev, from: date }))}
+                onToChange={(date) => setDateRange(prev => ({ ...prev, to: date }))}
+                onApply={loadReportData}
+              />
             </div>
 
             {/* Overview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <span className="text-2xl">📧</span>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Total Emails</dt>
-                        <dd className="text-lg font-medium text-[#f8fafc]">
-                          {reportData.emailStats.totalEmails.toLocaleString()}
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <span className="text-2xl">💰</span>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Total Transactions</dt>
-                        <dd className="text-lg font-medium text-[#f8fafc]">
-                          {reportData.transactionStats.totalTransactions.toLocaleString()}
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <span className="text-2xl">💵</span>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Total Amount</dt>
-                        <dd className="text-lg font-medium text-[#f8fafc]">
-                          {formatCurrency(reportData.transactionStats.totalAmount)}
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-[#1a1625] overflow-hidden shadow rounded-[var(--radius-md)]">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <span className="text-2xl">🔄</span>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Sync Success Rate</dt>
-                        <dd className="text-lg font-medium text-[#f8fafc]">
-                          {Math.round((reportData.syncStats.successfulSyncs / reportData.syncStats.totalSyncs) * 100)}%
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '20px',
+              marginBottom: '32px',
+            }}>
+              <ReportCard
+                icon="📧"
+                label="Total Emails"
+                value={reportData.emailStats.totalEmails}
+                iconBg="rgba(99, 102, 241, 0.12)"
+                trend={{ value: 12, isPositive: true }}
+              />
+              <ReportCard
+                icon="💳"
+                label="Transactions"
+                value={reportData.transactionStats.totalTransactions}
+                iconBg="rgba(34, 197, 94, 0.12)"
+                trend={{ value: 8, isPositive: true }}
+              />
+              <ReportCard
+                icon="💰"
+                label="Total Amount"
+                value={formatCurrency(reportData.transactionStats.totalAmount)}
+                iconBg="rgba(245, 158, 11, 0.12)"
+                trend={{ value: 15, isPositive: true }}
+              />
+              <ReportCard
+                icon="🔄"
+                label="Sync Success"
+                value={`${Math.round((reportData.syncStats.successfulSyncs / reportData.syncStats.totalSyncs) * 100)}%`}
+                iconBg="rgba(66, 133, 244, 0.12)"
+                trend={{ value: 2, isPositive: true }}
+              />
             </div>
 
-            {/* Charts and Tables */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Charts Section */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+              gap: '20px',
+              marginBottom: '32px',
+            }}>
               {/* Email Status Distribution */}
-              <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6">
-                <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Email Status Distribution</h3>
-                <div className="space-y-3">
+              <div className="chart-section" style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '24px',
+              }}>
+                <h3 style={{
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  color: '#FAFAFA',
+                  marginBottom: '24px',
+                  fontFamily: 'Outfit, sans-serif',
+                }}>
+                  Email Status Distribution
+                </h3>
+                <div>
                   {reportData.emailStats.emailsByStatus.map((item) => (
-                    <div key={item.status} className="flex items-center justify-between">
-                      <span className="text-sm text-[#cbd5e1]">{item.status}</span>
-                      <div className="flex items-center">
-                        <div className="w-32 bg-gray-200 rounded-full h-2 mr-3">
-                          <div
-                            className="bg-[#6b4ce6] h-2 rounded-full"
-                            style={{
-                              width: `${(item.count / reportData.emailStats.totalEmails) * 100}%`
-                            }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium text-[#f8fafc]">{item.count}</span>
-                      </div>
-                    </div>
+                    <ProgressBar
+                      key={item.status}
+                      label={item.status}
+                      value={item.count}
+                      total={reportData.emailStats.totalEmails}
+                      color={
+                        item.status === 'Processed' ? '#22C55E' :
+                        item.status === 'Failed' ? '#F87171' :
+                        item.status === 'Fetched' ? '#4285F4' :
+                        '#F59E0B'
+                      }
+                    />
                   ))}
                 </div>
               </div>
 
               {/* Transaction Direction */}
-              <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6">
-                <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Transaction Direction</h3>
-                <div className="space-y-3">
+              <div className="chart-section" style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '24px',
+              }}>
+                <h3 style={{
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  color: '#FAFAFA',
+                  marginBottom: '24px',
+                  fontFamily: 'Outfit, sans-serif',
+                }}>
+                  Transaction Flow
+                </h3>
+                <div>
                   {reportData.transactionStats.transactionsByDirection.map((item) => (
-                    <div key={item.direction} className="flex items-center justify-between">
-                      <span className="text-sm text-[#cbd5e1] capitalize">{item.direction}</span>
-                      <div className="flex items-center">
-                        <div className="w-32 bg-gray-200 rounded-full h-2 mr-3">
-                          <div
-                            className={`h-2 rounded-full ${item.direction === 'debit' ? 'bg-red-600' : 'bg-green-600'}`}
-                            style={{
-                              width: `${(item.count / reportData.transactionStats.totalTransactions) * 100}%`
-                            }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium text-[#f8fafc]">
-                          {item.count} ({formatCurrency(item.amount)})
-                        </span>
-                      </div>
-                    </div>
+                    <ProgressBar
+                      key={item.direction}
+                      label={item.direction}
+                      value={item.count}
+                      total={reportData.transactionStats.totalTransactions}
+                      color={item.direction === 'Debit' ? '#F87171' : '#22C55E'}
+                      suffix={formatCurrency(item.amount)}
+                    />
                   ))}
+                </div>
+              </div>
+
+              {/* Transaction Categories */}
+              <div className="chart-section" style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '24px',
+                gridColumn: 'span 2',
+              }}>
+                <h3 style={{
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  color: '#FAFAFA',
+                  marginBottom: '24px',
+                  fontFamily: 'Outfit, sans-serif',
+                }}>
+                  Top Transaction Categories
+                </h3>
+                <div>
+                  {reportData.transactionStats.transactionsByCategory.map((item, index) => {
+                    const colors = ['#6366F1', '#22C55E', '#F59E0B', '#4285F4', '#8B5CF6'];
+                    return (
+                      <ProgressBar
+                        key={item.category}
+                        label={item.category}
+                        value={item.amount}
+                        total={reportData.transactionStats.totalAmount}
+                        color={colors[index % colors.length]}
+                        suffix={`${item.count} txns`}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            {/* Top Senders */}
-            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6 mb-8">
-              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Email Senders</h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Sender
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email Count
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Percentage
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
-                    {reportData.emailStats.topSenders.map((sender, index) => (
-                      <tr key={sender.sender}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {sender.sender}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {sender.count}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {Math.round((sender.count / reportData.emailStats.totalEmails) * 100)}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {/* Data Tables */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
+              gap: '20px',
+            }}>
+              {/* Top Email Senders */}
+              <div className="table-section">
+                <DataTable
+                  title="Top Email Senders"
+                  columns={[
+                    { key: 'sender', label: 'Sender', align: 'left' },
+                    { key: 'count', label: 'Count', align: 'right' },
+                    {
+                      key: 'percentage',
+                      label: 'Share',
+                      align: 'right',
+                      format: (value: number) => `${value}%`,
+                    },
+                  ]}
+                  data={reportData.emailStats.topSenders.map((sender) => ({
+                    sender: sender.sender,
+                    count: sender.count,
+                    percentage: Math.round((sender.count / reportData.emailStats.totalEmails) * 100),
+                  }))}
+                />
               </div>
-            </div>
 
-            {/* Transaction Categories */}
-            <div className="bg-[#1a1625] shadow rounded-[var(--radius-md)] p-6">
-              <h3 className="text-lg font-medium text-[#f8fafc] mb-4">Top Transaction Categories</h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Category
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Count
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total Amount
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Average
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-[#1a1625] divide-y divide-gray-200">
-                    {reportData.transactionStats.transactionsByCategory.map((category) => (
-                      <tr key={category.category}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {category.category}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {category.count}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {formatCurrency(category.amount)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#f8fafc]">
-                          {formatCurrency(category.amount / category.count)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {/* Transaction Categories Detail */}
+              <div className="table-section">
+                <DataTable
+                  title="Category Analysis"
+                  columns={[
+                    { key: 'category', label: 'Category', align: 'left' },
+                    { key: 'count', label: 'Count', align: 'right' },
+                    {
+                      key: 'amount',
+                      label: 'Amount',
+                      align: 'right',
+                      format: formatCurrency,
+                    },
+                    {
+                      key: 'average',
+                      label: 'Average',
+                      align: 'right',
+                      format: formatCurrency,
+                    },
+                  ]}
+                  data={reportData.transactionStats.transactionsByCategory.map((category) => ({
+                    category: category.category,
+                    count: category.count,
+                    amount: category.amount,
+                    average: Math.round(category.amount / category.count),
+                  }))}
+                />
               </div>
             </div>
           </div>
