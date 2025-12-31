@@ -8,6 +8,7 @@ import TransactionModal from '@/components/TransactionModal';
 import { ToastContainer } from '@/components/Toast';
 import { useToast } from '@/hooks/useToast';
 import BackToTop from '@/components/BackToTop';
+import { Button } from '@/components/ui/button';
 import {
   TxnList,
   TxnListHeader,
@@ -305,15 +306,14 @@ export default function TransactionsPage() {
             {/* Load More */}
             {!loading && pagination.page < pagination.totalPages && (
               <div className="flex justify-center mt-6">
-                <button
+                <Button
                   onClick={() => searchTransactions(pagination.page + 1)}
-                  className="px-6 py-3 text-white rounded-xl font-medium transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.1)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                  variant="outline"
+                  size="lg"
+                  className="min-w-[150px]"
                 >
                   Load More
-                </button>
+                </Button>
               </div>
             )}
           </main>
