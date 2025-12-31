@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 interface Connection {
   id: string;
   email_address: string;
-  last_sync_at: string | null;
+  last_sync_at?: string;
 }
 
 interface ConnectedAccountsProps {
