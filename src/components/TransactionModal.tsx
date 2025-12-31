@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Transaction } from '@/pages/transactions';
 import InteractiveKeywordSelector from './InteractiveKeywordSelector';
 import LoadingScreen from './LoadingScreen';
+import SplitwiseDropdown from './SplitwiseDropdown';
 
 interface TransactionModalProps {
   transaction: Transaction;
@@ -17,6 +18,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [isReExtracting, setIsReExtracting] = useState(false);
   const [accountTypes, setAccountTypes] = useState<string[]>(['OTHER']); // Default fallback, will be populated from DB
+  const [splitwiseMessage, setSplitwiseMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     setFormData(transaction);
@@ -225,6 +227,23 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 </p>
               </div>
               <div className="flex items-center space-x-3">
+                {/* Splitwise Button */}
+                {formData.amount && parseFloat(formData.amount) > 0 && (
+                  <SplitwiseDropdown
+                    transactionAmount={parseFloat(formData.amount)}
+                    transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
+                    transactionDate={formData.txn_time?.split('T')[0]}
+                    currencyCode={formData.currency || 'INR'}
+                    onSuccess={() => {
+                      setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
+                      setTimeout(() => setSplitwiseMessage(null), 5000);
+                    }}
+                    onError={(error) => {
+                      setSplitwiseMessage({ type: 'error', text: error });
+                      setTimeout(() => setSplitwiseMessage(null), 5000);
+                    }}
+                  />
+                )}
                 {/* Re-extract with AI Button */}
                 <button
                   type="button"
@@ -264,6 +283,37 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               </div>
             </div>
           </div>
+
+          {/* Splitwise Message Toast */}
+          {splitwiseMessage && (
+            <div className={`px-4 py-3 flex items-center justify-between ${
+              splitwiseMessage.type === 'success'
+                ? 'bg-emerald-500/20 border-b border-emerald-500/30'
+                : 'bg-red-500/20 border-b border-red-500/30'
+            }`}>
+              <div className="flex items-center">
+                {splitwiseMessage.type === 'success' ? (
+                  <svg className="w-5 h-5 text-emerald-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-red-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+                <span className={`text-sm ${splitwiseMessage.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {splitwiseMessage.text}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSplitwiseMessage(null)}
+                className={`text-sm ${splitwiseMessage.type === 'success' ? 'text-emerald-400 hover:text-emerald-300' : 'text-red-400 hover:text-red-300'}`}
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="bg-[var(--color-bg-card)]">
