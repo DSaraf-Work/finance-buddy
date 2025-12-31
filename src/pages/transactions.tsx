@@ -15,7 +15,6 @@ import {
   TxnLoadingSkeleton,
   TxnEmptyState,
   TxnErrorState,
-  TxnStyles,
 } from '@/components/transactions';
 
 export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
@@ -280,8 +279,6 @@ export default function TransactionsPage() {
         <Head>
           <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
         </Head>
-
-        <TxnStyles />
 
         <div
           className="min-h-screen bg-[#09090B] text-[#FAFAFA]"

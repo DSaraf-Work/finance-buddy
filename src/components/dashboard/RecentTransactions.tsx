@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import {
   TxnList,
   TxnLoadingSkeleton,
-  TxnEmptyState,
-  TxnStyles
+  TxnEmptyState
 } from '@/components/transactions';
 
 interface RecentTransactionsProps {
@@ -61,8 +60,6 @@ export const RecentTransactions = memo(function RecentTransactions({
       borderRadius: '14px',
       padding: '24px',
     }}>
-      <TxnStyles />
-
       {/* Header */}
       <div style={{
         display: 'flex',

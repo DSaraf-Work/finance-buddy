@@ -4,4 +4,3 @@ export { ProgressBar } from './ProgressBar';
 export { ReportCard } from './ReportCard';
 export { DataTable } from './DataTable';
 export { ReportLoadingSkeleton } from './ReportLoadingSkeleton';
-export { ReportStyles } from './ReportStyles';

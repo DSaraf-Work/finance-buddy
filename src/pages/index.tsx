@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import {
-  DashboardStyles,
   StatCard,
   QuickActions,
   ConnectedAccounts,
@@ -142,7 +141,6 @@ const HomePage: NextPage = () => {
         title="Finance Buddy - Smart Financial Management"
         description="Track and manage your financial transactions with AI-powered insights"
       >
-        <DashboardStyles />
         <main className="min-h-[calc(100vh-72px)] bg-background py-10 px-5">
           <div className="max-w-[900px] mx-auto">
             {/* Hero Section */}
@@ -241,7 +239,6 @@ const HomePage: NextPage = () => {
       title="Finance Buddy - Dashboard"
       description="Finance Buddy dashboard with overview and quick actions"
     >
-      <DashboardStyles />
       <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
         <div className="max-w-[1200px] mx-auto">
           {/* Welcome Header */}

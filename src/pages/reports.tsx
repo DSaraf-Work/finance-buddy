@@ -11,7 +11,6 @@ import {
   ReportCard,
   DataTable,
   ReportLoadingSkeleton,
-  ReportStyles,
 } from '@/components/reports';
 
 interface ReportData {
@@ -149,7 +148,6 @@ const ReportsPage: NextPage = () => {
     return (
       <ProtectedRoute>
         <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
-          <ReportStyles />
           <ReportLoadingSkeleton />
         </Layout>
       </ProtectedRoute>
@@ -159,7 +157,6 @@ const ReportsPage: NextPage = () => {
   return (
     <ProtectedRoute>
       <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
-        <ReportStyles />
         <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
           <div className="max-w-[1200px] mx-auto">
             {/* Header */}
