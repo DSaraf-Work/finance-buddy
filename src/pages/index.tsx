@@ -4,6 +4,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import LoadingScreen from '@/components/LoadingScreen';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import Link from 'next/link';
 import {
   DashboardStyles,
   StatCard,
@@ -140,219 +143,92 @@ const HomePage: NextPage = () => {
         description="Track and manage your financial transactions with AI-powered insights"
       >
         <DashboardStyles />
-        <main style={{
-          minHeight: 'calc(100vh - 72px)',
-          background: '#09090B',
-          padding: '40px 20px',
-        }}>
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <main className="min-h-[calc(100vh-72px)] bg-background py-10 px-5">
+          <div className="max-w-[900px] mx-auto">
             {/* Hero Section */}
-            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-              <h1 style={{
-                fontSize: '48px',
-                fontWeight: '700',
-                color: '#FAFAFA',
-                marginBottom: '16px',
-                fontFamily: 'Outfit, sans-serif',
-                letterSpacing: '-1px',
-              }}>
+            <div className="text-center mb-[60px]">
+              <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">
                 Finance Buddy
               </h1>
-              <p style={{
-                fontSize: '18px',
-                color: 'rgba(255, 255, 255, 0.7)',
-                marginBottom: '32px',
-                lineHeight: '1.6',
-                fontFamily: 'Outfit, sans-serif',
-              }}>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 Track and manage your financial transactions with AI-powered insights.<br/>
                 Secure Gmail OAuth integration for automatic transaction extraction.
               </p>
 
               {/* Sign In/Up Buttons */}
-              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                <a
-                  href="/auth"
-                  style={{
-                    padding: '12px 32px',
-                    background: '#6366F1',
-                    border: 'none',
-                    borderRadius: '12px',
-                    color: '#FAFAFA',
-                    textDecoration: 'none',
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    fontFamily: 'Outfit, sans-serif',
-                    boxShadow: '0 0 32px rgba(99, 102, 241, 0.35)',
-                    display: 'inline-block',
-                    transition: 'opacity 0.2s ease-out',
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                >
-                  Sign In
-                </a>
-                <a
-                  href="/auth"
-                  style={{
-                    padding: '12px 32px',
-                    background: 'transparent',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '12px',
-                    color: '#FAFAFA',
-                    textDecoration: 'none',
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    fontFamily: 'Outfit, sans-serif',
-                    display: 'inline-block',
-                    transition: 'all 0.2s ease-out',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#6366F1';
-                    e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  Sign Up
-                </a>
+              <div className="flex gap-4 justify-center">
+                <Link href="/auth">
+                  <Button className="px-8 py-6 text-base font-semibold shadow-[0_0_32px_rgba(99,102,241,0.35)]">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth">
+                  <Button variant="outline" className="px-8 py-6 text-base font-semibold">
+                    Sign Up
+                  </Button>
+                </Link>
               </div>
             </div>
 
             {/* Features Grid */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '14px',
-              padding: '40px',
-              marginBottom: '32px',
-            }}>
-              <h2 style={{
-                fontSize: '24px',
-                fontWeight: '600',
-                color: '#FAFAFA',
-                textAlign: 'center',
-                marginBottom: '32px',
-                fontFamily: 'Outfit, sans-serif',
-              }}>
+            <Card className="bg-card/50 border-border/50 p-10 mb-8">
+              <h2 className="text-2xl font-semibold text-foreground text-center mb-8">
                 What you'll get with Finance Buddy
               </h2>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔐</div>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#FAFAFA',
-                    marginBottom: '8px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="text-center">
+                  <div className="text-4xl mb-3">🔐</div>
+                  <h3 className="text-base font-semibold text-foreground mb-2">
                     Secure OAuth
                   </h3>
-                  <p style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontFamily: 'Outfit, sans-serif',
-                    lineHeight: '1.5',
-                  }}>
+                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
                     Connect Gmail with industry-standard OAuth security
                   </p>
                 </div>
 
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>📧</div>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#FAFAFA',
-                    marginBottom: '8px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">📧</div>
+                  <h3 className="text-base font-semibold text-foreground mb-2">
                     Smart Email Sync
                   </h3>
-                  <p style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontFamily: 'Outfit, sans-serif',
-                    lineHeight: '1.5',
-                  }}>
+                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
                     Manual sync with intelligent deduplication
                   </p>
                 </div>
 
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#FAFAFA',
-                    marginBottom: '8px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">🔍</div>
+                  <h3 className="text-base font-semibold text-foreground mb-2">
                     Advanced Search
                   </h3>
-                  <p style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontFamily: 'Outfit, sans-serif',
-                    lineHeight: '1.5',
-                  }}>
+                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
                     Powerful filtering for transaction management
                   </p>
                 </div>
 
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚙️</div>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#FAFAFA',
-                    marginBottom: '8px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                <div className="text-center">
+                  <div className="text-4xl mb-3">⚙️</div>
+                  <h3 className="text-base font-semibold text-foreground mb-2">
                     Admin Tools
                   </h3>
-                  <p style={{
-                    fontSize: '13px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontFamily: 'Outfit, sans-serif',
-                    lineHeight: '1.5',
-                  }}>
+                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
                     Comprehensive system monitoring
                   </p>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Security & Privacy */}
-            <div style={{
-              background: 'rgba(34, 197, 94, 0.12)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
-              borderRadius: '12px',
-              padding: '20px',
-            }}>
-              <h3 style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: '#22C55E',
-                marginBottom: '8px',
-                fontFamily: 'Outfit, sans-serif',
-              }}>
+            <Card className="bg-success/10 border-success/30 p-5">
+              <h3 className="text-base font-semibold text-success mb-2">
                 🛡️ Security & Privacy
               </h3>
-              <p style={{
-                fontSize: '13px',
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontFamily: 'Outfit, sans-serif',
-                lineHeight: '1.5',
-              }}>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
                 Your data is protected with Row Level Security (RLS), secure cookie authentication,
                 and OAuth-only access. We never store your Gmail passwords.
               </p>
-            </div>
+            </Card>
           </div>
         </main>
       </Layout>
@@ -366,59 +242,22 @@ const HomePage: NextPage = () => {
       description="Finance Buddy dashboard with overview and quick actions"
     >
       <DashboardStyles />
-      <div style={{
-        minHeight: 'calc(100vh - 72px)',
-        background: '#09090B',
-        padding: '32px 20px',
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
+        <div className="max-w-[1200px] mx-auto">
           {/* Welcome Header */}
-          <div style={{ marginBottom: '40px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              paddingBottom: '20px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            }}>
+          <div className="mb-10">
+            <div className="flex items-end justify-between pb-5 border-b border-border/50">
               <div>
-                <p style={{
-                  fontSize: '11px',
-                  fontWeight: '500',
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  marginBottom: '8px',
-                  fontFamily: 'Outfit, sans-serif',
-                }}>
+                <p className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-wider mb-2">
                   Dashboard
                 </p>
-                <h1 style={{
-                  fontSize: '36px',
-                  fontWeight: '600',
-                  color: '#FAFAFA',
-                  fontFamily: 'Outfit, sans-serif',
-                  letterSpacing: '-0.5px',
-                }}>
+                <h1 className="text-4xl font-semibold text-foreground tracking-tight">
                   Welcome back
                 </h1>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{
-                  width: '6px',
-                  height: '6px',
-                  background: '#22C55E',
-                  borderRadius: '50%',
-                  animation: 'pulse 2s ease-in-out infinite',
-                }}/>
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: '500',
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  fontFamily: 'Outfit, sans-serif',
-                }}>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+                <span className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-wider">
                   Active
                 </span>
               </div>
@@ -426,12 +265,7 @@ const HomePage: NextPage = () => {
           </div>
 
           {/* Stats Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px',
-          }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             <StatCard
               icon={
                 <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -480,17 +314,12 @@ const HomePage: NextPage = () => {
           </div>
 
           {/* Recent Transactions Section */}
-          <div style={{ marginBottom: '40px' }}>
+          <div className="mb-10">
             <RecentTransactions limit={5} />
           </div>
 
           {/* Quick Actions & Connection Status */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px',
-          }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-10">
             <QuickActions
               actions={[
                 { label: 'Connect Gmail Account', onClick: handleConnect },
@@ -513,27 +342,12 @@ const HomePage: NextPage = () => {
           </div>
 
           {/* Features Overview */}
-          <div style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            paddingTop: '40px',
-          }}>
-            <h3 style={{
-              fontSize: '11px',
-              fontWeight: '600',
-              color: '#6366F1',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              marginBottom: '32px',
-              fontFamily: 'Outfit, sans-serif',
-            }}>
+          <div className="border-t border-border/50 pt-10">
+            <h3 className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-8">
               Features
             </h3>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-              gap: '20px',
-            }}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
               {[
                 { emoji: '🔒', title: 'Secure OAuth', desc: 'Gmail integration with PKCE security', color: '#6366F1' },
                 { emoji: '🔄', title: 'Smart Sync', desc: 'Manual sync with deduplication', color: '#22C55E' },
@@ -542,56 +356,36 @@ const HomePage: NextPage = () => {
                 { emoji: '⚙️', title: 'Admin Tools', desc: 'System health monitoring', color: '#06B6D4' },
                 { emoji: '🛡️', title: 'RLS Security', desc: 'Row-level data protection', color: '#8B5CF6' },
               ].map((feature, index) => (
-                <div
+                <Card
                   key={index}
-                  className="feature-card"
+                  className="p-5 border-border/50 hover:border-primary cursor-pointer transition-all duration-300 group"
                   style={{
-                    padding: '20px',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease-out',
+                    ['--feature-color' as any]: feature.color
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = feature.color;
                     e.currentTarget.style.background = `${feature.color}10`;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = '';
+                    e.currentTarget.style.background = '';
                   }}
                 >
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    background: `${feature.color}15`,
-                    borderRadius: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '12px',
-                    fontSize: '20px',
-                  }}>
+                  <div
+                    className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-3 text-xl"
+                    style={{
+                      background: `${feature.color}15`
+                    }}
+                  >
                     {feature.emoji}
                   </div>
-                  <h4 style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#FAFAFA',
-                    marginBottom: '4px',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                  <h4 className="text-sm font-semibold text-foreground mb-1">
                     {feature.title}
                   </h4>
-                  <p style={{
-                    fontSize: '11px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontFamily: 'Outfit, sans-serif',
-                    lineHeight: '1.4',
-                  }}>
+                  <p className="text-[11px] text-muted-foreground/80 leading-relaxed">
                     {feature.desc}
                   </p>
-                </div>
+                </Card>
               ))}
             </div>
           </div>

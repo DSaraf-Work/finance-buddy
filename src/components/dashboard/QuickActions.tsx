@@ -1,5 +1,8 @@
 import React, { memo } from 'react';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
 interface QuickAction {
   label: string;
@@ -16,148 +19,91 @@ interface QuickActionsProps {
 
 export const QuickActions = memo(function QuickActions({ actions, priorityResult }: QuickActionsProps) {
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.03)',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      borderRadius: '14px',
-      padding: '24px',
-    }}>
+    <Card className="bg-card/50 border-border/50 p-6">
       {/* Header */}
-      <div style={{
-        fontSize: '11px',
-        fontWeight: '600',
-        color: '#6366F1',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-        marginBottom: '20px',
-        fontFamily: 'Outfit, sans-serif',
-      }}>
+      <div className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-5">
         Quick Actions
       </div>
 
       {/* Actions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="flex flex-col gap-2">
         {actions.map((action, index) => {
-          const Component = action.href ? Link : 'button' as any;
-          const props = action.href ? { href: action.href } : { onClick: action.onClick };
+          if (action.href) {
+            return (
+              <Link key={index} href={action.href}>
+                <Button
+                  variant="outline"
+                  className="w-full justify-between h-auto py-3.5 px-4 border-border/50 hover:bg-primary/10 hover:border-primary"
+                  disabled={action.disabled}
+                >
+                  <span className="text-sm font-medium">
+                    {action.loading ? 'Processing...' : action.label}
+                  </span>
+                  {action.loading ? (
+                    <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </Link>
+            );
+          }
 
           return (
-            <Component
+            <Button
               key={index}
-              {...props}
+              variant="outline"
+              className="w-full justify-between h-auto py-3.5 px-4 border-border/50 hover:bg-primary/10 hover:border-primary"
+              onClick={action.onClick}
               disabled={action.disabled}
-              className="quick-action-item"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 16px',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'transparent',
-                cursor: action.disabled ? 'not-allowed' : 'pointer',
-                opacity: action.disabled ? 0.5 : 1,
-                textDecoration: 'none',
-                transition: 'all 0.2s ease-out',
-                width: '100%',
-                textAlign: 'left',
-              }}
-              onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
-                if (!action.disabled) {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#6366F1';
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(99, 102, 241, 0.1)';
-                }
-              }}
-              onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                (e.currentTarget as HTMLElement).style.background = 'transparent';
-              }}
             >
-              <span style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#FAFAFA',
-                fontFamily: 'Outfit, sans-serif',
-              }}>
+              <span className="text-sm font-medium">
                 {action.loading ? 'Processing...' : action.label}
               </span>
               {action.loading ? (
-                <div style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '2px solid rgba(99, 102, 241, 0.2)',
-                  borderTop: '2px solid #6366F1',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                }}/>
+                <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
               ) : (
-                <svg
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    transition: 'all 0.2s ease-out',
-                  }}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
               )}
-            </Component>
+            </Button>
           );
         })}
       </div>
 
       {/* Priority Email Result */}
       {priorityResult && (
-        <div style={{
-          marginTop: '20px',
-          padding: '16px',
-          borderRadius: '10px',
-          background: priorityResult.success
-            ? 'rgba(34, 197, 94, 0.12)'
-            : 'rgba(248, 113, 113, 0.12)',
-          border: `1px solid ${priorityResult.success
-            ? 'rgba(34, 197, 94, 0.3)'
-            : 'rgba(248, 113, 113, 0.3)'}`,
-        }}>
-          <div style={{
-            fontSize: '10px',
-            fontWeight: '600',
-            color: priorityResult.success ? '#22C55E' : '#F87171',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginBottom: '12px',
-            fontFamily: 'Outfit, sans-serif',
-          }}>
+        <div
+          className={`mt-5 p-4 rounded-[10px] ${
+            priorityResult.success
+              ? 'bg-success/10 border border-success/30'
+              : 'bg-destructive/10 border border-destructive/30'
+          }`}
+        >
+          <div
+            className={`text-[10px] font-semibold uppercase tracking-wider mb-3 ${
+              priorityResult.success ? 'text-success' : 'text-destructive'
+            }`}
+          >
             {priorityResult.success ? '✓ Success' : '✕ Error'}
           </div>
 
           {priorityResult.success && priorityResult.result && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.5)' }}>
-                  Found
-                </div>
-                <div style={{ fontSize: '18px', fontWeight: '600', color: '#FAFAFA', fontFamily: 'JetBrains Mono, monospace' }}>
+                <div className="text-[10px] text-muted-foreground">Found</div>
+                <div className="text-lg font-semibold text-foreground font-mono">
                   {priorityResult.result.emailsFound}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.5)' }}>
-                  Processed
-                </div>
-                <div style={{ fontSize: '18px', fontWeight: '600', color: '#FAFAFA', fontFamily: 'JetBrains Mono, monospace' }}>
+                <div className="text-[10px] text-muted-foreground">Processed</div>
+                <div className="text-lg font-semibold text-foreground font-mono">
                   {priorityResult.result.emailsProcessed}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.5)' }}>
-                  Connections
-                </div>
-                <div style={{ fontSize: '18px', fontWeight: '600', color: '#FAFAFA', fontFamily: 'JetBrains Mono, monospace' }}>
+                <div className="text-[10px] text-muted-foreground">Connections</div>
+                <div className="text-lg font-semibold text-foreground font-mono">
                   {priorityResult.result.connectionsProcessed}
                 </div>
               </div>
@@ -165,19 +111,12 @@ export const QuickActions = memo(function QuickActions({ actions, priorityResult
           )}
 
           {priorityResult.error && (
-            <div style={{ fontSize: '12px', color: '#F87171', fontFamily: 'Outfit, sans-serif' }}>
+            <div className="text-xs text-destructive">
               {priorityResult.error}
             </div>
           )}
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-    </div>
+    </Card>
   );
 });

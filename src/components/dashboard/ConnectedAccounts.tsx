@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface Connection {
   id: string;
@@ -16,149 +18,56 @@ export const ConnectedAccounts = memo(function ConnectedAccounts({
   onConnect
 }: ConnectedAccountsProps) {
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.03)',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      borderRadius: '14px',
-      padding: '24px',
-    }}>
+    <Card className="bg-card/50 border-border/50 p-6">
       {/* Header */}
-      <div style={{
-        fontSize: '11px',
-        fontWeight: '600',
-        color: '#6366F1',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-        marginBottom: '20px',
-        fontFamily: 'Outfit, sans-serif',
-      }}>
+      <div className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-5">
         Connected Accounts
       </div>
 
       {connections.length === 0 ? (
         /* Empty State */
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '48px 24px',
-        }}>
-          <div style={{
-            width: '56px',
-            height: '56px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px',
-          }}>
-            <span style={{ fontSize: '24px' }}>🔗</span>
+        <div className="flex flex-col items-center py-12 px-6">
+          <div className="w-14 h-14 bg-muted/30 rounded-xl flex items-center justify-center mb-4">
+            <span className="text-2xl">🔗</span>
           </div>
-          <div style={{
-            fontSize: '14px',
-            color: 'rgba(255, 255, 255, 0.5)',
-            marginBottom: '16px',
-            fontFamily: 'Outfit, sans-serif',
-          }}>
+          <div className="text-sm text-muted-foreground mb-4">
             No accounts connected
           </div>
-          <button
+          <Button
             onClick={onConnect}
-            style={{
-              padding: '10px 20px',
-              background: '#6366F1',
-              border: 'none',
-              borderRadius: '10px',
-              fontSize: '13px',
-              fontWeight: '500',
-              color: '#FAFAFA',
-              cursor: 'pointer',
-              fontFamily: 'Outfit, sans-serif',
-              boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)',
-              transition: 'opacity 0.2s ease-out',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            className="bg-primary hover:bg-primary/90 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
           >
             Connect Account
-          </button>
+          </Button>
         </div>
       ) : (
         /* Account List */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="flex flex-col gap-3">
           {connections.map((connection) => (
             <div
               key={connection.id}
-              className="connection-item"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '16px',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease-out',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#6366F1';
-                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                e.currentTarget.style.background = 'transparent';
-              }}
+              className="flex items-center justify-between p-4 rounded-[10px] border border-border/50 hover:border-primary hover:bg-primary/5 cursor-pointer transition-all duration-200"
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
-                <div style={{
-                  width: '36px',
-                  height: '36px',
-                  background: 'rgba(99, 102, 241, 0.12)',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <span style={{ fontSize: '16px' }}>📧</span>
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-9 h-9 bg-primary/10 rounded-[10px] flex items-center justify-center flex-shrink-0">
+                  <span className="text-base">📧</span>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: '#FAFAFA',
-                    marginBottom: '2px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-foreground truncate">
                     {connection.email_address}
                   </div>
-                  <div style={{
-                    fontSize: '11px',
-                    color: 'rgba(255, 255, 255, 0.35)',
-                    fontFamily: 'Outfit, sans-serif',
-                  }}>
+                  <div className="text-[11px] text-muted-foreground/70">
                     {connection.last_sync_at
                       ? `Synced ${new Date(connection.last_sync_at).toLocaleDateString('en-IN')}`
                       : 'Never synced'}
                   </div>
                 </div>
               </div>
-              <div style={{
-                width: '8px',
-                height: '8px',
-                background: '#22C55E',
-                borderRadius: '50%',
-                flexShrink: 0,
-                animation: 'pulse 2s ease-in-out infinite',
-              }}/>
+              <div className="w-2 h-2 bg-success rounded-full flex-shrink-0 animate-pulse" />
             </div>
           ))}
         </div>
       )}
-    </div>
+    </Card>
   );
 });

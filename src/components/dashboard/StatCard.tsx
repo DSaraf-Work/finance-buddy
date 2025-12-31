@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { Card } from '@/components/ui/card';
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -21,80 +22,49 @@ export const StatCard = memo(function StatCard({
   loading = false,
   hoverColor = '#6366F1',
 }: StatCardProps) {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   return (
-    <div
-      className="dashboard-card stat-card"
+    <Card
+      className="stat-card cursor-pointer transition-all duration-300 bg-card/50 border-border/50 hover:shadow-lg"
       style={{
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '14px',
-        padding: '24px',
-        cursor: 'pointer',
-        position: 'relative',
-        overflow: 'hidden',
+        borderColor: isHovered ? hoverColor : undefined,
+        boxShadow: isHovered ? `0 0 20px ${hoverColor}30` : undefined,
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = hoverColor;
-        e.currentTarget.style.boxShadow = `0 0 20px ${hoverColor}30`;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Icon */}
-      <div style={{
-        width: '48px',
-        height: '48px',
-        background: iconBg,
-        borderRadius: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: '16px',
-        color: iconColor,
-      }}>
-        {icon}
-      </div>
+      <div className="p-6">
+        {/* Icon */}
+        <div
+          className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+          style={{
+            background: iconBg,
+            color: iconColor,
+          }}
+        >
+          {icon}
+        </div>
 
-      {/* Label */}
-      <div style={{
-        fontSize: '11px',
-        fontWeight: '500',
-        color: 'rgba(255, 255, 255, 0.5)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-        marginBottom: '8px',
-        fontFamily: 'Outfit, sans-serif',
-      }}>
-        {label}
-      </div>
+        {/* Label */}
+        <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
+          {label}
+        </div>
 
-      {/* Value */}
-      <div style={{
-        fontSize: '32px',
-        fontWeight: '600',
-        color: '#FAFAFA',
-        marginBottom: '4px',
-        fontFamily: 'JetBrains Mono, monospace',
-        lineHeight: '1',
-      }}>
-        {loading ? (
-          <span style={{ color: 'rgba(255, 255, 255, 0.35)' }}>—</span>
-        ) : (
-          typeof value === 'number' ? value.toLocaleString('en-IN') : value
-        )}
-      </div>
+        {/* Value */}
+        <div className="text-[32px] font-semibold text-foreground mb-1 font-mono leading-none">
+          {loading ? (
+            <span className="text-muted-foreground/50">—</span>
+          ) : (
+            typeof value === 'number' ? value.toLocaleString('en-IN') : value
+          )}
+        </div>
 
-      {/* Subtitle */}
-      <div style={{
-        fontSize: '11px',
-        fontWeight: '400',
-        color: 'rgba(255, 255, 255, 0.35)',
-        fontFamily: 'Outfit, sans-serif',
-      }}>
-        {subtitle}
+        {/* Subtitle */}
+        <div className="text-[11px] font-normal text-muted-foreground/70">
+          {subtitle}
+        </div>
       </div>
-    </div>
+    </Card>
   );
 });
