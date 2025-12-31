@@ -1,0 +1,169 @@
+/**
+ * Finance Buddy Global Theme Configuration
+ * =========================================
+ * This file contains all theme variables for the application.
+ * To change the theme, modify the CSS variables in this file.
+ * All components reference these variables for consistent theming.
+ *
+ * Based on the Matte Dark Design System from /transactions page
+ */
+
+@layer base {
+  :root {
+    /* ===== MATTE DARK THEME ===== */
+
+    /* Background Colors
+     * These define the layering hierarchy of surfaces */
+    --background: 0 0% 4%;                /* #09090B - Main app background */
+    --foreground: 0 0% 98%;               /* #FAFAFA - Primary text color */
+
+    /* Card & Surface Colors */
+    --card: 0 0% 4%;                      /* #0a0a0a - Card background */
+    --card-foreground: 0 0% 98%;          /* #FAFAFA - Card text */
+
+    /* Muted Colors for subtle elements */
+    --muted: 0 0% 15%;                    /* Muted backgrounds */
+    --muted-foreground: 0 0% 60%;         /* Muted text */
+
+    /* Popover & Dropdown Colors */
+    --popover: 0 0% 4%;                   /* #0a0a0a - Popover background */
+    --popover-foreground: 0 0% 98%;       /* #FAFAFA - Popover text */
+
+    /* Border & Divider Colors */
+    --border: 0 0% 15%;                   /* Default border */
+    --input: 0 0% 18%;                    /* Input border */
+    --ring: 0 0% 25%;                     /* Focus ring */
+
+    /* Primary Brand Color (Indigo) */
+    --primary: 238 84% 67%;               /* #6366F1 - Primary actions */
+    --primary-foreground: 0 0% 98%;       /* #FAFAFA - Text on primary */
+
+    /* Secondary Color (Neutral) */
+    --secondary: 0 0% 15%;                /* Secondary actions */
+    --secondary-foreground: 0 0% 98%;     /* Text on secondary */
+
+    /* Semantic Colors */
+    --destructive: 0 73% 67%;             /* #F87171 - Errors, expenses, danger */
+    --destructive-foreground: 0 0% 98%;
+
+    /* Custom semantic colors for finance */
+    --success: 142 71% 45%;               /* #22C55E - Income, success */
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;                /* #FFA500 - Warnings */
+    --warning-foreground: 0 0% 98%;
+    --info: 213 94% 54%;                  /* #3B82F6 - Information */
+    --info-foreground: 0 0% 98%;
+
+    /* Accent Colors */
+    --accent: 0 0% 15%;                   /* Accent backgrounds */
+    --accent-foreground: 0 0% 98%;        /* Accent text */
+
+    /* Chart Colors for data visualization */
+    --chart-1: 238 84% 67%;               /* #6366F1 - Primary chart color */
+    --chart-2: 142 71% 45%;               /* #22C55E - Secondary chart color */
+    --chart-3: 0 73% 67%;                 /* #F87171 - Tertiary chart color */
+    --chart-4: 38 92% 50%;                /* #FFA500 - Quaternary chart color */
+    --chart-5: 213 94% 54%;               /* #3B82F6 - Quinary chart color */
+
+    /* Spacing & Radius (in px, not color values) */
+    --radius: 0.75rem;                    /* 12px - Default border radius */
+  }
+
+  /* Dark mode specific (explicit for clarity) */
+  .dark {
+    /* All variables same as root since we're dark-only */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 25%;
+    --primary: 238 84% 67%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --destructive: 0 73% 67%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    --info: 213 94% 54%;
+    --info-foreground: 0 0% 98%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+    --chart-1: 238 84% 67%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 0 73% 67%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 213 94% 54%;
+  }
+}
+
+/* ===== Base Styles ===== */
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar styles for the matte dark theme */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground));
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--foreground) / 0.5);
+  }
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
