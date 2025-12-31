@@ -9,3 +9,6 @@ export { default as TxnListHeader } from './TxnListHeader';
 export { default as TxnLoadingSkeleton } from './TxnLoadingSkeleton';
 export { default as TxnEmptyState } from './TxnEmptyState';
 export { default as TxnErrorState } from './TxnErrorState';
+export { TransactionFilterModal } from './TransactionFilterModal';
+export type { TransactionFilters } from './TransactionFilterModal';
+export type { GroupedTransactions } from './TxnList';

@@ -16,6 +16,9 @@ import {
   TxnEmptyState,
   TxnErrorState,
 } from '@/components/transactions';
+import { TransactionFilterModal, TransactionFilters } from '@/components/transactions/TransactionFilterModal';
+import { GroupedTransactions } from '@/components/transactions/TxnList';
+import { format } from 'date-fns';
 
 export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
 
@@ -63,22 +66,23 @@ const isYesterday = (date: Date) => {
     date.getFullYear() === yesterday.getFullYear();
 };
 
-// Helper to format date header
+// Helper to format date header with the requested format: "1 Jan, Thurs"
 const formatDateHeader = (dateStr: string | null) => {
   if (!dateStr) return 'Unknown Date';
   const date = new Date(dateStr);
 
-  if (isToday(date)) return `Today, ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-  if (isYesterday(date)) return `Yesterday, ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+  if (isToday(date)) {
+    return 'Today';
+  }
+  if (isYesterday(date)) {
+    return 'Yesterday';
+  }
 
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); // "Sun, Oct 24"
-};
-
-type GroupedTransactions = {
-  date: string; // YYYY-MM-DD for sorting
-  header: string;
-  transactions: Transaction[];
-  total: number;
+  // Format as "1 Jan, Thurs"
+  const day = date.getDate();
+  const month = date.toLocaleDateString('en-US', { month: 'short' });
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+  return `${day} ${month}, ${weekday}`;
 };
 
 export default function TransactionsPage() {
@@ -91,11 +95,12 @@ export default function TransactionsPage() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Filter state for Chips
-  const [activeFilter, setActiveFilter] = useState<'All' | 'Income' | 'Expense'>('All');
-
-  // Search query
-  const [searchQuery, setSearchQuery] = useState('');
+  // Filter state
+  const [filters, setFilters] = useState<TransactionFilters>({
+    dateFrom: undefined,
+    dateTo: undefined,
+    paymentMode: 'all',
+  });
 
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -116,25 +121,32 @@ export default function TransactionsPage() {
     }
   }, [user, authLoading, router]);
 
-  const searchTransactions = async (page: number = pagination.page) => {
+  const searchTransactions = async (page: number = 1, resetPage: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
 
-      // Simple search request - defaulting to All/Desc
-      // We will handle Income/Expense filtering client-side for smoother UI if list is small, 
-      // but simpler to do server side for correctness with pagination.
-      // Let's do server side filtering mapped to chips.
-
+      // Build search request with filters
       const searchRequest: any = {
         page,
         pageSize: pagination.pageSize,
-        sort: 'desc',
+        sort: 'desc', // Always sort by date descending
       };
 
-      if (activeFilter === 'Income') searchRequest.direction = 'credit';
-      if (activeFilter === 'Expense') searchRequest.direction = 'debit';
-      if (searchQuery) searchRequest.merchant = searchQuery; // Simple fuzzy search on merchant
+      // Add payment mode filter
+      if (filters.paymentMode === 'credit') searchRequest.direction = 'credit';
+      if (filters.paymentMode === 'debit') searchRequest.direction = 'debit';
+
+      // Add date range filters if provided
+      if (filters.dateFrom) {
+        searchRequest.startDate = format(filters.dateFrom, 'yyyy-MM-dd');
+      }
+      if (filters.dateTo) {
+        // Add end of day for dateTo
+        const endDate = new Date(filters.dateTo);
+        endDate.setHours(23, 59, 59, 999);
+        searchRequest.endDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss");
+      }
 
       const response = await fetch('/api/transactions/search', {
         method: 'POST',
@@ -147,7 +159,12 @@ export default function TransactionsPage() {
 
       const data = await response.json();
       if (data.success) {
-        setTransactions(data.transactions || []);
+        if (resetPage || page === 1) {
+          setTransactions(data.transactions || []);
+        } else {
+          // Append for load more
+          setTransactions(prev => [...prev, ...(data.transactions || [])]);
+        }
         setPagination({
           page: data.page,
           pageSize: data.pageSize,
@@ -169,7 +186,14 @@ export default function TransactionsPage() {
   const groupedTransactions = useMemo(() => {
     const groups: { [key: string]: GroupedTransactions } = {};
 
-    transactions.forEach(t => {
+    // First, sort transactions by date descending
+    const sortedTransactions = [...transactions].sort((a, b) => {
+      const dateA = a.txn_time ? new Date(a.txn_time).getTime() : 0;
+      const dateB = b.txn_time ? new Date(b.txn_time).getTime() : 0;
+      return dateB - dateA; // Descending order
+    });
+
+    sortedTransactions.forEach(t => {
       const dateVal = t.txn_time ? t.txn_time.split('T')[0] : 'unknown';
       if (!groups[dateVal]) {
         groups[dateVal] = {
@@ -192,6 +216,30 @@ export default function TransactionsPage() {
     // Sort groups by date desc
     return Object.values(groups).sort((a, b) => b.date.localeCompare(a.date));
   }, [transactions]);
+
+  // Handle filter application
+  const handleApplyFilters = useCallback(async (newFilters: TransactionFilters) => {
+    setFilters(newFilters);
+    // Search will be triggered by the useEffect below
+  }, []);
+
+  // Handle filter clearing
+  const handleClearFilters = useCallback(() => {
+    setFilters({
+      dateFrom: undefined,
+      dateTo: undefined,
+      paymentMode: 'all',
+    });
+    // Search will be triggered by the useEffect below
+  }, []);
+
+  // Effect to re-search when filters change
+  useEffect(() => {
+    if (user) {
+      searchTransactions(1, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.dateFrom, filters.dateTo, filters.paymentMode, user]);
 
   const handleStatusUpdate = useCallback(async (transactionId: string, newStatus: TransactionStatus) => {
     try {
@@ -255,19 +303,6 @@ export default function TransactionsPage() {
     }
   };
 
-  const handleFilterClick = (filter: 'All' | 'Income' | 'Expense') => {
-    setActiveFilter(filter);
-    // Trigger useEffect or call search immediately? 
-    // Effect dependency activeFilter is needed or helper param
-    // We didn't add activeFilter to dependency of searchTransactions effectively because it's wrapped in closure if not careful.
-    // Better: update state, and use useEffect to search when activeFilter changes.
-  };
-
-  // Effect to re-search when filters change
-  useEffect(() => {
-    if (user) searchTransactions(1);
-  }, [activeFilter, user]);
-
   const handleTransactionClick = useCallback((transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setIsModalOpen(true);
@@ -291,23 +326,37 @@ export default function TransactionsPage() {
         >
           {/* Main Content - listContainer - padding 8px (matching /txn) */}
           <main style={{ padding: '8px' }}>
-            <TxnListHeader title="Transactions" count={pagination.total} />
+            <TxnListHeader
+              title="Transactions"
+              count={pagination.total}
+              filterButton={
+                <TransactionFilterModal
+                  filters={filters}
+                  onApplyFilters={handleApplyFilters}
+                  onClearFilters={handleClearFilters}
+                  totalCount={pagination.total}
+                />
+              }
+            />
 
             {loading && <TxnLoadingSkeleton count={8} />}
-            {error && !loading && <TxnErrorState error={error} onRetry={() => searchTransactions()} />}
+            {error && !loading && <TxnErrorState error={error} onRetry={() => searchTransactions(1, true)} />}
             {!loading && !error && transactions.length === 0 && <TxnEmptyState />}
             {!loading && !error && transactions.length > 0 && (
-              <TxnList transactions={transactions} onTransactionClick={handleTransactionClick} />
+              <TxnList
+                groupedTransactions={groupedTransactions}
+                onTransactionClick={handleTransactionClick}
+              />
             )}
 
             {/* Load More */}
             {!loading && pagination.page < pagination.totalPages && (
               <div className="flex justify-center mt-6">
                 <Button
-                  onClick={() => searchTransactions(pagination.page + 1)}
+                  onClick={() => searchTransactions(pagination.page + 1, false)}
                   variant="outline"
                   size="lg"
-                  className="min-w-[150px]"
+                  className="min-w-[150px] bg-[#18181B] border-[#27272A] text-[#FAFAFA] hover:bg-[#27272A]"
                 >
                   Load More
                 </Button>
