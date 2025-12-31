@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import LoadingScreen from '@/components/LoadingScreen';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const ResetPasswordPage: NextPage = () => {
   const [password, setPassword] = useState('');
@@ -11,7 +15,7 @@ const ResetPasswordPage: NextPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [formError, setFormError] = useState('');
-  
+
   const { updatePassword, user, loading, error } = useAuth();
   const router = useRouter();
 
@@ -83,40 +87,41 @@ const ResetPasswordPage: NextPage = () => {
         <meta name="description" content="Create a new password for your Finance Buddy account" />
       </Head>
 
-      <div className="min-h-screen bg-[#0f0a1a]/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-background flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-[#f8fafc] mb-2">Finance Buddy</h1>
-            <p className="text-[#cbd5e1] mb-8">Gmail Financial Email Automation</p>
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-xl shadow-[0_0_30px_rgba(99,102,241,0.4)] mb-4">
+              <span className="text-3xl">💰</span>
+            </div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Finance Buddy</h1>
+            <p className="text-muted-foreground">Gmail Financial Email Automation</p>
           </div>
-          
-          <div className="bg-[#1a1625] py-8 px-4 shadow sm:rounded-[var(--radius-md)] sm:px-10">
+
+          <Card className="border-border/50">
             {!isCompleted ? (
               <>
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-[#f8fafc] text-center">
+                <CardHeader className="space-y-1 pb-4">
+                  <h2 className="text-2xl font-bold text-center">
                     Create new password
                   </h2>
-                  <p className="mt-2 text-center text-sm text-[#cbd5e1]">
+                  <p className="text-center text-sm text-muted-foreground">
                     Enter a new password for your account
                   </p>
-                </div>
+                </CardHeader>
 
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                  {(formError || error) && (
-                    <div className="bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-4">
-                      <div className="text-sm text-red-700">
-                        {formError || error}
+                <CardContent>
+                  <form className="space-y-6" onSubmit={handleSubmit}>
+                    {(formError || error) && (
+                      <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-4">
+                        <div className="text-sm text-destructive">
+                          {formError || error}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-[#cbd5e1]">
-                      New Password
-                    </label>
-                    <div className="mt-1">
-                      <input
+                    <div className="space-y-2">
+                      <Label htmlFor="password">New Password</Label>
+                      <Input
                         id="password"
                         name="password"
                         type="password"
@@ -124,21 +129,16 @@ const ResetPasswordPage: NextPage = () => {
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="input-field"
                         placeholder="Enter your new password"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Must be at least 6 characters long
+                      </p>
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">
-                      Must be at least 6 characters long
-                    </p>
-                  </div>
 
-                  <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#cbd5e1]">
-                      Confirm New Password
-                    </label>
-                    <div className="mt-1">
-                      <input
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <Input
                         id="confirmPassword"
                         name="confirmPassword"
                         type="password"
@@ -146,83 +146,80 @@ const ResetPasswordPage: NextPage = () => {
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="input-field"
                         placeholder="Confirm your new password"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <button
+                    <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full btn-primary"
+                      className="w-full"
                     >
                       {isSubmitting ? (
-                        <span className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        <span className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                           Updating password...
                         </span>
                       ) : (
                         'Update password'
                       )}
-                    </button>
-                  </div>
-                </form>
+                    </Button>
+                  </form>
 
-                <div className="mt-6">
-                  <div className="text-center">
+                  <div className="mt-6 text-center">
                     <a
                       href="/auth"
-                      className="text-sm text-blue-600 hover:text-blue-500"
+                      className="text-sm text-primary hover:text-primary/80 transition-colors"
                     >
                       Back to sign in
                     </a>
                   </div>
-                </div>
+                </CardContent>
               </>
             ) : (
-              <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#10b981]/10 mb-4">
-                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                
-                <h2 className="text-2xl font-bold text-[#f8fafc] mb-4">
-                  Password updated successfully!
-                </h2>
-                
-                <p className="text-[#cbd5e1] mb-6">
-                  Your password has been updated. You'll be redirected to your dashboard shortly.
-                </p>
-                
-                <div className="bg-green-50 border border-green-200 rounded-[var(--radius-md)] p-4 mb-6">
-                  <div className="text-sm text-green-700">
-                    <p className="font-medium mb-2">What's next:</p>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>You're now signed in with your new password</li>
-                      <li>Make sure to store your password securely</li>
-                      <li>You can now access all Finance Buddy features</li>
-                    </ul>
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-success/10 mb-4">
+                    <svg className="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+
+                  <h2 className="text-2xl font-bold text-foreground mb-4">
+                    Password updated successfully!
+                  </h2>
+
+                  <p className="text-muted-foreground mb-6">
+                    Your password has been updated. You'll be redirected to your dashboard shortly.
+                  </p>
+
+                  <div className="bg-success/10 border border-success/30 rounded-xl p-4 mb-6">
+                    <div className="text-sm text-muted-foreground">
+                      <p className="font-medium mb-2 text-foreground">What's next:</p>
+                      <ul className="list-disc list-inside space-y-1 text-left">
+                        <li>You're now signed in with your new password</li>
+                        <li>Make sure to store your password securely</li>
+                        <li>You can now access all Finance Buddy features</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => router.push('/')}
+                      className="w-full"
+                    >
+                      Go to Dashboard
+                    </Button>
+
+                    <div className="text-sm text-muted-foreground">
+                      Redirecting automatically in 3 seconds...
+                    </div>
                   </div>
                 </div>
-                
-                <div className="space-y-3">
-                  <button
-                    onClick={() => router.push('/')}
-                    className="w-full btn-primary"
-                  >
-                    Go to Dashboard
-                  </button>
-                  
-                  <div className="text-sm text-gray-500">
-                    Redirecting automatically in 3 seconds...
-                  </div>
-                </div>
-              </div>
+              </CardContent>
             )}
-          </div>
+          </Card>
         </div>
       </div>
     </>
