@@ -5,145 +5,176 @@ interface TransactionCardProps {
   transaction: Transaction;
   onQuickEdit: () => void;
   onStatusUpdate: (status: TransactionStatus) => void;
+  isLast?: boolean;
 }
 
-const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit, onStatusUpdate }: TransactionCardProps) {
-  const formatAmount = (amount?: string | null, currency?: string | null) => {
-    if (!amount) return 'N/A';
-    const numAmount = Math.abs(parseFloat(amount));
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD',
-    }).format(numAmount);
-  };
+// Category emoji/icon mapping (matching /txn)
+const getCategoryEmoji = (category?: string | null, merchantName?: string | null): string => {
+  const cat = category?.toLowerCase() || '';
+  const merchant = merchantName?.toLowerCase() || '';
 
+  // Check merchant name first for specific matches
+  if (merchant.includes('swiggy') || merchant.includes('zomato')) return '🍜';
+  if (merchant.includes('bigbasket') || merchant.includes('zepto') || merchant.includes('blinkit')) return '🛒';
+  if (merchant.includes('netflix') || merchant.includes('hotstar') || merchant.includes('prime')) return '▶️';
+  if (merchant.includes('ola') || merchant.includes('uber') || merchant.includes('rapido')) return '🚗';
+  if (merchant.includes('chai') || merchant.includes('coffee') || merchant.includes('starbucks')) return '☕';
+  if (merchant.includes('mutual fund') || merchant.includes('investment')) return '📈';
+  if (merchant.includes('electricity') || merchant.includes('bescom') || merchant.includes('power')) return '⚡';
+  if (merchant.includes('salary') || merchant.includes('freelance') || merchant.includes('upwork')) return '✏️';
+
+  // Fallback to category
+  switch (cat) {
+    case 'food': case 'food & dining': case 'dining': return '🍜';
+    case 'groceries': case 'grocery': return '🛒';
+    case 'income': case 'salary': return '✏️';
+    case 'subscription': case 'entertainment': return '▶️';
+    case 'transport': case 'transportation': case 'travel': return '🚗';
+    case 'utilities': case 'bills': return '⚡';
+    case 'investment': case 'savings': return '📈';
+    case 'shopping': return '🛍️';
+    case 'health': case 'medical': return '💊';
+    case 'education': return '📚';
+    default: return '💳';
+  }
+};
+
+// Payment method color mapping (from /txn design spec)
+const getPaymentMethodColor = (accountType?: string | null): string => {
+  const type = accountType?.toUpperCase() || '';
+
+  if (type.includes('UPI')) return '#6366F1';
+  if (type.includes('GPAY') || type.includes('GOOGLE')) return '#4285F4';
+  if (type.includes('PHONEPE')) return '#5F259F';
+  if (type.includes('PAYTM')) return '#00BAF2';
+  if (type.includes('NEFT') || type.includes('WIRE') || type.includes('IMPS')) return '#10B981';
+  if (type.includes('CARD') || type.includes('CREDIT') || type.includes('DEBIT')) return '#F59E0B';
+  if (type.includes('AUTO')) return '#EF4444';
+  return '#6B7280';
+};
+
+// Format date to "28 Dec" style (matching /txn)
+const formatShortDate = (dateStr: string | null): string => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+};
+
+// Transaction Card Component (matches /txn design exactly)
+const TransactionCard = memo(function TransactionCard({ transaction, onQuickEdit, onStatusUpdate, isLast }: TransactionCardProps) {
   const isExpense = transaction.direction === 'debit';
-  const amountPrefix = isExpense ? '-' : '+';
-  // Use theme semantic colors
-  const amountColor = isExpense ? 'text-[var(--color-text-primary)]' : 'text-[var(--color-income)]';
+  const emoji = getCategoryEmoji(transaction.category, transaction.merchant_name);
+  const paymentMethodColor = getPaymentMethodColor(transaction.account_type);
 
-  const getStatusStyle = (status: TransactionStatus) => {
-    switch (status) {
-      case 'REVIEW': return 'bg-[var(--color-warning)]/20 text-[var(--color-warning)] border-[var(--color-warning)]/30';
-      case 'APPROVED': return 'bg-[var(--color-income)]/20 text-[var(--color-income)] border-[var(--color-income)]/30';
-      case 'INVALID': return 'bg-[var(--color-text-disabled)]/20 text-[var(--color-text-disabled)] border-[var(--color-text-disabled)]/30';
-      case 'REJECTED': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)] border-[var(--color-expense)]/30';
-      default: return 'bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]';
+  const formatAmount = (amount?: string | null) => {
+    if (!amount) return '0';
+    const numAmount = Math.abs(parseFloat(amount));
+    // Indian number formatting with commas
+    if (numAmount >= 10000000) {
+      return (numAmount / 10000000).toFixed(2) + ' Cr';
+    } else if (numAmount >= 100000) {
+      return (numAmount / 100000).toFixed(2) + ' L';
     }
+    return numAmount.toLocaleString('en-IN');
   };
 
-  const getStatusLabel = (status: TransactionStatus) => {
-    if (status === 'APPROVED') return 'COMPLETED';
-    return status;
-  };
-
-  const getCategoryIcon = (category?: string | null) => {
-    const iconClass = "w-6 h-6 text-[var(--color-text-primary)]";
-    // Using simple shapes/emojis for now to match the design vibe, but keeping the SVG paths for cleaner look
-    // Design uses: Coffee cup for Food, Bank for Income, Cart for Shopping
-    switch (category?.toLowerCase()) {
-      case 'food': case 'dining':
-        return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 1v3M10 1v3M14 1v3" />
-          </svg>
-        );
-      case 'income': case 'salary':
-        return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-          </svg>
-        );
-      case 'shopping':
-        return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        );
-      case 'transport':
-        return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-        );
-      case 'utilities':
-        return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        );
-      default:
-        // Default Card icon
-        return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-          </svg>
-        );
+  const displayAccountType = (type?: string | null): string => {
+    if (!type) return '';
+    // Shorten common patterns
+    let display = type.replace(/_/g, ' ');
+    if (display.length > 10) {
+      display = display.substring(0, 10);
     }
-  };
-
-  const getIconBgColor = (category?: string | null) => {
-    switch (category?.toLowerCase()) {
-      case 'food': return 'bg-[var(--color-accent-primary)]';
-      case 'income': return 'bg-[var(--color-income)]';
-      case 'shopping': return 'bg-[var(--color-chart-3)]';
-      case 'utilities': return 'bg-[var(--color-warning)]';
-      case 'transport': return 'bg-[var(--color-accent-primary)]';
-      default: return 'bg-[var(--color-text-muted)]';
-    }
+    return display.toUpperCase();
   };
 
   return (
-    <div
-      onClick={onQuickEdit}
-      className="bg-[var(--color-bg-card)] rounded-2xl p-4 flex items-center justify-between hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer group mb-3 border border-[var(--color-border)]"
-    >
-      <div className="flex items-center gap-4">
-        {/* Icon Circle */}
-        <div className={`w-12 h-12 rounded-full ${getIconBgColor(transaction.category)} bg-opacity-20 flex items-center justify-center`}>
-          {/* Inner Circle for contrast if needed, or just icon */}
-          <div className={`w-12 h-12 rounded-full ${getIconBgColor(transaction.category)} bg-opacity-20 flex items-center justify-center`}>
-            {getCategoryIcon(transaction.category)}
+    <>
+      {/* transactionItem - exact match to /txn design */}
+      <div
+        className="transaction-item"
+        onClick={onQuickEdit}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '16px 8px',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease'
+        }}
+      >
+        {/* transactionLeft - gap 14px */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* transactionIcon - 48x48, borderRadius 14px */}
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: isExpense ? 'rgba(255,255,255,0.04)' : 'rgba(34, 197, 94, 0.12)'
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>{emoji}</span>
           </div>
-        </div>
 
-        {/* Text Content */}
-        <div className="flex flex-col">
-          <span className="text-[var(--color-text-primary)] font-semibold text-[15px]">
-            {transaction.merchant_name || 'Unknown Merchant'}
-          </span>
-          <span className="text-[var(--color-text-muted)] text-sm">
-            {transaction.category || 'Uncategorized'}
-          </span>
-
-          {/* Payment Method / Account Hint line */}
-          <div className="flex items-center gap-1.5 mt-1">
-            <svg className="w-3.5 h-3.5 text-[var(--color-text-disabled)]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H3V6h18v12zm-4-6h2v2h-2zm-4 0h2v2h-2z" />
-            </svg>
-            <span className="text-[var(--color-text-disabled)] text-xs">
-              {transaction.account_type
-                ? `${transaction.account_type.replace(/_/g, ' ')} ${transaction.account_hint ? `•••• ${transaction.account_hint.slice(-4)}` : ''}`
-                : 'Card •••• 0000'}
+          {/* transactionInfo - gap 4px */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {/* transactionTitle - 15px, 500 */}
+            <span style={{ fontSize: '15px', fontWeight: '500' }}>
+              {transaction.merchant_name || 'Unknown'}
+            </span>
+            {/* transactionCategory only - 12px, rgba(255,255,255,0.35) */}
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
+              {transaction.category || 'Uncategorized'}
             </span>
           </div>
         </div>
+
+        {/* transactionRight - gap 2px for tighter spacing */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+          {/* transactionAmount - 15px, 600, JetBrains Mono */}
+          <span
+            style={{
+              fontSize: '15px',
+              fontWeight: '600',
+              fontFamily: '"JetBrains Mono", monospace',
+              color: isExpense ? '#F87171' : '#22C55E'
+            }}
+          >
+            {isExpense ? '-' : '+'}₹{formatAmount(transaction.amount)}
+          </span>
+          {/* Payment method - smaller text below amount */}
+          {transaction.account_type && (
+            <span
+              style={{
+                fontSize: '10px',
+                fontWeight: '500',
+                textTransform: 'uppercase',
+                letterSpacing: '0.3px',
+                color: paymentMethodColor
+              }}
+            >
+              {displayAccountType(transaction.account_type)}
+            </span>
+          )}
+          {/* transactionDate - 10px, rgba(255,255,255,0.3), 500 */}
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: '500' }}>
+            {formatShortDate(transaction.txn_time)}
+          </span>
+        </div>
       </div>
 
-      {/* Right Content */}
-      <div className="flex flex-col items-end gap-2">
-        <span className={`${amountColor} font-bold text-[15px]`}>
-          {amountPrefix}{formatAmount(transaction.amount, transaction.currency)}
-        </span>
-        <button
-          onClick={(e) => { e.stopPropagation(); onQuickEdit(); }}
-          className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider ${getStatusStyle(transaction.status)} uppercase border`}
-        >
-          {getStatusLabel(transaction.status)}
-        </button>
-      </div>
-    </div>
+      {/* separatorWrapper + separator - 80%, 1px, rgba(255,255,255,0.06) */}
+      {!isLast && (
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <div style={{ width: '80%', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+        </div>
+      )}
+    </>
   );
 });
 
