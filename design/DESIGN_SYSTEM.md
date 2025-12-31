@@ -278,27 +278,94 @@ Icon buttons: 40x40px, transparent bg, radius-12
 Menu button: 44x44px, elevated bg, radius-14, border
 ```
 
-### Transaction Item
+### Transaction List (Modular Component Architecture)
 
+#### TxnListHeader
+```
+Container: padding 0
+Title: 15px, semibold (600), text-primary
+Count Badge: 12px, semibold (600), rgba(255,255,255,0.35)
+  Background: rgba(255,255,255,0.06)
+  Padding: 4px 10px
+  Border-radius: 8px
+Margin-bottom: 16px
+```
+
+#### TxnCard (Transaction Item)
 ```
 Padding: 16px 8px
 Border-radius: 12px
-Icon: 48x48px, radius-14
+Cursor: pointer
+Hover: background rgba(255,255,255,0.02)
+Animation: slideIn 0.35s ease-out backwards
+
+Layout: flexbox, justify-between, align-center
 Gap (icon to text): 14px
-Title: 15px, medium (500)
-Category: 12px, subtle (rgba 0.35)
-Method: 11px, semibold (600), uppercase, brand color
-Amount: 15px, semibold (600), mono font, semantic color
-Date: 11px, subtle (rgba 0.3), medium (500)
+Gap (info lines): 4px
+Gap (right column): 2px (tight)
+
+Icon Container:
+  Size: 48x48px
+  Border-radius: 14px
+  Background:
+    - Expense: rgba(255,255,255,0.04)
+    - Income: rgba(34,197,94,0.12)
+  Emoji: 18px
+
+Left Column (Info):
+  Merchant: 15px, medium (500), text-primary
+  Category: 12px, text-subtle (rgba 0.35)
+
+Right Column (Amount):
+  Amount: 15px, semibold (600), JetBrains Mono
+    - Expense: #F87171 (red)
+    - Income: #22C55E (green)
+  Payment Method: 10px, medium (500), uppercase, letter-spacing 0.3px
+    - Color: Brand-specific (see Payment Method Colors)
+  Date: 10px, medium (500), rgba(255,255,255,0.3)
 ```
 
-### Separator
-
+#### TxnSeparator
 ```
 Width: 80%
 Height: 1px
 Background: rgba(255,255,255,0.06)
-Alignment: center
+Alignment: center (flexbox)
+Displayed: Between items, not after last item
+```
+
+#### TxnLoadingSkeleton
+```
+Shimmer effect: linear-gradient animation
+Skeleton items match exact TxnCard dimensions:
+  Icon: 48x48px circle
+  Title: 120px x 15px
+  Category: 80px x 12px
+  Amount: 100px x 15px
+Default count: 8 items
+Animation: pulse + shimmer
+```
+
+#### TxnEmptyState
+```
+Padding: 80px 24px
+Text-align: center
+Emoji: 📭, 48px
+Message: 15px, text-muted (rgba 0.5)
+```
+
+#### TxnErrorState
+```
+Padding: 40px 24px
+Text-align: center
+Error icon: ⚠️, 36px
+Message: 15px, expense color (#F87171)
+Retry Button:
+  Padding: 12px 24px
+  Background: accent (#6366F1)
+  Border-radius: 12px
+  Font: 13px, medium (500)
+  Hover: opacity 0.9
 ```
 
 ### Badge
@@ -309,6 +376,47 @@ Radius: 8px
 Background: rgba(255,255,255,0.06)
 Font: 12px, semibold
 Color: rgba(255,255,255,0.35)
+```
+
+### Category Emoji Mapping
+
+```javascript
+// Merchant-specific (priority)
+'swiggy|zomato' → 🍜
+'bigbasket|zepto|blinkit' → 🛒
+'netflix|hotstar|prime' → ▶️
+'ola|uber|rapido' → 🚗
+'chai|coffee|starbucks' → ☕
+'mutual fund|investment' → 📈
+'electricity|bescom|power' → ⚡
+'salary|freelance|upwork' → ✏️
+
+// Category fallback
+'food & dining' → 🍜
+'groceries' → 🛒
+'income|salary' → ✏️
+'subscription|entertainment' → ▶️
+'transport|travel' → 🚗
+'utilities|bills' → ⚡
+'investment|savings' → 📈
+'shopping' → 🛍️
+'health|medical' → 💊
+'education' → 📚
+default → 💳
+```
+
+### Number Formatting (Indian)
+
+```javascript
+// Amount display logic
+≥ 1 Crore → X.XX Cr
+≥ 1 Lakh → X.XX L
+< 1 Lakh → XX,XXX (toLocaleString 'en-IN')
+
+// Examples
+15000000 → 1.50 Cr
+250000 → 2.50 L
+85000 → 85,000
 ```
 
 ---
@@ -475,6 +583,96 @@ JetBrains  mono      11px xs              10px default        200ms default
 
 ---
 
+## Modular Component Architecture
+
+### Overview
+
+The transaction list UI follows a **modular component architecture** with separation of concerns:
+
+```
+src/
+├── components/
+│   └── transactions/          # Transaction UI components
+│       ├── TxnCard.tsx        # Individual transaction card
+│       ├── TxnList.tsx        # Transaction list container
+│       ├── TxnListHeader.tsx  # Header with title & count
+│       ├── TxnLoadingSkeleton.tsx  # Loading state
+│       ├── TxnEmptyState.tsx  # Empty state
+│       ├── TxnErrorState.tsx  # Error state
+│       ├── TxnStyles.tsx      # CSS animations & styles
+│       └── index.ts           # Barrel export
+└── lib/
+    └── utils/
+        └── transaction-formatters.ts  # Utility functions
+```
+
+### Component Responsibilities
+
+| Component | Purpose | Reusability |
+|-----------|---------|-------------|
+| `TxnCard` | Display single transaction | High - Use in any transaction list |
+| `TxnList` | Map transactions to cards | High - Use for grouped/flat lists |
+| `TxnListHeader` | Show title with count badge | High - Use for any list section |
+| `TxnLoadingSkeleton` | Loading state placeholder | High - Use during data fetch |
+| `TxnEmptyState` | No data message | Medium - Customize message per context |
+| `TxnErrorState` | Error with retry | Medium - Customize error handling |
+| `TxnStyles` | CSS animations | High - Import globally |
+
+### Utility Functions (transaction-formatters.ts)
+
+```typescript
+// Category emoji selection (merchant-first, category fallback)
+getCategoryEmoji(category?: string | null, merchantName?: string | null): string
+
+// Payment method brand color
+getPaymentMethodColor(accountType?: string | null): string
+
+// Short date format ("28 Dec")
+formatShortDate(dateStr: string | null): string
+
+// Indian number formatting (Cr/L/commas)
+formatIndianAmount(amount?: string | null): string
+
+// Account type display (uppercase, max 10 chars)
+displayAccountType(type?: string | null): string
+```
+
+### Benefits
+
+1. **Reusability**: Components can be used across dashboard, reports, analytics
+2. **Maintainability**: Single source of truth for transaction UI
+3. **Testability**: Each component can be tested in isolation
+4. **Consistency**: Same visual language across all transaction lists
+5. **Performance**: React.memo prevents unnecessary re-renders
+6. **Type Safety**: Full TypeScript coverage with proper interfaces
+
+### Usage Example
+
+```typescript
+import {
+  TxnList,
+  TxnListHeader,
+  TxnLoadingSkeleton,
+  TxnEmptyState,
+  TxnErrorState,
+  TxnStyles,
+} from '@/components/transactions';
+
+// In your page component
+<>
+  <TxnStyles />
+  <TxnListHeader title="Recent Transactions" count={total} />
+  {loading && <TxnLoadingSkeleton count={8} />}
+  {error && <TxnErrorState error={error} onRetry={refetch} />}
+  {!loading && !error && transactions.length === 0 && <TxnEmptyState />}
+  {!loading && !error && transactions.length > 0 && (
+    <TxnList transactions={transactions} onTransactionClick={handleClick} />
+  )}
+</>
+```
+
+---
+
 ## Migration Notes
 
 ### From v2.0 (Midnight Blue) to v3.0 (Matte Dark)
@@ -490,12 +688,272 @@ JetBrains  mono      11px xs              10px default        200ms default
 
 ### Migration Checklist
 
-- [ ] Update CSS variables in globals.css
-- [ ] Add Google Fonts import (Outfit, JetBrains Mono)
-- [ ] Update Tailwind config
-- [ ] Migrate component colors
-- [ ] Update transaction list styling
+- [x] Update CSS variables in globals.css
+- [x] Add Google Fonts import (Outfit, JetBrains Mono)
+- [x] Update Tailwind config
+- [x] Migrate component colors
+- [x] Update transaction list styling (✓ /transactions completed)
+- [x] Create modular transaction components
+- [ ] Migrate dashboard page
+- [ ] Migrate reports/analytics pages
+- [ ] Migrate auth pages
+- [ ] Migrate settings page
 - [ ] Test accessibility contrast ratios
+
+---
+
+## Phased Migration Plan
+
+### Phase 1: Core Transaction UI ✓ (COMPLETED)
+
+**Goal**: Establish modular transaction component architecture
+**Status**: ✅ Completed (Commit: af65b5a5)
+
+**Completed Tasks**:
+- [x] Create `src/lib/utils/transaction-formatters.ts`
+- [x] Create `src/components/transactions/` directory
+- [x] Build TxnCard, TxnList, TxnListHeader components
+- [x] Build TxnLoadingSkeleton, TxnEmptyState, TxnErrorState
+- [x] Create TxnStyles with slideIn animation
+- [x] Refactor `/transactions` page to use modular components
+- [x] Update TransactionCard.tsx to match /txn design
+- [x] Test with 201 transactions
+- [x] Deploy to Vercel
+
+**Files Changed**:
+- Created: 9 new files (components + utilities)
+- Modified: 2 files (transactions.tsx, TransactionCard.tsx)
+- Lines: +625 insertions, -217 deletions
+
+---
+
+### Phase 2: Dashboard Page (NEXT)
+
+**Goal**: Migrate dashboard to matte dark theme with reusable components
+**Estimated Effort**: Medium (4-6 hours)
+
+**Tasks**:
+- [ ] Analyze current dashboard layout and components
+- [ ] Update background colors (#09090B, #111113)
+- [ ] Replace card components with matte dark variants
+- [ ] Integrate TxnList component for recent transactions section
+- [ ] Update stats cards with proper spacing and colors
+- [ ] Add slideIn animations for dashboard sections
+- [ ] Update chart colors to match design system
+- [ ] Test responsive layout on 430px container
+- [ ] Commit: "Migrate dashboard to matte dark design system"
+
+**Component Changes**:
+- `src/pages/index.tsx` (dashboard)
+- Create `src/components/dashboard/` directory if needed
+- Stats cards, charts, quick actions
+
+**Design Specifications**:
+- Use bg-primary (#09090B) for page background
+- Use bg-elevated (rgba 0.03) for stat cards
+- Use bg-secondary (#111113) for section headers
+- Reuse TxnList for "Recent Transactions" widget
+- Font: Outfit for text, JetBrains Mono for numbers
+- Animation: slideIn 0.35s for staggered card entry
+
+---
+
+### Phase 3: Reports & Analytics Pages
+
+**Goal**: Unify reports/analytics with design system
+**Estimated Effort**: Medium-High (6-8 hours)
+
+**Tasks**:
+- [ ] Identify all report/analytics pages
+- [ ] Update chart components (if using custom charts)
+- [ ] Update filter chips to match design system
+- [ ] Create reusable FilterChip component
+- [ ] Update date pickers and dropdowns
+- [ ] Ensure payment method colors are consistent
+- [ ] Add loading skeletons for chart data
+- [ ] Test data visualization contrast ratios
+- [ ] Commit: "Migrate reports & analytics to matte dark theme"
+
+**Component Changes**:
+- Report pages
+- Chart components
+- Filter components
+- Date/time pickers
+
+**Design Specifications**:
+- Chart colors: Use semantic colors (income, expense, accent)
+- Gridlines: rgba(255,255,255,0.04)
+- Tooltips: bg-secondary with border-subtle
+- Legends: text-muted with proper spacing
+- Filter chips: radius-default (10px), bg-hover on active
+
+---
+
+### Phase 4: Authentication Pages
+
+**Goal**: Modernize auth flow with matte dark aesthetic
+**Estimated Effort**: Low-Medium (3-4 hours)
+
+**Tasks**:
+- [ ] Update login page background and inputs
+- [ ] Update signup page if exists
+- [ ] Update password reset flow
+- [ ] Create AuthInput component with proper styling
+- [ ] Update OAuth buttons (Google, etc.) with brand colors
+- [ ] Add subtle glow to primary CTA button
+- [ ] Test form validation error states
+- [ ] Ensure accessibility (focus states, contrast)
+- [ ] Commit: "Migrate auth pages to matte dark design"
+
+**Component Changes**:
+- `src/pages/auth.tsx` or equivalent
+- Create `src/components/auth/` if needed
+- Input components, buttons, error messages
+
+**Design Specifications**:
+- Page bg: bg-primary (#09090B)
+- Form container: bg-secondary with border-subtle
+- Inputs: bg-elevated, border-default, radius-md (12px)
+- Focus states: border-strong with accent glow
+- Error states: expense color (#F87171)
+- Primary CTA: accent (#6366F1) with shadow-glow-lg
+
+---
+
+### Phase 5: Settings & Profile Pages
+
+**Goal**: Consistent settings UI with proper hierarchy
+**Estimated Effort**: Medium (4-5 hours)
+
+**Tasks**:
+- [ ] Analyze settings page structure
+- [ ] Create SettingsSection component
+- [ ] Create SettingsItem component (toggle, button, link)
+- [ ] Update profile form inputs
+- [ ] Add proper section headers with separators
+- [ ] Update toggle switches to match design
+- [ ] Add confirmation modals with matte dark styling
+- [ ] Test all interactive states
+- [ ] Commit: "Migrate settings & profile to matte dark theme"
+
+**Component Changes**:
+- Settings pages
+- Profile pages
+- Create `src/components/settings/` directory
+- Toggle, switch, select components
+
+**Design Specifications**:
+- Section headers: 15px semibold, text-primary, mb-16px
+- Settings items: 48px height, radius-md, bg-elevated
+- Toggle switches: accent color when active
+- Dividers: 1px solid border-subtle
+- Action buttons: radius-md, proper hover states
+
+---
+
+### Phase 6: Modals, Toasts & Overlays
+
+**Goal**: Unified modal and notification system
+**Estimated Effort**: Medium (4-5 hours)
+
+**Tasks**:
+- [ ] Update TransactionModal styling (if not done)
+- [ ] Create reusable Modal component
+- [ ] Update Toast component colors and animations
+- [ ] Create BottomSheet component (if needed)
+- [ ] Add backdrop with proper opacity
+- [ ] Ensure modals use slideUp animation
+- [ ] Add proper focus trapping and keyboard nav
+- [ ] Test modal close animations
+- [ ] Commit: "Unify modals, toasts & overlays with design system"
+
+**Component Changes**:
+- Modal components
+- Toast/notification components
+- Bottom sheets
+- Confirmation dialogs
+
+**Design Specifications**:
+- Backdrop: rgba(0,0,0,0.6)
+- Modal bg: bg-secondary (#111113)
+- Modal radius: radius-xl (16px) or radius-2xl (20px)
+- Animation: slideUp 0.35s ease-out
+- Toast: bg-secondary with border-subtle, slideUp from bottom
+- Close button: 40x40px, bg-elevated, radius-md
+
+---
+
+### Phase 7: Final Polish & Documentation
+
+**Goal**: Complete migration and document patterns
+**Estimated Effort**: Low-Medium (3-4 hours)
+
+**Tasks**:
+- [ ] Audit all pages for consistency
+- [ ] Fix any remaining color inconsistencies
+- [ ] Ensure all hover/active states match design system
+- [ ] Update README with design system reference
+- [ ] Create component usage examples in Storybook (optional)
+- [ ] Performance audit (bundle size, render performance)
+- [ ] Accessibility audit (WCAG 2.1 AA compliance)
+- [ ] Cross-browser testing (Chrome, Safari, Firefox)
+- [ ] Mobile device testing (iOS, Android)
+- [ ] Commit: "Final design system polish and documentation"
+
+**Validation Checklist**:
+- [ ] No pure black (#000) or pure white (#FFF) used
+- [ ] All borders use rgba() values
+- [ ] Accent color used sparingly (logo, primary CTAs)
+- [ ] Outfit font for UI text, JetBrains Mono for numbers
+- [ ] All animations use purposeful easing (ease-out for enter)
+- [ ] Contrast ratios meet WCAG 2.1 AA standards
+- [ ] Touch targets minimum 44x44px
+- [ ] Consistent spacing using design tokens
+
+---
+
+### Migration Timeline
+
+| Phase | Effort | Duration | Status |
+|-------|--------|----------|--------|
+| Phase 1: Transaction UI | Medium | 1 week | ✅ Complete |
+| Phase 2: Dashboard | Medium | 2-3 days | 📋 Planned |
+| Phase 3: Reports/Analytics | Medium-High | 3-4 days | 📋 Planned |
+| Phase 4: Auth Pages | Low-Medium | 1-2 days | 📋 Planned |
+| Phase 5: Settings/Profile | Medium | 2-3 days | 📋 Planned |
+| Phase 6: Modals/Toasts | Medium | 2-3 days | 📋 Planned |
+| Phase 7: Final Polish | Low-Medium | 1-2 days | 📋 Planned |
+| **Total** | **Medium-High** | **2-3 weeks** | **14% Complete** |
+
+### Git Commit Strategy
+
+Each phase should be a **single atomic commit** with a clear message:
+
+```bash
+# Pattern
+git commit -m "Phase N: [Brief description]
+
+- Task 1
+- Task 2
+- Task 3
+
+Design System: v3.0.0 Matte Dark
+Files changed: X files (+XXX, -XXX)
+"
+
+# Examples
+git commit -m "Phase 1: Refactor /transactions UI with modular components
+
+- Create src/lib/utils/transaction-formatters.ts
+- Create src/components/transactions/ directory
+- Build TxnCard, TxnList, TxnListHeader components
+- Add loading, empty, error states
+- Integrate slideIn animations
+
+Design System: v3.0.0 Matte Dark
+Files changed: 11 files (+625, -217)
+"
+```
 
 ---
 
