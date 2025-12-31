@@ -62,15 +62,15 @@ export const QuickActions = memo(function QuickActions({ actions, priorityResult
                 width: '100%',
                 textAlign: 'left',
               }}
-              onMouseEnter={(e: React.MouseEvent) => {
+              onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
                 if (!action.disabled) {
-                  e.currentTarget.style.borderColor = '#6366F1';
-                  e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#6366F1';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(99, 102, 241, 0.1)';
                 }
               }}
-              onMouseLeave={(e: React.MouseEvent) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                e.currentTarget.style.background = 'transparent';
+              onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
               }}
             >
               <span style={{
