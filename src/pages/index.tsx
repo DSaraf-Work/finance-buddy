@@ -4,17 +4,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import LoadingScreen from '@/components/LoadingScreen';
 import { GmailConnectionPublic, ConnectionsResponse } from '@/types';
+import {
+  DashboardStyles,
+  StatCard,
+  QuickActions,
+  ConnectedAccounts,
+  RecentTransactions
+} from '@/components/dashboard';
 
 interface DashboardStats {
   totalEmails: number;
   totalTransactions: number;
   totalConnections: number;
-  recentActivity: Array<{
-    id: string;
-    type: 'email' | 'transaction' | 'connection';
-    description: string;
-    timestamp: string;
-  }>;
 }
 
 const HomePage: NextPage = () => {
@@ -23,7 +24,6 @@ const HomePage: NextPage = () => {
     totalEmails: 0,
     totalTransactions: 0,
     totalConnections: 0,
-    recentActivity: [],
   });
   const [connections, setConnections] = useState<GmailConnectionPublic[]>([]);
   const [loadingStats, setLoadingStats] = useState(false);
@@ -79,20 +79,6 @@ const HomePage: NextPage = () => {
         totalEmails,
         totalTransactions,
         totalConnections: connectionsData?.connections?.length || 0,
-        recentActivity: [
-          {
-            id: '1',
-            type: 'connection',
-            description: 'Gmail account connected',
-            timestamp: new Date().toISOString(),
-          },
-          {
-            id: '2',
-            type: 'email',
-            description: `${totalEmails} emails synced`,
-            timestamp: new Date().toISOString(),
-          },
-        ],
       });
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
@@ -150,85 +136,219 @@ const HomePage: NextPage = () => {
   if (!user) {
     return (
       <Layout
-        title="Finance Buddy - Gmail Financial Email Automation"
-        description="Automate your financial email collection with Gmail OAuth integration"
+        title="Finance Buddy - Smart Financial Management"
+        description="Track and manage your financial transactions with AI-powered insights"
       >
-        <main className="p-8">
-          <div className="max-w-4xl mx-auto">
+        <DashboardStyles />
+        <main style={{
+          minHeight: 'calc(100vh - 72px)',
+          background: '#09090B',
+          padding: '40px 20px',
+        }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
             {/* Hero Section */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-text-primary)] mb-4">
+            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+              <h1 style={{
+                fontSize: '48px',
+                fontWeight: '700',
+                color: '#FAFAFA',
+                marginBottom: '16px',
+                fontFamily: 'Outfit, sans-serif',
+                letterSpacing: '-1px',
+              }}>
                 Finance Buddy
               </h1>
-
-              <p className="text-lg sm:text-xl text-[var(--color-text-secondary)] mb-8 leading-relaxed">
-                Automate your financial email collection with secure Gmail OAuth integration.<br/>
-                Sync, organize, and manage financial emails with advanced filtering and search.
+              <p style={{
+                fontSize: '18px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '32px',
+                lineHeight: '1.6',
+                fontFamily: 'Outfit, sans-serif',
+              }}>
+                Track and manage your financial transactions with AI-powered insights.<br/>
+                Secure Gmail OAuth integration for automatic transaction extraction.
               </p>
 
               {/* Sign In/Up Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
                 <a
                   href="/auth"
-                  className="btn-primary"
+                  style={{
+                    padding: '12px 32px',
+                    background: '#6366F1',
+                    border: 'none',
+                    borderRadius: '12px',
+                    color: '#FAFAFA',
+                    textDecoration: 'none',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    fontFamily: 'Outfit, sans-serif',
+                    boxShadow: '0 0 32px rgba(99, 102, 241, 0.35)',
+                    display: 'inline-block',
+                    transition: 'opacity 0.2s ease-out',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
                   Sign In
                 </a>
-
                 <a
                   href="/auth"
-                  className="btn-secondary"
+                  style={{
+                    padding: '12px 32px',
+                    background: 'transparent',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '12px',
+                    color: '#FAFAFA',
+                    textDecoration: 'none',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    fontFamily: 'Outfit, sans-serif',
+                    display: 'inline-block',
+                    transition: 'all 0.2s ease-out',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#6366F1';
+                    e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.currentTarget.style.background = 'transparent';
+                  }}
                 >
                   Sign Up
                 </a>
               </div>
             </div>
 
-            {/* Features Section */}
-            <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] p-8 mb-8 border border-[var(--color-border)]">
-              <h2 className="text-2xl font-semibold text-[var(--color-text-primary)] mb-6 text-center">
+            {/* Features Grid */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              padding: '40px',
+              marginBottom: '32px',
+            }}>
+              <h2 style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: '#FAFAFA',
+                textAlign: 'center',
+                marginBottom: '32px',
+                fontFamily: 'Outfit, sans-serif',
+              }}>
                 What you'll get with Finance Buddy
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="text-center">
-                  <div className="text-4xl mb-2">🔐</div>
-                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">Secure OAuth Integration</h3>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    Connect multiple Gmail accounts with industry-standard OAuth security
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔐</div>
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#FAFAFA',
+                    marginBottom: '8px',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    Secure OAuth
+                  </h3>
+                  <p style={{
+                    fontSize: '13px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontFamily: 'Outfit, sans-serif',
+                    lineHeight: '1.5',
+                  }}>
+                    Connect Gmail with industry-standard OAuth security
                   </p>
                 </div>
 
-                <div className="text-center">
-                  <div className="text-4xl mb-2">📧</div>
-                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">Smart Email Sync</h3>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    Manual sync with date ranges, sender filters, and intelligent deduplication
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>📧</div>
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#FAFAFA',
+                    marginBottom: '8px',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    Smart Email Sync
+                  </h3>
+                  <p style={{
+                    fontSize: '13px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontFamily: 'Outfit, sans-serif',
+                    lineHeight: '1.5',
+                  }}>
+                    Manual sync with intelligent deduplication
                   </p>
                 </div>
 
-                <div className="text-center">
-                  <div className="text-4xl mb-2">🔍</div>
-                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">Advanced Search</h3>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    Powerful filtering and search capabilities for financial email management
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#FAFAFA',
+                    marginBottom: '8px',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    Advanced Search
+                  </h3>
+                  <p style={{
+                    fontSize: '13px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontFamily: 'Outfit, sans-serif',
+                    lineHeight: '1.5',
+                  }}>
+                    Powerful filtering for transaction management
                   </p>
                 </div>
 
-                <div className="text-center">
-                  <div className="text-4xl mb-2">⚙️</div>
-                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">Admin Tools</h3>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    Comprehensive testing dashboard and system health monitoring
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚙️</div>
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#FAFAFA',
+                    marginBottom: '8px',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    Admin Tools
+                  </h3>
+                  <p style={{
+                    fontSize: '13px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontFamily: 'Outfit, sans-serif',
+                    lineHeight: '1.5',
+                  }}>
+                    Comprehensive system monitoring
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Security & Privacy */}
-            <div className="bg-[var(--color-income)]/10 rounded-[var(--radius-md)] p-6 border border-[var(--color-income)]/30">
-              <h3 className="text-lg font-semibold text-[var(--color-income)] mb-2">🛡️ Security & Privacy</h3>
-              <p className="text-sm text-[var(--color-text-secondary)]">
+            <div style={{
+              background: 'rgba(34, 197, 94, 0.12)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '12px',
+              padding: '20px',
+            }}>
+              <h3 style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: '#22C55E',
+                marginBottom: '8px',
+                fontFamily: 'Outfit, sans-serif',
+              }}>
+                🛡️ Security & Privacy
+              </h3>
+              <p style={{
+                fontSize: '13px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontFamily: 'Outfit, sans-serif',
+                lineHeight: '1.5',
+              }}>
                 Your data is protected with Row Level Security (RLS), secure cookie authentication,
                 and OAuth-only access. We never store your Gmail passwords.
               </p>
@@ -245,334 +365,236 @@ const HomePage: NextPage = () => {
       title="Finance Buddy - Dashboard"
       description="Finance Buddy dashboard with overview and quick actions"
     >
-      <div className="min-h-screen bg-[var(--color-bg-app)] py-8 sm:py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header - Midnight Blue Wealth Theme */}
-          <div className="mb-8 sm:mb-12">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-6 border-b border-[var(--color-border)]">
+      <DashboardStyles />
+      <div style={{
+        minHeight: 'calc(100vh - 72px)',
+        background: '#09090B',
+        padding: '32px 20px',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          {/* Welcome Header */}
+          <div style={{ marginBottom: '40px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              paddingBottom: '20px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            }}>
               <div>
-                <p className="text-xs sm:text-sm font-medium text-[var(--color-text-muted)] tracking-wide uppercase mb-2">
+                <p style={{
+                  fontSize: '11px',
+                  fontWeight: '500',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  marginBottom: '8px',
+                  fontFamily: 'Outfit, sans-serif',
+                }}>
                   Dashboard
                 </p>
-                <h1 className="text-3xl sm:text-4xl font-semibold text-[var(--color-text-primary)] tracking-tight">
+                <h1 style={{
+                  fontSize: '36px',
+                  fontWeight: '600',
+                  color: '#FAFAFA',
+                  fontFamily: 'Outfit, sans-serif',
+                  letterSpacing: '-0.5px',
+                }}>
                   Welcome back
                 </h1>
               </div>
-              <div className="flex items-center space-x-2 mt-3 sm:mt-0">
-                <div className="w-1.5 h-1.5 bg-[var(--color-income)] rounded-full animate-pulse"></div>
-                <span className="text-xs font-medium text-[var(--color-text-secondary)] tracking-wide">ACTIVE</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{
+                  width: '6px',
+                  height: '6px',
+                  background: '#22C55E',
+                  borderRadius: '50%',
+                  animation: 'pulse 2s ease-in-out infinite',
+                }}/>
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: '500',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  fontFamily: 'Outfit, sans-serif',
+                }}>
+                  Active
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards - Midnight Blue Wealth Theme */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-16">
-            {/* Total Emails Card */}
-            <div className="group bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 sm:p-6 hover:border-[var(--color-accent-primary)] hover:shadow-[var(--shadow-lg)] transition-all duration-300">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-[var(--color-accent-primary)]/10 rounded-[var(--radius-md)] flex items-center justify-center">
-                  <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xs font-medium text-[var(--color-text-muted)] tracking-wide uppercase mb-2">
-                Emails
-              </p>
-              <p className="text-3xl sm:text-4xl font-semibold text-[var(--color-text-primary)] mb-1 tracking-tight">
-                {loadingStats ? (
-                  <span className="text-[var(--color-text-muted)]">—</span>
-                ) : (
-                  stats.totalEmails.toLocaleString()
-                )}
-              </p>
-              <p className="text-xs text-[var(--color-text-secondary)]">
-                Synced from Gmail
-              </p>
-            </div>
-
-            {/* Total Transactions Card */}
-            <div className="group bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 sm:p-6 hover:border-[var(--color-income)] hover:shadow-[var(--shadow-lg)] transition-all duration-300">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-[var(--color-income)]/10 rounded-[var(--radius-md)] flex items-center justify-center">
-                  <svg className="w-5 h-5 text-[var(--color-income)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xs font-medium text-[var(--color-text-muted)] tracking-wide uppercase mb-2">
-                Transactions
-              </p>
-              <p className="text-3xl sm:text-4xl font-semibold text-[var(--color-text-primary)] mb-1 tracking-tight">
-                {loadingStats ? (
-                  <span className="text-[var(--color-text-muted)]">—</span>
-                ) : (
-                  stats.totalTransactions.toLocaleString()
-                )}
-              </p>
-              <p className="text-xs text-[var(--color-text-secondary)]">
-                AI-extracted
-              </p>
-            </div>
-
-            {/* Connected Accounts Card */}
-            <div className="group bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 sm:p-6 hover:border-[var(--color-info)] hover:shadow-[var(--shadow-lg)] transition-all duration-300 sm:col-span-2 lg:col-span-1">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-[var(--color-info)]/10 rounded-[var(--radius-md)] flex items-center justify-center">
-                  <svg className="w-5 h-5 text-[var(--color-info)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xs font-medium text-[var(--color-text-muted)] tracking-wide uppercase mb-2">
-                Accounts
-              </p>
-              <p className="text-3xl sm:text-4xl font-semibold text-[var(--color-text-primary)] mb-1 tracking-tight">
-                {loadingStats ? (
-                  <span className="text-[var(--color-text-muted)]">—</span>
-                ) : (
-                  stats.totalConnections
-                )}
-              </p>
-              <p className="text-xs text-[var(--color-text-secondary)]">
-                Connected
-              </p>
-            </div>
+          {/* Stats Cards */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px',
+          }}>
+            <StatCard
+              icon={
+                <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              }
+              iconColor="#6366F1"
+              iconBg="rgba(99, 102, 241, 0.12)"
+              label="Emails"
+              value={stats.totalEmails}
+              subtitle="Synced from Gmail"
+              loading={loadingStats}
+              hoverColor="#6366F1"
+            />
+            <StatCard
+              icon={
+                <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              }
+              iconColor="#22C55E"
+              iconBg="rgba(34, 197, 94, 0.12)"
+              label="Transactions"
+              value={stats.totalTransactions}
+              subtitle="AI-extracted"
+              loading={loadingStats}
+              hoverColor="#22C55E"
+            />
+            <StatCard
+              icon={
+                <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              }
+              iconColor="#4285F4"
+              iconBg="rgba(66, 133, 244, 0.12)"
+              label="Accounts"
+              value={stats.totalConnections}
+              subtitle="Connected"
+              loading={loadingStats}
+              hoverColor="#4285F4"
+            />
           </div>
 
-          {/* Quick Actions & Connection Status - Dark Purple Theme */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
-            {/* Quick Actions */}
-            <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 sm:p-6">
-              <h3 className="text-xs sm:text-sm font-medium text-[var(--color-accent-primary)] tracking-wide uppercase mb-4 sm:mb-6">
-                Quick Actions
-              </h3>
-              <div className="space-y-2">
-                <button
-                  onClick={handleConnect}
-                  className="group w-full text-left py-3 px-4 rounded-[var(--radius-md)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/10 transition-all duration-200 flex items-center justify-between"
-                >
-                  <span className="text-sm font-medium text-[var(--color-text-primary)]">Connect Gmail Account</span>
-                  <svg className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-primary)] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                <a
-                  href="/admin"
-                  className="group w-full block py-3 px-4 rounded-[var(--radius-md)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/10 transition-all duration-200 flex items-center justify-between"
-                >
-                  <span className="text-sm font-medium text-[var(--color-text-primary)]">Manage Connections</span>
-                  <svg className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-primary)] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-                <a
-                  href="/emails"
-                  className="group w-full block py-3 px-4 rounded-[var(--radius-md)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/10 transition-all duration-200 flex items-center justify-between"
-                >
-                  <span className="text-sm font-medium text-[var(--color-text-primary)]">Browse Emails</span>
-                  <svg className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-primary)] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-                <a
-                  href="/transactions"
-                  className="group w-full block py-3 px-4 rounded-[var(--radius-md)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/10 transition-all duration-200 flex items-center justify-between"
-                >
-                  <span className="text-sm font-medium text-[var(--color-text-primary)]">Review Transactions</span>
-                  <svg className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-primary)] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-                <button
-                  onClick={handleCheckPriorityEmails}
-                  disabled={checkingPriorityEmails}
-                  className="group w-full text-left py-3 px-4 rounded-[var(--radius-md)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/10 transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-[var(--color-border)] disabled:hover:bg-transparent"
-                >
-                  <span className="text-sm font-medium text-[var(--color-text-primary)]">
-                    {checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails'}
-                  </span>
-                  {checkingPriorityEmails ? (
-                    <svg className="animate-spin h-4 w-4 text-[var(--color-accent-primary)]" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-primary)] group-hover:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-
-              {/* Priority Email Result - Dark Theme */}
-              {priorityEmailResult && (
-                <div className={`mt-6 rounded-[var(--radius-lg)] p-4 border ${
-                  priorityEmailResult.success
-                    ? 'bg-[var(--color-income)]/10 border-[var(--color-income)]/30'
-                    : 'bg-[var(--color-expense)]/10 border-[var(--color-expense)]/30'
-                }`}>
-                  <p className={`text-xs font-medium tracking-wide uppercase mb-3 ${
-                    priorityEmailResult.success ? 'text-[var(--color-income)]' : 'text-[var(--color-expense)]'
-                  }`}>
-                    {priorityEmailResult.success ? '✓ Success' : '✕ Error'}
-                  </p>
-                  {priorityEmailResult.success && priorityEmailResult.result && (
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <span className="text-xs text-[var(--color-text-muted)]">Found</span>
-                        <p className="text-lg font-semibold text-[var(--color-text-primary)]">{priorityEmailResult.result.emailsFound}</p>
-                      </div>
-                      <div>
-                        <span className="text-xs text-[var(--color-text-muted)]">Processed</span>
-                        <p className="text-lg font-semibold text-[var(--color-text-primary)]">{priorityEmailResult.result.emailsProcessed}</p>
-                      </div>
-                      <div>
-                        <span className="text-xs text-[var(--color-text-muted)]">Connections</span>
-                        <p className="text-lg font-semibold text-[var(--color-text-primary)]">{priorityEmailResult.result.connectionsProcessed}</p>
-                      </div>
-                    </div>
-                  )}
-                  {priorityEmailResult.error && (
-                    <p className="text-xs text-[var(--color-expense)]">
-                      {priorityEmailResult.error}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Connection Status - Dark Theme */}
-            <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 sm:p-6">
-              <h3 className="text-xs sm:text-sm font-medium text-[var(--color-accent-primary)] tracking-wide uppercase mb-4 sm:mb-6">
-                Connected Accounts
-              </h3>
-              {connections.length === 0 ? (
-                <div className="text-center py-8 sm:py-12">
-                  <div className="w-12 h-12 bg-[var(--color-border)] rounded-[var(--radius-md)] flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-[var(--color-text-secondary)] mb-4">No accounts connected</p>
-                  <button
-                    onClick={handleConnect}
-                    className="inline-flex items-center px-4 py-2 bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] text-sm font-medium rounded-[var(--radius-md)] hover:bg-[var(--color-accent-hover)] transition-all duration-200 shadow-[0_0_20px_rgba(107,76,230,0.3)]"
-                  >
-                    Connect Account
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {connections.map((connection) => (
-                    <div
-                      key={connection.id}
-                      className="group p-4 rounded-[var(--radius-md)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/5 transition-all duration-200"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3 min-w-0 flex-1">
-                          <div className="w-8 h-8 bg-[var(--color-accent-primary)]/10 rounded-[var(--radius-md)] flex items-center justify-center flex-shrink-0 ring-1 ring-[var(--color-accent-primary)]/20">
-                            <svg className="w-4 h-4 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">{connection.email_address}</p>
-                            <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
-                              {connection.last_sync_at ? new Date(connection.last_sync_at).toLocaleDateString() : 'Never synced'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="w-2 h-2 bg-[var(--color-income)] rounded-full flex-shrink-0 animate-pulse"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Recent Transactions Section */}
+          <div style={{ marginBottom: '40px' }}>
+            <RecentTransactions limit={5} />
           </div>
 
-          {/* Features Overview - Dark Theme */}
-          <div className="border-t border-[var(--color-border)] pt-12 sm:pt-16">
-            <h3 className="text-xs sm:text-sm font-medium text-[var(--color-accent-primary)] tracking-wide uppercase mb-8 sm:mb-12">
+          {/* Quick Actions & Connection Status */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px',
+          }}>
+            <QuickActions
+              actions={[
+                { label: 'Connect Gmail Account', onClick: handleConnect },
+                { label: 'Manage Connections', href: '/admin' },
+                { label: 'Browse Emails', href: '/emails' },
+                { label: 'Review Transactions', href: '/transactions' },
+                {
+                  label: checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails',
+                  onClick: handleCheckPriorityEmails,
+                  disabled: checkingPriorityEmails,
+                  loading: checkingPriorityEmails,
+                },
+              ]}
+              priorityResult={priorityEmailResult}
+            />
+            <ConnectedAccounts
+              connections={connections}
+              onConnect={handleConnect}
+            />
+          </div>
+
+          {/* Features Overview */}
+          <div style={{
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingTop: '40px',
+          }}>
+            <h3 style={{
+              fontSize: '11px',
+              fontWeight: '600',
+              color: '#6366F1',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginBottom: '32px',
+              fontFamily: 'Outfit, sans-serif',
+            }}>
               Features
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              <div className="group p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-[var(--color-accent-primary)]/10 rounded-[var(--radius-md)] flex items-center justify-center mb-4 ring-1 ring-[var(--color-accent-primary)]/20">
-                  <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">Secure OAuth</h4>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                  Gmail integration with industry-standard PKCE security
-                </p>
-              </div>
 
-              <div className="group p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[var(--color-income)] hover:bg-[var(--color-income)]/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-[var(--color-income)]/10 rounded-[var(--radius-md)] flex items-center justify-center mb-4 ring-1 ring-[var(--color-income)]/20">
-                  <svg className="w-5 h-5 text-[var(--color-income)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: '20px',
+            }}>
+              {[
+                { emoji: '🔒', title: 'Secure OAuth', desc: 'Gmail integration with PKCE security', color: '#6366F1' },
+                { emoji: '🔄', title: 'Smart Sync', desc: 'Manual sync with deduplication', color: '#22C55E' },
+                { emoji: '🔍', title: 'Advanced Search', desc: 'Powerful filtering capabilities', color: '#6366F1' },
+                { emoji: '💡', title: 'AI Extraction', desc: 'Automated transaction parsing', color: '#F59E0B' },
+                { emoji: '⚙️', title: 'Admin Tools', desc: 'System health monitoring', color: '#06B6D4' },
+                { emoji: '🛡️', title: 'RLS Security', desc: 'Row-level data protection', color: '#8B5CF6' },
+              ].map((feature, index) => (
+                <div
+                  key={index}
+                  className="feature-card"
+                  style={{
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease-out',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = feature.color;
+                    e.currentTarget.style.background = `${feature.color}10`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    background: `${feature.color}15`,
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '12px',
+                    fontSize: '20px',
+                  }}>
+                    {feature.emoji}
+                  </div>
+                  <h4 style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#FAFAFA',
+                    marginBottom: '4px',
+                    fontFamily: 'Outfit, sans-serif',
+                  }}>
+                    {feature.title}
+                  </h4>
+                  <p style={{
+                    fontSize: '11px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontFamily: 'Outfit, sans-serif',
+                    lineHeight: '1.4',
+                  }}>
+                    {feature.desc}
+                  </p>
                 </div>
-                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">Smart Email Sync</h4>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                  Manual sync with date ranges and intelligent deduplication
-                </p>
-              </div>
-
-              <div className="group p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-[var(--color-accent-primary)]/10 rounded-[var(--radius-md)] flex items-center justify-center mb-4 ring-1 ring-[var(--color-accent-primary)]/20">
-                  <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">Advanced Search</h4>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                  Powerful filtering and search capabilities
-                </p>
-              </div>
-
-              <div className="group p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[var(--color-warning)] hover:bg-[var(--color-warning)]/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-[var(--color-warning)]/10 rounded-[var(--radius-md)] flex items-center justify-center mb-4 ring-1 ring-[#f59e0b]/20">
-                  <svg className="w-5 h-5 text-[var(--color-warning)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">AI Extraction</h4>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                  Automated financial transaction data parsing
-                </p>
-              </div>
-
-              <div className="group p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[#06b6d4] hover:bg-[#06b6d4]/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-[#06b6d4]/10 rounded-[var(--radius-md)] flex items-center justify-center mb-4 ring-1 ring-[#06b6d4]/20">
-                  <svg className="w-5 h-5 text-[#06b6d4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">Admin Tools</h4>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                  Comprehensive system health monitoring
-                </p>
-              </div>
-
-              <div className="group p-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] hover:border-[var(--color-accent-hover)] hover:bg-[var(--color-accent-hover)]/5 transition-all duration-300">
-                <div className="w-10 h-10 bg-[var(--color-accent-hover)]/10 rounded-[var(--radius-md)] flex items-center justify-center mb-4 ring-1 ring-[var(--color-accent-hover)]/20">
-                  <svg className="w-5 h-5 text-[var(--color-accent-hover)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2">RLS Security</h4>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-                  Row-level security data protection
-                </p>
-              </div>
+              ))}
             </div>
           </div>
-
         </div>
       </div>
     </Layout>
