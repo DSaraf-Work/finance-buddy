@@ -180,36 +180,15 @@ const TxnCard = ({
             <span style={{ fontSize: '15px', fontWeight: '500' }}>
               {transaction.merchant_name || 'Unknown'}
             </span>
-            {/* transactionMeta - gap 6px */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {/* transactionCategory - 12px, rgba(255,255,255,0.35) */}
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
-                {transaction.category || 'Uncategorized'}
-              </span>
-              {transaction.account_type && (
-                <>
-                  {/* metaDot - 8px, rgba(255,255,255,0.2) */}
-                  <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.2)' }}>•</span>
-                  {/* transactionMethod - 11px, 600, uppercase, letterSpacing 0.3px */}
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      fontWeight: '600',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.3px',
-                      color: paymentMethodColor
-                    }}
-                  >
-                    {displayAccountType(transaction.account_type)}
-                  </span>
-                </>
-              )}
-            </div>
+            {/* transactionCategory only - 12px, rgba(255,255,255,0.35) */}
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
+              {transaction.category || 'Uncategorized'}
+            </span>
           </div>
         </div>
 
-        {/* transactionRight - gap 4px */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+        {/* transactionRight - gap 2px for tighter spacing */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
           {/* transactionAmount - 15px, 600, JetBrains Mono */}
           <span
             style={{
@@ -221,8 +200,22 @@ const TxnCard = ({
           >
             {isExpense ? '-' : '+'}₹{formatAmount(transaction.amount)}
           </span>
-          {/* transactionDate - 11px, rgba(255,255,255,0.3), 500 */}
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', fontWeight: '500' }}>
+          {/* Payment method - smaller text below amount */}
+          {transaction.account_type && (
+            <span
+              style={{
+                fontSize: '10px',
+                fontWeight: '500',
+                textTransform: 'uppercase',
+                letterSpacing: '0.3px',
+                color: paymentMethodColor
+              }}
+            >
+              {displayAccountType(transaction.account_type)}
+            </span>
+          )}
+          {/* transactionDate - 10px, rgba(255,255,255,0.3), 500 */}
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: '500' }}>
             {formatShortDate(transaction.txn_time)}
           </span>
         </div>
