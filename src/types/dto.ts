@@ -2,7 +2,9 @@
 
 // Base types
 export type UUID = string;
-export type EmailStatus = 'Fetched' | 'Processed' | 'Failed' | 'Invalid' | 'NON_TRANSACTIONAL' | 'REJECT';
+// Derived email status - computed from FK presence (processed_id, rejected_id)
+// Uppercase is the canonical format for enum values
+export type EmailStatus = 'FETCHED' | 'PROCESSED' | 'REJECTED';
 export type TransactionDirection = 'debit' | 'credit';
 export type JobStatus = 'queued' | 'running' | 'completed' | 'failed';
 export type SortOrder = 'asc' | 'desc';
@@ -77,7 +79,13 @@ export interface Email {
   snippet?: string;
   internal_date?: string; // ISO timestamp
   plain_body?: string;
-  status: EmailStatus;
+  // Status is derived from FK presence:
+  // - processed_id set = 'Processed'
+  // - rejected_id set = 'Rejected'
+  // - neither set = 'Fetched'
+  processed_id?: UUID | null;
+  rejected_id?: UUID | null;
+  status?: EmailStatus; // Derived field, not stored in DB
   error_reason?: string;
   processed_at?: string; // ISO timestamp
   created_at: string; // ISO timestamp
@@ -96,7 +104,10 @@ export interface EmailPublic {
   subject?: string;
   snippet?: string;
   internal_date?: string;
-  status: EmailStatus;
+  // Status is derived from FK presence
+  processed_id?: UUID | null;
+  rejected_id?: UUID | null;
+  status?: EmailStatus; // Derived field, not stored in DB
   error_reason?: string;
   processed_at?: string;
   remarks?: string;
