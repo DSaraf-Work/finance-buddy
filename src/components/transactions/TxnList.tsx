@@ -49,8 +49,8 @@ function getDayTotalColor(total: number): { text: string; bg: string } {
     // High debit - Red
     return { text: '#EF4444', bg: 'rgba(239, 68, 68, 0.1)' };
   } else {
-    // Very high debit - Purple/Indigo
-    return { text: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.1)' };
+    // Very high debit - Dark Crimson (darker red = more severe)
+    return { text: '#B91C1C', bg: 'rgba(185, 28, 28, 0.1)' };
   }
 }
 
@@ -68,21 +68,23 @@ function DateSection({
   totalGroups: number;
   onTransactionClick: (transaction: Transaction) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  // First 2 dates expanded by default, rest collapsed
+  const [isOpen, setIsOpen] = useState(groupIndex < 2);
   const colors = getDayTotalColor(group.total);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      {/* Date separator with formatted date - clickable to collapse */}
+      {/* Date header - date on left, total on right */}
       <CollapsibleTrigger asChild>
         <div
-          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          className="flex items-center justify-between cursor-pointer hover:opacity-80 transition-opacity"
           style={{
             marginTop: groupIndex === 0 ? '0' : '20px',
             marginBottom: '12px',
+            padding: '0 4px',
           }}
         >
-          <Separator className="flex-1 bg-[#27272A]" />
+          {/* Left side: chevron + date + count */}
           <div className="flex items-center gap-2">
             {isOpen ? (
               <ChevronDown className="h-4 w-4 text-[#71717A]" />
@@ -110,20 +112,23 @@ function DateSection({
                 ({group.transactions.length})
               </span>
             )}
-            {/* Show mini total when collapsed */}
-            {!isOpen && group.total !== 0 && (
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: '500',
-                  color: colors.text,
-                }}
-              >
-                {group.total > 0 ? '+' : ''}₹{Math.abs(group.total).toFixed(0)}
-              </span>
-            )}
           </div>
-          <Separator className="flex-1 bg-[#27272A]" />
+
+          {/* Right side: day total (always visible) */}
+          {group.total !== 0 && (
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: '500',
+                color: colors.text,
+                padding: '2px 8px',
+                background: colors.bg,
+                borderRadius: '4px',
+              }}
+            >
+              {group.total > 0 ? '+' : ''}₹{Math.abs(group.total).toFixed(0)}
+            </span>
+          )}
         </div>
       </CollapsibleTrigger>
 
@@ -140,25 +145,6 @@ function DateSection({
             onClick={() => onTransactionClick(txn)}
           />
         ))}
-
-        {/* Daily total with color palette */}
-        {group.total !== 0 && (
-          <div
-            style={{
-              textAlign: 'right',
-              padding: '8px 16px',
-              fontSize: '12px',
-              color: colors.text,
-              fontWeight: '500',
-              marginTop: '4px',
-              marginBottom: '8px',
-              background: colors.bg,
-              borderRadius: '6px',
-            }}
-          >
-            Day Total: {group.total > 0 ? '+' : ''}₹{Math.abs(group.total).toFixed(2)}
-          </div>
-        )}
       </CollapsibleContent>
     </Collapsible>
   );
