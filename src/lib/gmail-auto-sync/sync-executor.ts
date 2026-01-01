@@ -165,12 +165,12 @@ export class SyncExecutor {
    * Calculate sync window from last processed email
    */
   private async calculateSyncWindow(userId: string): Promise<Date> {
-    // Get the most recent processed email
+    // Get the most recent processed email (status derived from FK: processed_id IS NOT NULL)
     const { data: lastProcessedEmail } = await (supabaseAdmin as any)
       .from(TABLE_EMAILS_FETCHED)
       .select('internal_date')
       .eq('user_id', userId)
-      .eq('status', 'Processed')
+      .not('processed_id', 'is', null)
       .order('internal_date', { ascending: false })
       .limit(1)
       .single();

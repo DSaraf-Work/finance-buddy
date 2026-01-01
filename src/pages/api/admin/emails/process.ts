@@ -15,12 +15,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   try {
-    // Count total fetched emails
+    // Count total fetched emails (status derived from FK: processed_id IS NULL AND rejected_id IS NULL)
     const { count } = await supabaseAdmin
       .from(TABLE_EMAILS_FETCHED)
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
-      .eq('status', 'Fetched');
+      .is('processed_id', null)
+      .is('rejected_id', null);
 
     const totalEmails = count || 0;
 
@@ -57,12 +58,13 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
 
   while (hasMore) {
     try {
-      // Fetch batch of fetched emails
+      // Fetch batch of fetched emails (status derived from FK: processed_id IS NULL AND rejected_id IS NULL)
       const { data: emails, error } = await (supabaseAdmin as any)
         .from(TABLE_EMAILS_FETCHED)
         .select('*')
         .eq('user_id', userId)
-        .eq('status', 'Fetched')
+        .is('processed_id', null)
+        .is('rejected_id', null)
         .order('internal_date', { ascending: false })
         .limit(BATCH_SIZE);
 
@@ -104,28 +106,18 @@ async function processEmailsInBackground(userId: string, totalEmails: number) {
           processedCount++;
         } catch (error: any) {
           console.error(`Error processing email ${email.id}:`, error);
-          
-          // Mark as failed
-          try {
-            await (supabaseAdmin as any)
-              .from(TABLE_EMAILS_FETCHED)
-              .update({
-                status: 'Failed',
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', email.id);
-          } catch (updateError) {
-            console.error('Error updating email status:', updateError);
-          }
+          // Errors are now handled by the EmailProcessor which creates rejection records
+          // and sets the rejected_id FK on fb_emails_fetched
         }
       }
 
-      // Check if there are more emails to process
+      // Check if there are more emails to process (status derived from FK)
       const { count } = await (supabaseAdmin as any)
         .from(TABLE_EMAILS_FETCHED)
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
-        .eq('status', 'Fetched');
+        .is('processed_id', null)
+        .is('rejected_id', null);
 
       hasMore = (count || 0) > 0;
     } catch (error: any) {
