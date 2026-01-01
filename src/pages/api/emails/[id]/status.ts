@@ -51,7 +51,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     if (action === 'reject') {
       // Add to rejected emails using service role (bypassing RLS)
       const emailData = email as any;
-      const { error: rejectError } = await supabaseAdmin
+      const { data: rejectedRecord, error: rejectError } = await supabaseAdmin
         .from(TABLE_REJECTED_EMAILS)
         .upsert({
           user_id: emailData.user_id,
@@ -66,11 +66,24 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           updated_at: new Date().toISOString(),
         } as any, {
           onConflict: 'email_row_id',
-        });
+        })
+        .select('id')
+        .single();
 
       if (rejectError) {
         console.error('Email rejection error:', rejectError);
         return res.status(500).json({ error: 'Failed to reject email', details: rejectError.message });
+      }
+
+      // Update fb_emails_fetched.rejected_id to link to the rejected record
+      if (rejectedRecord?.id) {
+        await supabaseAdmin
+          .from(TABLE_EMAILS_FETCHED)
+          .update({
+            rejected_id: rejectedRecord.id,
+            updated_at: new Date().toISOString(),
+          } as any)
+          .eq('id', id);
       }
     } else if (action === 'unreject') {
       // Remove from rejected emails using service role (bypassing RLS)
@@ -84,6 +97,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         console.error('Email unrejection error:', unrejectError);
         return res.status(500).json({ error: 'Failed to unreject email', details: unrejectError.message });
       }
+
+      // Clear the rejected_id FK on fb_emails_fetched
+      await supabaseAdmin
+        .from(TABLE_EMAILS_FETCHED)
+        .update({
+          rejected_id: null,
+          updated_at: new Date().toISOString(),
+        } as any)
+        .eq('id', id);
     }
 
     // Get the updated email
