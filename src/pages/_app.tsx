@@ -7,8 +7,8 @@ import '../styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
-    // Register service worker for PWA
-    if ('serviceWorker' in navigator) {
+    // Register service worker for PWA (disabled in development to prevent reload issues)
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       const registerSW = () => {
         navigator.serviceWorker
           .register('/sw.js')
@@ -39,6 +39,11 @@ export default function App({ Component, pageProps }: AppProps) {
         window.addEventListener('load', registerSW);
         return () => window.removeEventListener('load', registerSW);
       }
+    } else if ('serviceWorker' in navigator && process.env.NODE_ENV === 'development') {
+      // Unregister any existing service workers in development
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach(registration => registration.unregister());
+      });
     }
   }, []);
 
