@@ -204,7 +204,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
                 stats.updatedEmails++;
               } else {
-                // Insert new email
+                // Insert new email (status is derived from FK: no processed_id or rejected_id = 'Fetched')
                 await (supabaseAdmin as any)
                   .from(TABLE_EMAILS_FETCHED)
                   .insert({
@@ -218,7 +218,6 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
                     plain_body: body,
                     internal_date: internalDate.toISOString(),
                     email_date: date,
-                    status: 'Fetched',
                   });
 
                 stats.newEmails++;
