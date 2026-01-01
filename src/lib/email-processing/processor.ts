@@ -186,8 +186,9 @@ export class EmailProcessor {
     }
 
     // Filter by processing status - only process FETCHED emails (not PROCESSED or REJECTED)
+    // Status is now derived from FK presence: processed_id IS NULL AND rejected_id IS NULL means FETCHED
     if (!request.forceReprocess) {
-      query = query.eq('status', 'Fetched');
+      query = query.is('processed_id', null).is('rejected_id', null);
     }
 
     // Limit batch size
@@ -255,10 +256,25 @@ export class EmailProcessor {
 
     const transactionId = data?.id || null;
 
-    // Send push notification in background (fire and forget)
-    // The database trigger will create the notification in fb_notifications
-    // We need to wait a bit for the trigger to complete, then send the push
+    // Update fb_emails_fetched.processed_id to link to the processed record
     if (transactionId) {
+      const { error: updateError } = await (supabaseAdmin as any)
+        .from(TABLE_EMAILS_FETCHED)
+        .update({
+          processed_id: transactionId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', email.id);
+
+      if (updateError) {
+        console.error('❌ Failed to update processed_id on fb_emails_fetched:', updateError);
+      } else {
+        console.log(`✅ Updated fb_emails_fetched.processed_id = ${transactionId} for email ${email.id}`);
+      }
+
+      // Send push notification in background (fire and forget)
+      // The database trigger will create the notification in fb_notifications
+      // We need to wait a bit for the trigger to complete, then send the push
       this.sendPushNotificationForTransaction(transactionId).catch((error) => {
         console.error('❌ Failed to send push notification:', error);
       });
@@ -366,7 +382,7 @@ export class EmailProcessor {
       return;
     }
 
-    const { error } = await (supabaseAdmin as any)
+    const { data: rejectedRecord, error } = await (supabaseAdmin as any)
       .from(TABLE_REJECTED_EMAILS)
       .upsert({
         user_id: email.user_id,
@@ -381,10 +397,30 @@ export class EmailProcessor {
         updated_at: new Date().toISOString(),
       }, {
         onConflict: 'email_row_id',
-      });
+      })
+      .select('id')
+      .single();
 
     if (error) {
       console.error(`Failed to reject email ${emailId}:`, error);
+      return;
+    }
+
+    // Update fb_emails_fetched.rejected_id to link to the rejected record
+    if (rejectedRecord?.id) {
+      const { error: updateError } = await (supabaseAdmin as any)
+        .from(TABLE_EMAILS_FETCHED)
+        .update({
+          rejected_id: rejectedRecord.id,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', emailId);
+
+      if (updateError) {
+        console.error(`❌ Failed to update rejected_id on fb_emails_fetched:`, updateError);
+      } else {
+        console.log(`✅ Updated fb_emails_fetched.rejected_id = ${rejectedRecord.id} for email ${emailId}`);
+      }
     }
   }
 
@@ -397,7 +433,7 @@ export class EmailProcessor {
   }> {
     let query = (supabaseAdmin as any)
       .from(TABLE_EMAILS_FETCHED)
-      .select('status');
+      .select('processed_id, rejected_id');
 
     if (userId) {
       query = query.eq('user_id', userId);
@@ -416,17 +452,14 @@ export class EmailProcessor {
       rejected: 0,
     };
 
+    // Derive status from FK presence
     emails?.forEach((email: any) => {
-      switch (email.status) {
-        case 'Processed':
-          stats.processed++;
-          break;
-        case 'Fetched':
-          stats.fetched++;
-          break;
-        case 'Rejected':
-          stats.rejected++;
-          break;
+      if (email.processed_id) {
+        stats.processed++;
+      } else if (email.rejected_id) {
+        stats.rejected++;
+      } else {
+        stats.fetched++;
       }
     });
 

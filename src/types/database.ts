@@ -57,8 +57,9 @@ export type Database = {
           message_id: string
           plain_body: string | null
           processed_at: string | null
+          processed_id: string | null
+          rejected_id: string | null
           snippet: string | null
-          status: string
           subject: string | null
           thread_id: string
           to_addresses: string[] | null
@@ -77,8 +78,9 @@ export type Database = {
           message_id: string
           plain_body?: string | null
           processed_at?: string | null
+          processed_id?: string | null
+          rejected_id?: string | null
           snippet?: string | null
-          status?: string
           subject?: string | null
           thread_id: string
           to_addresses?: string[] | null
@@ -97,8 +99,9 @@ export type Database = {
           message_id?: string
           plain_body?: string | null
           processed_at?: string | null
+          processed_id?: string | null
+          rejected_id?: string | null
           snippet?: string | null
-          status?: string
           subject?: string | null
           thread_id?: string
           to_addresses?: string[] | null
