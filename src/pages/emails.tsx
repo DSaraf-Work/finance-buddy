@@ -654,7 +654,7 @@ const EmailsPage: NextPage = () => {
             </h2>
 
             {/* Row 1: Date range */}
-            <div className="flex items-center gap-1 mb-1">
+            <div className="flex items-center gap-1 mb-2">
               <span className="text-[10px] text-[var(--color-text-muted)]">From</span>
               <input
                 type="date"
@@ -673,7 +673,7 @@ const EmailsPage: NextPage = () => {
               />
             </div>
             {/* Row 2: Status + Page + Size */}
-            <div className="flex items-center gap-1 mb-2">
+            <div className="flex items-center gap-1 mb-3">
               <select
                 value={filters.status || ''}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
@@ -709,8 +709,8 @@ const EmailsPage: NextPage = () => {
               />
             </div>
 
-            {/* Row 2: Accounts and Senders - Collapsible */}
-            <div className="flex flex-wrap gap-2 mb-2">
+            {/* Row 3: Accounts and Senders - Collapsible */}
+            <div className="flex flex-wrap gap-2 mb-3">
               {/* Accounts - Collapsible */}
               <Collapsible open={accountsExpanded} onOpenChange={setAccountsExpanded} className="flex-1 min-w-[200px]">
                 <div className="border border-[var(--color-border)] rounded">
@@ -786,7 +786,7 @@ const EmailsPage: NextPage = () => {
               </Collapsible>
             </div>
 
-            {/* Row 3: Data Source and Buttons - compact */}
+            {/* Row 4: Data Source and Buttons */}
             <div className="flex flex-wrap items-center gap-1.5">
               <label className="flex items-center gap-1">
                 <Checkbox checked={filters.db_only || false} onCheckedChange={(checked) => handleBooleanFilterChange('db_only', checked as boolean)} className="h-3 w-3" />
