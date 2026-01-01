@@ -226,14 +226,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Derive status from FK presence and fetch transaction IDs for emails
     if (emails && emails.length > 0) {
-      // Add derived status to each email
+      // Add derived status to each email (uppercase enum values)
       (emails as any[]).forEach((email: any) => {
         if (email.processed_id) {
-          email.status = 'Processed';
+          email.status = 'PROCESSED';
         } else if (email.rejected_id) {
-          email.status = 'Rejected';
+          email.status = 'REJECTED';
         } else {
-          email.status = 'Fetched';
+          email.status = 'FETCHED';
         }
       });
 
