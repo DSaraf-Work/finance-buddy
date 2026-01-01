@@ -91,6 +91,7 @@ export default function TransactionsPage() {
   const { toasts, removeToast, success, error: showError } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,7 +124,12 @@ export default function TransactionsPage() {
 
   const searchTransactions = async (page: number = 1, resetPage: boolean = false) => {
     try {
-      setLoading(true);
+      // Use loadingMore for pagination, loading for initial load
+      if (page === 1 || resetPage) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
       setError(null);
 
       // Build search request with filters
@@ -179,6 +185,7 @@ export default function TransactionsPage() {
       setError(err.message || 'Failed to search transactions');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -356,9 +363,10 @@ export default function TransactionsPage() {
                   onClick={() => searchTransactions(pagination.page + 1, false)}
                   variant="outline"
                   size="lg"
+                  disabled={loadingMore}
                   className="min-w-[150px] bg-[#18181B] border-[#27272A] text-[#FAFAFA] hover:bg-[#27272A]"
                 >
-                  Load More
+                  {loadingMore ? 'Loading...' : 'Load More'}
                 </Button>
               </div>
             )}
