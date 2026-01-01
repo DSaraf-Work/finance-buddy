@@ -653,40 +653,40 @@ const EmailsPage: NextPage = () => {
               Filters
             </h2>
 
-            {/* Row 1: All filters inline */}
-            <div className="flex flex-wrap items-end gap-2 mb-2">
-              {/* Date Range - responsive widths */}
-              <div className="flex items-center gap-1 flex-wrap sm:flex-nowrap">
-                <span className="text-xs text-[var(--color-text-muted)] whitespace-nowrap">From</span>
-                <input
-                  type="date"
-                  value={filters.date_from || ''}
-                  onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                  className="input-field text-xs py-1 px-1 w-[100px] sm:w-[120px]"
-                />
-                <span className="text-xs text-[var(--color-text-muted)]">to</span>
-                <input
-                  type="date"
-                  value={filters.date_to || ''}
-                  onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                  className="input-field text-xs py-1 px-1 w-[100px] sm:w-[120px]"
-                />
-              </div>
+            {/* Row 1: Date range - always inline */}
+            <div className="flex items-center gap-1 mb-2">
+              <span className="text-[10px] text-[var(--color-text-muted)]">From</span>
+              <input
+                type="date"
+                value={filters.date_from || ''}
+                onChange={(e) => handleFilterChange('date_from', e.target.value)}
+                className="input-field text-[10px] py-0.5 px-1 flex-1 min-w-0"
+                style={{ maxWidth: '105px' }}
+              />
+              <span className="text-[10px] text-[var(--color-text-muted)]">to</span>
+              <input
+                type="date"
+                value={filters.date_to || ''}
+                onChange={(e) => handleFilterChange('date_to', e.target.value)}
+                className="input-field text-[10px] py-0.5 px-1 flex-1 min-w-0"
+                style={{ maxWidth: '105px' }}
+              />
+            </div>
 
-              {/* Status dropdown - compact inline */}
+            {/* Row 2: Status, Page, Size - always inline */}
+            <div className="flex items-center gap-1 mb-2">
               <select
                 value={filters.status || ''}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="input-field text-xs py-1 px-1 w-20"
-                title="Status"
+                className="input-field text-[10px] py-0.5 px-1 flex-1"
+                style={{ maxWidth: '80px' }}
               >
-                <option value="">Status</option>
+                <option value="">All</option>
                 <option value="FETCHED">Fetched</option>
                 <option value="PROCESSED">Processed</option>
                 <option value="REJECTED">Rejected</option>
               </select>
-
-              {/* Page Number and Size - compact inline */}
+              <span className="text-[10px] text-[var(--color-text-muted)]">Pg</span>
               <input
                 type="number"
                 min="1"
@@ -695,19 +695,16 @@ const EmailsPage: NextPage = () => {
                   const newPage = parseInt(e.target.value) || 1;
                   if (newPage >= 1) handlePageChange(newPage);
                 }}
-                className="input-field text-xs py-1 px-1 w-10"
-                title="Page"
-                placeholder="Pg"
+                className="input-field text-[10px] py-0.5 px-1 w-10"
               />
+              <span className="text-[10px] text-[var(--color-text-muted)]">Sz</span>
               <input
                 type="number"
                 min="1"
                 max="100"
                 value={pagination.pageSize}
                 onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
-                className="input-field text-xs py-1 px-1 w-10"
-                title="Page Size"
-                placeholder="Sz"
+                className="input-field text-[10px] py-0.5 px-1 w-10"
               />
             </div>
 
