@@ -51,7 +51,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.warn('No Gmail connection found for user, using fallback values');
     }
 
-    if (email.status === 'Processed') {
+    // Check if already processed using FK presence
+    if (email.processed_id) {
       return res.status(400).json({ error: 'Email already processed' });
     }
 

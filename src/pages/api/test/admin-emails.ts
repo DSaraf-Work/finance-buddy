@@ -39,12 +39,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (action === 'count-fetched') {
-      // Test: Count fetched emails
+      // Test: Count fetched emails (status derived from FK: processed_id IS NULL AND rejected_id IS NULL)
       const { count } = await (supabaseAdmin as any)
         .from(TABLE_EMAILS_FETCHED)
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
-        .eq('status', 'Fetched');
+        .is('processed_id', null)
+        .is('rejected_id', null);
 
       return res.status(200).json({
         userId,
@@ -53,12 +54,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (action === 'process-one') {
-      // Test: Process one email
+      // Test: Process one email (status derived from FK)
       const { data: emails } = await (supabaseAdmin as any)
         .from(TABLE_EMAILS_FETCHED)
         .select('*')
         .eq('user_id', userId)
-        .eq('status', 'Fetched')
+        .is('processed_id', null)
+        .is('rejected_id', null)
         .order('internal_date', { ascending: false })
         .limit(1);
 
