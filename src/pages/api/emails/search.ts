@@ -141,7 +141,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         subject,
         snippet,
         internal_date,
-        status,
+        processed_id,
+        rejected_id,
         error_reason,
         processed_at,
         remarks,
@@ -171,12 +172,17 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       query = query.ilike('from_address', `%${finalSender}%`);
     }
 
-    // Apply status filter (case-insensitive)
-    // The view returns uppercase status (FETCHED, PROCESSED, REJECTED)
-    // but the frontend sends title case (Fetched, Processed, etc.)
+    // Apply status filter using FK presence
+    // Status is derived: processed_id NOT NULL = Processed, rejected_id NOT NULL = Rejected, else = Fetched
     if (status) {
       const upperStatus = status.toUpperCase();
-      query = query.eq('status', upperStatus);
+      if (upperStatus === 'PROCESSED') {
+        query = query.not('processed_id', 'is', null);
+      } else if (upperStatus === 'REJECTED' || upperStatus === 'REJECT') {
+        query = query.not('rejected_id', 'is', null);
+      } else if (upperStatus === 'FETCHED') {
+        query = query.is('processed_id', null).is('rejected_id', null);
+      }
     }
 
     if (q) {
@@ -218,8 +224,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(500).json({ error: 'Failed to search emails' });
     }
 
-    // Fetch transaction IDs for emails
+    // Derive status from FK presence and fetch transaction IDs for emails
     if (emails && emails.length > 0) {
+      // Add derived status to each email
+      (emails as any[]).forEach((email: any) => {
+        if (email.processed_id) {
+          email.status = 'Processed';
+        } else if (email.rejected_id) {
+          email.status = 'Rejected';
+        } else {
+          email.status = 'Fetched';
+        }
+      });
+
       const emailIds = emails.map((e: any) => e.id);
       const { data: transactions } = await supabaseAdmin
         .from(TABLE_EMAILS_PROCESSED)
