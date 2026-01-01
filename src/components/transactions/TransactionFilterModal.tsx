@@ -125,7 +125,7 @@ export function TransactionFilterModal({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-[#09090B] border-[#27272A]" align="start">
+                <PopoverContent className="w-[320px] p-0 bg-[#09090B] border-[#27272A]" align="start">
                   <Calendar
                     mode="single"
                     selected={localFilters.dateFrom}
@@ -164,7 +164,7 @@ export function TransactionFilterModal({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-[#09090B] border-[#27272A]" align="start">
+                <PopoverContent className="w-[320px] p-0 bg-[#09090B] border-[#27272A]" align="start">
                   <Calendar
                     mode="single"
                     selected={localFilters.dateTo}
