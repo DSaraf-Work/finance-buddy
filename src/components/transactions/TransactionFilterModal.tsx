@@ -133,6 +133,9 @@ export function TransactionFilterModal({
                       setLocalFilters({ ...localFilters, dateFrom: date })
                     }
                     initialFocus
+                    captionLayout="dropdown"
+                    fromYear={2020}
+                    toYear={new Date().getFullYear() + 1}
                     disabled={(date) =>
                       date > new Date() || (localFilters.dateTo ? date > localFilters.dateTo : false)
                     }
@@ -172,6 +175,9 @@ export function TransactionFilterModal({
                       setLocalFilters({ ...localFilters, dateTo: date })
                     }
                     initialFocus
+                    captionLayout="dropdown"
+                    fromYear={2020}
+                    toYear={new Date().getFullYear() + 1}
                     disabled={(date) =>
                       date > new Date() || (localFilters.dateFrom ? date < localFilters.dateFrom : false)
                     }
