@@ -641,12 +641,6 @@ const EmailsPage: NextPage = () => {
                     </div>
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-text-primary)]">Email Management</h1>
                   </div>
-                  <p className="mt-1 text-sm sm:text-base text-[var(--color-text-secondary)]">
-                    Review and manage Gmail emails from connected accounts
-                  </p>
-                </div>
-                <div className="text-sm text-[var(--color-text-muted)]">
-                  {pagination.total} total emails
                 </div>
               </div>
             </div>
@@ -661,62 +655,60 @@ const EmailsPage: NextPage = () => {
 
             {/* Row 1: All filters inline */}
             <div className="flex flex-wrap items-end gap-2 mb-2">
-              {/* Date Range - compact */}
-              <div className="flex items-center gap-1">
+              {/* Date Range - responsive widths */}
+              <div className="flex items-center gap-1 flex-wrap sm:flex-nowrap">
                 <span className="text-xs text-[var(--color-text-muted)] whitespace-nowrap">From</span>
                 <input
                   type="date"
                   value={filters.date_from || ''}
                   onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                  className="input-field text-xs py-1 px-1.5 w-[110px]"
+                  className="input-field text-xs py-1 px-1 w-[100px] sm:w-[120px]"
                 />
                 <span className="text-xs text-[var(--color-text-muted)]">to</span>
                 <input
                   type="date"
                   value={filters.date_to || ''}
                   onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                  className="input-field text-xs py-1 px-1.5 w-[110px]"
+                  className="input-field text-xs py-1 px-1 w-[100px] sm:w-[120px]"
                 />
               </div>
 
-              {/* Status dropdown - compact */}
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-[var(--color-text-muted)]">Status</span>
-                <select
-                  value={filters.status || ''}
-                  onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="input-field text-xs py-1 px-1.5 w-24"
-                >
-                  <option value="">All</option>
-                  <option value="FETCHED">Fetched</option>
-                  <option value="PROCESSED">Processed</option>
-                  <option value="REJECTED">Rejected</option>
-                </select>
-              </div>
+              {/* Status dropdown - compact inline */}
+              <select
+                value={filters.status || ''}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
+                className="input-field text-xs py-1 px-1 w-20"
+                title="Status"
+              >
+                <option value="">Status</option>
+                <option value="FETCHED">Fetched</option>
+                <option value="PROCESSED">Processed</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
 
-              {/* Page Number and Size - compact */}
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-[var(--color-text-muted)]">Page</span>
-                <input
-                  type="number"
-                  min="1"
-                  value={pagination.page}
-                  onChange={(e) => {
-                    const newPage = parseInt(e.target.value) || 1;
-                    if (newPage >= 1) handlePageChange(newPage);
-                  }}
-                  className="input-field text-xs py-1 px-1.5 w-12"
-                />
-                <span className="text-xs text-[var(--color-text-muted)]">Size</span>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={pagination.pageSize}
-                  onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
-                  className="input-field text-xs py-1 px-1.5 w-12"
-                />
-              </div>
+              {/* Page Number and Size - compact inline */}
+              <input
+                type="number"
+                min="1"
+                value={pagination.page}
+                onChange={(e) => {
+                  const newPage = parseInt(e.target.value) || 1;
+                  if (newPage >= 1) handlePageChange(newPage);
+                }}
+                className="input-field text-xs py-1 px-1 w-10"
+                title="Page"
+                placeholder="Pg"
+              />
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={pagination.pageSize}
+                onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
+                className="input-field text-xs py-1 px-1 w-10"
+                title="Page Size"
+                placeholder="Sz"
+              />
             </div>
 
             {/* Row 2: Accounts and Senders - Collapsible */}
