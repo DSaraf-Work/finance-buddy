@@ -18,7 +18,7 @@ import {
 } from '@/components/transactions';
 import { TransactionFilterModal, TransactionFilters } from '@/components/transactions/TransactionFilterModal';
 import { GroupedTransactions } from '@/components/transactions/TxnList';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 
 export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
 
@@ -95,10 +95,10 @@ export default function TransactionsPage() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Filter state
+  // Filter state - default to last 7 days
   const [filters, setFilters] = useState<TransactionFilters>({
-    dateFrom: undefined,
-    dateTo: undefined,
+    dateFrom: subDays(new Date(), 7),
+    dateTo: new Date(),
     paymentMode: 'all',
   });
 
