@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 
 interface StatCardProps {
@@ -10,6 +11,7 @@ interface StatCardProps {
   subtitle: string;
   loading?: boolean;
   hoverColor?: string;
+  href?: string;
 }
 
 export const StatCard = memo(function StatCard({
@@ -21,12 +23,13 @@ export const StatCard = memo(function StatCard({
   subtitle,
   loading = false,
   hoverColor = '#6366F1',
+  href,
 }: StatCardProps) {
   const [isHovered, setIsHovered] = React.useState(false);
 
-  return (
+  const cardContent = (
     <Card
-      className="stat-card cursor-pointer transition-all duration-300 bg-card/50 border-border/50 hover:shadow-lg"
+      className="stat-card cursor-pointer transition-all duration-300 bg-card/50 border-border/50 hover:shadow-lg hover:-translate-y-0.5"
       style={{
         borderColor: isHovered ? hoverColor : undefined,
         boxShadow: isHovered ? `0 0 20px ${hoverColor}30` : undefined,
@@ -67,4 +70,10 @@ export const StatCard = memo(function StatCard({
       </div>
     </Card>
   );
+
+  if (href) {
+    return <Link href={href}>{cardContent}</Link>;
+  }
+
+  return cardContent;
 });

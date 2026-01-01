@@ -309,29 +309,33 @@ const HomePage: NextPage = () => {
                     color: '#22C55E',
                   },
                 ].map((item) => (
-                  <Card
-                    key={item.step}
-                    className="relative p-8 bg-card/50 border-border/50 hover:border-primary/50 transition-all duration-300"
-                  >
-                    <div
-                      className="absolute top-6 right-6 text-4xl font-bold opacity-10"
-                      style={{ color: item.color }}
+                  <Link key={item.step} href="/auth" className="group">
+                    <Card
+                      className="relative p-8 bg-card/50 border-border/50 hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 h-full"
                     >
-                      {item.step}
-                    </div>
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
-                      style={{ background: `${item.color}15` }}
-                    >
-                      <item.icon className="h-7 w-7" style={{ color: item.color }} />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-3">
-                      {item.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {item.description}
-                    </p>
-                  </Card>
+                      <div
+                        className="absolute top-6 right-6 text-4xl font-bold opacity-10 group-hover:opacity-20 transition-opacity"
+                        style={{ color: item.color }}
+                      >
+                        {item.step}
+                      </div>
+                      <div
+                        className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
+                        style={{ background: `${item.color}15` }}
+                      >
+                        <item.icon className="h-7 w-7" style={{ color: item.color }} />
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
+                      <div className="flex items-center gap-1 mt-4 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                        Get started <ChevronRight className="h-4 w-4" />
+                      </div>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -351,58 +355,69 @@ const HomePage: NextPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Large feature card */}
-                <Card className="p-8 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 md:row-span-2">
-                  <Shield className="h-10 w-10 text-primary mb-6" />
-                  <h3 className="text-2xl font-semibold text-foreground mb-4">
-                    Bank-Grade Security
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    Your data is protected with Row Level Security (RLS), OAuth-only authentication, and encrypted storage. We never store your Gmail password.
-                  </p>
-                  <ul className="space-y-3">
-                    {['OAuth 2.0 + PKCE', 'Row Level Security', 'Encrypted at Rest', 'No Password Storage'].map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
+                <Link href="/auth" className="group md:row-span-2">
+                  <Card className="p-8 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 h-full">
+                    <Shield className="h-10 w-10 text-primary mb-6" />
+                    <h3 className="text-2xl font-semibold text-foreground mb-4 group-hover:text-primary transition-colors">
+                      Bank-Grade Security
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed mb-6">
+                      Your data is protected with Row Level Security (RLS), OAuth-only authentication, and encrypted storage. We never store your Gmail password.
+                    </p>
+                    <ul className="space-y-3 mb-6">
+                      {['OAuth 2.0 + PKCE', 'Row Level Security', 'Encrypted at Rest', 'No Password Storage'].map((item) => (
+                        <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="flex items-center gap-1 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      Try it now <ChevronRight className="h-4 w-4" />
+                    </div>
+                  </Card>
+                </Link>
 
                 {/* Small feature cards */}
-                <Card className="p-6 bg-card/50 border-border/50 hover:border-amber-500/50 transition-colors">
-                  <Zap className="h-8 w-8 text-amber-500 mb-4" />
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Smart Sync
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Intelligent deduplication ensures you never see duplicate transactions.
-                  </p>
-                </Card>
+                <Link href="/auth" className="group">
+                  <Card className="p-6 bg-card/50 border-border/50 hover:border-amber-500/50 hover:-translate-y-1 transition-all duration-300 h-full">
+                    <Zap className="h-8 w-8 text-amber-500 mb-4" />
+                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-amber-500 transition-colors">
+                      Smart Sync
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Intelligent deduplication ensures you never see duplicate transactions.
+                    </p>
+                  </Card>
+                </Link>
 
-                <Card className="p-6 bg-card/50 border-border/50 hover:border-cyan-500/50 transition-colors">
-                  <Search className="h-8 w-8 text-cyan-500 mb-4" />
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Advanced Search
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Filter by date, amount, merchant, category, and more.
-                  </p>
-                </Card>
+                <Link href="/auth" className="group">
+                  <Card className="p-6 bg-card/50 border-border/50 hover:border-cyan-500/50 hover:-translate-y-1 transition-all duration-300 h-full">
+                    <Search className="h-8 w-8 text-cyan-500 mb-4" />
+                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-cyan-500 transition-colors">
+                      Advanced Search
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Filter by date, amount, merchant, category, and more.
+                    </p>
+                  </Card>
+                </Link>
 
-                <Card className="p-6 bg-card/50 border-border/50 hover:border-green-500/50 transition-colors md:col-span-2">
-                  <div className="flex items-start gap-6">
-                    <BarChart3 className="h-8 w-8 text-green-500 flex-shrink-0" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">
-                        Reports & Insights
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Visualize your spending patterns with beautiful charts and get actionable insights to improve your financial health.
-                      </p>
+                <Link href="/auth" className="group md:col-span-2">
+                  <Card className="p-6 bg-card/50 border-border/50 hover:border-green-500/50 hover:-translate-y-1 transition-all duration-300 h-full">
+                    <div className="flex items-start gap-6">
+                      <BarChart3 className="h-8 w-8 text-green-500 flex-shrink-0" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-green-500 transition-colors">
+                          Reports & Insights
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Visualize your spending patterns with beautiful charts and get actionable insights to improve your financial health.
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               </div>
             </div>
           </section>
@@ -446,6 +461,7 @@ const HomePage: NextPage = () => {
               onSync={handleSync}
               syncing={syncing}
               loading={loadingStats}
+              spendingHref="/transactions"
             />
           </div>
 
@@ -460,6 +476,7 @@ const HomePage: NextPage = () => {
               subtitle="Synced from Gmail"
               loading={loadingStats}
               hoverColor="#6366F1"
+              href="/emails"
             />
             <StatCard
               icon={<CreditCard className="h-5 w-5" />}
@@ -470,6 +487,7 @@ const HomePage: NextPage = () => {
               subtitle="AI-extracted"
               loading={loadingStats}
               hoverColor="#22C55E"
+              href="/transactions"
             />
             <StatCard
               icon={<Link2 className="h-5 w-5" />}
@@ -480,6 +498,7 @@ const HomePage: NextPage = () => {
               subtitle="Connected"
               loading={loadingStats}
               hoverColor="#4285F4"
+              href="/admin"
             />
           </div>
 

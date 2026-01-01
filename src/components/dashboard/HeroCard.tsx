@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { RefreshCw, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { RefreshCw, TrendingUp, TrendingDown, Clock, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface HeroCardProps {
@@ -9,6 +10,7 @@ interface HeroCardProps {
   onSync: () => void;
   syncing?: boolean;
   loading?: boolean;
+  spendingHref?: string;
 }
 
 export const HeroCard = memo(function HeroCard({
@@ -18,6 +20,7 @@ export const HeroCard = memo(function HeroCard({
   onSync,
   syncing = false,
   loading = false,
+  spendingHref,
 }: HeroCardProps) {
   // Calculate percentage change
   const percentChange = lastWeekSpending > 0
@@ -84,42 +87,84 @@ export const HeroCard = memo(function HeroCard({
 
         {/* Main content */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          {/* Spending amount */}
-          <div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl md:text-5xl font-bold text-foreground font-mono tracking-tight">
-                {loading ? (
-                  <span className="text-muted-foreground/50">---</span>
-                ) : (
-                  <>₹{weeklySpending.toLocaleString('en-IN')}</>
-                )}
-              </span>
-              <span className="text-lg text-muted-foreground/60">spent</span>
-            </div>
-
-            {/* Trend indicator */}
-            {!loading && lastWeekSpending > 0 && (
-              <div className="flex items-center gap-2 mt-3">
-                <div
-                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
-                    isIncrease
-                      ? 'bg-red-500/10 text-red-400'
-                      : 'bg-green-500/10 text-green-400'
-                  }`}
-                >
-                  {isIncrease ? (
-                    <TrendingUp className="h-3 w-3" />
+          {/* Spending amount - clickable */}
+          {spendingHref ? (
+            <Link
+              href={spendingHref}
+              className="group cursor-pointer hover:opacity-90 transition-opacity"
+            >
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl md:text-5xl font-bold text-foreground font-mono tracking-tight group-hover:text-primary transition-colors">
+                  {loading ? (
+                    <span className="text-muted-foreground/50">---</span>
                   ) : (
-                    <TrendingDown className="h-3 w-3" />
+                    <>₹{weeklySpending.toLocaleString('en-IN')}</>
                   )}
-                  <span>{absPercent}%</span>
-                </div>
-                <span className="text-xs text-muted-foreground/60">
-                  vs last week
                 </span>
+                <span className="text-lg text-muted-foreground/60">spent</span>
+                <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </div>
-            )}
-          </div>
+
+              {/* Trend indicator */}
+              {!loading && lastWeekSpending > 0 && (
+                <div className="flex items-center gap-2 mt-3">
+                  <div
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
+                      isIncrease
+                        ? 'bg-red-500/10 text-red-400'
+                        : 'bg-green-500/10 text-green-400'
+                    }`}
+                  >
+                    {isIncrease ? (
+                      <TrendingUp className="h-3 w-3" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3" />
+                    )}
+                    <span>{absPercent}%</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground/60">
+                    vs last week
+                  </span>
+                </div>
+              )}
+            </Link>
+          ) : (
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl md:text-5xl font-bold text-foreground font-mono tracking-tight">
+                  {loading ? (
+                    <span className="text-muted-foreground/50">---</span>
+                  ) : (
+                    <>₹{weeklySpending.toLocaleString('en-IN')}</>
+                  )}
+                </span>
+                <span className="text-lg text-muted-foreground/60">spent</span>
+              </div>
+
+              {/* Trend indicator */}
+              {!loading && lastWeekSpending > 0 && (
+                <div className="flex items-center gap-2 mt-3">
+                  <div
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
+                      isIncrease
+                        ? 'bg-red-500/10 text-red-400'
+                        : 'bg-green-500/10 text-green-400'
+                    }`}
+                  >
+                    {isIncrease ? (
+                      <TrendingUp className="h-3 w-3" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3" />
+                    )}
+                    <span>{absPercent}%</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground/60">
+                    vs last week
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Last sync info */}
           <div className="flex items-center gap-2 text-muted-foreground/60">
