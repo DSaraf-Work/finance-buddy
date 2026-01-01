@@ -4,14 +4,17 @@ import { EmailPublic, EmailSearchRequest, PaginatedResponse, EmailStatus, GmailC
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
 import LoadingScreen from '@/components/LoadingScreen';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
 
 interface EmailFilters {
   date_from?: string;
   date_to?: string;
   email_addresses?: string[]; // Changed to array for multi-select
-  sender?: string;
+  senders?: string[]; // Changed to array for multi-select
   status?: EmailStatus;
-  q?: string;
   db_only?: boolean;
 }
 
@@ -34,31 +37,29 @@ const EmailsPage: NextPage = () => {
     return date.toISOString().split('T')[0];
   };
 
-  // Helper functions to get default dates (entire current month)
+  // Helper functions to get default dates (2 weeks range ending today)
   const getDefaultStartDate = () => {
     const date = new Date();
-    // Set to first day of current month
-    date.setDate(1);
+    date.setDate(date.getDate() - 14); // 2 weeks ago
     return formatDateForInput(date);
   };
 
   const getDefaultEndDate = () => {
-    const date = new Date();
-    // Set to last day of current month
-    date.setMonth(date.getMonth() + 1);
-    date.setDate(0);
-    return formatDateForInput(date);
+    return formatDateForInput(new Date()); // Today
   };
 
   const [filters, setFilters] = useState<EmailFilters>({
     date_from: getDefaultStartDate(),
     date_to: getDefaultEndDate(),
     email_addresses: [], // Will be populated with available connections
-    sender: '', // Will be populated with user's bank account types
+    senders: [], // Will be populated with user's bank account types
     status: undefined,
-    q: '',
     db_only: false, // Default to database-only search
   });
+
+  // Collapsible states for filter sections
+  const [accountsExpanded, setAccountsExpanded] = useState(false);
+  const [sendersExpanded, setSendersExpanded] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<EmailPublic | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -78,11 +79,11 @@ const EmailsPage: NextPage = () => {
         const accountTypes = data.accountTypes || [];
         setBankAccountTypes(accountTypes);
 
-        // Set default sender filter to user's bank account types
+        // Set default senders filter to all user's bank account types (all selected)
         if (accountTypes.length > 0) {
           setFilters(prev => ({
             ...prev,
-            sender: accountTypes.join(',')
+            senders: accountTypes // All selected by default
           }));
         }
       } else {
@@ -147,11 +148,11 @@ const EmailsPage: NextPage = () => {
 
       // Search each email address sequentially
       for (const emailAddress of emailAddresses) {
-        // Handle multiple senders by splitting comma-separated values
-        const senders = activeFilters.sender ? activeFilters.sender.split(',').map(s => s.trim()) : [];
+        // Use senders array from filters
+        const senders = activeFilters.senders || [];
 
         // If multiple senders, search each sender separately for this email address
-        if (senders.length > 1) {
+        if (senders.length > 0) {
           for (const sender of senders) {
             const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
               ...activeFilters,
@@ -163,8 +164,9 @@ const EmailsPage: NextPage = () => {
               ignore_defaults: ignoreDefaults, // Add ignore_defaults parameter
             };
 
-            // Remove empty filters and email_addresses array (use email_address instead)
+            // Remove empty filters and email_addresses/senders arrays (use email_address/sender instead)
             delete (searchRequest as any).email_addresses;
+            delete (searchRequest as any).senders;
             Object.keys(searchRequest).forEach(key => {
               if (key !== 'ignore_defaults' &&
                   (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
@@ -193,7 +195,7 @@ const EmailsPage: NextPage = () => {
             }
           }
         } else {
-          // Single sender or no sender filter
+          // No sender filter - search all senders
           const searchRequest: EmailSearchRequest & { ignore_defaults?: boolean } = {
             ...activeFilters,
             email_address: emailAddress, // Use single email address for each request
@@ -203,8 +205,9 @@ const EmailsPage: NextPage = () => {
             ignore_defaults: ignoreDefaults, // Add ignore_defaults parameter
           };
 
-          // Remove empty filters and email_addresses array (use email_address instead)
+          // Remove empty filters and email_addresses/senders arrays
           delete (searchRequest as any).email_addresses;
+          delete (searchRequest as any).senders;
           Object.keys(searchRequest).forEach(key => {
             if (key !== 'ignore_defaults' &&
                 (searchRequest[key as keyof (EmailSearchRequest & { ignore_defaults?: boolean })] === '' ||
@@ -306,6 +309,41 @@ const EmailsPage: NextPage = () => {
       }
       return prev;
     });
+  };
+
+  const handleSenderChange = (sender: string, isSelected: boolean) => {
+    setFilters(prev => {
+      const currentSenders = prev.senders || [];
+      if (isSelected) {
+        // Add sender if not already present
+        if (!currentSenders.includes(sender)) {
+          return { ...prev, senders: [...currentSenders, sender] };
+        }
+      } else {
+        // Remove sender
+        return { ...prev, senders: currentSenders.filter(s => s !== sender) };
+      }
+      return prev;
+    });
+  };
+
+  const handleSelectAllAccounts = (selectAll: boolean) => {
+    if (selectAll) {
+      setFilters(prev => ({
+        ...prev,
+        email_addresses: connections.map(conn => conn.email_address)
+      }));
+    } else {
+      setFilters(prev => ({ ...prev, email_addresses: [] }));
+    }
+  };
+
+  const handleSelectAllSenders = (selectAll: boolean) => {
+    if (selectAll) {
+      setFilters(prev => ({ ...prev, senders: [...bankAccountTypes] }));
+    } else {
+      setFilters(prev => ({ ...prev, senders: [] }));
+    }
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
@@ -523,9 +561,8 @@ const EmailsPage: NextPage = () => {
       // Update filters to show FETCHED emails and clear sender restrictions
       const updatedFilters: EmailFilters = {
         ...filters,
-        status: 'Fetched' as EmailStatus, // Set status filter to Fetched
-        sender: '', // Clear sender filter to bypass default restrictions
-        q: '', // Clear search query
+        status: 'FETCHED' as EmailStatus, // Set status filter to FETCHED (uppercase)
+        senders: [], // Clear sender filter to bypass default restrictions
         date_from: '', // Clear date filters to show all FETCHED emails
         date_to: '',
       };
@@ -613,227 +650,262 @@ const EmailsPage: NextPage = () => {
                 </div>
               </div>
             </div>
-          {/* Filters */}
-          <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)] border border-[var(--color-border)] p-6 mb-6">
-            <h2 className="text-base sm:text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Filters - Optimized Layout */}
+          <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)] border border-[var(--color-border)] p-4 mb-6">
+            <h2 className="text-base font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+              <svg className="w-4 h-4 text-[var(--color-accent-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
               Filters
             </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Date From</label>
-                <input
-                  type="date"
-                  value={filters.date_from || ''}
-                  onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                  className="input-field"
-                />
+
+            {/* Row 1: Date Range (inline), Status */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+              {/* Date Range - From and To on same line */}
+              <div className="lg:col-span-1">
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Date Range</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="date"
+                    value={filters.date_from || ''}
+                    onChange={(e) => handleFilterChange('date_from', e.target.value)}
+                    className="input-field text-sm py-1.5 flex-1"
+                  />
+                  <span className="text-xs text-[var(--color-text-muted)]">to</span>
+                  <input
+                    type="date"
+                    value={filters.date_to || ''}
+                    onChange={(e) => handleFilterChange('date_to', e.target.value)}
+                    className="input-field text-sm py-1.5 flex-1"
+                  />
+                </div>
               </div>
-              
+
+              {/* Status dropdown - cleaned up */}
               <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Date To</label>
-                <input
-                  type="date"
-                  value={filters.date_to || ''}
-                  onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                  Accounts <span className="text-red-500">*</span>
-                  <span className="text-xs text-[var(--color-text-muted)] ml-1">
-                    ({filters.email_addresses?.length || 0} selected)
-                  </span>
-                </label>
-                {loadingConnections ? (
-                  <div className="input-field bg-[var(--color-bg-elevated)] text-[var(--color-text-muted)]">Loading connections...</div>
-                ) : connections.length === 0 ? (
-                  <div className="input-field bg-[var(--color-expense)]/10 text-[var(--color-expense)]">No Gmail connections found</div>
-                ) : (
-                  <div className="relative">
-                    <div className="input-field min-h-[2.5rem] max-h-24 overflow-y-auto">
-                      {connections.map((connection) => (
-                        <label key={connection.id} className="flex items-center space-x-2 py-1">
-                          <input
-                            type="checkbox"
-                            checked={filters.email_addresses?.includes(connection.email_address) || false}
-                            onChange={(e) => handleEmailAddressChange(connection.email_address, e.target.checked)}
-                            className="rounded border-[var(--color-border)] text-[var(--color-accent-primary)] focus:ring-[var(--color-accent-primary)]"
-                          />
-                          <span className="text-sm text-[var(--color-text-secondary)]">{connection.email_address}</span>
-                        </label>
-                      ))}
-                    </div>
-                    {filters.email_addresses?.length === 0 && (
-                      <div className="text-xs text-red-500 mt-1">Please select at least one account</div>
-                    )}
-                  </div>
-                )}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Status</label>
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Status</label>
                 <select
                   value={filters.status || ''}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="input-field"
+                  className="input-field text-sm py-1.5"
                 >
                   <option value="">All Statuses</option>
-                  <option value="Fetched">Fetched</option>
-                  <option value="Processed">Processed</option>
-                  <option value="REJECT">Rejected</option>
-                  <option value="Fetched">Fetched (Legacy)</option>
-                  <option value="Processed">Processed (Legacy)</option>
-                  <option value="Failed">Failed</option>
-                  <option value="Invalid">Invalid</option>
+                  <option value="FETCHED">Fetched</option>
+                  <option value="PROCESSED">Processed</option>
+                  <option value="REJECTED">Rejected</option>
                 </select>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Sender</label>
-                <input
-                  type="text"
-                  value={filters.sender || ''}
-                  onChange={(e) => handleFilterChange('sender', e.target.value)}
-                  placeholder="sender@example.com"
-                  className="input-field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Search Query</label>
-                <input
-                  type="text"
-                  value={filters.q || ''}
-                  onChange={(e) => handleFilterChange('q', e.target.value)}
-                  placeholder="Search in subject and snippet..."
-                  className="input-field"
-                />
-              </div>
-            </div>
 
-            {/* Pagination Controls and Database Toggle */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {/* Page Number and Size - on same line */}
               <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Page Number</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={pagination.page}
-                  onChange={(e) => {
-                    const newPage = parseInt(e.target.value) || 1;
-                    if (newPage >= 1) {
-                      handlePageChange(newPage);
-                    }
-                  }}
-                  className="input-field"
-                  placeholder="1"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Page Size</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={pagination.pageSize}
-                  onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
-                  className="input-field"
-                  placeholder="10"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Data Source</label>
-                <div className="flex items-center space-x-3 mt-2">
-                  <label className="flex items-center">
+                <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Pagination</label>
+                <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-1 flex-1">
+                    <span className="text-xs text-[var(--color-text-muted)]">Page</span>
                     <input
-                      type="checkbox"
-                      checked={filters.db_only || false}
-                      onChange={(e) => handleBooleanFilterChange('db_only', e.target.checked)}
-                      className="h-4 w-4 text-[var(--color-accent-primary)] focus:ring-[var(--color-accent-primary)] border-[var(--color-border)] rounded"
+                      type="number"
+                      min="1"
+                      value={pagination.page}
+                      onChange={(e) => {
+                        const newPage = parseInt(e.target.value) || 1;
+                        if (newPage >= 1) handlePageChange(newPage);
+                      }}
+                      className="input-field text-sm py-1.5 w-16"
                     />
-                    <span className="ml-2 text-sm text-[var(--color-text-secondary)]">Database Only</span>
-                  </label>
-                  <span className="text-xs text-[var(--color-text-muted)]">
-                    {filters.db_only ? 'Searching local database only' : 'Will fetch from Gmail if needed'}
-                  </span>
+                  </div>
+                  <div className="flex items-center gap-1 flex-1">
+                    <span className="text-xs text-[var(--color-text-muted)]">Size</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={pagination.pageSize}
+                      onChange={(e) => handlePageSizeChange(parseInt(e.target.value) || 10)}
+                      className="input-field text-sm py-1.5 w-16"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <button
+            {/* Row 2: Accounts and Senders - Collapsible */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              {/* Accounts - Collapsible */}
+              <Collapsible open={accountsExpanded} onOpenChange={setAccountsExpanded}>
+                <div className="border border-[var(--color-border)] rounded-md">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 hover:bg-[var(--color-bg-elevated)] rounded-md transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-[var(--color-text-secondary)]">
+                        Accounts <span className="text-red-500">*</span>
+                      </span>
+                      <span className="text-xs bg-[var(--color-accent-primary)]/20 text-[var(--color-accent-primary)] px-1.5 py-0.5 rounded">
+                        {filters.email_addresses?.length || 0}/{connections.length}
+                      </span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 text-[var(--color-text-muted)] transition-transform ${accountsExpanded ? 'rotate-180' : ''}`} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-3 pb-2">
+                    {loadingConnections ? (
+                      <div className="text-xs text-[var(--color-text-muted)] py-2">Loading...</div>
+                    ) : connections.length === 0 ? (
+                      <div className="text-xs text-[var(--color-expense)] py-2">No connections found</div>
+                    ) : (
+                      <>
+                        <div className="flex gap-2 mb-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => handleSelectAllAccounts(true)}
+                            className="text-xs text-[var(--color-accent-primary)] hover:underline"
+                          >
+                            Select All
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSelectAllAccounts(false)}
+                            className="text-xs text-[var(--color-text-muted)] hover:underline"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                        <div className="space-y-1 max-h-24 overflow-y-auto">
+                          {connections.map((connection) => (
+                            <label key={connection.id} className="flex items-center gap-2 cursor-pointer">
+                              <Checkbox
+                                checked={filters.email_addresses?.includes(connection.email_address) || false}
+                                onCheckedChange={(checked) => handleEmailAddressChange(connection.email_address, checked as boolean)}
+                              />
+                              <span className="text-xs text-[var(--color-text-secondary)] truncate">{connection.email_address}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+
+              {/* Senders - Collapsible */}
+              <Collapsible open={sendersExpanded} onOpenChange={setSendersExpanded}>
+                <div className="border border-[var(--color-border)] rounded-md">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 hover:bg-[var(--color-bg-elevated)] rounded-md transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-[var(--color-text-secondary)]">Senders</span>
+                      <span className="text-xs bg-[var(--color-accent-primary)]/20 text-[var(--color-accent-primary)] px-1.5 py-0.5 rounded">
+                        {filters.senders?.length || 0}/{bankAccountTypes.length}
+                      </span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 text-[var(--color-text-muted)] transition-transform ${sendersExpanded ? 'rotate-180' : ''}`} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-3 pb-2">
+                    {bankAccountTypes.length === 0 ? (
+                      <div className="text-xs text-[var(--color-text-muted)] py-2">No senders configured</div>
+                    ) : (
+                      <>
+                        <div className="flex gap-2 mb-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => handleSelectAllSenders(true)}
+                            className="text-xs text-[var(--color-accent-primary)] hover:underline"
+                          >
+                            Select All
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSelectAllSenders(false)}
+                            className="text-xs text-[var(--color-text-muted)] hover:underline"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                        <div className="space-y-1 max-h-24 overflow-y-auto">
+                          {bankAccountTypes.map((sender) => (
+                            <label key={sender} className="flex items-center gap-2 cursor-pointer">
+                              <Checkbox
+                                checked={filters.senders?.includes(sender) || false}
+                                onCheckedChange={(checked) => handleSenderChange(sender, checked as boolean)}
+                              />
+                              <span className="text-xs text-[var(--color-text-secondary)] truncate">{sender}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+            </div>
+
+            {/* Row 3: Data Source and Buttons */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Data Source checkbox */}
+              <label className="flex items-center gap-1.5 mr-2">
+                <Checkbox
+                  checked={filters.db_only || false}
+                  onCheckedChange={(checked) => handleBooleanFilterChange('db_only', checked as boolean)}
+                />
+                <span className="text-xs text-[var(--color-text-secondary)]">DB Only</span>
+              </label>
+
+              {/* Primary buttons */}
+              <Button
                 onClick={handleSearch}
                 disabled={loading}
-                className="btn-primary"
+                size="sm"
+                className="h-8"
               >
                 {loading ? 'Searching...' : 'Search'}
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={() => {
-                  // Reset to default values including default dates
-                  const today = new Date();
-                  const sevenDaysAgo = new Date();
-                  sevenDaysAgo.setDate(today.getDate() - 7);
-
-                  // Reset to all available connections
+                  const twoWeeksAgo = new Date();
+                  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
                   const allEmails = connections.map(conn => conn.email_address);
-
                   setFilters({
-                    date_from: formatDateForInput(sevenDaysAgo),
-                    date_to: formatDateForInput(today),
-                    email_addresses: allEmails, // Reset to all connections
-                    sender: 'alerts@dcbbank.com,alerts@hdfcbank.net,alerts@yes.bank.in', // Multiple default senders
+                    date_from: formatDateForInput(twoWeeksAgo),
+                    date_to: formatDateForInput(new Date()),
+                    email_addresses: allEmails,
+                    senders: [...bankAccountTypes],
                     status: undefined,
-                    q: '',
                     db_only: false,
                   });
                   searchEmails(1);
                 }}
-                className="btn-secondary"
+                variant="outline"
+                size="sm"
+                className="h-8"
               >
-                Clear Filters
-              </button>
+                Clear
+              </Button>
 
-              <button
+              <div className="h-4 w-px bg-[var(--color-border)] mx-1" />
+
+              {/* Secondary buttons */}
+              <Button
                 onClick={handleGetAllFetched}
                 disabled={batchProcessing || loading}
-                className={`px-4 py-2 rounded font-medium transition-colors ${
-                  batchProcessing || loading
-                    ? 'bg-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed'
-                    : 'bg-[var(--color-income)] text-[var(--color-text-primary)] hover:bg-[var(--color-income)]'
-                }`}
+                variant="outline"
+                size="sm"
+                className="h-8 border-[var(--color-income)] text-[var(--color-income)] hover:bg-[var(--color-income)]/10"
               >
                 {batchProcessing && batchProgress.total > 0
-                  ? `Processing Batch ${batchProgress.current} of ${batchProgress.total}...`
-                  : 'Get All Fetched'
+                  ? `Batch ${batchProgress.current}/${batchProgress.total}`
+                  : 'Get Fetched'
                 }
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={handleBulkProcess}
                 disabled={batchProcessing || loading}
-                className={`px-4 py-2 rounded font-medium transition-colors ${
-                  batchProcessing || loading
-                    ? 'bg-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed'
-                    : 'bg-[var(--color-accent-primary)] text-[var(--color-text-primary)] hover:bg-[var(--color-accent-hover)]'
-                }`}
+                variant="outline"
+                size="sm"
+                className="h-8 border-[var(--color-accent-primary)] text-[var(--color-accent-primary)] hover:bg-[var(--color-accent-primary)]/10"
               >
                 {batchProcessing && batchProgress.total > 0 && batchProgress.current <= emails.length
-                  ? `Processing ${batchProgress.current} of ${batchProgress.total}...`
+                  ? `Processing ${batchProgress.current}/${batchProgress.total}`
                   : 'Bulk Process'
                 }
-              </button>
+              </Button>
             </div>
           </div>
 
