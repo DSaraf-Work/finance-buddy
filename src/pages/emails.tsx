@@ -493,19 +493,18 @@ const EmailsPage: NextPage = () => {
     return new Date(dateString).toLocaleString();
   };
 
-  const getStatusColor = (status: EmailStatus | string) => {
+  const getStatusColor = (status?: EmailStatus | string) => {
+    // Status is derived from FK presence - default to FETCHED if undefined
+    // API returns uppercase enum values: 'FETCHED', 'PROCESSED', 'REJECTED'
     switch (status) {
-      case 'Fetched': return 'bg-[var(--color-info)]/20 text-[var(--color-info)]';
-      case 'Processed': return 'bg-[var(--color-income)]/20 text-[var(--color-income)]';
-      case 'Failed': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
-      case 'Invalid': return 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]';
-      case 'NON_TRANSACTIONAL': return 'bg-[var(--color-warning)]/20 text-[var(--color-warning)]';
-      case 'REJECT': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
-      // Derived statuses from backend
-      case 'FETCHED': return 'bg-[var(--color-info)]/20 text-[var(--color-info)]';
-      case 'PROCESSED': return 'bg-[var(--color-income)]/20 text-[var(--color-income)]';
-      case 'REJECTED': return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
-      default: return 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]';
+      case 'FETCHED':
+        return 'bg-[var(--color-info)]/20 text-[var(--color-info)]';
+      case 'PROCESSED':
+        return 'bg-[var(--color-income)]/20 text-[var(--color-income)]';
+      case 'REJECTED':
+        return 'bg-[var(--color-expense)]/20 text-[var(--color-expense)]';
+      default:
+        return 'bg-[var(--color-info)]/20 text-[var(--color-info)]'; // Default to FETCHED color
     }
   };
 
@@ -558,9 +557,7 @@ const EmailsPage: NextPage = () => {
 
     try {
       // Get all FETCHED emails from current table view (already aggregated from all selected connections)
-      const fetchedEmails = emails.filter(email =>
-        email.status === 'Fetched' || (email.status as string) === 'FETCHED'
-      );
+      const fetchedEmails = emails.filter(email => email.status === 'FETCHED');
 
       if (fetchedEmails.length === 0) {
         alert('No FETCHED emails in current view to process.');
@@ -900,7 +897,7 @@ const EmailsPage: NextPage = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && email.fb_extracted_transactions && email.fb_extracted_transactions.length > 0 ? (
+                            {email.status === 'PROCESSED' && email.fb_extracted_transactions && email.fb_extracted_transactions.length > 0 ? (
                               <button
                                 onClick={() => {
                                   const txnId = email.fb_extracted_transactions![0].id;
@@ -917,7 +914,7 @@ const EmailsPage: NextPage = () => {
                               </button>
                             ) : (
                               <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(email.status)}`}>
-                                {(email.status === 'Processed' || (email.status as string) === 'PROCESSED') && (
+                                {email.status === 'PROCESSED' && (
                                   <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                   </svg>
@@ -949,7 +946,7 @@ const EmailsPage: NextPage = () => {
                                 </svg>
                               </button>
 
-                              {(email.status === 'Fetched' || (email.status as string) === 'FETCHED') && (
+                              {email.status === 'FETCHED' && (
                                 <button
                                   onClick={() => handleProcessEmail(email)}
                                   disabled={processingEmails.has(email.id)}
@@ -974,7 +971,7 @@ const EmailsPage: NextPage = () => {
                                 </button>
                               )}
 
-                              {(email.status !== 'REJECT') && (
+                              {email.status !== 'REJECTED' && (
                                 <button
                                   onClick={() => handleRejectEmail(email)}
                                   className="text-red-600 hover:text-red-900"
@@ -984,7 +981,7 @@ const EmailsPage: NextPage = () => {
                                 </button>
                               )}
 
-                              {(email.status === 'REJECT') && (
+                              {email.status === 'REJECTED' && (
                                 <button
                                   onClick={() => openStatusModal(email)}
                                   className="text-[var(--color-accent-primary)] hover:text-[var(--color-accent-hover)]"
@@ -1076,7 +1073,7 @@ const EmailsPage: NextPage = () => {
                           <dt className="text-sm font-medium text-[var(--color-text-muted)]">Status</dt>
                           <dd>
                             <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedEmail.status)}`}>
-                              {(selectedEmail.status === 'Processed' || (selectedEmail.status as string) === 'PROCESSED') && (
+                              {selectedEmail.status === 'PROCESSED' && (
                                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
@@ -1147,7 +1144,7 @@ const EmailsPage: NextPage = () => {
                 </div>
                 
                 <div className="px-6 py-4 border-t border-[var(--color-border)] flex gap-3">
-                  {selectedEmail && (selectedEmail.status === 'Fetched' || (selectedEmail.status as string) === 'FETCHED') && (
+                  {selectedEmail && selectedEmail.status === 'FETCHED' && (
                     <button
                       onClick={() => {
                         handleProcessEmail(selectedEmail);
@@ -1179,7 +1176,7 @@ const EmailsPage: NextPage = () => {
                       )}
                     </button>
                   )}
-                  {selectedEmail && (selectedEmail.status !== 'REJECT') && (
+                  {selectedEmail && selectedEmail.status !== 'REJECTED' && (
                     <button
                       onClick={() => {
                         handleRejectEmail(selectedEmail);
