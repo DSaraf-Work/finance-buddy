@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import LoadingScreen from '@/components/LoadingScreen';
@@ -8,29 +8,53 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import {
+  Mail,
+  CreditCard,
+  Link2,
+  ArrowRight,
+  Shield,
+  Zap,
+  Search,
+  BarChart3,
+  ChevronRight,
+  Sparkles,
+} from 'lucide-react';
+import {
   StatCard,
   QuickActions,
   ConnectedAccounts,
-  RecentTransactions
+  RecentTransactions,
+  HeroCard,
 } from '@/components/dashboard';
 
 interface DashboardStats {
   totalEmails: number;
   totalTransactions: number;
   totalConnections: number;
+  weeklySpending: number;
+  lastWeekSpending: number;
+}
+
+interface Transaction {
+  id: string;
+  amount: number;
+  transaction_date: string;
+  transaction_type: string;
 }
 
 const HomePage: NextPage = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalEmails: 0,
     totalTransactions: 0,
     totalConnections: 0,
+    weeklySpending: 0,
+    lastWeekSpending: 0,
   });
   const [connections, setConnections] = useState<GmailConnectionPublic[]>([]);
   const [loadingStats, setLoadingStats] = useState(false);
-  const [checkingPriorityEmails, setCheckingPriorityEmails] = useState(false);
-  const [priorityEmailResult, setPriorityEmailResult] = useState<any>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
   // Load dashboard data for authenticated users
   useEffect(() => {
@@ -38,6 +62,35 @@ const HomePage: NextPage = () => {
       loadDashboardData();
     }
   }, [user, loading]);
+
+  // Calculate weekly spending from transactions
+  const calculateWeeklySpending = (transactions: Transaction[]): { thisWeek: number; lastWeek: number } => {
+    const now = new Date();
+    const startOfThisWeek = new Date(now);
+    startOfThisWeek.setDate(now.getDate() - 7);
+
+    const startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+
+    let thisWeek = 0;
+    let lastWeek = 0;
+
+    transactions.forEach((txn) => {
+      const txnDate = new Date(txn.transaction_date);
+      const amount = Math.abs(txn.amount);
+
+      // Only count debits (negative amounts or debit type)
+      if (txn.amount < 0 || txn.transaction_type?.toLowerCase() === 'debit') {
+        if (txnDate >= startOfThisWeek) {
+          thisWeek += amount;
+        } else if (txnDate >= startOfLastWeek && txnDate < startOfThisWeek) {
+          lastWeek += amount;
+        }
+      }
+    });
+
+    return { thisWeek, lastWeek };
+  };
 
   const loadDashboardData = async () => {
     setLoadingStats(true);
@@ -48,6 +101,17 @@ const HomePage: NextPage = () => {
       if (connectionsResponse.ok) {
         connectionsData = await connectionsResponse.json();
         setConnections(connectionsData?.connections || []);
+
+        // Get most recent sync time from connections
+        if (connectionsData?.connections?.length) {
+          const mostRecentSync = connectionsData.connections.reduce((latest, conn) => {
+            const syncTime = conn.last_sync_at ? new Date(conn.last_sync_at) : null;
+            if (!syncTime) return latest;
+            if (!latest) return syncTime;
+            return syncTime > latest ? syncTime : latest;
+          }, null as Date | null);
+          setLastSyncTime(mostRecentSync);
+        }
       }
 
       // Load email stats
@@ -57,15 +121,26 @@ const HomePage: NextPage = () => {
         body: JSON.stringify({ page: 1, pageSize: 1 }),
       });
 
-      // Load transaction stats
+      // Load transaction stats with last 14 days for weekly comparison
+      const twoWeeksAgo = new Date();
+      twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
       const transactionResponse = await fetch('/api/transactions/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ page: 1, pageSize: 1 }),
+        body: JSON.stringify({
+          page: 1,
+          pageSize: 100,
+          startDate: twoWeeksAgo.toISOString(),
+          sortBy: 'transaction_date',
+          sortOrder: 'desc',
+        }),
       });
 
       let totalEmails = 0;
       let totalTransactions = 0;
+      let weeklySpending = 0;
+      let lastWeekSpending = 0;
 
       if (emailResponse.ok) {
         const emailData = await emailResponse.json();
@@ -75,12 +150,19 @@ const HomePage: NextPage = () => {
       if (transactionResponse.ok) {
         const transactionData = await transactionResponse.json();
         totalTransactions = transactionData.total || 0;
+
+        // Calculate weekly spending
+        const spending = calculateWeeklySpending(transactionData.transactions || []);
+        weeklySpending = spending.thisWeek;
+        lastWeekSpending = spending.lastWeek;
       }
 
       setStats({
         totalEmails,
         totalTransactions,
         totalConnections: connectionsData?.connections?.length || 0,
+        weeklySpending,
+        lastWeekSpending,
       });
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
@@ -89,35 +171,22 @@ const HomePage: NextPage = () => {
     }
   };
 
-  const handleCheckPriorityEmails = async () => {
-    setCheckingPriorityEmails(true);
-    setPriorityEmailResult(null);
-
+  const handleSync = async () => {
+    setSyncing(true);
     try {
       const response = await fetch('/api/priority-emails/trigger', {
         method: 'POST',
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setPriorityEmailResult(data);
-        // Reload dashboard data to show new transactions
+        // Reload dashboard data after sync
         await loadDashboardData();
-      } else {
-        setPriorityEmailResult({
-          success: false,
-          error: data.error || 'Failed to check priority emails',
-        });
+        setLastSyncTime(new Date());
       }
-    } catch (error: any) {
-      console.error('Failed to check priority emails:', error);
-      setPriorityEmailResult({
-        success: false,
-        error: error.message || 'Failed to check priority emails',
-      });
+    } catch (error) {
+      console.error('Failed to sync:', error);
     } finally {
-      setCheckingPriorityEmails(false);
+      setSyncing(false);
     }
   };
 
@@ -134,142 +203,256 @@ const HomePage: NextPage = () => {
     );
   }
 
-  // Unauthenticated homepage
+  // Unauthenticated homepage - Modern landing page
   if (!user) {
     return (
       <Layout
-        title="Finance Buddy - Smart Financial Management"
-        description="Track and manage your financial transactions with AI-powered insights"
+        title="Finance Buddy - Track Your Finances Automatically"
+        description="AI-powered transaction extraction from your email. Secure. Private. Smart."
       >
-        <main className="min-h-[calc(100vh-72px)] bg-background py-10 px-5">
-          <div className="max-w-[900px] mx-auto">
-            {/* Hero Section */}
-            <div className="text-center mb-[60px]">
-              <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight">
-                Finance Buddy
+        <main className="min-h-[calc(100vh-72px)] bg-background">
+          {/* Hero Section */}
+          <section className="relative overflow-hidden py-20 px-5">
+            {/* Background gradient */}
+            <div className="absolute inset-0 -z-10">
+              <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+            </div>
+
+            <div className="max-w-[1000px] mx-auto text-center">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-primary">AI-Powered Finance Tracking</span>
+              </div>
+
+              {/* Main headline */}
+              <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 tracking-tight leading-tight">
+                Track Your Finances{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
+                  Automatically
+                </span>
               </h1>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Track and manage your financial transactions with AI-powered insights.<br/>
-                Secure Gmail OAuth integration for automatic transaction extraction.
+
+              {/* Subheadline */}
+              <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-[700px] mx-auto leading-relaxed">
+                Connect your Gmail and let AI extract transactions from your emails.
+                No manual entry. Complete privacy. Full control.
               </p>
 
-              {/* Sign In/Up Buttons */}
-              <div className="flex gap-4 justify-center">
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
                 <Link href="/auth">
-                  <Button className="px-8 py-6 text-base font-semibold shadow-[0_0_32px_rgba(99,102,241,0.35)]">
+                  <Button size="lg" className="px-8 py-6 text-base font-semibold gap-2 shadow-[0_0_32px_rgba(99,102,241,0.35)]">
+                    Get Started Free
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/auth">
+                  <Button variant="outline" size="lg" className="px-8 py-6 text-base font-semibold">
                     Sign In
                   </Button>
                 </Link>
-                <Link href="/auth">
-                  <Button variant="outline" className="px-8 py-6 text-base font-semibold">
-                    Sign Up
-                  </Button>
-                </Link>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground/80">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-green-500" />
+                  <span>Bank-grade Security</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  <span>Instant Setup</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                  <span>100% Free</span>
+                </div>
               </div>
             </div>
+          </section>
 
-            {/* Features Grid */}
-            <Card className="bg-card/50 border-border/50 p-10 mb-8">
-              <h2 className="text-2xl font-semibold text-foreground text-center mb-8">
-                What you'll get with Finance Buddy
-              </h2>
+          {/* How It Works */}
+          <section className="py-20 px-5 bg-card/30">
+            <div className="max-w-[1000px] mx-auto">
+              <div className="text-center mb-16">
+                <p className="text-sm font-medium text-primary uppercase tracking-wider mb-3">
+                  How It Works
+                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  Three Simple Steps
+                </h2>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">🔐</div>
-                  <h3 className="text-base font-semibold text-foreground mb-2">
-                    Secure OAuth
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    step: '01',
+                    icon: Link2,
+                    title: 'Connect Gmail',
+                    description: 'Securely link your Gmail account with OAuth 2.0. We never see your password.',
+                    color: '#6366F1',
+                  },
+                  {
+                    step: '02',
+                    icon: Sparkles,
+                    title: 'AI Extraction',
+                    description: 'Our AI reads transaction emails and extracts amounts, dates, and merchants.',
+                    color: '#F59E0B',
+                  },
+                  {
+                    step: '03',
+                    icon: BarChart3,
+                    title: 'Track & Analyze',
+                    description: 'View spending patterns, get insights, and take control of your finances.',
+                    color: '#22C55E',
+                  },
+                ].map((item) => (
+                  <Card
+                    key={item.step}
+                    className="relative p-8 bg-card/50 border-border/50 hover:border-primary/50 transition-all duration-300"
+                  >
+                    <div
+                      className="absolute top-6 right-6 text-4xl font-bold opacity-10"
+                      style={{ color: item.color }}
+                    >
+                      {item.step}
+                    </div>
+                    <div
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
+                      style={{ background: `${item.color}15` }}
+                    >
+                      <item.icon className="h-7 w-7" style={{ color: item.color }} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-foreground mb-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {item.description}
+                    </p>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Features Bento Grid */}
+          <section className="py-20 px-5">
+            <div className="max-w-[1000px] mx-auto">
+              <div className="text-center mb-16">
+                <p className="text-sm font-medium text-primary uppercase tracking-wider mb-3">
+                  Features
+                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  Everything You Need
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Large feature card */}
+                <Card className="p-8 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 md:row-span-2">
+                  <Shield className="h-10 w-10 text-primary mb-6" />
+                  <h3 className="text-2xl font-semibold text-foreground mb-4">
+                    Bank-Grade Security
                   </h3>
-                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
-                    Connect Gmail with industry-standard OAuth security
+                  <p className="text-muted-foreground leading-relaxed mb-6">
+                    Your data is protected with Row Level Security (RLS), OAuth-only authentication, and encrypted storage. We never store your Gmail password.
                   </p>
-                </div>
+                  <ul className="space-y-3">
+                    {['OAuth 2.0 + PKCE', 'Row Level Security', 'Encrypted at Rest', 'No Password Storage'].map((item) => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
 
-                <div className="text-center">
-                  <div className="text-4xl mb-3">📧</div>
-                  <h3 className="text-base font-semibold text-foreground mb-2">
-                    Smart Email Sync
+                {/* Small feature cards */}
+                <Card className="p-6 bg-card/50 border-border/50 hover:border-amber-500/50 transition-colors">
+                  <Zap className="h-8 w-8 text-amber-500 mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    Smart Sync
                   </h3>
-                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
-                    Manual sync with intelligent deduplication
+                  <p className="text-sm text-muted-foreground">
+                    Intelligent deduplication ensures you never see duplicate transactions.
                   </p>
-                </div>
+                </Card>
 
-                <div className="text-center">
-                  <div className="text-4xl mb-3">🔍</div>
-                  <h3 className="text-base font-semibold text-foreground mb-2">
+                <Card className="p-6 bg-card/50 border-border/50 hover:border-cyan-500/50 transition-colors">
+                  <Search className="h-8 w-8 text-cyan-500 mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     Advanced Search
                   </h3>
-                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
-                    Powerful filtering for transaction management
+                  <p className="text-sm text-muted-foreground">
+                    Filter by date, amount, merchant, category, and more.
                   </p>
-                </div>
+                </Card>
 
-                <div className="text-center">
-                  <div className="text-4xl mb-3">⚙️</div>
-                  <h3 className="text-base font-semibold text-foreground mb-2">
-                    Admin Tools
-                  </h3>
-                  <p className="text-[13px] text-muted-foreground/80 leading-relaxed">
-                    Comprehensive system monitoring
-                  </p>
-                </div>
+                <Card className="p-6 bg-card/50 border-border/50 hover:border-green-500/50 transition-colors md:col-span-2">
+                  <div className="flex items-start gap-6">
+                    <BarChart3 className="h-8 w-8 text-green-500 flex-shrink-0" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
+                        Reports & Insights
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Visualize your spending patterns with beautiful charts and get actionable insights to improve your financial health.
+                      </p>
+                    </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
+            </div>
+          </section>
 
-            {/* Security & Privacy */}
-            <Card className="bg-success/10 border-success/30 p-5">
-              <h3 className="text-base font-semibold text-success mb-2">
-                🛡️ Security & Privacy
-              </h3>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">
-                Your data is protected with Row Level Security (RLS), secure cookie authentication,
-                and OAuth-only access. We never store your Gmail passwords.
+          {/* Final CTA */}
+          <section className="py-20 px-5 bg-card/30">
+            <div className="max-w-[600px] mx-auto text-center">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
+                Ready to take control?
+              </h2>
+              <p className="text-muted-foreground mb-8">
+                Join and start tracking your finances automatically.
               </p>
-            </Card>
-          </div>
+              <Link href="/auth">
+                <Button size="lg" className="px-8 py-6 text-base font-semibold gap-2">
+                  Get Started Free
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </section>
         </main>
       </Layout>
     );
   }
 
-  // Authenticated homepage
+  // Authenticated Dashboard - Revamped design
   return (
     <Layout
       title="Finance Buddy - Dashboard"
-      description="Finance Buddy dashboard with overview and quick actions"
+      description="Your personal finance dashboard"
     >
-      <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
+      <div className="min-h-[calc(100vh-72px)] bg-background py-6 px-5">
         <div className="max-w-[1200px] mx-auto">
-          {/* Welcome Header */}
-          <div className="mb-10">
-            <div className="flex items-end justify-between pb-5 border-b border-border/50">
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-wider mb-2">
-                  Dashboard
-                </p>
-                <h1 className="text-4xl font-semibold text-foreground tracking-tight">
-                  Welcome back
-                </h1>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
-                <span className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-wider">
-                  Active
-                </span>
-              </div>
-            </div>
+          {/* Hero Card - Spending Summary */}
+          <div className="mb-8">
+            <HeroCard
+              weeklySpending={stats.weeklySpending}
+              lastWeekSpending={stats.lastWeekSpending}
+              lastSyncTime={lastSyncTime}
+              onSync={handleSync}
+              syncing={syncing}
+              loading={loadingStats}
+            />
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+          {/* Quick Stats Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             <StatCard
-              icon={
-                <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              }
+              icon={<Mail className="h-5 w-5" />}
               iconColor="#6366F1"
               iconBg="rgba(99, 102, 241, 0.12)"
               label="Emails"
@@ -279,12 +462,7 @@ const HomePage: NextPage = () => {
               hoverColor="#6366F1"
             />
             <StatCard
-              icon={
-                <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              }
+              icon={<CreditCard className="h-5 w-5" />}
               iconColor="#22C55E"
               iconBg="rgba(34, 197, 94, 0.12)"
               label="Transactions"
@@ -294,12 +472,7 @@ const HomePage: NextPage = () => {
               hoverColor="#22C55E"
             />
             <StatCard
-              icon={
-                <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-              }
+              icon={<Link2 className="h-5 w-5" />}
               iconColor="#4285F4"
               iconBg="rgba(66, 133, 244, 0.12)"
               label="Accounts"
@@ -310,81 +483,25 @@ const HomePage: NextPage = () => {
             />
           </div>
 
-          {/* Recent Transactions Section */}
-          <div className="mb-10">
+          {/* Recent Transactions */}
+          <div className="mb-8">
             <RecentTransactions limit={5} />
           </div>
 
-          {/* Quick Actions & Connection Status */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-10">
+          {/* Quick Actions & Connected Accounts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <QuickActions
               actions={[
                 { label: 'Connect Gmail Account', onClick: handleConnect },
-                { label: 'Manage Connections', href: '/admin' },
                 { label: 'Browse Emails', href: '/emails' },
-                { label: 'Review Transactions', href: '/transactions' },
-                {
-                  label: checkingPriorityEmails ? 'Checking...' : 'Check Priority Emails',
-                  onClick: handleCheckPriorityEmails,
-                  disabled: checkingPriorityEmails,
-                  loading: checkingPriorityEmails,
-                },
+                { label: 'View All Transactions', href: '/transactions' },
+                { label: 'View Reports', href: '/reports' },
               ]}
-              priorityResult={priorityEmailResult}
             />
             <ConnectedAccounts
               connections={connections}
               onConnect={handleConnect}
             />
-          </div>
-
-          {/* Features Overview */}
-          <div className="border-t border-border/50 pt-10">
-            <h3 className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-8">
-              Features
-            </h3>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-              {[
-                { emoji: '🔒', title: 'Secure OAuth', desc: 'Gmail integration with PKCE security', color: '#6366F1' },
-                { emoji: '🔄', title: 'Smart Sync', desc: 'Manual sync with deduplication', color: '#22C55E' },
-                { emoji: '🔍', title: 'Advanced Search', desc: 'Powerful filtering capabilities', color: '#6366F1' },
-                { emoji: '💡', title: 'AI Extraction', desc: 'Automated transaction parsing', color: '#F59E0B' },
-                { emoji: '⚙️', title: 'Admin Tools', desc: 'System health monitoring', color: '#06B6D4' },
-                { emoji: '🛡️', title: 'RLS Security', desc: 'Row-level data protection', color: '#8B5CF6' },
-              ].map((feature, index) => (
-                <Card
-                  key={index}
-                  className="p-5 border-border/50 hover:border-primary cursor-pointer transition-all duration-300 group"
-                  style={{
-                    ['--feature-color' as any]: feature.color
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = feature.color;
-                    e.currentTarget.style.background = `${feature.color}10`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '';
-                    e.currentTarget.style.background = '';
-                  }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-3 text-xl"
-                    style={{
-                      background: `${feature.color}15`
-                    }}
-                  >
-                    {feature.emoji}
-                  </div>
-                  <h4 className="text-sm font-semibold text-foreground mb-1">
-                    {feature.title}
-                  </h4>
-                  <p className="text-[11px] text-muted-foreground/80 leading-relaxed">
-                    {feature.desc}
-                  </p>
-                </Card>
-              ))}
-            </div>
           </div>
         </div>
       </div>
