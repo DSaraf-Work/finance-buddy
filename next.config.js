@@ -21,6 +21,8 @@ const nextConfig = {
   experimental: {
     // Enable optimized package imports
     optimizePackageImports: ['@supabase/supabase-js'],
+    // ESM compatibility for Radix UI packages
+    esmExternals: 'loose',
   },
 
   // Headers for security and CORS
