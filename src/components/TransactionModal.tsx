@@ -33,7 +33,7 @@ interface TransactionModalProps {
 export default function TransactionModal({ transaction, isOpen, onClose, onSave }: TransactionModalProps) {
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [isLoading, setIsLoading] = useState(false);
-  const [emailBody, setEmailBody] = useState<string | null>(null);
+  const [emailData, setEmailData] = useState<{ body: string | null; subject: string | null; from: string | null } | null>(null);
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [isReExtracting, setIsReExtracting] = useState(false);
   const [accountTypes, setAccountTypes] = useState<string[]>(['OTHER']);
@@ -55,7 +55,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       const response = await fetch(`/api/emails/${emailRowId}`);
       if (response.ok) {
         const data = await response.json();
-        setEmailBody(data.plain_body || null);
+        // Use plain_body, fallback to snippet
+        const body = data.plain_body || data.snippet || null;
+        setEmailData({
+          body,
+          subject: data.subject || null,
+          from: data.from_address || null,
+        });
       }
     } catch (error) {
       console.error('Error fetching email body:', error);
@@ -577,15 +583,33 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                   <CardContent>
                     {loadingEmail ? (
                       <LoadingScreen message="Loading email..." fullScreen={false} size="sm" />
-                    ) : emailBody ? (
-                      <div className="bg-background border border-border rounded-xl p-4 max-h-96 overflow-y-auto">
-                        <div
-                          className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap text-xs"
-                          dangerouslySetInnerHTML={{ __html: emailBody }}
-                        />
+                    ) : emailData ? (
+                      <div className="space-y-3">
+                        {/* Email metadata */}
+                        {(emailData.subject || emailData.from) && (
+                          <div className="space-y-1 text-sm border-b border-border/50 pb-3">
+                            {emailData.subject && (
+                              <p className="text-foreground font-medium">{emailData.subject}</p>
+                            )}
+                            {emailData.from && (
+                              <p className="text-muted-foreground text-xs">From: {emailData.from}</p>
+                            )}
+                          </div>
+                        )}
+                        {/* Email body */}
+                        {emailData.body ? (
+                          <div className="bg-background border border-border rounded-xl p-4 max-h-80 overflow-y-auto">
+                            <div
+                              className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap text-xs leading-relaxed"
+                              dangerouslySetInnerHTML={{ __html: emailData.body }}
+                            />
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">No email body content available.</p>
+                        )}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">No email content available.</p>
+                      <p className="text-sm text-muted-foreground">Failed to load email.</p>
                     )}
                   </CardContent>
                 )}

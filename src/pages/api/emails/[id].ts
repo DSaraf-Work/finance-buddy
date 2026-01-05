@@ -35,7 +35,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // Fetch email with explicit user_id filter for authorization
     const { data, error } = await supabaseAdmin
       .from(TABLE_EMAILS_FETCHED)
-      .select('id, plain_body, subject, from_address, internal_date')
+      .select('id, plain_body, snippet, subject, from_address, internal_date')
       .eq('id', id)
       .eq('user_id', user.id) // Explicit authorization
       .single();
