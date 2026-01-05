@@ -23,6 +23,7 @@ interface SplitwiseDropdownProps {
   currencyCode?: string;
   onSuccess?: () => void;
   onError?: (error: string) => void;
+  iconOnly?: boolean;
 }
 
 export default function SplitwiseDropdown({
@@ -32,6 +33,7 @@ export default function SplitwiseDropdown({
   currencyCode = 'INR',
   onSuccess,
   onError,
+  iconOnly = false,
 }: SplitwiseDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'groups' | 'friends'>('groups');
@@ -207,39 +209,54 @@ export default function SplitwiseDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center px-3 py-2 text-sm font-medium text-[var(--color-text-primary)] bg-emerald-600 border border-transparent rounded-[var(--radius-md)] hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+        title="Split with Splitwise"
+        className={iconOnly
+          ? "w-10 h-10 flex items-center justify-center bg-emerald-600 rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+          : "inline-flex items-center px-3 py-2 text-sm font-medium text-[var(--color-text-primary)] bg-emerald-600 border border-transparent rounded-[var(--radius-md)] hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+        }
       >
-        <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        {/* Split/Users icon */}
+        <svg className={iconOnly ? "w-5 h-5 text-white" : "w-4 h-4 mr-2"} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
         </svg>
-        Split with Splitwise
-        <svg className={`w-4 h-4 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        {!iconOnly && (
+          <>
+            Split with Splitwise
+            <svg className={`w-4 h-4 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </>
+        )}
       </button>
 
-      {/* Dropdown Panel */}
+      {/* Dropdown Panel - Fixed center modal */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-lg z-50">
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 z-[100]"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 bg-zinc-900 border border-border rounded-xl shadow-2xl z-[101]">
           {/* Header */}
-          <div className="px-4 py-3 border-b border-[var(--color-border)]">
-            <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">
+          <div className="px-4 py-3 border-b border-border">
+            <h4 className="text-sm font-semibold text-foreground">
               Split Expense on Splitwise
             </h4>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {currencyCode} {transactionAmount.toFixed(2)} - {transactionDescription}
             </p>
           </div>
 
           {/* Tabs */}
-          <div className="flex border-b border-[var(--color-border)]">
+          <div className="flex border-b border-border">
             <button
               type="button"
               onClick={() => setActiveTab('groups')}
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'groups'
                   ? 'text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/10'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Groups
@@ -250,7 +267,7 @@ export default function SplitwiseDropdown({
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'friends'
                   ? 'text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/10'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Friends
@@ -264,7 +281,7 @@ export default function SplitwiseDropdown({
               placeholder={`Search ${activeTab}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-[var(--color-bg-app)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
 
@@ -278,7 +295,7 @@ export default function SplitwiseDropdown({
                 </svg>
               </div>
             ) : error && !groups.length && !friends.length ? (
-              <div className="text-center py-4 text-[var(--color-text-muted)] text-sm">
+              <div className="text-center py-4 text-muted-foreground text-sm">
                 {error}
                 <button
                   type="button"
@@ -290,7 +307,7 @@ export default function SplitwiseDropdown({
               </div>
             ) : activeTab === 'groups' ? (
               filteredGroups.length === 0 ? (
-                <div className="text-center py-4 text-[var(--color-text-muted)] text-sm">
+                <div className="text-center py-4 text-muted-foreground text-sm">
                   No groups found
                 </div>
               ) : (
@@ -299,10 +316,10 @@ export default function SplitwiseDropdown({
                     key={group.id}
                     type="button"
                     onClick={() => handleGroupSelect(group)}
-                    className={`w-full flex items-center px-3 py-2 rounded-[var(--radius-md)] transition-colors ${
+                    className={`w-full flex items-center px-3 py-2 rounded-lg transition-colors ${
                       selectedGroup?.id === group.id
                         ? 'bg-emerald-500/20 border border-emerald-500'
-                        : 'hover:bg-[var(--color-bg-elevated)]'
+                        : 'hover:bg-muted'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center mr-3">
@@ -311,8 +328,8 @@ export default function SplitwiseDropdown({
                       </svg>
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-[var(--color-text-primary)]">{group.name}</div>
-                      <div className="text-xs text-[var(--color-text-muted)]">
+                      <div className="text-sm font-medium text-foreground">{group.name}</div>
+                      <div className="text-xs text-muted-foreground">
                         {group.members.length} members
                       </div>
                     </div>
@@ -326,7 +343,7 @@ export default function SplitwiseDropdown({
               )
             ) : (
               filteredFriends.length === 0 ? (
-                <div className="text-center py-4 text-[var(--color-text-muted)] text-sm">
+                <div className="text-center py-4 text-muted-foreground text-sm">
                   No friends found
                 </div>
               ) : (
@@ -337,10 +354,10 @@ export default function SplitwiseDropdown({
                       key={friend.id}
                       type="button"
                       onClick={() => handleFriendToggle(friend)}
-                      className={`w-full flex items-center px-3 py-2 rounded-[var(--radius-md)] transition-colors ${
+                      className={`w-full flex items-center px-3 py-2 rounded-lg transition-colors ${
                         isSelected
                           ? 'bg-emerald-500/20 border border-emerald-500'
-                          : 'hover:bg-[var(--color-bg-elevated)]'
+                          : 'hover:bg-muted'
                       }`}
                     >
                       {friend.picture ? (
@@ -350,24 +367,24 @@ export default function SplitwiseDropdown({
                           className="w-8 h-8 rounded-full mr-3"
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-[var(--color-accent-primary)]/20 flex items-center justify-center mr-3">
-                          <span className="text-sm font-medium text-[var(--color-accent-primary)]">
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                          <span className="text-sm font-medium text-primary">
                             {friend.firstName.charAt(0)}
                           </span>
                         </div>
                       )}
                       <div className="flex-1 text-left">
-                        <div className="text-sm font-medium text-[var(--color-text-primary)]">
+                        <div className="text-sm font-medium text-foreground">
                           {friend.firstName} {friend.lastName}
                         </div>
                         {friend.email && (
-                          <div className="text-xs text-[var(--color-text-muted)]">{friend.email}</div>
+                          <div className="text-xs text-muted-foreground">{friend.email}</div>
                         )}
                       </div>
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                         isSelected
                           ? 'bg-emerald-500 border-emerald-500'
-                          : 'border-[var(--color-border)]'
+                          : 'border-border'
                       }`}>
                         {isSelected && (
                           <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -384,9 +401,9 @@ export default function SplitwiseDropdown({
 
           {/* Selection Summary */}
           {getSelectionSummary() && (
-            <div className="px-4 py-2 bg-emerald-500/10 border-t border-[var(--color-border)]">
+            <div className="px-4 py-2 bg-emerald-500/10 border-t border-border">
               <p className="text-xs text-emerald-400">{getSelectionSummary()}</p>
-              <p className="text-xs text-[var(--color-text-muted)] mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Each person owes: {currencyCode} {(transactionAmount / (selectedGroup ? selectedGroup.members.length : selectedFriends.length + 1)).toFixed(2)}
               </p>
             </div>
@@ -400,7 +417,7 @@ export default function SplitwiseDropdown({
           )}
 
           {/* Footer Actions */}
-          <div className="px-4 py-3 border-t border-[var(--color-border)] flex justify-end gap-2">
+          <div className="px-4 py-3 border-t border-border flex justify-end gap-2">
             <button
               type="button"
               onClick={() => {
@@ -409,7 +426,7 @@ export default function SplitwiseDropdown({
                 setSelectedFriends([]);
                 setSearchQuery('');
               }}
-              className="px-3 py-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Cancel
             </button>
@@ -417,7 +434,7 @@ export default function SplitwiseDropdown({
               type="button"
               onClick={handleCreateSplit}
               disabled={creating || (!selectedGroup && selectedFriends.length === 0)}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-[var(--radius-md)] hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+              className="px-4 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
             >
               {creating ? (
                 <>
@@ -433,6 +450,7 @@ export default function SplitwiseDropdown({
             </button>
           </div>
         </div>
+        </>
       )}
     </div>
   );

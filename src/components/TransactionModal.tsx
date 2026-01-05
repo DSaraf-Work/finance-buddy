@@ -218,51 +218,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]">
-        <DialogHeader className="shrink-0 pt-4 pb-2">
-          <DialogTitle className="sr-only">Edit Transaction</DialogTitle>
-          <div className="flex items-center gap-3 flex-wrap">
-            {formData.amount && parseFloat(formData.amount) > 0 && (
-              <SplitwiseDropdown
-                transactionAmount={parseFloat(formData.amount)}
-                transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
-                transactionDate={formData.txn_time?.split('T')[0]}
-                currencyCode={formData.currency || 'INR'}
-                onSuccess={() => {
-                  setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
-                  setTimeout(() => setSplitwiseMessage(null), 5000);
-                }}
-                onError={(error) => {
-                  setSplitwiseMessage({ type: 'error', text: error });
-                  setTimeout(() => setSplitwiseMessage(null), 5000);
-                }}
-              />
-            )}
-            <Button
-              type="button"
-              onClick={handleReExtract}
-              disabled={isReExtracting}
-              variant="outline"
-              size="sm"
-              title="Re-extract transaction data using AI"
-            >
-              {isReExtracting ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Re-extracting...
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  Re-extract with AI
-                </>
-              )}
-            </Button>
-          </div>
+        <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
+          <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Transaction
+          </DialogTitle>
         </DialogHeader>
 
         {/* Splitwise Message Toast */}
@@ -659,32 +621,74 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           </div>
 
           {/* Footer - Sticky at bottom */}
-          <div className="shrink-0 px-6 py-4 border-t border-border bg-card flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={onClose}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="bg-success hover:bg-success/90 text-white"
-            >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+          <div className="shrink-0 px-6 py-4 border-t border-border bg-card flex items-center justify-between">
+            {/* Left side - Action icons */}
+            <div className="flex items-center gap-3">
+              {formData.amount && parseFloat(formData.amount) > 0 && (
+                <SplitwiseDropdown
+                  transactionAmount={parseFloat(formData.amount)}
+                  transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
+                  transactionDate={formData.txn_time?.split('T')[0]}
+                  currencyCode={formData.currency || 'INR'}
+                  iconOnly={true}
+                  onSuccess={() => {
+                    setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
+                    setTimeout(() => setSplitwiseMessage(null), 5000);
+                  }}
+                  onError={(error) => {
+                    setSplitwiseMessage({ type: 'error', text: error });
+                    setTimeout(() => setSplitwiseMessage(null), 5000);
+                  }}
+                />
+              )}
+              <button
+                type="button"
+                onClick={handleReExtract}
+                disabled={isReExtracting}
+                title="Re-extract with AI"
+                className="w-10 h-10 flex items-center justify-center bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50"
+              >
+                {isReExtracting ? (
+                  <svg className="animate-spin h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Saving...
-                </>
-              ) : (
-                'Save'
-              )}
-            </Button>
+                ) : (
+                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {/* Right side - Cancel & Save */}
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-success hover:bg-success/90 text-white"
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Saving...
+                  </>
+                ) : (
+                  'Save'
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </DialogContent>
