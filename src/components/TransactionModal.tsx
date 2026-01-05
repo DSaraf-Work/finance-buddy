@@ -212,7 +212,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]">
-        <DialogHeader className="shrink-0 pt-2">
+        <DialogHeader className="shrink-0 pt-4 pb-2">
           <DialogTitle className="sr-only">Edit Transaction</DialogTitle>
           <div className="flex items-center gap-3 flex-wrap">
             {formData.amount && parseFloat(formData.amount) > 0 && (
@@ -549,6 +549,49 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               </CardContent>
             </Card>
 
+            {/* Email Body Section - Collapsible */}
+            {transaction.email_row_id && (
+              <Card className="bg-card/50 border-border/50">
+                <CardHeader
+                  className="cursor-pointer select-none"
+                  onClick={() => setEmailExpanded(!emailExpanded)}
+                >
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Source Email
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-muted-foreground transition-transform ${emailExpanded ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </CardTitle>
+                </CardHeader>
+                {emailExpanded && (
+                  <CardContent>
+                    {loadingEmail ? (
+                      <LoadingScreen message="Loading email..." fullScreen={false} size="sm" />
+                    ) : emailBody ? (
+                      <div className="bg-background border border-border rounded-xl p-4 max-h-96 overflow-y-auto">
+                        <div
+                          className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap text-xs"
+                          dangerouslySetInnerHTML={{ __html: emailBody }}
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No email content available.</p>
+                    )}
+                  </CardContent>
+                )}
+              </Card>
+            )}
+
             {/* Notes Section - Collapsible */}
             <Card className="bg-card/50 border-border/50">
               <CardHeader
@@ -600,47 +643,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 </CardContent>
               )}
             </Card>
-
-            {/* Email Body Section - Collapsible */}
-            {emailBody && (
-              <Card className="bg-card/50 border-border/50">
-                <CardHeader
-                  className="cursor-pointer select-none"
-                  onClick={() => setEmailExpanded(!emailExpanded)}
-                >
-                  <CardTitle className="text-lg flex items-center justify-between">
-                    <div className="flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      Original Email
-                    </div>
-                    <svg
-                      className={`w-5 h-5 text-muted-foreground transition-transform ${emailExpanded ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </CardTitle>
-                </CardHeader>
-                {emailExpanded && (
-                  <CardContent>
-                    {loadingEmail ? (
-                      <LoadingScreen message="Loading email body..." fullScreen={false} size="sm" />
-                    ) : (
-                      <div className="bg-background border border-border rounded-xl p-4 max-h-96 overflow-y-auto">
-                        <div
-                          className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap"
-                          dangerouslySetInnerHTML={{ __html: emailBody }}
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-                )}
-              </Card>
-            )}
           </div>
 
           {/* Footer - Sticky at bottom */}
