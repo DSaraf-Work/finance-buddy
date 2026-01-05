@@ -585,17 +585,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                       <LoadingScreen message="Loading email..." fullScreen={false} size="sm" />
                     ) : emailData ? (
                       <div className="space-y-3">
-                        {/* Email metadata */}
-                        {(emailData.subject || emailData.from) && (
-                          <div className="space-y-1 text-sm border-b border-border/50 pb-3">
-                            {emailData.subject && (
-                              <p className="text-foreground font-medium">{emailData.subject}</p>
-                            )}
-                            {emailData.from && (
-                              <p className="text-muted-foreground text-xs">From: {emailData.from}</p>
-                            )}
-                          </div>
-                        )}
                         {/* Email body */}
                         {emailData.body ? (
                           <div className="bg-background border border-border rounded-xl p-4 max-h-80 overflow-y-auto">
