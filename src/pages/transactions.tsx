@@ -122,6 +122,40 @@ export default function TransactionsPage() {
     }
   }, [user, authLoading, router]);
 
+  // Handle editTxnId query param - open modal for specific transaction
+  useEffect(() => {
+    const editTxnId = router.query.editTxnId as string;
+    if (editTxnId && user && !loading) {
+      // Find the transaction in the loaded list first
+      const existingTxn = transactions.find(t => t.id === editTxnId);
+      if (existingTxn) {
+        setSelectedTransaction(existingTxn);
+        setIsModalOpen(true);
+        // Clear the query param from URL without refresh
+        router.replace('/transactions', undefined, { shallow: true });
+      } else {
+        // Fetch the transaction if not in current list
+        fetch(`/api/transactions/${editTxnId}`, {
+          method: 'GET',
+          credentials: 'include',
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success && data.transaction) {
+              setSelectedTransaction(data.transaction);
+              setIsModalOpen(true);
+              // Clear the query param from URL without refresh
+              router.replace('/transactions', undefined, { shallow: true });
+            }
+          })
+          .catch(err => {
+            console.error('Failed to fetch transaction for edit:', err);
+            showError('Failed to load transaction');
+          });
+      }
+    }
+  }, [router.query.editTxnId, user, loading, transactions]);
+
   const searchTransactions = async (page: number = 1, resetPage: boolean = false) => {
     try {
       // Use loadingMore for pagination, loading for initial load

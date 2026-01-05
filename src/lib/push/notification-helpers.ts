@@ -26,7 +26,7 @@ export class NotificationHelpers {
       body: `₹${transaction.amount} at ${transaction.merchant}`,
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
-      url: `/transactions/${transaction.id}`,
+      url: `/transactions?editTxnId=${transaction.id}`,
       data: {
         type: 'transaction',
         transactionId: transaction.id,
