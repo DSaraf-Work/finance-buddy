@@ -413,6 +413,10 @@ export default function TransactionsPage() {
               onClose={() => {
                 setIsModalOpen(false);
                 setSelectedTransaction(null);
+                // Clear editTxnId query param if present
+                if (router.query.editTxnId) {
+                  router.replace('/transactions', undefined, { shallow: true });
+                }
               }}
               onSave={handleTransactionUpdate}
             />
