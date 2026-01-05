@@ -99,7 +99,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUs
         fromAddress: (email as any).from_address,
         emailId: (email as any).id,
         transactionId: transactionId,
-        userId: userId
+        userId: userId,
+        internalDate: (email as any).internal_date
       });
 
       console.log('✅ Real AI extraction successful:', {
@@ -119,12 +120,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUs
     }
 
     // Update the transaction with new extracted data
+    // Use email.internal_date as fallback if AI didn't extract txn_time
+    let txnTime = extractedTransaction.txn_time ? (
+      typeof extractedTransaction.txn_time === 'string'
+        ? extractedTransaction.txn_time
+        : extractedTransaction.txn_time.toISOString()
+    ) : null;
+    if (!txnTime && (email as any).internal_date) {
+      console.log('📅 Using email internal_date as fallback for txn_time:', (email as any).internal_date);
+      txnTime = (email as any).internal_date;
+    }
+
     const updatedData = {
-      txn_time: extractedTransaction.txn_time ? (
-        typeof extractedTransaction.txn_time === 'string'
-          ? extractedTransaction.txn_time
-          : extractedTransaction.txn_time.toISOString()
-      ) : null,
+      txn_time: txnTime,
       amount: extractedTransaction.amount,
       currency: extractedTransaction.currency,
       direction: extractedTransaction.direction,

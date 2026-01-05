@@ -210,13 +210,19 @@ export class EmailProcessor {
 
   private async saveExtractedTransaction(email: any, transaction: any): Promise<string | null> {
     // Handle both old and new transaction formats
+    // Determine txn_time with fallback to email.internal_date if AI didn't extract a time
+    let txnTime = transaction.txn_time || (transaction.txnTime ? transaction.txnTime.toISOString() : null);
+    if (!txnTime && email.internal_date) {
+      console.log('📅 Using email internal_date as fallback for txn_time:', email.internal_date);
+      txnTime = email.internal_date;
+    }
+
     const transactionData: Database['public']['Tables']['fb_emails_processed']['Insert'] = {
       user_id: email.user_id,
       google_user_id: email.google_user_id,
       connection_id: email.connection_id,
       email_row_id: email.id,
-      // Handle both old format (txnTime) and new format (txn_time)
-      txn_time: transaction.txn_time || (transaction.txnTime ? transaction.txnTime.toISOString() : null),
+      txn_time: txnTime,
       amount: transaction.amount ? transaction.amount.toString() : null,
       currency: transaction.currency || 'INR',
       direction: transaction.direction,

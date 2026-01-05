@@ -414,6 +414,7 @@ ${emailContent}
 EMAIL METADATA:
 Subject: ${emailMetadata?.subject || 'N/A'}
 From: ${emailMetadata?.fromAddress || 'N/A'}
+Email Received Date: ${emailMetadata?.internalDate || 'N/A'}
 
 REQUIRED OUTPUT SCHEMA:
 ${schemaDescription}
@@ -427,6 +428,7 @@ EXTRACTION RULES:
 6. For dates, use ISO format (YYYY-MM-DDTHH:MM:SSZ)
 7. Be intelligent about account_type - infer from bank name and card details
 8. Set confidence based on how clear the information is in the email
+9. IMPORTANT for txn_time: If no specific transaction date/time is mentioned in the email body, use the "Email Received Date" provided in the metadata as the transaction date
 
 IMPORTANT: Return ONLY valid JSON matching the schema. No additional text or explanation.
 
