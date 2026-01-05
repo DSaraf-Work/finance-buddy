@@ -39,6 +39,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [accountTypes, setAccountTypes] = useState<string[]>(['OTHER']);
   const [splitwiseMessage, setSplitwiseMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [reExtractMessage, setReExtractMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [notesExpanded, setNotesExpanded] = useState(true);
 
   useEffect(() => {
     setFormData(transaction);
@@ -210,52 +211,50 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]">
-        <DialogHeader className="shrink-0">
-          <div className="flex items-center justify-between">
-            <DialogTitle>Edit Transaction</DialogTitle>
-            <div className="flex items-center gap-2">
-              {formData.amount && parseFloat(formData.amount) > 0 && (
-                <SplitwiseDropdown
-                  transactionAmount={parseFloat(formData.amount)}
-                  transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
-                  transactionDate={formData.txn_time?.split('T')[0]}
-                  currencyCode={formData.currency || 'INR'}
-                  onSuccess={() => {
-                    setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
-                    setTimeout(() => setSplitwiseMessage(null), 5000);
-                  }}
-                  onError={(error) => {
-                    setSplitwiseMessage({ type: 'error', text: error });
-                    setTimeout(() => setSplitwiseMessage(null), 5000);
-                  }}
-                />
+        <DialogHeader className="shrink-0 space-y-3">
+          <DialogTitle>Edit Transaction</DialogTitle>
+          <div className="flex items-center gap-2 flex-wrap">
+            {formData.amount && parseFloat(formData.amount) > 0 && (
+              <SplitwiseDropdown
+                transactionAmount={parseFloat(formData.amount)}
+                transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
+                transactionDate={formData.txn_time?.split('T')[0]}
+                currencyCode={formData.currency || 'INR'}
+                onSuccess={() => {
+                  setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
+                  setTimeout(() => setSplitwiseMessage(null), 5000);
+                }}
+                onError={(error) => {
+                  setSplitwiseMessage({ type: 'error', text: error });
+                  setTimeout(() => setSplitwiseMessage(null), 5000);
+                }}
+              />
+            )}
+            <Button
+              type="button"
+              onClick={handleReExtract}
+              disabled={isReExtracting}
+              variant="outline"
+              size="sm"
+              title="Re-extract transaction data using AI"
+            >
+              {isReExtracting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Re-extracting...
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  Re-extract with AI
+                </>
               )}
-              <Button
-                type="button"
-                onClick={handleReExtract}
-                disabled={isReExtracting}
-                variant="default"
-                size="sm"
-                title="Re-extract transaction data using AI"
-              >
-                {isReExtracting ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Re-extracting...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    Re-extract with AI
-                  </>
-                )}
-              </Button>
-            </div>
+            </Button>
           </div>
         </DialogHeader>
 
@@ -549,41 +548,56 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               </CardContent>
             </Card>
 
-            {/* Notes Section */}
+            {/* Notes Section - Collapsible */}
             <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              <CardHeader
+                className="cursor-pointer select-none"
+                onClick={() => setNotesExpanded(!notesExpanded)}
+              >
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Notes & Comments
+                  </div>
+                  <svg
+                    className={`w-5 h-5 text-muted-foreground transition-transform ${notesExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                  Notes & Comments
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="ai-notes">Transaction Keywords</Label>
-                  <InteractiveKeywordSelector
-                    value={formData.ai_notes || ''}
-                    onChange={(value) => handleInputChange('ai_notes', value)}
-                    merchantName={formData.merchant_name || undefined}
-                    transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
-                    placeholder="Select keywords to categorize this transaction..."
-                  />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Select relevant keywords to help categorize and search for this transaction.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="user-notes">Your Notes</Label>
-                  <Textarea
-                    id="user-notes"
-                    value={formData.user_notes || ''}
-                    onChange={(e) => handleInputChange('user_notes', e.target.value)}
-                    placeholder="Add your personal notes about this transaction..."
-                    className="min-h-[100px]"
-                  />
-                </div>
-              </CardContent>
+              {notesExpanded && (
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="user-notes">Your Notes</Label>
+                    <Textarea
+                      id="user-notes"
+                      value={formData.user_notes || ''}
+                      onChange={(e) => handleInputChange('user_notes', e.target.value)}
+                      placeholder="Add your personal notes about this transaction..."
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ai-notes">Transaction Keywords</Label>
+                    <InteractiveKeywordSelector
+                      value={formData.ai_notes || ''}
+                      onChange={(value) => handleInputChange('ai_notes', value)}
+                      merchantName={formData.merchant_name || undefined}
+                      transactionAmount={formData.amount ? parseFloat(formData.amount.toString()) : undefined}
+                      placeholder="Select keywords to categorize this transaction..."
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Select relevant keywords to help categorize and search for this transaction.
+                    </p>
+                  </div>
+                </CardContent>
+              )}
             </Card>
 
             {/* Email Body Section */}
