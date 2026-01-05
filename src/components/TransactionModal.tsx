@@ -38,6 +38,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [isReExtracting, setIsReExtracting] = useState(false);
   const [accountTypes, setAccountTypes] = useState<string[]>(['OTHER']);
   const [splitwiseMessage, setSplitwiseMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [reExtractMessage, setReExtractMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
   useEffect(() => {
     setFormData(transaction);
@@ -133,15 +134,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
   const handleReExtract = async () => {
     if (!transaction.id) {
-      alert('Transaction ID is missing');
-      return;
-    }
-
-    if (!confirm('Re-extract this transaction with AI? This will overwrite the current data with fresh AI extraction.')) {
+      setReExtractMessage({ type: 'error', text: 'Transaction ID is missing' });
+      setTimeout(() => setReExtractMessage(null), 5000);
       return;
     }
 
     setIsReExtracting(true);
+    setReExtractMessage({ type: 'info', text: 'Re-extracting transaction with AI...' });
 
     try {
       const response = await fetch('/api/transactions/re-extract', {
@@ -155,19 +154,28 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
       if (response.ok) {
         const result = await response.json();
-        setFormData(prev => ({
-          ...prev,
-          ...result.extractionResult,
-          confidence: result.extractionResult.confidence,
-        }));
-        alert(`Re-extraction completed! Confidence: ${Math.round(result.extractionResult.confidence * 100)}%`);
+        // Use result.transaction which contains all the updated fields from the database
+        if (result.transaction) {
+          setFormData(prev => ({
+            ...prev,
+            ...result.transaction,
+          }));
+        }
+        const confidence = result.extractionResult?.confidence || result.transaction?.confidence;
+        setReExtractMessage({
+          type: 'success',
+          text: `Re-extraction completed! Confidence: ${confidence ? Math.round(parseFloat(confidence) * 100) : 'N/A'}%`
+        });
+        setTimeout(() => setReExtractMessage(null), 5000);
       } else {
         const error = await response.json();
-        alert(`Re-extraction failed: ${error.error}`);
+        setReExtractMessage({ type: 'error', text: `Re-extraction failed: ${error.error}` });
+        setTimeout(() => setReExtractMessage(null), 5000);
       }
     } catch (error) {
       console.error('Error re-extracting transaction:', error);
-      alert('Failed to re-extract transaction. Please try again.');
+      setReExtractMessage({ type: 'error', text: 'Failed to re-extract transaction. Please try again.' });
+      setTimeout(() => setReExtractMessage(null), 5000);
     } finally {
       setIsReExtracting(false);
     }
@@ -201,15 +209,10 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col bg-card border-border">
-        <DialogHeader>
+      <DialogContent className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]">
+        <DialogHeader className="shrink-0">
           <div className="flex items-center justify-between">
-            <div>
-              <DialogTitle>Edit Transaction</DialogTitle>
-              <DialogDescription>
-                Update transaction details and add your notes
-              </DialogDescription>
-            </div>
+            <DialogTitle>Edit Transaction</DialogTitle>
             <div className="flex items-center gap-2">
               {formData.amount && parseFloat(formData.amount) > 0 && (
                 <SplitwiseDropdown
@@ -288,9 +291,57 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           </div>
         )}
 
+        {/* Re-extract Message Toast */}
+        {reExtractMessage && (
+          <div className={`px-4 py-3 flex items-center justify-between ${
+            reExtractMessage.type === 'success'
+              ? 'bg-success/20 border-b border-success/30'
+              : reExtractMessage.type === 'info'
+              ? 'bg-primary/20 border-b border-primary/30'
+              : 'bg-destructive/20 border-b border-destructive/30'
+          }`}>
+            <div className="flex items-center">
+              {reExtractMessage.type === 'success' ? (
+                <svg className="w-5 h-5 text-success mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ) : reExtractMessage.type === 'info' ? (
+                <svg className="w-5 h-5 text-primary mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-destructive mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+              <span className={`text-sm ${
+                reExtractMessage.type === 'success' ? 'text-success' :
+                reExtractMessage.type === 'info' ? 'text-primary' :
+                'text-destructive'
+              }`}>
+                {reExtractMessage.text}
+              </span>
+            </div>
+            {reExtractMessage.type !== 'info' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setReExtractMessage(null)}
+                className={
+                  reExtractMessage.type === 'success' ? 'text-success hover:text-success/80' :
+                  'text-destructive hover:text-destructive/80'
+                }
+              >
+                Dismiss
+              </Button>
+            )}
+          </div>
+        )}
+
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
-          <div className="px-6 py-6 space-y-6">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6 space-y-6">
             {/* Transaction Details Section */}
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
@@ -562,54 +613,33 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             )}
           </div>
 
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-border/50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center">
-                  <svg className="w-4 h-4 mr-1 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          {/* Footer - Sticky at bottom */}
+          <div className="shrink-0 px-6 py-4 border-t border-border bg-card flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="bg-success hover:bg-success/90 text-white"
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Confidence: {formData.confidence ? `${Math.round(parseFloat(formData.confidence) * 100)}%` : 'N/A'}
-                </div>
-                <div className="flex items-center">
-                  <svg className="w-4 h-4 mr-1 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Last updated: {formData.updated_at ? new Date(formData.updated_at).toLocaleDateString() : 'Never'}
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onClose}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Save Changes
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
+                  Saving...
+                </>
+              ) : (
+                'Save'
+              )}
+            </Button>
           </div>
         </form>
       </DialogContent>

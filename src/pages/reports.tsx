@@ -156,46 +156,34 @@ const ReportsPage: NextPage = () => {
 
   return (
     <ProtectedRoute>
-      <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data">
+      <Layout title="Reports - Finance Buddy" description="Analytics and insights for your financial data" pageTitle="Reports & Analytics" pageIcon="📊">
         <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
           <div className="max-w-[1200px] mx-auto">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between pb-5 border-b border-border/50">
-                <div>
-                  <h1 className="text-3xl font-semibold text-foreground mb-1">
-                    Reports & Analytics
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    Insights and analytics for your financial data
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => exportReport('csv')}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Export CSV
-                  </Button>
-                  <Button
-                    onClick={() => exportReport('json')}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Export JSON
-                  </Button>
-                  <Button
-                    onClick={() => exportReport('pdf')}
-                    size="sm"
-                    className="text-xs shadow-[0_0_20px_rgba(99,102,241,0.3)]"
-                  >
-                    Export PDF
-                  </Button>
-                </div>
-              </div>
+            {/* Export Actions */}
+            <div className="flex justify-end gap-2 mb-6">
+              <Button
+                onClick={() => exportReport('csv')}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+              >
+                Export CSV
+              </Button>
+              <Button
+                onClick={() => exportReport('json')}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+              >
+                Export JSON
+              </Button>
+              <Button
+                onClick={() => exportReport('pdf')}
+                size="sm"
+                className="text-xs shadow-[0_0_20px_rgba(99,102,241,0.3)]"
+              >
+                Export PDF
+              </Button>
             </div>
 
             {/* Filter Chips */}

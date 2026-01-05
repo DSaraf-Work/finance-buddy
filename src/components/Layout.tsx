@@ -18,6 +18,8 @@ interface LayoutProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
+  pageTitle?: string;
+  pageIcon?: string;
 }
 
 interface NavItem {
@@ -44,7 +46,7 @@ const dbNavigation: NavItem[] = [
   { name: 'Transaction Workbench', href: '/db/fb_extracted_transactions', icon: '🔧', description: 'Advanced transaction review' },
 ];
 
-export function Layout({ children, title, description }: LayoutProps) {
+export function Layout({ children, title, description, pageTitle: pageTitleProp, pageIcon }: LayoutProps) {
   const { user, signOut } = useAuth();
   const { mockAIEnabled, toggleMockAI, loading } = useMockAI();
   const router = useRouter();
@@ -432,30 +434,53 @@ export function Layout({ children, title, description }: LayoutProps) {
           )}
         </nav>
 
-        {/* Breadcrumbs - Matte Dark (matching /txn) */}
+        {/* Page Header - Matte Dark */}
         {router.pathname !== '/' && (
           <div className="bg-[#0D0D0F]" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center gap-2 py-3 text-sm">
-                {getBreadcrumbs().map((crumb, index) => (
-                  <React.Fragment key={crumb.href}>
-                    {index > 0 && (
-                      <svg className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.2)' }} fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    <Link
-                      href={crumb.href}
-                      className="transition-colors duration-200"
-                      style={{
-                        color: index === getBreadcrumbs().length - 1 ? '#A5B4FC' : 'rgba(255,255,255,0.4)',
-                        fontWeight: index === getBreadcrumbs().length - 1 ? 500 : 400
-                      }}
-                    >
-                      {crumb.name}
-                    </Link>
-                  </React.Fragment>
-                ))}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex items-center gap-4">
+                {/* Page Icon */}
+                {pageIcon && (
+                  <div
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.08) 100%)',
+                      boxShadow: '0 0 20px rgba(99,102,241,0.15)'
+                    }}
+                  >
+                    <span className="text-xl sm:text-2xl">{pageIcon}</span>
+                  </div>
+                )}
+
+                {/* Title and Breadcrumbs */}
+                <div className="flex-1 min-w-0">
+                  {pageTitleProp && (
+                    <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">
+                      {pageTitleProp}
+                    </h1>
+                  )}
+                  {/* Breadcrumb navigation */}
+                  <div className="flex items-center gap-1.5 text-xs mt-1">
+                    {getBreadcrumbs().map((crumb, index) => (
+                      <React.Fragment key={crumb.href}>
+                        {index > 0 && (
+                          <svg className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.2)' }} fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <Link
+                          href={crumb.href}
+                          className="transition-colors duration-200 hover:text-primary"
+                          style={{
+                            color: index === getBreadcrumbs().length - 1 ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.35)'
+                          }}
+                        >
+                          {crumb.name}
+                        </Link>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

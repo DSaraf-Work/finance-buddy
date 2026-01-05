@@ -317,7 +317,7 @@ export default function TransactionsPage() {
 
   return (
     <ProtectedRoute>
-      <Layout title="Transactions" description="Your financial activity">
+      <Layout title="Transactions" description="Your financial activity" pageTitle="Transactions" pageIcon="💰">
         <Head>
           <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
         </Head>
@@ -334,7 +334,6 @@ export default function TransactionsPage() {
           {/* Main Content - listContainer - padding 8px (matching /txn) */}
           <main style={{ padding: '8px' }}>
             <TxnListHeader
-              title="Transactions"
               count={pagination.total}
               filterButton={
                 <TransactionFilterModal

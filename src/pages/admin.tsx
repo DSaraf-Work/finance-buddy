@@ -146,22 +146,13 @@ const AdminPage: NextPage = () => {
       <Layout
         title="Admin Dashboard - Finance Buddy"
         description="Admin dashboard for Finance Buddy"
+        pageTitle="Admin Dashboard"
+        pageIcon="⚙️"
       >
         <div className="min-h-[calc(100vh-72px)] bg-background py-8 px-5">
           <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)]">
-                    <span className="text-xl sm:text-2xl">⚙️</span>
-                  </div>
-                  <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Manage Gmail connections and monitor system health
-                </p>
-              </div>
+            {/* Action Button */}
+            <div className="flex justify-end mb-6">
               <Button
                 onClick={handleConnect}
                 className="shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]"

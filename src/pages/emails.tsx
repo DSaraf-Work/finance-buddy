@@ -628,22 +628,11 @@ const EmailsPage: NextPage = () => {
       <Layout
         title="Finance Buddy - Email Management"
         description="Manage and review Gmail emails"
+        pageTitle="Email Management"
+        pageIcon="📧"
       >
         <div className="py-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6b4ce6] to-[#8b5cf6] rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_0_20px_rgba(107,76,230,0.3)]">
-                      <span className="text-xl sm:text-2xl">📧</span>
-                    </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-text-primary)]">Email Management</h1>
-                  </div>
-                </div>
-              </div>
-            </div>
           {/* Filters - Compact Layout */}
           <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)] border border-[var(--color-border)] p-3 mb-4">
             <h2 className="text-sm font-semibold text-[var(--color-text-primary)] mb-2 flex items-center gap-1.5">
