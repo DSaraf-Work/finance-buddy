@@ -41,6 +41,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [reExtractMessage, setReExtractMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const [notesExpanded, setNotesExpanded] = useState(false);
   const [emailExpanded, setEmailExpanded] = useState(false);
+  const [splitwiseStatus, setSplitwiseStatus] = useState<'checking' | 'exists' | 'none'>('none');
 
   useEffect(() => {
     setFormData(transaction);
@@ -48,6 +49,34 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       fetchEmailBody(transaction.email_row_id);
     }
   }, [transaction, isOpen]);
+
+  // Check Splitwise expense status when modal opens
+  useEffect(() => {
+    const checkSplitwiseExpense = async () => {
+      if (!isOpen || !transaction.splitwise_expense_id) {
+        setSplitwiseStatus('none');
+        return;
+      }
+
+      setSplitwiseStatus('checking');
+      try {
+        const response = await fetch(`/api/splitwise/expense/${transaction.splitwise_expense_id}`);
+        const data = await response.json();
+
+        if (response.ok && data.exists) {
+          setSplitwiseStatus('exists');
+        } else {
+          // Expense doesn't exist or was deleted
+          setSplitwiseStatus('none');
+        }
+      } catch (error) {
+        console.error('Error checking Splitwise expense:', error);
+        setSplitwiseStatus('none');
+      }
+    };
+
+    checkSplitwiseExpense();
+  }, [isOpen, transaction.splitwise_expense_id]);
 
   const fetchEmailBody = async (emailRowId: string) => {
     try {
@@ -88,6 +117,29 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       ...prev,
       [field]: value,
     }));
+  };
+
+  // Handler for when Splitwise expense is created
+  const handleSplitwiseExpenseCreated = async (expenseId: string) => {
+    try {
+      // Update transaction with expense ID in the database
+      const response = await fetch(`/api/transactions/${formData.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ splitwise_expense_id: expenseId }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setFormData(prev => ({ ...prev, splitwise_expense_id: expenseId }));
+        setSplitwiseStatus('exists');
+      } else {
+        console.error('Failed to save Splitwise expense ID to transaction');
+      }
+    } catch (error) {
+      console.error('Error saving Splitwise expense ID:', error);
+    }
   };
 
   // Fetch user's account types on mount
@@ -634,6 +686,10 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                   transactionDate={formData.txn_time?.split('T')[0]}
                   currencyCode={formData.currency || 'INR'}
                   iconOnly={true}
+                  transactionId={formData.id}
+                  existingExpenseId={formData.splitwise_expense_id}
+                  disabled={splitwiseStatus === 'exists' || splitwiseStatus === 'checking'}
+                  onExpenseCreated={handleSplitwiseExpenseCreated}
                   onSuccess={() => {
                     setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
                     setTimeout(() => setSplitwiseMessage(null), 5000);

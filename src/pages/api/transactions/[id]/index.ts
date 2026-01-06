@@ -74,6 +74,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         'transaction_type',
         'user_notes',
         'status',
+        'splitwise_expense_id',
       ];
 
       const filteredUpdates: any = {};

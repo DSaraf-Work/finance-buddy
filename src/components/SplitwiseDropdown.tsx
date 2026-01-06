@@ -24,6 +24,10 @@ interface SplitwiseDropdownProps {
   onSuccess?: () => void;
   onError?: (error: string) => void;
   iconOnly?: boolean;
+  transactionId?: string;
+  existingExpenseId?: string | null;
+  onExpenseCreated?: (expenseId: string) => void;
+  disabled?: boolean;
 }
 
 export default function SplitwiseDropdown({
@@ -34,6 +38,10 @@ export default function SplitwiseDropdown({
   onSuccess,
   onError,
   iconOnly = false,
+  transactionId,
+  existingExpenseId,
+  onExpenseCreated,
+  disabled = false,
 }: SplitwiseDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'groups' | 'friends'>('groups');
@@ -169,7 +177,14 @@ export default function SplitwiseDropdown({
         throw new Error(data.error || data.details || 'Failed to create expense');
       }
 
-      // Success!
+      // Success! Extract expense ID from response
+      const createdExpense = data.expenses?.[0] || data.expense;
+      const expenseId = createdExpense?.id?.toString();
+
+      if (expenseId) {
+        onExpenseCreated?.(expenseId);
+      }
+
       setIsOpen(false);
       setSelectedGroup(null);
       setSelectedFriends([]);
@@ -208,11 +223,20 @@ export default function SplitwiseDropdown({
       {/* Trigger Button */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        title="Split with Splitwise"
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
+        title={disabled ? "Already split on Splitwise" : "Split with Splitwise"}
         className={iconOnly
-          ? "w-10 h-10 flex items-center justify-center bg-emerald-600 rounded-full hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
-          : "inline-flex items-center px-3 py-2 text-sm font-medium text-[var(--color-text-primary)] bg-emerald-600 border border-transparent rounded-[var(--radius-md)] hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+          ? `w-10 h-10 flex items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors ${
+              disabled
+                ? 'bg-emerald-600/50 cursor-not-allowed'
+                : 'bg-emerald-600 hover:bg-emerald-700'
+            }`
+          : `inline-flex items-center px-3 py-2 text-sm font-medium text-[var(--color-text-primary)] border border-transparent rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors ${
+              disabled
+                ? 'bg-emerald-600/50 cursor-not-allowed'
+                : 'bg-emerald-600 hover:bg-emerald-700'
+            }`
         }
       >
         {/* Split/Users icon */}
