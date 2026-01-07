@@ -79,16 +79,30 @@ const TxnCard = memo(function TxnCard({ transaction, onClick, isLast }: TxnCardP
         {/* transactionRight - gap 2px for tighter spacing */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
           {/* transactionAmount - 15px, 600, JetBrains Mono */}
-          <span
-            style={{
-              fontSize: '15px',
-              fontWeight: '600',
-              fontFamily: '"JetBrains Mono", monospace',
-              color: isExpense ? '#F87171' : '#22C55E'
-            }}
-          >
-            {isExpense ? '-' : '+'}₹{formatIndianAmount(transaction.amount)}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span
+              style={{
+                fontSize: '15px',
+                fontWeight: '600',
+                fontFamily: '"JetBrains Mono", monospace',
+                color: isExpense ? '#F87171' : '#22C55E'
+              }}
+            >
+              {isExpense ? '-' : '+'}₹{formatIndianAmount(transaction.amount)}
+            </span>
+            {/* Splitwise indicator */}
+            {transaction.splitwise_expense_id && (
+              <span title="Split on Splitwise">
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="#10B981"
+                >
+                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+              </span>
+            )}
+          </div>
 
           {/* Payment method - 10px, 500, uppercase, colored */}
           {transaction.account_type && (
