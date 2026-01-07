@@ -53,6 +53,16 @@ export default async function handler(
       });
     }
 
+    // Extract participant names (exclude current user who paid)
+    const users = data.expense?.users || [];
+    const participants = users
+      .filter((u: any) => parseFloat(u.owed_share || '0') > 0 && parseFloat(u.paid_share || '0') === 0)
+      .map((u: any) => u.user?.first_name || 'Unknown')
+      .slice(0, 3); // Limit to 3 names for display
+
+    // Check if it's a group expense
+    const groupId = data.expense?.group_id;
+
     // Expense exists and is not deleted
     return res.status(200).json({
       exists: true,
@@ -64,7 +74,10 @@ export default async function handler(
         date: data.expense?.date,
         created_at: data.expense?.created_at,
         payment: data.expense?.payment,
-      }
+      },
+      splitWith: participants,
+      totalParticipants: users.length,
+      groupId,
     });
   } catch (error) {
     console.error('Error fetching Splitwise expense:', error);

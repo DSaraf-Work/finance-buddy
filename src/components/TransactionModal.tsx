@@ -42,6 +42,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [notesExpanded, setNotesExpanded] = useState(false);
   const [emailExpanded, setEmailExpanded] = useState(false);
   const [splitwiseStatus, setSplitwiseStatus] = useState<'checking' | 'exists' | 'none'>('none');
+  const [splitwiseParticipants, setSplitwiseParticipants] = useState<string[]>([]);
 
   useEffect(() => {
     setFormData(transaction);
@@ -55,6 +56,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
     const checkSplitwiseExpense = async () => {
       if (!isOpen || !transaction.splitwise_expense_id) {
         setSplitwiseStatus('none');
+        setSplitwiseParticipants([]);
         return;
       }
 
@@ -65,13 +67,16 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
         if (response.ok && data.exists) {
           setSplitwiseStatus('exists');
+          setSplitwiseParticipants(data.splitWith || []);
         } else {
           // Expense doesn't exist or was deleted
           setSplitwiseStatus('none');
+          setSplitwiseParticipants([]);
         }
       } catch (error) {
         console.error('Error checking Splitwise expense:', error);
         setSplitwiseStatus('none');
+        setSplitwiseParticipants([]);
       }
     };
 
@@ -688,15 +693,14 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
                   </svg>
-                  <span className="text-sm text-emerald-400">Linked to Splitwise</span>
-                  {formData.splitwise_expense_id && (
-                    <span className="text-xs text-emerald-500/60 font-mono">
-                      #{formData.splitwise_expense_id}
-                    </span>
-                  )}
+                  <span className="text-sm text-emerald-400">
+                    Split with {splitwiseParticipants.length > 0
+                      ? splitwiseParticipants.join(', ')
+                      : 'others'}
+                  </span>
                 </>
               )}
             </div>
