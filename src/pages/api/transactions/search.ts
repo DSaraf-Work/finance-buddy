@@ -73,7 +73,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         extraction_version,
         status,
         created_at,
-        updated_at
+        updated_at,
+        splitwise_expense_id
       `, { count: 'exact' })
       .eq('user_id', user.id);
 
