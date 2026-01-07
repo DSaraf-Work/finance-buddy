@@ -137,8 +137,11 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
       if (response.ok) {
         // Update local state
-        setFormData(prev => ({ ...prev, splitwise_expense_id: expenseId }));
+        const updatedTransaction = { ...formData, splitwise_expense_id: expenseId };
+        setFormData(updatedTransaction);
         setSplitwiseStatus('exists');
+        // Notify parent to update the transaction list
+        onSave(updatedTransaction);
       } else {
         console.error('Failed to save Splitwise expense ID to transaction');
       }
