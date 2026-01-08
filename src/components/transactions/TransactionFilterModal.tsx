@@ -77,22 +77,22 @@ export function TransactionFilterModal({
           size="sm"
           className={cn(
             "h-9 px-3",
-            hasActiveFilters && "border-[#8C50FF] text-[#8C50FF]"
+            hasActiveFilters && "border-primary text-primary"
           )}
         >
           <Filter className="h-4 w-4 mr-2" />
           Filters
           {hasActiveFilters && (
-            <span className="ml-2 px-1.5 py-0.5 text-xs bg-[#8C50FF] text-white rounded-full">
+            <span className="ml-2 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
               Active
             </span>
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-[#09090B] border-[#27272A]">
+      <DialogContent className="sm:max-w-[425px] bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-[#FAFAFA]">Filter Transactions</DialogTitle>
-          <DialogDescription className="text-[#A1A1AA]">
+          <DialogTitle className="text-foreground">Filter Transactions</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             Set filters to narrow down your transaction list
           </DialogDescription>
         </DialogHeader>
@@ -100,11 +100,11 @@ export function TransactionFilterModal({
         <div className="grid gap-6 py-4">
           {/* Date Range Section */}
           <div className="space-y-3">
-            <Label className="text-[#FAFAFA] font-medium">Date Range</Label>
+            <Label className="text-foreground font-medium">Date Range</Label>
 
             {/* From Date */}
             <div className="flex flex-col space-y-2">
-              <Label htmlFor="date-from" className="text-sm text-[#A1A1AA]">
+              <Label htmlFor="date-from" className="text-sm text-muted-foreground">
                 From
               </Label>
               <Popover>
@@ -113,8 +113,8 @@ export function TransactionFilterModal({
                     id="date-from"
                     variant="outline"
                     className={cn(
-                      "justify-start text-left font-normal bg-[#18181B] border-[#27272A] text-[#FAFAFA]",
-                      !localFilters.dateFrom && "text-[#71717A]"
+                      "justify-start text-left font-normal bg-muted border-border text-foreground",
+                      !localFilters.dateFrom && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -125,7 +125,7 @@ export function TransactionFilterModal({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[320px] p-0 bg-[#09090B] border-[#27272A]" align="start">
+                <PopoverContent className="w-[320px] p-0 bg-popover border-border" align="start">
                   <Calendar
                     mode="single"
                     selected={localFilters.dateFrom}
@@ -146,7 +146,7 @@ export function TransactionFilterModal({
 
             {/* To Date */}
             <div className="flex flex-col space-y-2">
-              <Label htmlFor="date-to" className="text-sm text-[#A1A1AA]">
+              <Label htmlFor="date-to" className="text-sm text-muted-foreground">
                 To
               </Label>
               <Popover>
@@ -155,8 +155,8 @@ export function TransactionFilterModal({
                     id="date-to"
                     variant="outline"
                     className={cn(
-                      "justify-start text-left font-normal bg-[#18181B] border-[#27272A] text-[#FAFAFA]",
-                      !localFilters.dateTo && "text-[#71717A]"
+                      "justify-start text-left font-normal bg-muted border-border text-foreground",
+                      !localFilters.dateTo && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -167,7 +167,7 @@ export function TransactionFilterModal({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[320px] p-0 bg-[#09090B] border-[#27272A]" align="start">
+                <PopoverContent className="w-[320px] p-0 bg-popover border-border" align="start">
                   <Calendar
                     mode="single"
                     selected={localFilters.dateTo}
@@ -189,7 +189,7 @@ export function TransactionFilterModal({
 
           {/* Payment Mode Section */}
           <div className="space-y-3">
-            <Label className="text-[#FAFAFA] font-medium">Payment Mode</Label>
+            <Label className="text-foreground font-medium">Payment Mode</Label>
             <RadioGroup
               value={localFilters.paymentMode}
               onValueChange={(value: 'all' | 'credit' | 'debit') =>
@@ -197,28 +197,28 @@ export function TransactionFilterModal({
               }
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="all" id="all" className="border-[#27272A]" />
+                <RadioGroupItem value="all" id="all" className="border-border" />
                 <Label
                   htmlFor="all"
-                  className="text-sm text-[#FAFAFA] cursor-pointer font-normal"
+                  className="text-sm text-foreground cursor-pointer font-normal"
                 >
                   Both (Credit & Debit)
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="credit" id="credit" className="border-[#27272A]" />
+                <RadioGroupItem value="credit" id="credit" className="border-border" />
                 <Label
                   htmlFor="credit"
-                  className="text-sm text-[#FAFAFA] cursor-pointer font-normal"
+                  className="text-sm text-foreground cursor-pointer font-normal"
                 >
                   Credit Only (Income)
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="debit" id="debit" className="border-[#27272A]" />
+                <RadioGroupItem value="debit" id="debit" className="border-border" />
                 <Label
                   htmlFor="debit"
-                  className="text-sm text-[#FAFAFA] cursor-pointer font-normal"
+                  className="text-sm text-foreground cursor-pointer font-normal"
                 >
                   Debit Only (Expense)
                 </Label>
@@ -232,14 +232,14 @@ export function TransactionFilterModal({
             type="button"
             variant="ghost"
             onClick={handleClear}
-            className="text-[#A1A1AA] hover:text-[#FAFAFA]"
+            className="text-muted-foreground hover:text-foreground"
           >
             Clear All
           </Button>
           <Button
             type="button"
             onClick={handleApply}
-            className="bg-[#8C50FF] hover:bg-[#7C3AED] text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Apply Filters
           </Button>

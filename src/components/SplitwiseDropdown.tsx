@@ -261,7 +261,7 @@ export default function SplitwiseDropdown({
             className="fixed inset-0 bg-black/60 z-[100]"
             onClick={() => setIsOpen(false)}
           />
-          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 bg-zinc-900 border border-border rounded-xl shadow-2xl z-[101]">
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 bg-card border border-border rounded-xl shadow-2xl z-[101]">
           {/* Header */}
           <div className="px-4 py-3 border-b border-border">
             <h4 className="text-sm font-semibold text-foreground">
