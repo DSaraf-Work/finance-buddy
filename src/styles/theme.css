@@ -13,20 +13,21 @@
     /* ===== MATTE DARK THEME ===== */
 
     /* Background Colors
-     * These define the layering hierarchy of surfaces */
-    --background: 0 0% 4%;                /* #09090B - Main app background */
+     * These define the layering hierarchy of surfaces
+     * Follows dark mode elevation: higher layers = slightly lighter */
+    --background: 0 0% 4%;                /* #0a0a0a - Main app background */
     --foreground: 0 0% 98%;               /* #FAFAFA - Primary text color */
 
-    /* Card & Surface Colors */
-    --card: 0 0% 4%;                      /* #0a0a0a - Card background */
+    /* Card & Surface Colors (elevated above background) */
+    --card: 0 0% 6%;                      /* #0f0f0f - Card background */
     --card-foreground: 0 0% 98%;          /* #FAFAFA - Card text */
 
     /* Muted Colors for subtle elements */
     --muted: 0 0% 15%;                    /* Muted backgrounds */
     --muted-foreground: 0 0% 60%;         /* Muted text */
 
-    /* Popover & Dropdown Colors */
-    --popover: 0 0% 4%;                   /* #0a0a0a - Popover background */
+    /* Popover & Dropdown Colors (elevated above cards) */
+    --popover: 0 0% 9%;                   /* #171717 - Popover/modal background */
     --popover-foreground: 0 0% 98%;       /* #FAFAFA - Popover text */
 
     /* Border & Divider Colors */
@@ -74,11 +75,11 @@
     /* All variables same as root since we're dark-only */
     --background: 0 0% 4%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 4%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 98%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 60%;
-    --popover: 0 0% 4%;
+    --popover: 0 0% 9%;
     --popover-foreground: 0 0% 98%;
     --border: 0 0% 15%;
     --input: 0 0% 18%;
