@@ -32,20 +32,28 @@ export default async function handler(
 
     const data = await response.json();
 
-    // Transform groups to a simpler format
-    const groups = (data.groups || []).map((group: any) => ({
-      id: group.id,
-      name: group.name,
-      members: (group.members || []).map((member: any) => ({
-        id: member.id,
-        firstName: member.first_name,
-        lastName: member.last_name,
-        email: member.email,
-        picture: member.picture?.medium,
-      })),
-      simplifyByDefault: group.simplify_by_default,
-      groupType: group.group_type,
-    }));
+    // Transform groups to a simpler format and sort by last activity (updated_at) descending
+    const groups = (data.groups || [])
+      .map((group: any) => ({
+        id: group.id,
+        name: group.name,
+        members: (group.members || []).map((member: any) => ({
+          id: member.id,
+          firstName: member.first_name,
+          lastName: member.last_name,
+          email: member.email,
+          picture: member.picture?.medium,
+        })),
+        simplifyByDefault: group.simplify_by_default,
+        groupType: group.group_type,
+        updatedAt: group.updated_at,
+      }))
+      .sort((a: any, b: any) => {
+        // Sort by updated_at descending (most recent first)
+        const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+        const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+        return dateB - dateA;
+      });
 
     return res.status(200).json({ success: true, groups });
   } catch (error) {
