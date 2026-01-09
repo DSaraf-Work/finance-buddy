@@ -53,6 +53,9 @@ export default function SplitwiseDropdown({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGroup, setSelectedGroup] = useState<SplitwiseGroup | null>(null);
   const [selectedFriends, setSelectedFriends] = useState<SplitwiseUser[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<SplitwiseUser[]>([]);
+  const [splitType, setSplitType] = useState<'equal' | 'custom'>('equal');
+  const [customSplits, setCustomSplits] = useState<Record<number, string>>({});
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -74,6 +77,25 @@ export default function SplitwiseDropdown({
       fetchSplitwiseData();
     }
   }, [isOpen]);
+
+  // Initialize selected members and custom splits when group changes
+  useEffect(() => {
+    if (selectedGroup) {
+      setSelectedMembers(selectedGroup.members);
+      // Initialize custom splits with equal values
+      const equalShare = transactionAmount / selectedGroup.members.length;
+      const initialSplits: Record<number, string> = {};
+      selectedGroup.members.forEach(m => {
+        initialSplits[m.id] = equalShare.toFixed(2);
+      });
+      setCustomSplits(initialSplits);
+      setSplitType('equal');
+    } else {
+      setSelectedMembers([]);
+      setCustomSplits({});
+      setSplitType('equal');
+    }
+  }, [selectedGroup, transactionAmount]);
 
   const fetchSplitwiseData = async () => {
     setLoading(true);
@@ -123,6 +145,51 @@ export default function SplitwiseDropdown({
     });
   };
 
+  // Toggle member selection within a group
+  const handleMemberToggle = (member: SplitwiseUser) => {
+    // Don't allow deselecting current user (they are the payer)
+    if (currentUser && member.id === currentUser.id) return;
+
+    setSelectedMembers(prev => {
+      const isSelected = prev.some(m => m.id === member.id);
+      const newMembers = isSelected
+        ? prev.filter(m => m.id !== member.id)
+        : [...prev, member];
+
+      // Recalculate equal splits for remaining members
+      if (newMembers.length > 0) {
+        const equalShare = transactionAmount / newMembers.length;
+        const newSplits: Record<number, string> = {};
+        newMembers.forEach(m => {
+          newSplits[m.id] = equalShare.toFixed(2);
+        });
+        setCustomSplits(newSplits);
+      }
+
+      return newMembers;
+    });
+  };
+
+  // Handle custom split amount change
+  const handleCustomSplitChange = (userId: number, value: string) => {
+    setCustomSplits(prev => ({
+      ...prev,
+      [userId]: value,
+    }));
+  };
+
+  // Calculate custom split total and validation
+  const getCustomSplitTotal = () => {
+    return Object.entries(customSplits)
+      .filter(([id]) => selectedMembers.some(m => m.id === parseInt(id)))
+      .reduce((sum, [, val]) => sum + (parseFloat(val) || 0), 0);
+  };
+
+  const isCustomSplitValid = () => {
+    const total = getCustomSplitTotal();
+    return Math.abs(total - transactionAmount) < 0.01;
+  };
+
   const handleCreateSplit = async () => {
     if (!currentUser) {
       setError('Unable to get current user. Please try again.');
@@ -133,8 +200,21 @@ export default function SplitwiseDropdown({
     let groupId: number | undefined;
 
     if (selectedGroup) {
-      participants = selectedGroup.members;
+      // Use selected members instead of all group members
+      participants = selectedMembers;
       groupId = selectedGroup.id;
+
+      // Validate minimum participants
+      if (participants.length < 2) {
+        setError('Please select at least 2 participants');
+        return;
+      }
+
+      // Validate custom split total
+      if (splitType === 'custom' && !isCustomSplitValid()) {
+        setError(`Split amounts must equal ${currencyCode} ${transactionAmount.toFixed(2)}`);
+        return;
+      }
     } else if (selectedFriends.length > 0) {
       // Include current user + selected friends
       participants = [currentUser, ...selectedFriends];
@@ -143,15 +223,13 @@ export default function SplitwiseDropdown({
       return;
     }
 
-    // Calculate equal split
-    const totalParticipants = participants.length;
-    const equalShare = transactionAmount / totalParticipants;
-
-    // Build splits: current user paid full amount, everyone owes equal share
+    // Build splits based on split type
     const splits = participants.map(participant => ({
       userId: participant.id,
       paidShare: participant.id === currentUser.id ? transactionAmount : 0,
-      owedShare: equalShare,
+      owedShare: splitType === 'custom' && selectedGroup
+        ? parseFloat(customSplits[participant.id] || '0')
+        : transactionAmount / participants.length,
     }));
 
     setCreating(true);
@@ -188,6 +266,9 @@ export default function SplitwiseDropdown({
       setIsOpen(false);
       setSelectedGroup(null);
       setSelectedFriends([]);
+      setSelectedMembers([]);
+      setSplitType('equal');
+      setCustomSplits({});
       onSuccess?.();
     } catch (err: any) {
       console.error('Error creating Splitwise expense:', err);
@@ -208,8 +289,8 @@ export default function SplitwiseDropdown({
   );
 
   const getSelectionSummary = () => {
-    if (selectedGroup) {
-      return `Split with ${selectedGroup.members.length} people in "${selectedGroup.name}"`;
+    if (selectedGroup && selectedMembers.length > 0) {
+      return `Split with ${selectedMembers.length} people in "${selectedGroup.name}"`;
     }
     if (selectedFriends.length > 0) {
       const names = selectedFriends.map(f => f.firstName).join(', ');
@@ -423,13 +504,134 @@ export default function SplitwiseDropdown({
             )}
           </div>
 
+          {/* Member Selection (only when group is selected) */}
+          {selectedGroup && (
+            <>
+              <div className="border-t border-border">
+                <div className="flex items-center justify-between px-4 py-2 bg-muted/50">
+                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                    Participants ({selectedMembers.length} of {selectedGroup.members.length})
+                  </span>
+                </div>
+                <div className="max-h-32 overflow-y-auto px-2 py-1">
+                  {selectedGroup.members.map((member) => {
+                    const isSelected = selectedMembers.some(m => m.id === member.id);
+                    const isCurrentUserMember = !!(currentUser && member.id === currentUser.id);
+                    return (
+                      <button
+                        key={member.id}
+                        type="button"
+                        onClick={() => handleMemberToggle(member)}
+                        disabled={isCurrentUserMember}
+                        className={`w-full flex items-center px-3 py-1.5 rounded-lg transition-colors ${
+                          isSelected ? 'bg-emerald-500/10' : 'hover:bg-muted'
+                        } ${isCurrentUserMember ? 'cursor-default' : ''}`}
+                      >
+                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors mr-3 ${
+                          isSelected
+                            ? 'bg-emerald-500 border-emerald-500'
+                            : 'border-border'
+                        } ${isCurrentUserMember ? 'opacity-60' : ''}`}>
+                          {isSelected && (
+                            <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="text-sm text-foreground flex-1 text-left">
+                          {member.firstName} {member.lastName}
+                          {isCurrentUserMember && (
+                            <span className="text-xs text-muted-foreground ml-1">(You)</span>
+                          )}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Split Type Toggle */}
+              <div className="flex border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setSplitType('equal')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+                    splitType === 'equal'
+                      ? 'text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/10'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Equal Split
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSplitType('custom')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
+                    splitType === 'custom'
+                      ? 'text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/10'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Custom Split
+                </button>
+              </div>
+
+              {/* Custom Split Inputs */}
+              {splitType === 'custom' && (
+                <div className="px-4 py-3 border-t border-border bg-muted/30">
+                  <div className="space-y-2">
+                    {selectedMembers.map((member) => (
+                      <div key={member.id} className="flex items-center justify-between">
+                        <span className="text-sm text-foreground">
+                          {member.firstName}
+                          {currentUser && member.id === currentUser.id && (
+                            <span className="text-xs text-muted-foreground ml-1">(You)</span>
+                          )}
+                        </span>
+                        <div className="relative">
+                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">
+                            {currencyCode === 'INR' ? '₹' : currencyCode}
+                          </span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={customSplits[member.id] || ''}
+                            onChange={(e) => handleCustomSplitChange(member.id, e.target.value)}
+                            className="w-24 pl-6 pr-2 py-1 text-sm bg-background border border-border rounded-lg text-right text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Total</span>
+                    <span className={`text-sm font-medium ${
+                      isCustomSplitValid() ? 'text-emerald-400' : 'text-red-400'
+                    }`}>
+                      {currencyCode} {getCustomSplitTotal().toFixed(2)}
+                      {!isCustomSplitValid() && (
+                        <span className="text-xs ml-1">
+                          ({(transactionAmount - getCustomSplitTotal()) > 0 ? '+' : ''}
+                          {(transactionAmount - getCustomSplitTotal()).toFixed(2)} remaining)
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
           {/* Selection Summary */}
-          {getSelectionSummary() && (
+          {(selectedGroup || selectedFriends.length > 0) && (
             <div className="px-4 py-2 bg-emerald-500/10 border-t border-border">
               <p className="text-xs text-emerald-400">{getSelectionSummary()}</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Each person owes: {currencyCode} {(transactionAmount / (selectedGroup ? selectedGroup.members.length : selectedFriends.length + 1)).toFixed(2)}
-              </p>
+              {splitType === 'equal' && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Each person owes: {currencyCode} {(transactionAmount / (selectedGroup ? selectedMembers.length : selectedFriends.length + 1)).toFixed(2)}
+                </p>
+              )}
             </div>
           )}
 
@@ -448,6 +650,9 @@ export default function SplitwiseDropdown({
                 setIsOpen(false);
                 setSelectedGroup(null);
                 setSelectedFriends([]);
+                setSelectedMembers([]);
+                setSplitType('equal');
+                setCustomSplits({});
                 setSearchQuery('');
               }}
               className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -457,7 +662,12 @@ export default function SplitwiseDropdown({
             <button
               type="button"
               onClick={handleCreateSplit}
-              disabled={creating || (!selectedGroup && selectedFriends.length === 0)}
+              disabled={
+                creating ||
+                (!selectedGroup && selectedFriends.length === 0) ||
+                !!(selectedGroup && selectedMembers.length < 2) ||
+                !!(selectedGroup && splitType === 'custom' && !isCustomSplitValid())
+              }
               className="px-4 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
             >
               {creating ? (
