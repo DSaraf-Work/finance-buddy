@@ -342,7 +342,7 @@ export default function SplitwiseDropdown({
             className="fixed inset-0 bg-black/60 z-[100]"
             onClick={() => setIsOpen(false)}
           />
-          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 bg-card border border-border rounded-xl shadow-2xl z-[101]">
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 bg-[hsl(var(--popover))] border border-border rounded-xl shadow-2xl z-[101]">
           {/* Header */}
           <div className="px-4 py-3 border-b border-border">
             <h4 className="text-sm font-semibold text-foreground">
@@ -386,7 +386,7 @@ export default function SplitwiseDropdown({
               placeholder={`Search ${activeTab}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 text-sm bg-[hsl(var(--card))] border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
 
@@ -508,7 +508,7 @@ export default function SplitwiseDropdown({
           {selectedGroup && (
             <>
               <div className="border-t border-border">
-                <div className="flex items-center justify-between px-4 py-2 bg-muted/50">
+                <div className="flex items-center justify-between px-4 py-2 bg-[hsl(var(--muted))]">
                   <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                     Participants ({selectedMembers.length} of {selectedGroup.members.length})
                   </span>
@@ -578,7 +578,7 @@ export default function SplitwiseDropdown({
 
               {/* Custom Split Inputs */}
               {splitType === 'custom' && (
-                <div className="px-4 py-3 border-t border-border bg-muted/30">
+                <div className="px-4 py-3 border-t border-border bg-[hsl(var(--card))]">
                   <div className="space-y-2">
                     {selectedMembers.map((member) => (
                       <div key={member.id} className="flex items-center justify-between">
@@ -598,7 +598,7 @@ export default function SplitwiseDropdown({
                             min="0"
                             value={customSplits[member.id] || ''}
                             onChange={(e) => handleCustomSplitChange(member.id, e.target.value)}
-                            className="w-24 pl-6 pr-2 py-1 text-sm bg-background border border-border rounded-lg text-right text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="w-24 pl-6 pr-2 py-1 text-sm bg-[hsl(var(--background))] border border-border rounded-lg text-right text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           />
                         </div>
                       </div>
