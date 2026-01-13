@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const SPLITWISE_API_KEY = process.env.SPLITWISE_API_KEY;
-const SPLITWISE_API_BASE = 'https://secure.splitwise.com/api/v3.0';
+import { fetchGroups } from '@/lib/splitwise/client';
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,29 +9,15 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (!SPLITWISE_API_KEY) {
-    return res.status(500).json({ error: 'Splitwise API key not configured' });
+  const result = await fetchGroups();
+
+  if (result.error || !result.data) {
+    console.error('Splitwise API error:', result.error);
+    return res.status(result.statusCode || 500).json({ error: 'Failed to fetch groups from Splitwise' });
   }
 
-  try {
-    const response = await fetch(`${SPLITWISE_API_BASE}/get_groups`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${SPLITWISE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Splitwise API error:', errorText);
-      return res.status(response.status).json({ error: 'Failed to fetch groups from Splitwise' });
-    }
-
-    const data = await response.json();
-
-    // Transform groups to a simpler format and sort by last activity (updated_at) descending
-    const groups = (data.groups || [])
+  // Transform groups to a simpler format and sort by last activity (updated_at) descending
+  const groups = result.data
       .map((group: any) => ({
         id: group.id,
         name: group.name,
@@ -55,9 +39,5 @@ export default async function handler(
         return dateB - dateA;
       });
 
-    return res.status(200).json({ success: true, groups });
-  } catch (error) {
-    console.error('Error fetching Splitwise groups:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  return res.status(200).json({ success: true, groups });
 }

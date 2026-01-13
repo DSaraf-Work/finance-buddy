@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import {
   TABLE_EMAILS_PROCESSED
 } from '@/lib/constants/database';
+import { checkSplitwiseExpenseExists } from '@/lib/splitwise/validate-expense';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   const { id } = req.query;
@@ -42,6 +43,28 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           error: 'Transaction not found',
           details: txnError?.message 
         });
+      }
+
+      // Validate Splitwise link if present
+      if (transaction.splitwise_expense_id) {
+        const expenseCheck = await checkSplitwiseExpenseExists(
+          transaction.splitwise_expense_id
+        );
+
+        // If Splitwise expense no longer exists, clear the link from the database
+        if (!expenseCheck.exists) {
+          await supabaseAdmin
+            .from(TABLE_EMAILS_PROCESSED)
+            .update({ 
+              splitwise_expense_id: null,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+          // Clear the field in the returned transaction
+          transaction.splitwise_expense_id = null;
+        }
       }
 
       return res.status(200).json({ transaction });

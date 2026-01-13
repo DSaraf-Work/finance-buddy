@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const SPLITWISE_API_KEY = process.env.SPLITWISE_API_KEY;
-const SPLITWISE_API_BASE = 'https://secure.splitwise.com/api/v3.0';
+import { fetchCurrentUser } from '@/lib/splitwise/client';
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,38 +9,16 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (!SPLITWISE_API_KEY) {
-    return res.status(500).json({ error: 'Splitwise API key not configured' });
+  const result = await fetchCurrentUser();
+
+  if (result.error) {
+    console.error('Splitwise API error:', result.error);
+    return res.status(result.statusCode || 500).json({ error: 'Failed to fetch current user from Splitwise' });
   }
 
-  try {
-    const response = await fetch(`${SPLITWISE_API_BASE}/get_current_user`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${SPLITWISE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Splitwise API error:', errorText);
-      return res.status(response.status).json({ error: 'Failed to fetch current user from Splitwise' });
-    }
-
-    const data = await response.json();
-
-    const user = {
-      id: data.user.id,
-      firstName: data.user.first_name,
-      lastName: data.user.last_name,
-      email: data.user.email,
-      picture: data.user.picture?.medium,
-    };
-
-    return res.status(200).json({ success: true, user });
-  } catch (error) {
-    console.error('Error fetching Splitwise current user:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+  if (!result.data) {
+    return res.status(500).json({ error: 'Invalid response from Splitwise' });
   }
+
+  return res.status(200).json({ success: true, user: result.data });
 }

@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const SPLITWISE_API_KEY = process.env.SPLITWISE_API_KEY;
-const SPLITWISE_API_BASE = 'https://secure.splitwise.com/api/v3.0';
+import { fetchSplitwiseExpense, SPLITWISE_API_KEY } from '@/lib/splitwise/client';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,66 +19,54 @@ export default async function handler(
     return res.status(400).json({ error: 'Expense ID is required' });
   }
 
-  try {
-    const response = await fetch(`${SPLITWISE_API_BASE}/get_expense/${id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${SPLITWISE_API_KEY}`,
-      },
-    });
+  const result = await fetchSplitwiseExpense(id);
 
-    if (!response.ok) {
-      // 404 or other error means expense doesn't exist
-      if (response.status === 404) {
-        return res.status(200).json({ exists: false, reason: 'not_found' });
-      }
-      const errorText = await response.text();
-      console.error('Splitwise API error:', errorText);
-      return res.status(response.status).json({
-        error: 'Failed to fetch expense from Splitwise',
-        details: errorText
-      });
+  if (result.error) {
+    if (result.statusCode === 404) {
+      return res.status(200).json({ exists: false, reason: 'not_found' });
     }
-
-    const data = await response.json();
-
-    // Check if expense was deleted
-    if (data.expense?.deleted_at) {
-      return res.status(200).json({
-        exists: false,
-        reason: 'deleted',
-        deleted_at: data.expense.deleted_at
-      });
-    }
-
-    // Extract participant names (exclude current user who paid)
-    const users = data.expense?.users || [];
-    const participants = users
-      .filter((u: any) => parseFloat(u.owed_share || '0') > 0 && parseFloat(u.paid_share || '0') === 0)
-      .map((u: any) => u.user?.first_name || 'Unknown')
-      .slice(0, 3); // Limit to 3 names for display
-
-    // Check if it's a group expense
-    const groupId = data.expense?.group_id;
-
-    // Expense exists and is not deleted
-    return res.status(200).json({
-      exists: true,
-      expense: {
-        id: data.expense?.id,
-        description: data.expense?.description,
-        cost: data.expense?.cost,
-        currency_code: data.expense?.currency_code,
-        date: data.expense?.date,
-        created_at: data.expense?.created_at,
-        payment: data.expense?.payment,
-      },
-      splitWith: participants,
-      totalParticipants: users.length,
-      groupId,
+    console.error('Splitwise API error:', result.error);
+    return res.status(result.statusCode || 500).json({
+      error: 'Failed to fetch expense from Splitwise',
+      details: result.error,
     });
-  } catch (error) {
-    console.error('Error fetching Splitwise expense:', error);
-    return res.status(500).json({ error: 'Internal server error' });
   }
+
+  const expense = result.data;
+  if (!expense) {
+    return res.status(500).json({ error: 'Invalid response from Splitwise' });
+  }
+
+  // Check if expense was deleted
+  if (expense.deleted_at) {
+    return res.status(200).json({
+      exists: false,
+      reason: 'deleted',
+      deleted_at: expense.deleted_at,
+    });
+  }
+
+  // Extract participant names (exclude current user who paid)
+  const users = expense.users || [];
+  const participants = users
+    .filter((u) => parseFloat(u.owed_share || '0') > 0 && parseFloat(u.paid_share || '0') === 0)
+    .map((u) => u.user?.first_name || 'Unknown')
+    .slice(0, 3); // Limit to 3 names for display
+
+  // Expense exists and is not deleted
+  return res.status(200).json({
+    exists: true,
+    expense: {
+      id: expense.id,
+      description: expense.description,
+      cost: expense.cost,
+      currency_code: expense.currency_code,
+      date: expense.date,
+      created_at: expense.created_at,
+      payment: expense.payment,
+    },
+    splitWith: participants,
+    totalParticipants: users.length,
+    groupId: expense.group_id,
+  });
 }
