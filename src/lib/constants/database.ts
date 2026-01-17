@@ -49,6 +49,24 @@ export const TABLE_REJECTED_EMAILS = 'fb_rejected_emails' as const;
  */
 export const TABLE_SUB_TRANSACTIONS = 'fb_sub_transactions' as const;
 
+/**
+ * Receipt metadata and parsing status
+ * Added in migration 0007_receipt_parsing.sql
+ */
+export const TABLE_RECEIPTS = 'fb_receipts' as const;
+
+/**
+ * Receipt line items (parsed from receipt images)
+ * Added in migration 0007_receipt_parsing.sql
+ */
+export const TABLE_RECEIPT_ITEMS = 'fb_receipt_items' as const;
+
+/**
+ * Links between receipt items and sub-transactions
+ * Added in migration 0007_receipt_parsing.sql
+ */
+export const TABLE_RECEIPT_ITEM_LINKS = 'fb_receipt_item_links' as const;
+
 // ============================================================================
 // VIEWS
 // ============================================================================
@@ -57,6 +75,12 @@ export const TABLE_SUB_TRANSACTIONS = 'fb_sub_transactions' as const;
  * View of user's active keywords
  */
 export const VIEW_USER_ACTIVE_KEYWORDS = 'fb_user_active_keywords' as const;
+
+/**
+ * View of receipt summaries with item counts
+ * Added in migration 0007_receipt_parsing.sql
+ */
+export const VIEW_RECEIPT_SUMMARY = 'fb_receipt_summary' as const;
 
 // ============================================================================
 // TABLE NAME COLLECTIONS
@@ -73,6 +97,9 @@ export const ACTIVE_TABLES = [
   TABLE_TRANSACTION_KEYWORDS,
   TABLE_REJECTED_EMAILS,
   TABLE_SUB_TRANSACTIONS,
+  TABLE_RECEIPTS,
+  TABLE_RECEIPT_ITEMS,
+  TABLE_RECEIPT_ITEM_LINKS,
 ] as const;
 
 /**
@@ -80,6 +107,7 @@ export const ACTIVE_TABLES = [
  */
 export const VIEWS = [
   VIEW_USER_ACTIVE_KEYWORDS,
+  VIEW_RECEIPT_SUMMARY,
 ] as const;
 
 // ============================================================================
