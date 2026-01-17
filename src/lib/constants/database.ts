@@ -43,6 +43,12 @@ export const TABLE_TRANSACTION_KEYWORDS = 'fb_transaction_keywords' as const;
  */
 export const TABLE_REJECTED_EMAILS = 'fb_rejected_emails' as const;
 
+/**
+ * Sub-transactions (line items of parent transactions)
+ * Added in migration 0006_sub_transactions.sql
+ */
+export const TABLE_SUB_TRANSACTIONS = 'fb_sub_transactions' as const;
+
 // ============================================================================
 // VIEWS
 // ============================================================================
@@ -66,6 +72,7 @@ export const ACTIVE_TABLES = [
   TABLE_CONFIG,
   TABLE_TRANSACTION_KEYWORDS,
   TABLE_REJECTED_EMAILS,
+  TABLE_SUB_TRANSACTIONS,
 ] as const;
 
 /**
