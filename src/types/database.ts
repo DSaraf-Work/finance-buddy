@@ -362,6 +362,68 @@ export type Database = {
         }
         Relationships: []
       }
+      fb_sub_transactions: {
+        Row: {
+          id: string
+          parent_transaction_id: string
+          user_id: string
+          email_row_id: string
+          currency: string
+          direction: string
+          txn_time: string | null
+          amount: number
+          category: string | null
+          merchant_name: string | null
+          user_notes: string | null
+          sub_transaction_order: number
+          splitwise_expense_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          parent_transaction_id: string
+          user_id: string
+          email_row_id: string
+          currency: string
+          direction: string
+          txn_time?: string | null
+          amount: number
+          category?: string | null
+          merchant_name?: string | null
+          user_notes?: string | null
+          sub_transaction_order?: number
+          splitwise_expense_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          parent_transaction_id?: string
+          user_id?: string
+          email_row_id?: string
+          currency?: string
+          direction?: string
+          txn_time?: string | null
+          amount?: number
+          category?: string | null
+          merchant_name?: string | null
+          user_notes?: string | null
+          sub_transaction_order?: number
+          splitwise_expense_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fb_sub_transactions_parent_transaction_id_fkey"
+            columns: ["parent_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "fb_emails_processed"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       fb_user_active_keywords: {
