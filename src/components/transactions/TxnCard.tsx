@@ -7,11 +7,28 @@ import {
   formatIndianAmount,
   displayAccountType,
 } from '@/lib/utils/transaction-formatters';
+import {
+  isReceiptParsingEnabled,
+  isSmartRefundsEnabled,
+} from '@/lib/features/flags';
+import { ReceiptBadge } from '@/components/receipts';
+import { RefundBadge, RefundIndicator } from '@/components/refunds';
+import type { ReceiptParsingStatus } from '@/types/receipts';
 
 interface TxnCardProps {
   transaction: Transaction;
   onClick: () => void;
   isLast?: boolean;
+  /** Optional: Receipt parsing status (Phase 2) */
+  receiptStatus?: ReceiptParsingStatus;
+  /** Optional: Number of parsed receipt items (Phase 2) */
+  receiptItemCount?: number;
+  /** Optional: Total amount refunded (Phase 3 - for debits) */
+  refundTotal?: number;
+  /** Optional: Number of refund links (Phase 3 - for debits) */
+  refundCount?: number;
+  /** Optional: Number of original transactions linked (Phase 3 - for credits) */
+  refundLinkCount?: number;
 }
 
 /**
@@ -25,10 +42,25 @@ interface TxnCardProps {
  * - Font: Outfit for text, JetBrains Mono for amounts
  * - Animation: slideIn 0.35s ease-out
  */
-const TxnCard = memo(function TxnCard({ transaction, onClick, isLast }: TxnCardProps) {
+const TxnCard = memo(function TxnCard({
+  transaction,
+  onClick,
+  isLast,
+  receiptStatus,
+  receiptItemCount,
+  refundTotal,
+  refundCount,
+  refundLinkCount,
+}: TxnCardProps) {
   const isExpense = transaction.direction === 'debit';
+  const isCredit = transaction.direction === 'credit';
   const emoji = getCategoryEmoji(transaction.category, transaction.merchant_name);
   const paymentMethodColor = getPaymentMethodColor(transaction.account_type);
+
+  // Feature flag checks
+  const showReceiptBadge = isReceiptParsingEnabled() && receiptStatus;
+  const showRefundBadge = isSmartRefundsEnabled() && isExpense && refundTotal && refundTotal > 0;
+  const showRefundIndicator = isSmartRefundsEnabled() && isCredit && refundLinkCount && refundLinkCount > 0;
 
   return (
     <>
@@ -70,10 +102,38 @@ const TxnCard = memo(function TxnCard({ transaction, onClick, isLast }: TxnCardP
               {transaction.merchant_name || 'Unknown'}
             </span>
             {/* transactionCategory - 12px, rgba(255,255,255,0.35) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
                 {transaction.category || 'Uncategorized'}
               </span>
+
+              {/* Receipt badge (Phase 2) */}
+              {showReceiptBadge && (
+                <ReceiptBadge
+                  status={receiptStatus!}
+                  itemCount={receiptItemCount}
+                  size="sm"
+                />
+              )}
+
+              {/* Refund badge for debits (Phase 3) */}
+              {showRefundBadge && (
+                <RefundBadge
+                  totalRefunded={refundTotal!}
+                  originalAmount={parseFloat(transaction.amount)}
+                  refundCount={refundCount}
+                  size="sm"
+                />
+              )}
+
+              {/* Refund indicator for credits (Phase 3) */}
+              {showRefundIndicator && (
+                <RefundIndicator
+                  linkCount={refundLinkCount!}
+                  size="sm"
+                />
+              )}
+
               {/* Splitwise indicator */}
               {transaction.splitwise_expense_id && (
                 <span title="Split on Splitwise" style={{ display: 'flex', alignItems: 'center' }}>
