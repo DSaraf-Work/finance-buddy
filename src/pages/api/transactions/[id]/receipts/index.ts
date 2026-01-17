@@ -10,14 +10,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import { isReceiptParsingEnabled } from '@/lib/features/flags';
+import { uploadReceipt } from '@/lib/receipts/storage';
+import { mapReceiptToPublic, mapReceiptSummaryToPublic } from '@/lib/receipts/mappers';
 import {
   TABLE_EMAILS_PROCESSED,
   TABLE_RECEIPTS,
   VIEW_RECEIPT_SUMMARY,
 } from '@/lib/constants/database';
-import { isReceiptParsingEnabled } from '@/lib/features/flags';
-import { uploadReceipt } from '@/lib/receipts/storage';
-import { mapReceiptToPublic, mapReceiptSummaryToPublic } from '@/lib/receipts/mappers';
 import { isValidReceiptFileType, RECEIPT_LIMITS } from '@/types/receipts';
 import type { ReceiptFileType, ListReceiptsResponse } from '@/types/receipts';
 import formidable from 'formidable';
@@ -43,14 +43,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify transaction exists and belongs to user
-  const { data: transaction, error: txnError } = await supabaseAdmin
+  const { data: transactionData, error: txnError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id')
     .eq('id', transactionId)
     .eq('user_id', user.id)
     .single();
 
-  if (txnError || !transaction) {
+  if (txnError || !transactionData) {
     return res.status(404).json({ error: 'Transaction not found' });
   }
 
@@ -148,7 +148,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       );
 
       // Create receipt record in database
-      const { data: receipt, error: insertError } = await supabaseAdmin
+      const { data: receipt, error: insertError } = await (supabaseAdmin as any)
         .from(TABLE_RECEIPTS)
         .insert({
           user_id: user.id,

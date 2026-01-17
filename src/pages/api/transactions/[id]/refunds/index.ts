@@ -9,18 +9,25 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import {
-  TABLE_EMAILS_PROCESSED,
-  TABLE_REFUND_LINKS,
-  VIEW_REFUND_AGGREGATES,
-} from '@/lib/constants/database';
 import { isSmartRefundsEnabled } from '@/lib/features/flags';
 import {
   mapRefundLinksToPublic,
   buildRefundStatus,
   buildEmptyRefundStatus,
 } from '@/lib/refunds/mappers';
+import {
+  TABLE_EMAILS_PROCESSED,
+  TABLE_REFUND_LINKS,
+  VIEW_REFUND_AGGREGATES,
+} from '@/lib/constants/database';
 import type { ListRefundLinksResponse, RefundLinkAggregate } from '@/types/refunds';
+
+// Type for transaction query result
+interface TransactionRow {
+  id: string;
+  user_id: string;
+  amount: number | null;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -39,16 +46,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify transaction exists and belongs to user
-  const { data: transaction, error: txnError } = await supabaseAdmin
+  const { data: transactionData, error: txnError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, amount')
     .eq('id', transactionId)
     .eq('user_id', user.id)
     .single();
 
-  if (txnError || !transaction) {
+  if (txnError || !transactionData) {
     return res.status(404).json({ error: 'Transaction not found' });
   }
+
+  const transaction = transactionData as TransactionRow;
 
   try {
     // Get all refund links where this transaction is the original

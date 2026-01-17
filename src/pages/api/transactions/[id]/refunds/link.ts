@@ -13,23 +13,38 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import {
-  TABLE_EMAILS_PROCESSED,
-  TABLE_SUB_TRANSACTIONS,
-  TABLE_REFUND_LINKS,
-  VIEW_REFUND_AGGREGATES,
-} from '@/lib/constants/database';
 import { isSmartRefundsEnabled } from '@/lib/features/flags';
 import {
   mapRefundLinkToPublic,
   buildRefundStatus,
   buildEmptyRefundStatus,
 } from '@/lib/refunds/mappers';
+import {
+  TABLE_EMAILS_PROCESSED,
+  TABLE_SUB_TRANSACTIONS,
+  TABLE_REFUND_LINKS,
+  VIEW_REFUND_AGGREGATES,
+} from '@/lib/constants/database';
 import type {
   CreateRefundLinkRequest,
   CreateRefundLinkResponse,
   RefundLinkAggregate,
 } from '@/types/refunds';
+
+// Type for sub-transaction query result
+interface SubTransactionRow {
+  id: string;
+  user_id: string;
+  amount: number | null;
+}
+
+// Type for transaction query result
+interface TransactionRow {
+  id: string;
+  user_id: string;
+  amount: number | null;
+  direction: string | null;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -76,30 +91,33 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   // Verify original transaction/sub-transaction
   // ============================================================================
   if (is_sub_transaction) {
-    const { data: subTxn, error: subError } = await supabaseAdmin
+    const { data: subTxnData, error: subError } = await supabaseAdmin
       .from(TABLE_SUB_TRANSACTIONS)
       .select('id, user_id, amount')
       .eq('id', originalId)
       .eq('user_id', user.id)
       .single();
 
-    if (subError || !subTxn) {
+    if (subError || !subTxnData) {
       return res.status(404).json({ error: 'Sub-transaction not found' });
     }
 
+    const subTxn = subTxnData as SubTransactionRow;
     originalAmount = Math.abs(Number(subTxn.amount) || 0);
     originalUserId = subTxn.user_id;
   } else {
-    const { data: transaction, error: txnError } = await supabaseAdmin
+    const { data: transactionData, error: txnError } = await supabaseAdmin
       .from(TABLE_EMAILS_PROCESSED)
       .select('id, user_id, amount, direction')
       .eq('id', originalId)
       .eq('user_id', user.id)
       .single();
 
-    if (txnError || !transaction) {
+    if (txnError || !transactionData) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
+
+    const transaction = transactionData as TransactionRow;
 
     // Original should be a debit (purchase)
     if (transaction.direction !== 'debit') {
@@ -116,16 +134,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   // ============================================================================
   // Verify refund transaction
   // ============================================================================
-  const { data: refundTxn, error: refundError } = await supabaseAdmin
+  const { data: refundTxnData, error: refundError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, amount, direction')
     .eq('id', refund_transaction_id)
     .eq('user_id', user.id)
     .single();
 
-  if (refundError || !refundTxn) {
+  if (refundError || !refundTxnData) {
     return res.status(404).json({ error: 'Refund transaction not found' });
   }
+
+  const refundTxn = refundTxnData as TransactionRow;
 
   // Refund should be a credit
   if (refundTxn.direction !== 'credit') {
@@ -184,7 +204,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       linkData.original_sub_transaction_id = null;
     }
 
-    const { data: link, error: insertError } = await supabaseAdmin
+    const { data: link, error: insertError } = await (supabaseAdmin as any)
       .from(TABLE_REFUND_LINKS)
       .insert(linkData)
       .select()

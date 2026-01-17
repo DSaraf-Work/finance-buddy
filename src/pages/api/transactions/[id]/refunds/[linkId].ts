@@ -9,8 +9,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_REFUND_LINKS } from '@/lib/constants/database';
 import { isSmartRefundsEnabled } from '@/lib/features/flags';
+import { TABLE_REFUND_LINKS } from '@/lib/constants/database';
+
+// Type for refund link query result
+interface RefundLinkRow {
+  id: string;
+  original_transaction_id: string | null;
+  original_sub_transaction_id: string | null;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -35,16 +42,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   try {
     // Verify the link exists and belongs to this user
     // Also verify it's associated with the transaction in the URL
-    const { data: link, error: fetchError } = await supabaseAdmin
+    const { data: linkData, error: fetchError } = await supabaseAdmin
       .from(TABLE_REFUND_LINKS)
       .select('id, original_transaction_id, original_sub_transaction_id')
       .eq('id', linkId)
       .eq('user_id', user.id)
       .single();
 
-    if (fetchError || !link) {
+    if (fetchError || !linkData) {
       return res.status(404).json({ error: 'Refund link not found' });
     }
+
+    const link = linkData as RefundLinkRow;
 
     // Verify the link is associated with the transaction in the URL
     // (either as original_transaction_id or original_sub_transaction_id)

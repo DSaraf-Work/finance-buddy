@@ -9,10 +9,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import { isSubTransactionsEnabled } from '@/lib/features/flags';
 import { buildValidationResult } from '@/lib/sub-transactions/validation';
+import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import type { SubTransactionValidation } from '@/types/sub-transactions';
+
+// Type for parent transaction query result
+interface ParentTransactionRow {
+  id: string;
+  amount: number | null;
+}
+
+// Type for sub-transaction amount query result
+interface SubTransactionAmountRow {
+  amount: number | string;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -32,19 +43,21 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   try {
     // Get parent transaction
-    const { data: parent, error: parentError } = await supabaseAdmin
+    const { data: parentData, error: parentError } = await supabaseAdmin
       .from(TABLE_EMAILS_PROCESSED)
       .select('id, amount')
       .eq('id', parentId)
       .eq('user_id', user.id)
       .single();
 
-    if (parentError || !parent) {
+    if (parentError || !parentData) {
       return res.status(404).json({ error: 'Parent transaction not found' });
     }
 
+    const parent = parentData as ParentTransactionRow;
+
     // Get sub-transactions summary
-    const { data: subs, error: subsError } = await supabaseAdmin
+    const { data: subsData, error: subsError } = await supabaseAdmin
       .from(TABLE_SUB_TRANSACTIONS)
       .select('amount')
       .eq('parent_transaction_id', parentId)
@@ -58,9 +71,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       });
     }
 
+    const subs = (subsData || []) as SubTransactionAmountRow[];
+
     // Calculate totals
-    const subTotal = (subs || []).reduce((sum, s) => sum + Number(s.amount), 0);
-    const subCount = (subs || []).length;
+    const subTotal = subs.reduce((sum: number, s) => sum + Number(s.amount), 0);
+    const subCount = subs.length;
 
     // Build validation result
     const validation: SubTransactionValidation = buildValidationResult(

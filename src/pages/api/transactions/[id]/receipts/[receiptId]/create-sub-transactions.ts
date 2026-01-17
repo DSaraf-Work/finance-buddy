@@ -9,19 +9,50 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import {
-  TABLE_EMAILS_PROCESSED,
-  TABLE_RECEIPTS,
-  TABLE_RECEIPT_ITEMS,
-  TABLE_RECEIPT_ITEM_LINKS,
-  TABLE_SUB_TRANSACTIONS,
-} from '@/lib/constants/database';
 import { isReceiptParsingEnabled, isSubTransactionsEnabled } from '@/lib/features/flags';
 import type {
   CreateSubTransactionsFromReceiptRequest,
   CreateSubTransactionsFromReceiptResponse,
 } from '@/types/receipts';
 import { SUB_TRANSACTION_LIMITS } from '@/types/sub-transactions';
+
+// Type for transaction query result
+interface ParentTransactionRow {
+  id: string;
+  user_id: string;
+  email_row_id: string;
+  currency: string | null;
+  direction: string | null;
+  amount: number | null;
+  txn_time: string | null;
+  splitwise_expense_id: string | null;
+}
+
+// Type for receipt query result
+interface ReceiptRow {
+  id: string;
+  user_id: string;
+  transaction_id: string;
+  parsing_status: string;
+  [key: string]: any;
+}
+
+// Type for receipt item query result
+interface ReceiptItemRow {
+  id: string;
+  receipt_id: string;
+  user_id: string;
+  item_name: string;
+  item_description: string | null;
+  total_price: number;
+  category: string | null;
+  is_excluded: boolean;
+  is_tax: boolean;
+  is_discount: boolean;
+  is_tip?: boolean;
+  is_service_charge?: boolean;
+  [key: string]: any;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -54,16 +85,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   try {
     // Verify transaction exists and belongs to user
-    const { data: transaction, error: txnError } = await supabaseAdmin
-      .from(TABLE_EMAILS_PROCESSED)
+    const { data: transactionData, error: txnError } = await supabaseAdmin
+      .from('fb_emails_processed')
       .select('id, user_id, email_row_id, currency, direction, amount, txn_time, splitwise_expense_id')
       .eq('id', transactionId)
       .eq('user_id', user.id)
       .single();
 
-    if (txnError || !transaction) {
+    if (txnError || !transactionData) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
+
+    const transaction = transactionData as ParentTransactionRow;
 
     // Check if parent has required fields
     if (!transaction.currency || !transaction.direction) {
@@ -74,16 +107,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Get receipt
-    const { data: receipt, error: receiptError } = await supabaseAdmin
-      .from(TABLE_RECEIPTS)
+    const { data: receiptData, error: receiptError } = await supabaseAdmin
+      .from('fb_receipts')
       .select('*')
       .eq('id', receiptId)
       .eq('user_id', user.id)
       .single();
 
-    if (receiptError || !receipt) {
+    if (receiptError || !receiptData) {
       return res.status(404).json({ error: 'Receipt not found' });
     }
+
+    const receipt = receiptData as ReceiptRow;
 
     // Verify receipt belongs to this transaction
     if (receipt.transaction_id !== transactionId) {
@@ -103,7 +138,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     // Check if sub-transactions already exist for this parent
     const { count: existingSubCount } = await supabaseAdmin
-      .from(TABLE_SUB_TRANSACTIONS)
+      .from('fb_sub_transactions')
       .select('*', { count: 'exact', head: true })
       .eq('parent_transaction_id', transactionId)
       .eq('user_id', user.id);
@@ -116,19 +151,21 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Get receipt items
-    const { data: items, error: itemsError } = await supabaseAdmin
-      .from(TABLE_RECEIPT_ITEMS)
+    const { data: itemsData, error: itemsError } = await supabaseAdmin
+      .from('fb_receipt_items')
       .select('*')
       .eq('receipt_id', receiptId)
       .eq('user_id', user.id)
       .order('line_number', { ascending: true });
 
-    if (itemsError || !items || items.length === 0) {
+    if (itemsError || !itemsData || itemsData.length === 0) {
       return res.status(400).json({
         error: 'No receipt items found',
         code: 'NO_ITEMS',
       });
     }
+
+    const items = itemsData as ReceiptItemRow[];
 
     // Filter items
     const excludedSet = new Set(excluded_item_ids);
@@ -184,8 +221,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       splitwise_expense_id: transaction.splitwise_expense_id,
     }));
 
-    const { data: createdSubs, error: subError } = await supabaseAdmin
-      .from(TABLE_SUB_TRANSACTIONS)
+    const { data: createdSubs, error: subError } = await (supabaseAdmin as any)
+      .from('fb_sub_transactions')
       .insert(subTransactionsToInsert)
       .select();
 
@@ -205,8 +242,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       link_method: 'auto',
     }));
 
-    const { data: createdLinks, error: linkError } = await supabaseAdmin
-      .from(TABLE_RECEIPT_ITEM_LINKS)
+    const { data: createdLinks, error: linkError } = await (supabaseAdmin as any)
+      .from('fb_receipt_item_links')
       .insert(linksToInsert)
       .select();
 

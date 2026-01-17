@@ -9,21 +9,32 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import { isReceiptParsingEnabled } from '@/lib/features/flags';
+import { getReceiptAsBase64 } from '@/lib/receipts/storage';
+import { getReceiptParser } from '@/lib/receipts/parser';
+import { mapReceiptToPublic, mapReceiptItemsToPublic } from '@/lib/receipts/mappers';
 import {
   TABLE_EMAILS_PROCESSED,
   TABLE_RECEIPTS,
   TABLE_RECEIPT_ITEMS,
 } from '@/lib/constants/database';
-import { isReceiptParsingEnabled } from '@/lib/features/flags';
-import { getReceiptAsBase64 } from '@/lib/receipts/storage';
-import { getReceiptParser } from '@/lib/receipts/parser';
-import { mapReceiptToPublic, mapReceiptItemsToPublic } from '@/lib/receipts/mappers';
 import type {
   ParseReceiptRequest,
   ParseReceiptResponse,
   ReceiptFileType,
 } from '@/types/receipts';
 import { RECEIPT_LIMITS } from '@/types/receipts';
+
+// Type for receipt query result
+interface ReceiptRow {
+  id: string;
+  user_id: string;
+  transaction_id: string;
+  file_path: string;
+  file_type: string;
+  parsing_status: string;
+  [key: string]: any;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -49,28 +60,30 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   try {
     // Verify transaction exists and belongs to user
-    const { data: transaction, error: txnError } = await supabaseAdmin
+    const { data: transactionData, error: txnError } = await supabaseAdmin
       .from(TABLE_EMAILS_PROCESSED)
       .select('id, user_id')
       .eq('id', transactionId)
       .eq('user_id', user.id)
       .single();
 
-    if (txnError || !transaction) {
+    if (txnError || !transactionData) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
 
     // Get receipt
-    const { data: receipt, error: receiptError } = await supabaseAdmin
+    const { data: receiptData, error: receiptError } = await supabaseAdmin
       .from(TABLE_RECEIPTS)
       .select('*')
       .eq('id', receiptId)
       .eq('user_id', user.id)
       .single();
 
-    if (receiptError || !receipt) {
+    if (receiptError || !receiptData) {
       return res.status(404).json({ error: 'Receipt not found' });
     }
+
+    const receipt = receiptData as ReceiptRow;
 
     // Verify receipt belongs to this transaction
     if (receipt.transaction_id !== transactionId) {
@@ -113,7 +126,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const startTime = Date.now();
 
     // Update status to processing
-    await supabaseAdmin
+    await (supabaseAdmin as any)
       .from(TABLE_RECEIPTS)
       .update({ parsing_status: 'processing' })
       .eq('id', receiptId)
@@ -159,7 +172,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         raw_text: item.raw_text || null,
       }));
 
-      const { data: insertedItems, error: insertError } = await supabaseAdmin
+      const { data: insertedItems, error: insertError } = await (supabaseAdmin as any)
         .from(TABLE_RECEIPT_ITEMS)
         .insert(itemsToInsert)
         .select();
@@ -175,7 +188,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           : 'completed';
 
       // Update receipt with parsed data
-      const { data: updatedReceipt, error: updateError } = await supabaseAdmin
+      const { data: updatedReceipt, error: updateError } = await (supabaseAdmin as any)
         .from(TABLE_RECEIPTS)
         .update({
           store_name: parsedData.store_name,
@@ -209,7 +222,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           updatedReceipt,
           insertedItems?.length || 0,
           0, // No links yet
-          insertedItems?.reduce((sum, item) => sum + Number(item.total_price), 0)
+          insertedItems?.reduce((sum: number, item: any) => sum + Number(item.total_price), 0)
         ),
         items: mapReceiptItemsToPublic(insertedItems || []),
         parsing_duration_ms: processingTime,
@@ -218,7 +231,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(200).json({ success: true, data: response });
     } catch (parseError: any) {
       // Update receipt with error status
-      await supabaseAdmin
+      await (supabaseAdmin as any)
         .from(TABLE_RECEIPTS)
         .update({
           parsing_status: 'failed',
