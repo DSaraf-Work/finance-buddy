@@ -67,6 +67,12 @@ export const TABLE_RECEIPT_ITEMS = 'fb_receipt_items' as const;
  */
 export const TABLE_RECEIPT_ITEM_LINKS = 'fb_receipt_item_links' as const;
 
+/**
+ * Refund links (M:N relationship between refunds and originals)
+ * Added in migration 0008_smart_refunds.sql
+ */
+export const TABLE_REFUND_LINKS = 'fb_refund_links' as const;
+
 // ============================================================================
 // VIEWS
 // ============================================================================
@@ -81,6 +87,12 @@ export const VIEW_USER_ACTIVE_KEYWORDS = 'fb_user_active_keywords' as const;
  * Added in migration 0007_receipt_parsing.sql
  */
 export const VIEW_RECEIPT_SUMMARY = 'fb_receipt_summary' as const;
+
+/**
+ * View of aggregated refund status per original
+ * Added in migration 0008_smart_refunds.sql
+ */
+export const VIEW_REFUND_AGGREGATES = 'fb_refund_link_aggregates' as const;
 
 // ============================================================================
 // TABLE NAME COLLECTIONS
@@ -100,6 +112,7 @@ export const ACTIVE_TABLES = [
   TABLE_RECEIPTS,
   TABLE_RECEIPT_ITEMS,
   TABLE_RECEIPT_ITEM_LINKS,
+  TABLE_REFUND_LINKS,
 ] as const;
 
 /**
@@ -108,6 +121,7 @@ export const ACTIVE_TABLES = [
 export const VIEWS = [
   VIEW_USER_ACTIVE_KEYWORDS,
   VIEW_RECEIPT_SUMMARY,
+  VIEW_REFUND_AGGREGATES,
 ] as const;
 
 // ============================================================================
