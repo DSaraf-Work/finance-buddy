@@ -16,10 +16,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED } from '@/lib/constants/database';
 import { isSmartRefundsEnabled } from '@/lib/features/flags';
 import { findRefundMatches } from '@/lib/refunds/matching';
+import { TABLE_EMAILS_PROCESSED } from '@/lib/constants/database';
 import type { GetRefundSuggestionsResponse } from '@/types/refunds';
+
+// Type for transaction query result
+interface TransactionRow {
+  id: string;
+  user_id: string;
+  amount: number | null;
+  merchant_name: string | null;
+  txn_time: string | null;
+  direction: string | null;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -43,16 +53,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify transaction exists, belongs to user, and is a CREDIT (refund)
-  const { data: transaction, error: txnError } = await supabaseAdmin
+  const { data: transactionData, error: txnError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, amount, merchant_name, txn_time, direction')
     .eq('id', transactionId)
     .eq('user_id', user.id)
     .single();
 
-  if (txnError || !transaction) {
+  if (txnError || !transactionData) {
     return res.status(404).json({ error: 'Transaction not found' });
   }
+
+  const transaction = transactionData as TransactionRow;
 
   // Refunds are typically credits (money coming back)
   if (transaction.direction !== 'credit') {

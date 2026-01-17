@@ -10,12 +10,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import {
-  TABLE_EMAILS_PROCESSED,
-  TABLE_RECEIPTS,
-  TABLE_RECEIPT_ITEMS,
-  TABLE_RECEIPT_ITEM_LINKS,
-} from '@/lib/constants/database';
 import { isReceiptParsingEnabled } from '@/lib/features/flags';
 import { deleteReceipt as deleteReceiptFile } from '@/lib/receipts/storage';
 import {
@@ -23,7 +17,32 @@ import {
   mapReceiptItemsToPublic,
   createLinksMap,
 } from '@/lib/receipts/mappers';
+import {
+  TABLE_EMAILS_PROCESSED,
+  TABLE_RECEIPTS,
+  TABLE_RECEIPT_ITEMS,
+  TABLE_RECEIPT_ITEM_LINKS,
+} from '@/lib/constants/database';
 import type { GetReceiptResponse, ReceiptItemLink } from '@/types/receipts';
+
+// Type for receipt query result
+interface ReceiptRow {
+  id: string;
+  user_id: string;
+  transaction_id: string;
+  file_path: string;
+  parsing_status: string;
+  [key: string]: any;
+}
+
+// Type for receipt item query result
+interface ReceiptItemRow {
+  id: string;
+  receipt_id: string;
+  user_id: string;
+  total_price: number;
+  [key: string]: any;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -42,28 +61,30 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify transaction exists and belongs to user
-  const { data: transaction, error: txnError } = await supabaseAdmin
+  const { data: transactionData, error: txnError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id')
     .eq('id', transactionId)
     .eq('user_id', user.id)
     .single();
 
-  if (txnError || !transaction) {
+  if (txnError || !transactionData) {
     return res.status(404).json({ error: 'Transaction not found' });
   }
 
   // Get receipt
-  const { data: receipt, error: receiptError } = await supabaseAdmin
+  const { data: receiptData, error: receiptError } = await supabaseAdmin
     .from(TABLE_RECEIPTS)
     .select('*')
     .eq('id', receiptId)
     .eq('user_id', user.id)
     .single();
 
-  if (receiptError || !receipt) {
+  if (receiptError || !receiptData) {
     return res.status(404).json({ error: 'Receipt not found' });
   }
+
+  const receipt = receiptData as ReceiptRow;
 
   // Verify receipt belongs to this transaction
   if (receipt.transaction_id !== transactionId) {
@@ -79,7 +100,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'GET') {
     try {
       // Get receipt items
-      const { data: items, error: itemsError } = await supabaseAdmin
+      const { data: itemsData, error: itemsError } = await supabaseAdmin
         .from(TABLE_RECEIPT_ITEMS)
         .select('*')
         .eq('receipt_id', receiptId)
@@ -94,8 +115,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         });
       }
 
+      const items = (itemsData || []) as ReceiptItemRow[];
+
       // Get links for items
-      const itemIds = (items || []).map((item) => item.id);
+      const itemIds = items.map((item) => item.id);
       let linksMap = new Map<string, ReceiptItemLink>();
 
       if (itemIds.length > 0) {
@@ -113,11 +136,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       const response: GetReceiptResponse = {
         receipt: mapReceiptToPublic(
           receipt,
-          items?.length || 0,
+          items.length,
           linksMap.size,
-          items?.reduce((sum, item) => sum + Number(item.total_price), 0)
+          items.reduce((sum, item) => sum + Number(item.total_price), 0)
         ),
-        items: mapReceiptItemsToPublic(items || [], linksMap),
+        items: mapReceiptItemsToPublic(items, linksMap),
       };
 
       return res.status(200).json({ success: true, data: response });

@@ -424,6 +424,227 @@ export type Database = {
           }
         ]
       }
+      fb_receipts: {
+        Row: {
+          id: string
+          user_id: string
+          transaction_id: string
+          file_path: string
+          file_name: string
+          file_type: string
+          store_name: string | null
+          receipt_date: string | null
+          receipt_total: number | null
+          parsing_status: string
+          confidence: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          transaction_id: string
+          file_path: string
+          file_name: string
+          file_type: string
+          store_name?: string | null
+          receipt_date?: string | null
+          receipt_total?: number | null
+          parsing_status?: string
+          confidence?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          transaction_id?: string
+          file_path?: string
+          file_name?: string
+          file_type?: string
+          store_name?: string | null
+          receipt_date?: string | null
+          receipt_total?: number | null
+          parsing_status?: string
+          confidence?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fb_receipts_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "fb_emails_processed"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      fb_receipt_items: {
+        Row: {
+          id: string
+          receipt_id: string
+          user_id: string
+          item_name: string
+          quantity: number
+          unit_price: number
+          total_price: number
+          category: string | null
+          is_tax: boolean
+          is_discount: boolean
+          is_excluded: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          receipt_id: string
+          user_id: string
+          item_name: string
+          quantity?: number
+          unit_price: number
+          total_price: number
+          category?: string | null
+          is_tax?: boolean
+          is_discount?: boolean
+          is_excluded?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          receipt_id?: string
+          user_id?: string
+          item_name?: string
+          quantity?: number
+          unit_price?: number
+          total_price?: number
+          category?: string | null
+          is_tax?: boolean
+          is_discount?: boolean
+          is_excluded?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fb_receipt_items_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "fb_receipts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      fb_receipt_item_links: {
+        Row: {
+          id: string
+          user_id: string
+          receipt_item_id: string
+          sub_transaction_id: string
+          link_method: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          receipt_item_id: string
+          sub_transaction_id: string
+          link_method?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          receipt_item_id?: string
+          sub_transaction_id?: string
+          link_method?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fb_receipt_item_links_receipt_item_id_fkey"
+            columns: ["receipt_item_id"]
+            isOneToOne: true
+            referencedRelation: "fb_receipt_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fb_receipt_item_links_sub_transaction_id_fkey"
+            columns: ["sub_transaction_id"]
+            isOneToOne: true
+            referencedRelation: "fb_sub_transactions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      fb_refund_links: {
+        Row: {
+          id: string
+          user_id: string
+          refund_transaction_id: string
+          original_transaction_id: string | null
+          original_sub_transaction_id: string | null
+          allocated_amount: number
+          refund_type: string
+          match_confidence_score: number | null
+          match_method: string
+          match_reasons: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          refund_transaction_id: string
+          original_transaction_id?: string | null
+          original_sub_transaction_id?: string | null
+          allocated_amount: number
+          refund_type?: string
+          match_confidence_score?: number | null
+          match_method?: string
+          match_reasons?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          refund_transaction_id?: string
+          original_transaction_id?: string | null
+          original_sub_transaction_id?: string | null
+          allocated_amount?: number
+          refund_type?: string
+          match_confidence_score?: number | null
+          match_method?: string
+          match_reasons?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fb_refund_links_refund_transaction_id_fkey"
+            columns: ["refund_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "fb_emails_processed"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fb_refund_links_original_transaction_id_fkey"
+            columns: ["original_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "fb_emails_processed"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fb_refund_links_original_sub_transaction_id_fkey"
+            columns: ["original_sub_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "fb_sub_transactions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       fb_user_active_keywords: {
@@ -437,6 +658,26 @@ export type Database = {
           usage_category: string | null
           usage_count: number | null
           user_id: string | null
+        }
+      }
+      fb_receipt_summary: {
+        Row: {
+          transaction_id: string | null
+          user_id: string | null
+          receipt_count: number | null
+          total_receipt_items: number | null
+          linked_items_count: number | null
+        }
+      }
+      fb_refund_link_aggregates: {
+        Row: {
+          original_id: string | null
+          original_transaction_id: string | null
+          original_sub_transaction_id: string | null
+          user_id: string | null
+          total_refunded: number | null
+          refund_count: number | null
+          refund_transaction_ids: string[] | null
         }
       }
     }

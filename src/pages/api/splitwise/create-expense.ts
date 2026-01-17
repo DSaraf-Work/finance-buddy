@@ -59,8 +59,10 @@ export default async function handler(
     return res.status(500).json({ error: 'Invalid response from Splitwise' });
   }
 
-  if (data.errors && Object.keys(data.errors).length > 0) {
-    return res.status(400).json({ error: 'Splitwise validation error', details: (data as any).errors });
+  // Check for Splitwise validation errors (errors field may exist in error responses)
+  const dataWithErrors = data as typeof data & { errors?: Record<string, unknown> };
+  if (dataWithErrors.errors && Object.keys(dataWithErrors.errors).length > 0) {
+    return res.status(400).json({ error: 'Splitwise validation error', details: dataWithErrors.errors });
   }
 
   return res.status(200).json({

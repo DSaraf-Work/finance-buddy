@@ -11,7 +11,6 @@
  */
 
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import type {
   RefundSuggestion,
   RefundMatchScores,
@@ -77,16 +76,26 @@ export async function findRefundMatches(
   } = options;
 
   // Get the refund transaction
-  const { data: refundTxn, error: refundError } = await supabaseAdmin
-    .from(TABLE_EMAILS_PROCESSED)
+  const { data: refundTxnData, error: refundError } = await supabaseAdmin
+    .from('fb_emails_processed')
     .select('id, amount, merchant_name, merchant_normalized, txn_time, reference_id')
     .eq('id', refundTxnId)
     .eq('user_id', userId)
     .single();
 
-  if (refundError || !refundTxn) {
+  if (refundError || !refundTxnData) {
     throw new Error('Refund transaction not found');
   }
+
+  // Type assertion for the query result
+  const refundTxn = refundTxnData as {
+    id: string;
+    amount: number | null;
+    merchant_name: string | null;
+    merchant_normalized: string | null;
+    txn_time: string | null;
+    reference_id: string | null;
+  };
 
   // Validate it's a credit (refund)
   const refundAmount = Math.abs(Number(refundTxn.amount) || 0);
@@ -112,8 +121,8 @@ export async function findRefundMatches(
   const candidates: CandidateTransaction[] = [];
 
   // Get parent transactions (debits only)
-  const { data: parentTxns } = await supabaseAdmin
-    .from(TABLE_EMAILS_PROCESSED)
+  const { data: parentTxnsData } = await supabaseAdmin
+    .from('fb_emails_processed')
     .select('id, amount, merchant_name, merchant_normalized, txn_time, reference_id, category')
     .eq('user_id', userId)
     .eq('direction', 'debit')
@@ -121,10 +130,27 @@ export async function findRefundMatches(
     .lte('txn_time', refundDate.toISOString())
     .not('id', 'eq', refundTxnId);
 
+  // Type assertion for parent transactions
+  const parentTxns = parentTxnsData as Array<{
+    id: string;
+    amount: number | null;
+    merchant_name: string | null;
+    merchant_normalized: string | null;
+    txn_time: string | null;
+    reference_id: string | null;
+    category: string | null;
+  }> | null;
+
   if (parentTxns) {
     for (const txn of parentTxns) {
       candidates.push({
-        ...txn,
+        id: txn.id,
+        amount: txn.amount,
+        merchant_name: txn.merchant_name,
+        merchant_normalized: txn.merchant_normalized,
+        txn_time: txn.txn_time,
+        reference_id: txn.reference_id,
+        category: txn.category,
         is_sub_transaction: false,
       });
     }
@@ -132,13 +158,22 @@ export async function findRefundMatches(
 
   // Get sub-transactions if enabled
   if (includeSubTransactions) {
-    const { data: subTxns } = await supabaseAdmin
-      .from(TABLE_SUB_TRANSACTIONS)
+    const { data: subTxnsData } = await supabaseAdmin
+      .from('fb_sub_transactions')
       .select('id, amount, merchant_name, txn_time, category')
       .eq('user_id', userId)
       .eq('direction', 'debit')
       .gte('txn_time', windowStart.toISOString())
       .lte('txn_time', refundDate.toISOString());
+
+    // Type assertion for sub-transactions
+    const subTxns = subTxnsData as Array<{
+      id: string;
+      amount: number;
+      merchant_name: string | null;
+      txn_time: string | null;
+      category: string | null;
+    }> | null;
 
     if (subTxns) {
       for (const sub of subTxns) {

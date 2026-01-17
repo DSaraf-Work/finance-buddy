@@ -10,14 +10,40 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import { isSubTransactionsEnabled } from '@/lib/features/flags';
 import {
   validateUpdateInput,
   SubTransactionValidationError,
 } from '@/lib/sub-transactions/validation';
 import { mapSubTransactionToPublic } from '@/lib/sub-transactions/mappers';
+import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import type { UpdateSubTransactionInput } from '@/types/sub-transactions';
+
+// Type for parent transaction query result
+interface ParentTransactionRow {
+  id: string;
+  user_id: string;
+  amount: number | null;
+}
+
+// Type for sub-transaction query result
+interface SubTransactionRow {
+  id: string;
+  parent_transaction_id: string;
+  user_id: string;
+  email_row_id: string;
+  currency: string;
+  direction: string;
+  txn_time: string | null;
+  amount: string | number;
+  category: string | null;
+  merchant_name: string | null;
+  user_notes: string | null;
+  sub_transaction_order: number;
+  splitwise_expense_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -36,28 +62,32 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify parent transaction exists and belongs to user
-  const { data: parent, error: parentError } = await supabaseAdmin
+  const { data: parentData, error: parentError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, amount')
     .eq('id', parentId)
     .eq('user_id', user.id)
     .single();
 
-  if (parentError || !parent) {
+  if (parentError || !parentData) {
     return res.status(404).json({ error: 'Parent transaction not found' });
   }
 
+  const parent = parentData as ParentTransactionRow;
+
   // Get the sub-transaction
-  const { data: existing, error: getError } = await supabaseAdmin
+  const { data: existingData, error: getError } = await supabaseAdmin
     .from(TABLE_SUB_TRANSACTIONS)
     .select('*')
     .eq('id', subId)
     .eq('user_id', user.id)
     .single();
 
-  if (getError || !existing) {
+  if (getError || !existingData) {
     return res.status(404).json({ error: 'Sub-transaction not found' });
   }
+
+  const existing = existingData as SubTransactionRow;
 
   // Verify sub-transaction belongs to the specified parent
   if (existing.parent_transaction_id !== parentId) {
@@ -98,8 +128,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           .eq('user_id', user.id)
           .neq('id', subId);
 
-        const siblingsTotal = (siblings || []).reduce(
-          (sum, s) => sum + Number(s.amount),
+        const siblingsTotal = ((siblings || []) as { amount: number | null }[]).reduce(
+          (sum: number, s) => sum + Number(s.amount),
           0
         );
         const newTotal = siblingsTotal + input.amount;
@@ -128,7 +158,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       }
 
       // Update
-      const { data: updated, error: updateError } = await supabaseAdmin
+      const { data: updated, error: updateError } = await (supabaseAdmin as any)
         .from(TABLE_SUB_TRANSACTIONS)
         .update(updateData)
         .eq('id', subId)

@@ -11,7 +11,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import { isSubTransactionsEnabled } from '@/lib/features/flags';
 import {
   validateBulkCreateRequest,
@@ -19,11 +18,43 @@ import {
   buildValidationResult,
 } from '@/lib/sub-transactions/validation';
 import { mapSubTransactionToPublic } from '@/lib/sub-transactions/mappers';
+import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
 import type {
   CreateSubTransactionsRequest,
   SubTransactionListResponse,
   CreateSubTransactionsResponse,
 } from '@/types/sub-transactions';
+
+// Type for parent transaction query result
+interface ParentTransactionRow {
+  id: string;
+  user_id: string;
+  email_row_id: string;
+  currency: string | null;
+  direction: string | null;
+  amount: number | null;
+  txn_time: string | null;
+  splitwise_expense_id: string | null;
+}
+
+// Type for sub-transaction query result
+interface SubTransactionRow {
+  id: string;
+  parent_transaction_id: string;
+  user_id: string;
+  email_row_id: string;
+  currency: string;
+  direction: string;
+  txn_time: string | null;
+  amount: string | number;
+  category: string | null;
+  merchant_name: string | null;
+  user_notes: string | null;
+  sub_transaction_order: number;
+  splitwise_expense_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -38,16 +69,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify parent transaction exists and belongs to user
-  const { data: parent, error: parentError } = await supabaseAdmin
+  const { data: parentData, error: parentError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, email_row_id, currency, direction, amount, txn_time, splitwise_expense_id')
     .eq('id', parentId)
     .eq('user_id', user.id)
     .single();
 
-  if (parentError || !parent) {
+  if (parentError || !parentData) {
     return res.status(404).json({ error: 'Parent transaction not found' });
   }
+
+  const parent = parentData as ParentTransactionRow;
 
   // ============================================================================
   // GET - List sub-transactions
@@ -55,7 +88,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'GET') {
     try {
       // Get sub-transactions
-      const { data: items, error: listError } = await supabaseAdmin
+      const { data: itemsData, error: listError } = await supabaseAdmin
         .from(TABLE_SUB_TRANSACTIONS)
         .select('*')
         .eq('parent_transaction_id', parentId)
@@ -70,17 +103,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         });
       }
 
+      const items = (itemsData || []) as SubTransactionRow[];
+
       // Calculate validation
-      const subTotal = (items || []).reduce((sum, item) => sum + Number(item.amount), 0);
+      const subTotal = items.reduce((sum: number, item) => sum + Number(item.amount), 0);
       const validation = buildValidationResult(
         parent.amount,
         subTotal,
-        (items || []).length
+        items.length
       );
 
       const response: SubTransactionListResponse = {
-        items: (items || []).map(mapSubTransactionToPublic),
-        count: (items || []).length,
+        items: items.map(mapSubTransactionToPublic),
+        count: items.length,
         validation,
       };
 
@@ -164,7 +199,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         splitwise_expense_id: parent.splitwise_expense_id,
       }));
 
-      const { data: created, error: insertError } = await supabaseAdmin
+      const { data: createdData, error: insertError } = await (supabaseAdmin as any)
         .from(TABLE_SUB_TRANSACTIONS)
         .insert(insertData)
         .select();
@@ -177,17 +212,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         });
       }
 
+      const created = (createdData || []) as SubTransactionRow[];
+
       // Calculate validation after creation
-      const subTotal = (created || []).reduce((sum, item) => sum + Number(item.amount), 0);
+      const subTotal = created.reduce((sum: number, item) => sum + Number(item.amount), 0);
       const validation = buildValidationResult(
         parent.amount,
         subTotal,
-        (created || []).length
+        created.length
       );
 
       const response: CreateSubTransactionsResponse = {
-        items: (created || []).map(mapSubTransactionToPublic),
-        count: (created || []).length,
+        items: created.map(mapSubTransactionToPublic),
+        count: created.length,
         validation,
       };
 
