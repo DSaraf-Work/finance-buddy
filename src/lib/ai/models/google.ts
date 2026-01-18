@@ -1,6 +1,6 @@
 // Google AI (Gemini) Model Implementation
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 import { BaseAIModel, AIRequest, AIResponse } from '../types';
 
 export class GoogleModel extends BaseAIModel {
@@ -19,7 +19,7 @@ export class GoogleModel extends BaseAIModel {
     try {
       await this.checkRateLimit();
 
-      const model = this.client.getGenerativeModel({ 
+      const model = this.client.getGenerativeModel({
         model: this.config.model,
         generationConfig: {
           maxOutputTokens: request.maxTokens || this.config.maxTokens,
@@ -27,13 +27,10 @@ export class GoogleModel extends BaseAIModel {
         },
       });
 
-      // Combine system prompt and user prompt
-      let fullPrompt = request.prompt;
-      if (request.systemPrompt) {
-        fullPrompt = `${request.systemPrompt}\n\n${request.prompt}`;
-      }
+      // Build content parts - supports both text-only and vision requests
+      const parts = this.buildContentParts(request);
 
-      const result = await model.generateContent(fullPrompt);
+      const result = await model.generateContent(parts);
       const response = await result.response;
       
       this.updateRateLimitCounters();
@@ -62,15 +59,45 @@ export class GoogleModel extends BaseAIModel {
     }
   }
 
+  /**
+   * Build content parts for Gemini API
+   * Supports both text-only and vision (image + text) requests
+   */
+  private buildContentParts(request: AIRequest): string | Part[] {
+    // Combine system prompt and user prompt
+    let fullPrompt = request.prompt;
+    if (request.systemPrompt) {
+      fullPrompt = `${request.systemPrompt}\n\n${request.prompt}`;
+    }
+
+    // If no image, return simple text string
+    if (!request.image) {
+      return fullPrompt;
+    }
+
+    // Build parts array with image and text for vision requests
+    return [
+      {
+        inlineData: {
+          mimeType: request.image.mediaType,
+          data: request.image.base64,
+        },
+      },
+      {
+        text: fullPrompt,
+      },
+    ];
+  }
+
   async isHealthy(): Promise<boolean> {
     try {
-      const model = this.client.getGenerativeModel({ 
+      const model = this.client.getGenerativeModel({
         model: this.config.model,
         generationConfig: {
           maxOutputTokens: 5,
         },
       });
-      
+
       const result = await model.generateContent('Hello');
       const response = await result.response;
       return !!response.text();

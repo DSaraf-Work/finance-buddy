@@ -74,10 +74,26 @@ export function getModelConfigs(): Record<string, AIModelConfig> {
   }
 
   if (process.env.GOOGLE_AI_API_KEY) {
-    configs['gemini-1.5-flash-latest'] = {
-      name: 'Gemini 1.5 Flash Latest',
+    // Primary Gemini model - 2.5 Flash (latest, fastest)
+    configs['gemini-2.5-flash'] = {
+      name: 'Gemini 2.5 Flash',
       provider: 'google',
-      model: 'gemini-1.5-flash-latest',
+      model: 'gemini-2.5-flash',
+      apiKey: process.env.GOOGLE_AI_API_KEY,
+      maxTokens: 4000,
+      temperature: 0.1,
+      timeout: 30000,
+      rateLimit: {
+        requestsPerMinute: 60,
+        requestsPerHour: 1500,
+      },
+    };
+
+    // Secondary Gemini model - 2.5 Flash Lite (lightweight fallback)
+    configs['gemini-2.5-flash-lite'] = {
+      name: 'Gemini 2.5 Flash Lite',
+      provider: 'google',
+      model: 'gemini-2.5-flash-lite',
       apiKey: process.env.GOOGLE_AI_API_KEY,
       maxTokens: 4000,
       temperature: 0.1,
@@ -136,8 +152,8 @@ export function getDefaultHierarchy(): AIModelHierarchy {
   // Build hierarchy based on available models
   const hierarchy: AIModelHierarchy = {} as AIModelHierarchy;
 
-  // Preferred order: GPT-4o Mini > Perplexity Sonar > Claude Sonnet > GPT-3.5 > Claude Haiku > Gemini (only real AI models)
-  const preferredOrder = ['gpt-4o-mini', 'sonar', 'claude-3-sonnet', 'gpt-3.5-turbo', 'claude-3-haiku', 'gemini-1.5-flash-latest'];
+  // Preferred order: Gemini 2.5 Flash > Gemini 2.5 Flash Lite > GPT-4o Mini > others
+  const preferredOrder = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gpt-4o-mini', 'sonar', 'claude-3-sonnet', 'gpt-3.5-turbo', 'claude-3-haiku'];
   const availableInOrder = preferredOrder.filter(model => configs[model]);
 
   if (availableInOrder.length > 0) {
