@@ -154,12 +154,21 @@ export async function fetchSplitwiseExpense(
 }
 
 /**
+ * Response type for create expense API
+ * Splitwise returns errors object on validation failures
+ */
+export interface CreateExpenseResponse {
+  expenses: SplitwiseExpenseData[];
+  errors?: Record<string, string[]>;
+}
+
+/**
  * Create a new expense on Splitwise
  */
 export async function createSplitwiseExpense(
   expenseData: Record<string, string>
-): Promise<ApiResult<{ expenses: SplitwiseExpenseData[] }>> {
-  return callSplitwiseAPI<{ expenses: SplitwiseExpenseData[] }>(
+): Promise<ApiResult<CreateExpenseResponse>> {
+  return callSplitwiseAPI<CreateExpenseResponse>(
     '/create_expense',
     'POST',
     expenseData

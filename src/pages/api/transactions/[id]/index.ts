@@ -18,7 +18,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'GET') {
     try {
       // Fetch transaction with related email
-      const { data: transaction, error: txnError } = await supabaseAdmin
+      const { data, error: txnError } = await supabaseAdmin
         .from(TABLE_EMAILS_PROCESSED)
         .select(`
           *,
@@ -38,12 +38,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         .eq('user_id', user.id)
         .single();
 
-      if (txnError || !transaction) {
-        return res.status(404).json({ 
+      if (txnError || !data) {
+        return res.status(404).json({
           error: 'Transaction not found',
-          details: txnError?.message 
+          details: txnError?.message
         });
       }
+
+      // Type assertion for transaction data (Supabase types not generated)
+      const transaction = data as Record<string, any>;
 
       // Validate Splitwise link if present
       if (transaction.splitwise_expense_id) {
@@ -53,9 +56,9 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
         // If Splitwise expense no longer exists, clear the link from the database
         if (!expenseCheck.exists) {
-          await supabaseAdmin
+          await (supabaseAdmin as any)
             .from(TABLE_EMAILS_PROCESSED)
-            .update({ 
+            .update({
               splitwise_expense_id: null,
               updated_at: new Date().toISOString()
             })

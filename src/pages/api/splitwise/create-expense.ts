@@ -60,7 +60,7 @@ export default async function handler(
   }
 
   if (data.errors && Object.keys(data.errors).length > 0) {
-    return res.status(400).json({ error: 'Splitwise validation error', details: (data as any).errors });
+    return res.status(400).json({ error: 'Splitwise validation error', details: data.errors });
   }
 
   return res.status(200).json({
