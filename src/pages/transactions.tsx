@@ -358,16 +358,10 @@ export default function TransactionsPage() {
         </Head>
 
         <div
-          className="min-h-screen bg-[#09090B] text-[#FAFAFA]"
-          style={{
-            fontFamily: '"Outfit", -apple-system, sans-serif',
-            maxWidth: '430px',
-            margin: '0 auto',
-            position: 'relative'
-          }}
+          className="min-h-screen bg-background text-foreground font-sans max-w-[430px] mx-auto relative"
         >
-          {/* Main Content - listContainer - padding 8px (matching /txn) */}
-          <main style={{ padding: '8px' }}>
+          {/* Main Content */}
+          <main className="p-2">
             <TxnListHeader
               count={pagination.total}
               filterButton={
@@ -398,7 +392,7 @@ export default function TransactionsPage() {
                   variant="outline"
                   size="lg"
                   disabled={loadingMore}
-                  className="min-w-[150px] bg-[#18181B] border-[#27272A] text-[#FAFAFA] hover:bg-[#27272A]"
+                  className="min-w-[150px] bg-muted border-border text-foreground hover:bg-border hover:border-primary/50 transition-all duration-300"
                 >
                   {loadingMore ? 'Loading...' : 'Load More'}
                 </Button>
