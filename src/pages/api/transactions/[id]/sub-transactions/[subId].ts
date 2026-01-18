@@ -36,28 +36,34 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify parent transaction exists and belongs to user
-  const { data: parent, error: parentError } = await supabaseAdmin
+  const { data: parentData, error: parentError } = await supabaseAdmin
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, amount')
     .eq('id', parentId)
     .eq('user_id', user.id)
     .single();
 
-  if (parentError || !parent) {
+  if (parentError || !parentData) {
     return res.status(404).json({ error: 'Parent transaction not found' });
   }
 
+  // Type assertion for Supabase response
+  const parent = parentData as Record<string, any>;
+
   // Get the sub-transaction
-  const { data: existing, error: getError } = await supabaseAdmin
+  const { data: existingData, error: getError } = await supabaseAdmin
     .from(TABLE_SUB_TRANSACTIONS)
     .select('*')
     .eq('id', subId)
     .eq('user_id', user.id)
     .single();
 
-  if (getError || !existing) {
+  if (getError || !existingData) {
     return res.status(404).json({ error: 'Sub-transaction not found' });
   }
+
+  // Type assertion for Supabase response (types not generated)
+  const existing = existingData as Record<string, any>;
 
   // Verify sub-transaction belongs to the specified parent
   if (existing.parent_transaction_id !== parentId) {
@@ -98,7 +104,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           .eq('user_id', user.id)
           .neq('id', subId);
 
-        const siblingsTotal = (siblings || []).reduce(
+        const siblingsTotal = ((siblings || []) as Array<{ amount: number }>).reduce(
           (sum, s) => sum + Number(s.amount),
           0
         );
@@ -128,7 +134,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       }
 
       // Update
-      const { data: updated, error: updateError } = await supabaseAdmin
+      const { data: updated, error: updateError } = await (supabaseAdmin as any)
         .from(TABLE_SUB_TRANSACTIONS)
         .update(updateData)
         .eq('id', subId)
@@ -195,7 +201,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'GET') {
     return res.status(200).json({
       success: true,
-      data: mapSubTransactionToPublic(existing),
+      data: mapSubTransactionToPublic(existingData as any),
     });
   }
 

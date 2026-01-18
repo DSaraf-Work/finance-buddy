@@ -32,16 +32,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   try {
     // Get parent transaction
-    const { data: parent, error: parentError } = await supabaseAdmin
+    const { data: parentData, error: parentError } = await supabaseAdmin
       .from(TABLE_EMAILS_PROCESSED)
       .select('id, amount')
       .eq('id', parentId)
       .eq('user_id', user.id)
       .single();
 
-    if (parentError || !parent) {
+    if (parentError || !parentData) {
       return res.status(404).json({ error: 'Parent transaction not found' });
     }
+
+    // Type assertion for Supabase response
+    const parent = parentData as Record<string, any>;
 
     // Get sub-transactions summary
     const { data: subs, error: subsError } = await supabaseAdmin
@@ -59,8 +62,9 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
 
     // Calculate totals
-    const subTotal = (subs || []).reduce((sum, s) => sum + Number(s.amount), 0);
-    const subCount = (subs || []).length;
+    const subsArray = (subs || []) as Array<{ amount: number }>;
+    const subTotal = subsArray.reduce((sum, s) => sum + Number(s.amount), 0);
+    const subCount = subsArray.length;
 
     // Build validation result
     const validation: SubTransactionValidation = buildValidationResult(
