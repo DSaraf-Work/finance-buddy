@@ -23,6 +23,9 @@ export class AnthropicModel extends BaseAIModel {
     try {
       await this.checkRateLimit();
 
+      // Build message content - supports both text-only and vision requests
+      const content = this.buildMessageContent(request);
+
       const message = await this.client.messages.create({
         model: this.config.model,
         max_tokens: request.maxTokens || this.config.maxTokens || 4000,
@@ -31,20 +34,20 @@ export class AnthropicModel extends BaseAIModel {
         messages: [
           {
             role: 'user',
-            content: request.prompt,
+            content,
           },
         ],
       });
 
       this.updateRateLimitCounters();
 
-      const content = message.content[0];
-      if (content.type !== 'text') {
+      const responseContent = message.content[0];
+      if (responseContent.type !== 'text') {
         throw new Error('Unexpected response type from Anthropic');
       }
 
       return {
-        content: content.text,
+        content: responseContent.text,
         model: this.config.model,
         provider: this.config.provider,
         usage: {
@@ -60,6 +63,33 @@ export class AnthropicModel extends BaseAIModel {
     } catch (error: any) {
       throw this.handleError(error);
     }
+  }
+
+  /**
+   * Build message content for Anthropic API
+   * Supports both text-only and vision (image + text) requests
+   */
+  private buildMessageContent(request: AIRequest): string | Anthropic.MessageCreateParams['messages'][0]['content'] {
+    // If no image, return simple text string
+    if (!request.image) {
+      return request.prompt;
+    }
+
+    // Build content array with image and text for vision requests
+    return [
+      {
+        type: 'image' as const,
+        source: {
+          type: 'base64' as const,
+          media_type: request.image.mediaType,
+          data: request.image.base64,
+        },
+      },
+      {
+        type: 'text' as const,
+        text: request.prompt,
+      },
+    ];
   }
 
   async isHealthy(): Promise<boolean> {
