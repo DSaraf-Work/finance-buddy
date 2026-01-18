@@ -13,6 +13,7 @@ import {
 } from '@/lib/features/flags';
 import { ReceiptBadge } from '@/components/receipts';
 import { RefundBadge, RefundIndicator } from '@/components/refunds';
+import { Users } from 'lucide-react';
 import type { ReceiptParsingStatus } from '@/types/receipts';
 
 interface TxnCardProps {
@@ -32,15 +33,15 @@ interface TxnCardProps {
 }
 
 /**
- * Transaction Card Component - Matches /txn design exactly
+ * Transaction Card Component - Matte Dark Design System
  *
  * Design Specifications:
  * - Icon: 48x48px, borderRadius 14px
- * - Gap between icon and text: 14px
- * - Gap within info column: 4px
- * - Gap in amount column: 2px
- * - Font: Outfit for text, JetBrains Mono for amounts
- * - Animation: slideIn 0.35s ease-out
+ * - Gap between icon and text: 14px (gap-3.5)
+ * - Gap within info column: 4px (gap-1)
+ * - Gap in amount column: 2px (gap-0.5)
+ * - Font: Outfit for text, font-mono for amounts
+ * - Animation: transition-all duration-200 with micro-interactions
  */
 const TxnCard = memo(function TxnCard({
   transaction,
@@ -64,46 +65,41 @@ const TxnCard = memo(function TxnCard({
 
   return (
     <>
-      {/* transactionItem - exact match to /txn design */}
+      {/* Transaction Item */}
       <div
-        className="transaction-item"
         onClick={onClick}
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '16px 8px',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease'
-        }}
+        className="
+          group flex justify-between items-center
+          px-2 py-4 rounded-xl cursor-pointer
+          transition-all duration-200 ease-out
+          hover:bg-muted/30 hover:shadow-sm
+          active:scale-[0.98] active:bg-muted/40
+        "
       >
-        {/* transactionLeft - gap 14px */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          {/* transactionIcon - 48x48, borderRadius 14px */}
+        {/* Left Section - Icon + Info */}
+        <div className="flex items-center gap-3.5">
+          {/* Category Icon - with hover animation */}
           <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '14px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: isExpense ? 'rgba(255,255,255,0.04)' : 'rgba(34, 197, 94, 0.12)'
-            }}
+            className={`
+              w-12 h-12 rounded-[14px] flex items-center justify-center
+              transition-all duration-200 ease-out
+              group-hover:scale-105
+              ${isExpense ? 'bg-foreground/[0.04] group-hover:bg-foreground/[0.08]' : 'bg-success/[0.12] group-hover:bg-success/[0.18]'}
+            `}
           >
-            <span style={{ fontSize: '18px' }}>{emoji}</span>
+            <span className="text-lg transition-transform duration-200 group-hover:scale-110">{emoji}</span>
           </div>
 
-          {/* transactionInfo - gap 4px */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {/* transactionTitle - 15px, 500 */}
-            <span style={{ fontSize: '15px', fontWeight: '500' }}>
+          {/* Transaction Info */}
+          <div className="flex flex-col gap-1">
+            {/* Merchant Name */}
+            <span className="text-[15px] font-medium text-foreground">
               {transaction.merchant_name || 'Unknown'}
             </span>
-            {/* transactionCategory - 12px, rgba(255,255,255,0.35) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
+
+            {/* Category + Badges Row */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs text-muted-foreground/50">
                 {transaction.category || 'Uncategorized'}
               </span>
 
@@ -136,60 +132,47 @@ const TxnCard = memo(function TxnCard({
 
               {/* Splitwise indicator */}
               {transaction.splitwise_expense_id && (
-                <span title="Split on Splitwise" style={{ display: 'flex', alignItems: 'center' }}>
-                  <svg
-                    style={{ width: '12px', height: '12px' }}
-                    viewBox="0 0 24 24"
-                    fill="#10B981"
-                  >
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                  </svg>
+                <span title="Split on Splitwise" className="flex items-center">
+                  <Users className="w-3 h-3 text-success" />
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        {/* transactionRight - gap 2px for tighter spacing */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-          {/* transactionAmount - 15px, 600, JetBrains Mono */}
+        {/* Right Section - Amount + Details */}
+        <div className="flex flex-col items-end gap-0.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
+          {/* Amount */}
           <span
-            style={{
-              fontSize: '15px',
-              fontWeight: '600',
-              fontFamily: '"JetBrains Mono", monospace',
-              color: isExpense ? '#F87171' : '#22C55E'
-            }}
+            className={`
+              text-[15px] font-semibold font-mono transition-colors duration-200
+              ${isExpense ? 'text-destructive group-hover:text-destructive/90' : 'text-success group-hover:text-success/90'}
+            `}
           >
             {isExpense ? '-' : '+'}₹{formatIndianAmount(transaction.amount)}
           </span>
 
-          {/* Payment method - 10px, 500, uppercase, colored */}
+          {/* Payment Method */}
           {transaction.account_type && (
             <span
-              style={{
-                fontSize: '10px',
-                fontWeight: '500',
-                textTransform: 'uppercase',
-                letterSpacing: '0.3px',
-                color: paymentMethodColor
-              }}
+              className="text-[10px] font-medium uppercase tracking-wide transition-opacity duration-200 group-hover:opacity-80"
+              style={{ color: paymentMethodColor }}
             >
               {displayAccountType(transaction.account_type)}
             </span>
           )}
 
-          {/* transactionDate - 10px, rgba(255,255,255,0.3), 500 */}
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: '500' }}>
+          {/* Date */}
+          <span className="text-[10px] font-medium text-muted-foreground/40 transition-opacity duration-200 group-hover:text-muted-foreground/60">
             {formatShortDate(transaction.txn_time)}
           </span>
         </div>
       </div>
 
-      {/* separatorWrapper + separator - 80%, 1px, rgba(255,255,255,0.06) */}
+      {/* Separator - subtle animated line */}
       {!isLast && (
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          <div style={{ width: '80%', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+        <div className="flex justify-center w-full overflow-hidden">
+          <div className="w-4/5 h-px bg-foreground/[0.06] transition-all duration-300" />
         </div>
       )}
     </>

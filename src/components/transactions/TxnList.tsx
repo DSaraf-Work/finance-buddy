@@ -22,40 +22,44 @@ interface TxnListProps {
   onTransactionClick: (transaction: Transaction) => void;
 }
 
-// Get color based on amount for Day Total
-// Green: credit (positive) or small debit up to 100
-// Yellow: debit 100-500
-// Orange: debit 500-1000
-// Red: debit 1000-5000
-// Purple/Indigo: debit above 5000
-function getDayTotalColor(total: number): { text: string; bg: string } {
+/**
+ * Get color classes based on amount for Day Total
+ * Uses design system semantic colors
+ * Green: credit (positive) or small debit up to 100
+ * Yellow: debit 100-500
+ * Orange: debit 500-1000
+ * Red: debit 1000-5000
+ * Dark Red: debit above 5000
+ */
+function getDayTotalClasses(total: number): { textClass: string; bgClass: string } {
   if (total > 0) {
-    // Credit - Green
-    return { text: '#10B981', bg: 'rgba(16, 185, 129, 0.1)' };
+    // Credit - Green (success)
+    return { textClass: 'text-success', bgClass: 'bg-success/10' };
   }
 
   const absTotal = Math.abs(total);
 
   if (absTotal <= 100) {
     // Small debit - Green (minor expense)
-    return { text: '#10B981', bg: 'rgba(16, 185, 129, 0.1)' };
+    return { textClass: 'text-success', bgClass: 'bg-success/10' };
   } else if (absTotal <= 500) {
-    // Medium debit - Yellow
-    return { text: '#EAB308', bg: 'rgba(234, 179, 8, 0.1)' };
+    // Medium debit - Yellow/Amber
+    return { textClass: 'text-amber-400', bgClass: 'bg-amber-400/10' };
   } else if (absTotal <= 1000) {
     // Larger debit - Orange
-    return { text: '#F97316', bg: 'rgba(249, 115, 22, 0.1)' };
+    return { textClass: 'text-orange-400', bgClass: 'bg-orange-400/10' };
   } else if (absTotal <= 5000) {
-    // High debit - Red
-    return { text: '#EF4444', bg: 'rgba(239, 68, 68, 0.1)' };
+    // High debit - Red (destructive)
+    return { textClass: 'text-destructive', bgClass: 'bg-destructive/10' };
   } else {
-    // Very high debit - Dark Crimson (darker red = more severe)
-    return { text: '#B91C1C', bg: 'rgba(185, 28, 28, 0.1)' };
+    // Very high debit - Dark Crimson
+    return { textClass: 'text-red-700', bgClass: 'bg-red-700/10' };
   }
 }
 
 /**
  * Collapsible Date Section Component
+ * Uses Tailwind classes for design system compliance
  */
 function DateSection({
   group,
@@ -70,45 +74,33 @@ function DateSection({
 }) {
   // First 2 dates expanded by default, rest collapsed
   const [isOpen, setIsOpen] = useState(groupIndex < 2);
-  const colors = getDayTotalColor(group.total);
+  const { textClass, bgClass } = getDayTotalClasses(group.total);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       {/* Date header - date on left, total on right */}
       <CollapsibleTrigger asChild>
         <div
-          className="flex items-center justify-between cursor-pointer hover:opacity-80 transition-opacity"
-          style={{
-            marginTop: groupIndex === 0 ? '0' : '20px',
-            marginBottom: '12px',
-            padding: '0 4px',
-          }}
+          className={`
+            flex items-center justify-between cursor-pointer px-1 mb-3
+            hover:opacity-80 transition-all duration-200
+            ${groupIndex === 0 ? '' : 'mt-5'}
+          `}
         >
           {/* Left side: chevron + date + count */}
           <div className="flex items-center gap-2">
-            {isOpen ? (
-              <ChevronDown className="h-4 w-4 text-[#71717A]" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-[#71717A]" />
-            )}
-            <span
-              style={{
-                fontSize: '13px',
-                fontWeight: '500',
-                color: 'rgba(255,255,255,0.5)',
-                whiteSpace: 'nowrap',
-              }}
-            >
+            <ChevronDown
+              className={`
+                h-4 w-4 text-muted-foreground transition-transform duration-200
+                ${isOpen ? 'rotate-0' : '-rotate-90'}
+              `}
+            />
+            <span className="text-[13px] font-medium text-muted-foreground/50 whitespace-nowrap">
               {group.header}
             </span>
             {/* Show count when collapsed */}
             {!isOpen && (
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: '#71717A',
-                }}
-              >
+              <span className="text-xs text-muted-foreground animate-in fade-in duration-200">
                 ({group.transactions.length})
               </span>
             )}
@@ -117,14 +109,11 @@ function DateSection({
           {/* Right side: day total (always visible) */}
           {group.total !== 0 && (
             <span
-              style={{
-                fontSize: '12px',
-                fontWeight: '500',
-                color: colors.text,
-                padding: '2px 8px',
-                background: colors.bg,
-                borderRadius: '4px',
-              }}
+              className={`
+                text-xs font-medium px-2 py-0.5 rounded
+                transition-all duration-200 hover:scale-105
+                ${textClass} ${bgClass}
+              `}
             >
               {group.total > 0 ? '+' : ''}₹{Math.abs(group.total).toFixed(0)}
             </span>
@@ -132,7 +121,7 @@ function DateSection({
         </div>
       </CollapsibleTrigger>
 
-      <CollapsibleContent>
+      <CollapsibleContent className="animate-in slide-in-from-top-2 duration-200">
         {/* Transactions for this date */}
         {group.transactions.map((txn, index) => (
           <TxnCard
@@ -153,6 +142,7 @@ function DateSection({
 /**
  * Transaction List Component
  * Renders a list of transaction cards with optional date grouping
+ * Features: Collapsible date sections, staggered animations, design system compliance
  */
 const TxnList = memo(function TxnList({
   transactions,
@@ -162,7 +152,7 @@ const TxnList = memo(function TxnList({
   // If grouped transactions are provided, render with collapsible date sections
   if (groupedTransactions && groupedTransactions.length > 0) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="flex flex-col">
         {groupedTransactions.map((group, groupIndex) => (
           <DateSection
             key={group.date}
@@ -179,7 +169,7 @@ const TxnList = memo(function TxnList({
   // Fallback to flat list (backward compatibility)
   if (transactions) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="flex flex-col">
         {transactions.map((txn, index) => (
           <TxnCard
             key={txn.id}

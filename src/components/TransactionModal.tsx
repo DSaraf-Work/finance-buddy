@@ -22,6 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+// Icons
+import {
+  Pencil,
+  Calculator,
+  Building2,
+  FileText,
+  Mail,
+  StickyNote,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Sparkles,
+  ChevronDown,
+  Users,
+} from 'lucide-react';
 // Phase 2 & 3 Components
 import { ReceiptSection } from '@/components/receipts';
 import { RefundStatusSection, RefundLinkSection, RefundSuggestionsModal } from '@/components/refunds';
@@ -481,31 +496,27 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
         className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
+        <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border/50">
           <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Pencil className="w-4 h-4 text-primary" />
+            </div>
             Edit Transaction
           </DialogTitle>
         </DialogHeader>
 
         {/* Splitwise Message Toast */}
         {splitwiseMessage && (
-          <div className={`px-4 py-3 flex items-center justify-between ${
+          <div className={`px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 duration-300 ${
             splitwiseMessage.type === 'success'
-              ? 'bg-success/20 border-b border-success/30'
-              : 'bg-destructive/20 border-b border-destructive/30'
+              ? 'bg-success/10 border-b border-success/20'
+              : 'bg-destructive/10 border-b border-destructive/20'
           }`}>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               {splitwiseMessage.type === 'success' ? (
-                <svg className="w-5 h-5 text-success mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircle2 className="w-4 h-4 text-success" />
               ) : (
-                <svg className="w-5 h-5 text-destructive mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <XCircle className="w-4 h-4 text-destructive" />
               )}
               <span className={`text-sm ${splitwiseMessage.type === 'success' ? 'text-success' : 'text-destructive'}`}>
                 {splitwiseMessage.text}
@@ -515,7 +526,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               variant="ghost"
               size="sm"
               onClick={() => setSplitwiseMessage(null)}
-              className={splitwiseMessage.type === 'success' ? 'text-success hover:text-success/80' : 'text-destructive hover:text-destructive/80'}
+              className={`h-7 px-2 ${splitwiseMessage.type === 'success' ? 'text-success hover:text-success/80 hover:bg-success/10' : 'text-destructive hover:text-destructive/80 hover:bg-destructive/10'}`}
             >
               Dismiss
             </Button>
@@ -524,27 +535,20 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
         {/* Re-extract Message Toast */}
         {reExtractMessage && (
-          <div className={`px-4 py-3 flex items-center justify-between ${
+          <div className={`px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 duration-300 ${
             reExtractMessage.type === 'success'
-              ? 'bg-success/20 border-b border-success/30'
+              ? 'bg-success/10 border-b border-success/20'
               : reExtractMessage.type === 'info'
-              ? 'bg-primary/20 border-b border-primary/30'
-              : 'bg-destructive/20 border-b border-destructive/30'
+              ? 'bg-primary/10 border-b border-primary/20'
+              : 'bg-destructive/10 border-b border-destructive/20'
           }`}>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               {reExtractMessage.type === 'success' ? (
-                <svg className="w-5 h-5 text-success mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircle2 className="w-4 h-4 text-success" />
               ) : reExtractMessage.type === 'info' ? (
-                <svg className="w-5 h-5 text-primary mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+                <Loader2 className="w-4 h-4 text-primary animate-spin" />
               ) : (
-                <svg className="w-5 h-5 text-destructive mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <XCircle className="w-4 h-4 text-destructive" />
               )}
               <span className={`text-sm ${
                 reExtractMessage.type === 'success' ? 'text-success' :
@@ -559,10 +563,10 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 variant="ghost"
                 size="sm"
                 onClick={() => setReExtractMessage(null)}
-                className={
-                  reExtractMessage.type === 'success' ? 'text-success hover:text-success/80' :
-                  'text-destructive hover:text-destructive/80'
-                }
+                className={`h-7 px-2 ${
+                  reExtractMessage.type === 'success' ? 'text-success hover:text-success/80 hover:bg-success/10' :
+                  'text-destructive hover:text-destructive/80 hover:bg-destructive/10'
+                }`}
               >
                 Dismiss
               </Button>
@@ -574,12 +578,12 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6 space-y-6">
             {/* Transaction Details Section */}
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
+            <Card className="bg-card/50 border-border/50 overflow-hidden">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-medium flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Calculator className="w-4 h-4 text-primary" />
+                  </div>
                   Transaction Details
                 </CardTitle>
               </CardHeader>
@@ -645,12 +649,12 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             </Card>
 
             {/* Merchant Information Section */}
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+            <Card className="bg-card/50 border-border/50 overflow-hidden">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-medium flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                    <Building2 className="w-4 h-4 text-success" />
+                  </div>
                   Merchant Information
                 </CardTitle>
               </CardHeader>
@@ -709,12 +713,12 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             </Card>
 
             {/* Additional Details Section */}
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+            <Card className="bg-card/50 border-border/50 overflow-hidden">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base font-medium flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-purple-400" />
+                  </div>
                   Additional Details
                 </CardTitle>
               </CardHeader>
@@ -822,26 +826,21 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
             {/* Email Body Section - Collapsible */}
             {transaction.email_row_id && (
-              <Card className="bg-card/50 border-border/50">
+              <Card className="bg-card/50 border-border/50 overflow-hidden">
                 <CardHeader
-                  className="cursor-pointer select-none"
+                  className="cursor-pointer select-none hover:bg-muted/20 transition-colors"
                   onClick={() => setEmailExpanded(!emailExpanded)}
                 >
-                  <CardTitle className="text-lg flex items-center justify-between">
-                    <div className="flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
+                  <CardTitle className="text-base font-medium flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Mail className="w-4 h-4 text-primary" />
+                      </div>
                       Source Email
                     </div>
-                    <svg
-                      className={`w-5 h-5 text-muted-foreground transition-transform ${emailExpanded ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <ChevronDown
+                      className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${emailExpanded ? 'rotate-180' : ''}`}
+                    />
                   </CardTitle>
                 </CardHeader>
                 {emailExpanded && (
@@ -871,26 +870,21 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             )}
 
             {/* Notes Section - Collapsible */}
-            <Card className="bg-card/50 border-border/50">
+            <Card className="bg-card/50 border-border/50 overflow-hidden">
               <CardHeader
-                className="cursor-pointer select-none"
+                className="cursor-pointer select-none hover:bg-muted/20 transition-colors"
                 onClick={() => setNotesExpanded(!notesExpanded)}
               >
-                <CardTitle className="text-lg flex items-center justify-between">
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
+                <CardTitle className="text-base font-medium flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                      <StickyNote className="w-4 h-4 text-orange-400" />
+                    </div>
                     Notes & Comments
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-muted-foreground transition-transform ${notesExpanded ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown
+                    className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${notesExpanded ? 'rotate-180' : ''}`}
+                  />
                 </CardTitle>
               </CardHeader>
               {notesExpanded && (
@@ -925,21 +919,16 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
           {/* Splitwise Status Banner - shows when expense is linked */}
           {(splitwiseStatus === 'exists' || splitwiseStatus === 'checking') && (
-            <div className="shrink-0 px-6 py-2.5 bg-emerald-500/10 border-t border-emerald-500/20 flex items-center gap-2">
+            <div className="shrink-0 px-6 py-2.5 bg-success/10 border-t border-success/20 flex items-center gap-2">
               {splitwiseStatus === 'checking' ? (
                 <>
-                  <svg className="animate-spin h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span className="text-sm text-emerald-400">Checking Splitwise...</span>
+                  <Loader2 className="h-4 w-4 text-success animate-spin" />
+                  <span className="text-sm text-success">Checking Splitwise...</span>
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                  </svg>
-                  <span className="text-sm text-emerald-400">
+                  <Users className="w-4 h-4 text-success shrink-0" />
+                  <span className="text-sm text-success">
                     Split with {splitwiseParticipants.length > 0
                       ? splitwiseParticipants.join(', ')
                       : 'others'}
@@ -950,9 +939,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           )}
 
           {/* Footer - Sticky at bottom */}
-          <div className="shrink-0 px-6 py-4 border-t border-border bg-card flex items-center justify-between">
+          <div className="shrink-0 px-6 py-4 border-t border-border/50 bg-card/80 backdrop-blur-sm flex items-center justify-between">
             {/* Left side - Action icons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {formData.amount && parseFloat(formData.amount) > 0 && (
                 <SplitwiseDropdown
                   transactionAmount={parseFloat(formData.amount)}
@@ -979,42 +968,34 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 onClick={handleReExtract}
                 disabled={isReExtracting}
                 title="Re-extract with AI"
-                className="w-10 h-10 flex items-center justify-center bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50"
+                className="w-10 h-10 flex items-center justify-center bg-muted/50 hover:bg-primary/10 hover:text-primary rounded-xl transition-all duration-200 disabled:opacity-50 group"
               >
                 {isReExtracting ? (
-                  <svg className="animate-spin h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <Loader2 className="h-5 w-5 text-primary animate-spin" />
                 ) : (
-                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
+                  <Sparkles className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 )}
               </button>
             </div>
 
             {/* Right side - Cancel & Save */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={onClose}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="bg-success hover:bg-success/90 text-white"
+                className="bg-success hover:bg-success/90 text-white min-w-[80px] transition-all duration-200"
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Saving...
                   </>
                 ) : (
