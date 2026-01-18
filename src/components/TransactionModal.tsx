@@ -114,11 +114,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       });
 
       if (response.ok) {
-        const data: SubTransactionListResponse = await response.json();
-        setSubTransactions(data.items);
-        setSubTransactionValidation(data.validation);
+        const result = await response.json();
+        // API returns { success, data: { items, count, validation } }
+        const data: SubTransactionListResponse = result.data || result;
+        setSubTransactions(data.items || []);
+        setSubTransactionValidation(data.validation || null);
         // Auto-expand if there are sub-transactions
-        if (data.items.length > 0) {
+        if (data.items && data.items.length > 0) {
           setSubTransactionsExpanded(true);
         }
       }
