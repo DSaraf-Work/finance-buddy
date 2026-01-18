@@ -122,6 +122,12 @@ SELECT
 FROM fb_sub_transactions s
 JOIN fb_emails_processed p ON s.parent_transaction_id = p.id;
 
+-- 3.1 Grant permissions to Supabase roles
+-- service_role needs SELECT for admin client queries
+GRANT SELECT ON v_all_transactions TO service_role;
+GRANT SELECT ON v_all_transactions TO authenticated;
+GRANT SELECT ON v_all_transactions TO anon;
+
 -- ============================================================================
 -- PART 4: Triggers for automatic status management
 -- ============================================================================
