@@ -9,6 +9,24 @@ export type TransactionDirection = 'debit' | 'credit';
 export type JobStatus = 'queued' | 'running' | 'completed' | 'failed';
 export type SortOrder = 'asc' | 'desc';
 
+/**
+ * Transaction workflow status.
+ * - REVIEW: Needs user review
+ * - APPROVED: User confirmed transaction
+ * - INVALID: Transaction is invalid/erroneous
+ * - REJECTED: User rejected the transaction
+ * - split: Parent transaction has been split into sub-transactions (hidden from main list)
+ */
+export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED' | 'split';
+
+/**
+ * Record type discriminator for unified view (v_all_transactions).
+ * Named 'record_type' to avoid collision with existing 'transaction_type' (Dr/Cr) field.
+ * - parent: Regular transaction from fb_emails_processed
+ * - sub: Sub-transaction from fb_sub_transactions
+ */
+export type RecordType = 'parent' | 'sub';
+
 // Gmail API types
 export interface GmailMessage {
   id: string;
@@ -274,5 +292,48 @@ export interface BackfillResponse {
   job_id: UUID;
   status: JobStatus;
   message: string;
+}
+
+// ============================================================================
+// UNIFIED TRANSACTION TYPES (for v_all_transactions view)
+// ============================================================================
+
+/**
+ * Unified transaction from v_all_transactions view.
+ * Includes both regular transactions (type='parent') and sub-transactions (type='sub').
+ * Sub-transactions inherit metadata fields from their parent via JOIN.
+ */
+export interface UnifiedTransaction {
+  id: UUID;
+  user_id: UUID;
+  email_row_id: UUID;
+  txn_time: string | null;
+  amount: number | null;
+  currency: string | null;
+  direction: TransactionDirection | null;
+  merchant_name: string | null;
+  category: string | null;
+  status: TransactionStatus;
+  /** Discriminator: 'parent' for regular transactions, 'sub' for sub-transactions */
+  record_type: RecordType;
+  /** NULL for parents, UUID for sub-transactions (points to parent) */
+  parent_transaction_id: UUID | null;
+  created_at: string;
+  updated_at: string;
+  splitwise_expense_id: string | null;
+  user_notes: string | null;
+  /** Original transaction type: 'Dr' (debit) or 'Cr' (credit) - inherited from parent for sub-txns */
+  transaction_type: 'Dr' | 'Cr' | null;
+  // Inherited parent fields (sub-transactions get these via JOIN)
+  google_user_id: string | null;
+  connection_id: UUID | null;
+  merchant_normalized: string | null;
+  account_hint: string | null;
+  reference_id: string | null;
+  location: string | null;
+  confidence: number | null;
+  extraction_version: string | null;
+  account_type: string | null;
+  ai_notes: string | null;
 }
 

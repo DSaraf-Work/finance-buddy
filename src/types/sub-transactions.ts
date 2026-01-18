@@ -218,3 +218,58 @@ export interface DBCreateSubTransactionItem {
   merchant_name?: string | null;
   user_notes?: string | null;
 }
+
+// ============================================================================
+// SUB-TRANSACTION INDEPENDENCE TYPES (Phase 2)
+// Added in migration 0007_sub_transaction_status.sql
+// ============================================================================
+
+/**
+ * Sibling sub-transaction info for cascade delete modal
+ */
+export interface SiblingSubTransaction {
+  id: UUID;
+  parent_id: UUID;
+  amount: number;
+  merchant_name: string | null;
+  category: string | null;
+}
+
+/**
+ * Response when deleting a sub-transaction
+ * Includes sibling info for the frontend confirmation modal
+ *
+ * DELETE /api/transactions/[id]/sub-transactions/[subId]
+ */
+export interface SubTransactionDeleteResponse {
+  /** Whether the deletion was successful */
+  deleted: boolean;
+  /** Number of remaining sibling sub-transactions */
+  sibling_count: number;
+  /** Details of remaining siblings (for modal display) */
+  siblings: SiblingSubTransaction[];
+  /** Parent transaction ID */
+  parent_id: UUID;
+  /** True if this was the last sibling and parent will be restored */
+  will_restore_parent: boolean;
+  /** Status the parent will be restored to (if will_restore_parent is true) */
+  restored_status?: string;
+}
+
+/**
+ * Response for unsplitting a transaction (delete all sub-transactions)
+ *
+ * POST /api/transactions/[id]/unsplit
+ */
+export interface UnsplitResponse {
+  /** Whether the unsplit was successful */
+  success: boolean;
+  /** Parent transaction ID that was restored */
+  parent_id: UUID;
+  /** Number of sub-transactions deleted */
+  deleted_count: number;
+  /** Whether the parent was restored (always true on success) */
+  parent_restored: boolean;
+  /** Status the parent was restored to */
+  restored_status: string;
+}

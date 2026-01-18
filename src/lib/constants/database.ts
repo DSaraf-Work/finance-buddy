@@ -94,6 +94,13 @@ export const VIEW_RECEIPT_SUMMARY = 'fb_receipt_summary' as const;
  */
 export const VIEW_REFUND_AGGREGATES = 'fb_refund_link_aggregates' as const;
 
+/**
+ * Unified view of all transactions: regular parents (non-split) + sub-transactions.
+ * Use this for transaction list APIs to show sub-transactions as independent items.
+ * Added in migration 0007_sub_transaction_status.sql
+ */
+export const VIEW_ALL_TRANSACTIONS = 'v_all_transactions' as const;
+
 // ============================================================================
 // TABLE NAME COLLECTIONS
 // ============================================================================
@@ -122,6 +129,7 @@ export const VIEWS = [
   VIEW_USER_ACTIVE_KEYWORDS,
   VIEW_RECEIPT_SUMMARY,
   VIEW_REFUND_AGGREGATES,
+  VIEW_ALL_TRANSACTIONS,
 ] as const;
 
 // ============================================================================
