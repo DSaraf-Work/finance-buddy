@@ -1,8 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Transaction } from '@/pages/transactions';
 import InteractiveKeywordSelector from './InteractiveKeywordSelector';
 import LoadingScreen from './LoadingScreen';
 import SplitwiseDropdown from './SplitwiseDropdown';
+import {
+  SubTransactionEditor,
+  SubTransactionList,
+} from '@/components/sub-transactions';
+import type {
+  SubTransactionPublic,
+  SubTransactionValidation,
+  CreateSubTransactionInput,
+  SubTransactionListResponse,
+} from '@/types/sub-transactions';
+import { Layers } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -44,6 +55,15 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [splitwiseStatus, setSplitwiseStatus] = useState<'checking' | 'exists' | 'none'>('none');
   const [splitwiseParticipants, setSplitwiseParticipants] = useState<string[]>([]);
 
+  // Sub-transaction state
+  const [showSplitEditor, setShowSplitEditor] = useState(false);
+  const [subTransactions, setSubTransactions] = useState<SubTransactionPublic[]>([]);
+  const [subTransactionValidation, setSubTransactionValidation] = useState<SubTransactionValidation | null>(null);
+  const [subTransactionsLoading, setSubTransactionsLoading] = useState(false);
+  const [subTransactionsExpanded, setSubTransactionsExpanded] = useState(false);
+  const [splitError, setSplitError] = useState<string | null>(null);
+  const [splitLoading, setSplitLoading] = useState(false);
+
   useEffect(() => {
     setFormData(transaction);
     if (isOpen && transaction.email_row_id) {
@@ -82,6 +102,96 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
     checkSplitwiseExpense();
   }, [isOpen, transaction.splitwise_expense_id]);
+
+  // Load sub-transactions when modal opens
+  const fetchSubTransactions = useCallback(async () => {
+    if (!transaction.id) return;
+
+    setSubTransactionsLoading(true);
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions`, {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data: SubTransactionListResponse = await response.json();
+        setSubTransactions(data.items);
+        setSubTransactionValidation(data.validation);
+        // Auto-expand if there are sub-transactions
+        if (data.items.length > 0) {
+          setSubTransactionsExpanded(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching sub-transactions:', error);
+    } finally {
+      setSubTransactionsLoading(false);
+    }
+  }, [transaction.id]);
+
+  // Load sub-transactions when modal opens
+  useEffect(() => {
+    if (isOpen && transaction.id) {
+      fetchSubTransactions();
+    } else {
+      // Reset state when modal closes
+      setSubTransactions([]);
+      setSubTransactionValidation(null);
+      setSubTransactionsExpanded(false);
+    }
+  }, [isOpen, transaction.id, fetchSubTransactions]);
+
+  // Handle creating sub-transactions
+  const handleCreateSubTransactions = useCallback(async (items: CreateSubTransactionInput[]) => {
+    if (!transaction.id) return;
+
+    setSplitLoading(true);
+    setSplitError(null);
+
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ items }),
+      });
+
+      if (response.ok) {
+        // Refresh sub-transactions
+        await fetchSubTransactions();
+        setShowSplitEditor(false);
+      } else {
+        const error = await response.json();
+        setSplitError(error.error || 'Failed to create sub-transactions');
+      }
+    } catch (error) {
+      console.error('Error creating sub-transactions:', error);
+      setSplitError('Failed to create sub-transactions. Please try again.');
+    } finally {
+      setSplitLoading(false);
+    }
+  }, [transaction.id, fetchSubTransactions]);
+
+  // Handle deleting a sub-transaction
+  const handleDeleteSubTransaction = useCallback(async (subId: string) => {
+    if (!transaction.id) return;
+
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions/${subId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Refresh sub-transactions
+        await fetchSubTransactions();
+      } else {
+        console.error('Failed to delete sub-transaction');
+      }
+    } catch (error) {
+      console.error('Error deleting sub-transaction:', error);
+    }
+  }, [transaction.id, fetchSubTransactions]);
 
   const fetchEmailBody = async (emailRowId: string) => {
     try {
@@ -276,6 +386,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const transactionTypes = ['Dr', 'Cr'];
 
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]"
@@ -580,6 +691,47 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               </CardContent>
             </Card>
 
+            {/* Sub-Transactions Section - Collapsible */}
+            <Card className="bg-card/50 border-border/50">
+              <CardHeader
+                className="cursor-pointer select-none"
+                onClick={() => setSubTransactionsExpanded(!subTransactionsExpanded)}
+              >
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Layers className="w-5 h-5 mr-2 text-primary" />
+                    Sub-Transactions
+                    {subTransactions.length > 0 && (
+                      <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-primary/15 text-primary">
+                        {subTransactions.length}
+                      </span>
+                    )}
+                  </div>
+                  <svg
+                    className={`w-5 h-5 text-muted-foreground transition-transform ${subTransactionsExpanded ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </CardTitle>
+              </CardHeader>
+              {subTransactionsExpanded && (
+                <CardContent>
+                  <SubTransactionList
+                    items={subTransactions}
+                    validation={subTransactionValidation || undefined}
+                    loading={subTransactionsLoading}
+                    onDelete={handleDeleteSubTransaction}
+                    onAdd={() => setShowSplitEditor(true)}
+                    currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+                    defaultExpanded={true}
+                  />
+                </CardContent>
+              )}
+            </Card>
+
             {/* Email Body Section - Collapsible */}
             {transaction.email_row_id && (
               <Card className="bg-card/50 border-border/50">
@@ -713,7 +865,18 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           <div className="shrink-0 px-6 py-4 border-t border-border bg-card flex items-center justify-between">
             {/* Left side - Action icons */}
             <div className="flex items-center gap-3">
-              {formData.amount && parseFloat(formData.amount) > 0 && (
+              {/* Split Transaction Button */}
+              {formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowSplitEditor(true)}
+                  title="Split into sub-transactions"
+                  className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors"
+                >
+                  <Layers className="h-5 w-5 text-primary" />
+                </button>
+              )}
+              {formData.amount && parseFloat(formData.amount.toString()) > 0 && (
                 <SplitwiseDropdown
                   transactionAmount={parseFloat(formData.amount)}
                   transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
@@ -786,5 +949,20 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
         </form>
       </DialogContent>
     </Dialog>
+
+      {/* Sub-Transaction Editor Modal */}
+      <SubTransactionEditor
+        isOpen={showSplitEditor}
+        onClose={() => {
+          setShowSplitEditor(false);
+          setSplitError(null);
+        }}
+        onSubmit={handleCreateSubTransactions}
+        parentAmount={formData.amount ? parseFloat(formData.amount.toString()) : null}
+        currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+        loading={splitLoading}
+        error={splitError}
+      />
+    </>
   );
 }
