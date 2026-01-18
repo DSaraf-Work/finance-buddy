@@ -21,6 +21,16 @@ export interface AIModelHierarchy {
   tertiary?: AIModelConfig;
 }
 
+/**
+ * Image content for vision requests
+ */
+export interface AIImageContent {
+  /** Base64-encoded image data (without data URI prefix) */
+  base64: string;
+  /** MIME type of the image */
+  mediaType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
+}
+
 export interface AIRequest {
   prompt: string;
   systemPrompt?: string;
@@ -28,6 +38,8 @@ export interface AIRequest {
   temperature?: number;
   responseFormat?: 'text' | 'json';
   metadata?: Record<string, any>;
+  /** Optional image for vision requests (Claude Vision API) */
+  image?: AIImageContent;
 }
 
 
