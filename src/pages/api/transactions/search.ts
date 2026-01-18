@@ -2,12 +2,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import {
-  TABLE_EMAILS_PROCESSED
+  VIEW_ALL_TRANSACTIONS
 } from '@/lib/constants/database';
 import {
   TransactionSearchRequest,
   PaginatedResponse,
-  ExtractedTransactionPublic
+  UnifiedTransaction,
+  RecordType
 } from '@/types';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
@@ -28,6 +29,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       min_amount,
       max_amount,
       min_confidence,
+      record_type,  // 'parent' | 'sub' - filter by record type (parent vs sub-transaction)
       page = 1,
       pageSize = 50,
       sort = 'asc'
@@ -45,11 +47,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       return res.status(400).json({ error: 'pageSize cannot exceed 100' });
     }
 
-    // Build query - use supabaseAdmin for server-side operations
+    // Build query using unified view (v_all_transactions)
+    // This view includes both regular transactions and sub-transactions
+    // - Parents with status='split' are excluded (their sub-txns appear instead)
+    // - Sub-transactions inherit parent metadata via JOIN
     // Authorization enforced by withAuth() + explicit user_id filter
-    // RLS policies remain as defense-in-depth layer
     let query = supabaseAdmin
-      .from(TABLE_EMAILS_PROCESSED)
+      .from(VIEW_ALL_TRANSACTIONS)
       .select(`
         id,
         google_user_id,
@@ -66,7 +70,9 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         reference_id,
         location,
         account_type,
+        record_type,
         transaction_type,
+        parent_transaction_id,
         ai_notes,
         user_notes,
         confidence,
@@ -121,6 +127,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     if (account_type) {
       query = query.eq('account_type', account_type);
+    }
+
+    // Filter by record type ('parent' or 'sub')
+    if (record_type) {
+      query = query.eq('record_type', record_type);
     }
 
     // Apply pagination and sorting

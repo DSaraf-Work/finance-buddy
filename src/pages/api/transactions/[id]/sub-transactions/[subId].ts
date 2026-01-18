@@ -17,7 +17,11 @@ import {
   SubTransactionValidationError,
 } from '@/lib/sub-transactions/validation';
 import { mapSubTransactionToPublic } from '@/lib/sub-transactions/mappers';
-import type { UpdateSubTransactionInput } from '@/types/sub-transactions';
+import type {
+  UpdateSubTransactionInput,
+  SubTransactionDeleteResponse,
+  SiblingSubTransaction,
+} from '@/types/sub-transactions';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   // Check feature flag
@@ -165,9 +169,48 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   // ============================================================================
   // DELETE - Delete single sub-transaction
+  // Returns sibling info for frontend confirmation modal
   // ============================================================================
   if (req.method === 'DELETE') {
     try {
+      // Get all siblings (including the one being deleted) for modal info
+      const { data: allSiblings, error: siblingsError } = await supabaseAdmin
+        .from(TABLE_SUB_TRANSACTIONS)
+        .select('id, parent_transaction_id, amount, merchant_name, category')
+        .eq('parent_transaction_id', parentId)
+        .eq('user_id', user.id)
+        .order('sub_transaction_order');
+
+      if (siblingsError) {
+        console.error('[SubTransactions] Failed to get siblings:', siblingsError);
+      }
+
+      // Map siblings to response type (excluding the one being deleted)
+      const siblings: SiblingSubTransaction[] = ((allSiblings || []) as any[])
+        .filter((s) => s.id !== subId)
+        .map((s) => ({
+          id: s.id,
+          parent_id: s.parent_transaction_id,
+          amount: Number(s.amount),
+          merchant_name: s.merchant_name,
+          category: s.category,
+        }));
+
+      const remainingCount = siblings.length;
+      const willRestoreParent = remainingCount === 0;
+
+      // Get parent's status_before_split if this will restore it
+      let restoredStatus: string | undefined;
+      if (willRestoreParent) {
+        const { data: parentStatus } = await supabaseAdmin
+          .from(TABLE_EMAILS_PROCESSED)
+          .select('status_before_split')
+          .eq('id', parentId)
+          .single();
+        restoredStatus = (parentStatus as any)?.status_before_split || 'REVIEW';
+      }
+
+      // Perform the delete
       const { error: deleteError } = await supabaseAdmin
         .from(TABLE_SUB_TRANSACTIONS)
         .delete()
@@ -182,9 +225,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         });
       }
 
+      // Return response with sibling info for modal
+      const response: SubTransactionDeleteResponse = {
+        deleted: true,
+        sibling_count: remainingCount,
+        siblings,
+        parent_id: parentId,
+        will_restore_parent: willRestoreParent,
+        ...(restoredStatus && { restored_status: restoredStatus }),
+      };
+
       return res.status(200).json({
         success: true,
-        data: { deleted: true },
+        data: response,
       });
     } catch (error: any) {
       console.error('[SubTransactions] Delete error:', error);
