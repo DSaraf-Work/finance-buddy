@@ -99,7 +99,12 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       }
 
       // If updating amount, validate total doesn't exceed parent
-      if (input.amount !== undefined && parent.amount !== null) {
+      // Convert parent.amount to number (may come as string from DB)
+      const parentAmount = parent.amount !== null && parent.amount !== undefined
+        ? Number(parent.amount)
+        : null;
+
+      if (input.amount !== undefined && parentAmount !== null) {
         // Get all other sub-transactions for this parent
         const { data: siblings } = await supabaseAdmin
           .from(TABLE_SUB_TRANSACTIONS)
@@ -114,9 +119,9 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         );
         const newTotal = siblingsTotal + input.amount;
 
-        if (newTotal > parent.amount) {
+        if (newTotal > parentAmount) {
           return res.status(400).json({
-            error: `Updated total (${newTotal}) would exceed parent amount (${parent.amount})`,
+            error: `Updated total (${newTotal}) would exceed parent amount (${parentAmount})`,
             code: 'AMOUNT_EXCEEDED',
           });
         }

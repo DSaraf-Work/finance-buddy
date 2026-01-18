@@ -38,7 +38,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   }
 
   // Verify parent transaction exists and belongs to user
-  const { data: parentData, error: parentError } = await supabaseAdmin
+  const { data: parentData, error: parentError } = await (supabaseAdmin as any)
     .from(TABLE_EMAILS_PROCESSED)
     .select('id, user_id, email_row_id, currency, direction, amount, txn_time, splitwise_expense_id')
     .eq('id', parentId)
@@ -58,7 +58,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'GET') {
     try {
       // Get sub-transactions
-      const { data: items, error: listError } = await supabaseAdmin
+      const { data: items, error: listError } = await (supabaseAdmin as any)
         .from(TABLE_SUB_TRANSACTIONS)
         .select('*')
         .eq('parent_transaction_id', parentId)
@@ -76,8 +76,12 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       // Calculate validation
       const itemsArray = (items || []) as Array<Record<string, any>>;
       const subTotal = itemsArray.reduce((sum, item) => sum + Number(item.amount), 0);
+      // Convert parent.amount to number (may come as string from DB)
+      const parentAmount = parent.amount !== null && parent.amount !== undefined
+        ? Number(parent.amount)
+        : null;
       const validation = buildValidationResult(
-        parent.amount,
+        parentAmount,
         subTotal,
         itemsArray.length
       );
@@ -144,10 +148,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       // Calculate total amount of new items
       const totalAmount = request.items.reduce((sum, item) => sum + item.amount, 0);
 
+      // Convert parent.amount to number (may come as string from DB)
+      const parentAmountNum = parent.amount !== null && parent.amount !== undefined
+        ? Number(parent.amount)
+        : null;
+
       // Validate total doesn't exceed parent (allow partial splits)
-      if (parent.amount !== null && totalAmount > parent.amount) {
+      if (parentAmountNum !== null && totalAmount > parentAmountNum) {
         return res.status(400).json({
-          error: `Total sub-transaction amount (${totalAmount}) exceeds parent amount (${parent.amount})`,
+          error: `Total sub-transaction amount (${totalAmount}) exceeds parent amount (${parentAmountNum})`,
           code: 'AMOUNT_EXCEEDED',
         });
       }
@@ -185,7 +194,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       const createdArray = (created || []) as Array<Record<string, any>>;
       const subTotal = createdArray.reduce((sum, item) => sum + Number(item.amount), 0);
       const validation = buildValidationResult(
-        parent.amount,
+        parentAmountNum,
         subTotal,
         createdArray.length
       );

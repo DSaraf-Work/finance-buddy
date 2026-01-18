@@ -66,9 +66,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const subTotal = subsArray.reduce((sum, s) => sum + Number(s.amount), 0);
     const subCount = subsArray.length;
 
+    // Convert parent.amount to number (may come as string from DB)
+    const parentAmount = parent.amount !== null && parent.amount !== undefined
+      ? Number(parent.amount)
+      : null;
+
     // Build validation result
     const validation: SubTransactionValidation = buildValidationResult(
-      parent.amount,
+      parentAmount,
       subTotal,
       subCount
     );
