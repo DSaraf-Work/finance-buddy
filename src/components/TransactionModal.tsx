@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Transaction } from '@/pages/transactions';
 import InteractiveKeywordSelector from './InteractiveKeywordSelector';
 import LoadingScreen from './LoadingScreen';
@@ -22,6 +22,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+// Phase 2 & 3 Components
+import { ReceiptSection } from '@/components/receipts';
+import { RefundStatusSection, RefundLinkSection, RefundSuggestionsModal } from '@/components/refunds';
+import { isReceiptParsingEnabled, isSmartRefundsEnabled } from '@/lib/features/flags';
+import type { ReceiptPublic, ReceiptItemPublic } from '@/types/receipts';
+import type { RefundStatus, RefundLinkPublic } from '@/types/refunds';
 
 interface TransactionModalProps {
   transaction: Transaction;
@@ -43,6 +49,14 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [emailExpanded, setEmailExpanded] = useState(false);
   const [splitwiseStatus, setSplitwiseStatus] = useState<'checking' | 'exists' | 'none'>('none');
   const [splitwiseParticipants, setSplitwiseParticipants] = useState<string[]>([]);
+  // Phase 2 & 3 state
+  const [receipt, setReceipt] = useState<ReceiptPublic | null>(null);
+  const [receiptItems, setReceiptItems] = useState<ReceiptItemPublic[]>([]);
+  const [receiptLoading, setReceiptLoading] = useState(false);
+  const [refundStatus, setRefundStatus] = useState<RefundStatus | null>(null);
+  const [refundLinks, setRefundLinks] = useState<RefundLinkPublic[]>([]);
+  const [refundLoading, setRefundLoading] = useState(false);
+  const [showRefundSuggestions, setShowRefundSuggestions] = useState(false);
 
   useEffect(() => {
     setFormData(transaction);
@@ -82,6 +96,81 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
     checkSplitwiseExpense();
   }, [isOpen, transaction.splitwise_expense_id]);
+
+  // Fetch receipt data when modal opens (Phase 2)
+  useEffect(() => {
+    const fetchReceiptData = async () => {
+      if (!isOpen || !transaction.id || !isReceiptParsingEnabled()) {
+        setReceipt(null);
+        setReceiptItems([]);
+        return;
+      }
+
+      setReceiptLoading(true);
+      try {
+        const response = await fetch(`/api/transactions/${transaction.id}/receipts`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data?.receipts?.[0]) {
+            setReceipt(data.data.receipts[0]);
+            // Fetch items if receipt exists and is completed
+            if (data.data.receipts[0].parsing_status === 'completed') {
+              const itemsRes = await fetch(
+                `/api/transactions/${transaction.id}/receipts/${data.data.receipts[0].id}`,
+                { credentials: 'include' }
+              );
+              if (itemsRes.ok) {
+                const itemsData = await itemsRes.json();
+                setReceiptItems(itemsData.data?.items || []);
+              }
+            }
+          } else {
+            setReceipt(null);
+            setReceiptItems([]);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching receipt:', error);
+      } finally {
+        setReceiptLoading(false);
+      }
+    };
+
+    fetchReceiptData();
+  }, [isOpen, transaction.id]);
+
+  // Fetch refund data when modal opens (Phase 3)
+  useEffect(() => {
+    const fetchRefundData = async () => {
+      if (!isOpen || !transaction.id || !isSmartRefundsEnabled()) {
+        setRefundStatus(null);
+        setRefundLinks([]);
+        return;
+      }
+
+      setRefundLoading(true);
+      try {
+        const response = await fetch(`/api/transactions/${transaction.id}/refunds`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data) {
+            setRefundStatus(data.data.status);
+            setRefundLinks(data.data.links || []);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching refund data:', error);
+      } finally {
+        setRefundLoading(false);
+      }
+    };
+
+    fetchRefundData();
+  }, [isOpen, transaction.id]);
 
   const fetchEmailBody = async (emailRowId: string) => {
     try {
@@ -248,6 +337,117 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       setIsReExtracting(false);
     }
   };
+
+  // Receipt handlers (Phase 2)
+  const handleReceiptUploadComplete = useCallback(async (receiptId: string) => {
+    // Refresh receipt data
+    try {
+      const response = await fetch(
+        `/api/transactions/${transaction.id}/receipts/${receiptId}`,
+        { credentials: 'include' }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setReceipt(data.data?.receipt);
+        setReceiptItems(data.data?.items || []);
+      }
+    } catch (error) {
+      console.error('Error fetching uploaded receipt:', error);
+    }
+  }, [transaction.id]);
+
+  const handleReceiptParse = useCallback(async (receiptId: string) => {
+    try {
+      const response = await fetch(
+        `/api/transactions/${transaction.id}/receipts/${receiptId}/parse`,
+        { method: 'POST', credentials: 'include' }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setReceipt(data.data?.receipt);
+        setReceiptItems(data.data?.items || []);
+      }
+    } catch (error) {
+      console.error('Error parsing receipt:', error);
+    }
+  }, [transaction.id]);
+
+  const handleReceiptDelete = useCallback(async (receiptId: string) => {
+    try {
+      const response = await fetch(
+        `/api/transactions/${transaction.id}/receipts/${receiptId}`,
+        { method: 'DELETE', credentials: 'include' }
+      );
+      if (response.ok) {
+        setReceipt(null);
+        setReceiptItems([]);
+      }
+    } catch (error) {
+      console.error('Error deleting receipt:', error);
+    }
+  }, [transaction.id]);
+
+  // Refund handlers (Phase 3)
+  const handleRefundUnlink = useCallback(async (linkId: string) => {
+    try {
+      const response = await fetch(
+        `/api/transactions/${transaction.id}/refunds/${linkId}`,
+        { method: 'DELETE', credentials: 'include' }
+      );
+      if (response.ok) {
+        // Refresh refund data
+        const refreshResponse = await fetch(`/api/transactions/${transaction.id}/refunds`, {
+          credentials: 'include',
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          setRefundStatus(data.data?.status);
+          setRefundLinks(data.data?.links || []);
+        }
+      }
+    } catch (error) {
+      console.error('Error unlinking refund:', error);
+    }
+  }, [transaction.id]);
+
+  const handleRefundLink = useCallback(async (
+    originalId: string,
+    isSubTransaction: boolean,
+    allocatedAmount: number,
+    confidenceScore: number,
+    matchReasons: string[]
+  ) => {
+    try {
+      const response = await fetch(`/api/transactions/${originalId}/refunds/link`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          refund_transaction_id: transaction.id,
+          allocated_amount: allocatedAmount,
+          refund_type: 'full',
+          match_method: 'ai_suggestion',
+          match_confidence_score: confidenceScore,
+          match_reasons: matchReasons,
+          is_sub_transaction: isSubTransaction,
+        }),
+      });
+      if (response.ok) {
+        // Refresh refund data
+        const refreshResponse = await fetch(`/api/transactions/${transaction.id}/refunds`, {
+          credentials: 'include',
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          setRefundStatus(data.data?.status);
+          setRefundLinks(data.data?.links || []);
+        }
+      }
+    } catch (error) {
+      console.error('Error linking refund:', error);
+      throw error;
+    }
+  }, [transaction.id]);
 
   const [categories, setCategories] = useState<string[]>([
     'food', 'transport', 'shopping', 'bills', 'entertainment',
@@ -580,6 +780,46 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               </CardContent>
             </Card>
 
+            {/* Receipt Section - Phase 2 */}
+            {isReceiptParsingEnabled() && (
+              <ReceiptSection
+                transactionId={transaction.id}
+                receipt={receipt}
+                items={receiptItems}
+                loading={receiptLoading}
+                currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+                onUploadComplete={handleReceiptUploadComplete}
+                onParse={handleReceiptParse}
+                onDelete={handleReceiptDelete}
+                defaultCollapsed={!receipt}
+              />
+            )}
+
+            {/* Refund Section - Phase 3 */}
+            {isSmartRefundsEnabled() && formData.direction === 'debit' && refundStatus && (
+              <RefundStatusSection
+                status={refundStatus}
+                currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+                onUnlink={handleRefundUnlink}
+                loading={refundLoading}
+                defaultCollapsed={refundStatus.refund_count === 0}
+              />
+            )}
+
+            {/* Refund Links Section - Phase 3 (for credit transactions) */}
+            {isSmartRefundsEnabled() && formData.direction === 'credit' && (
+              <RefundLinkSection
+                transactionId={transaction.id}
+                transactionAmount={parseFloat(formData.amount?.toString() || '0')}
+                links={refundLinks}
+                currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+                onUnlink={handleRefundUnlink}
+                onFindMatches={() => setShowRefundSuggestions(true)}
+                loading={refundLoading}
+                defaultCollapsed={refundLinks.length === 0}
+              />
+            )}
+
             {/* Email Body Section - Collapsible */}
             {transaction.email_row_id && (
               <Card className="bg-card/50 border-border/50">
@@ -785,6 +1025,20 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           </div>
         </form>
       </DialogContent>
+
+      {/* Refund Suggestions Modal - Phase 3 */}
+      {isSmartRefundsEnabled() && (
+        <RefundSuggestionsModal
+          isOpen={showRefundSuggestions}
+          onClose={() => setShowRefundSuggestions(false)}
+          transactionId={transaction.id}
+          transactionAmount={parseFloat(formData.amount?.toString() || '0')}
+          transactionMerchant={formData.merchant_name || formData.merchant_normalized || undefined}
+          currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+          onLink={handleRefundLink}
+          linkedOriginalIds={new Set(refundLinks.map(l => l.original_transaction_id || l.original_sub_transaction_id || ''))}
+        />
+      )}
     </Dialog>
   );
 }
