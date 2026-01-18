@@ -37,10 +37,12 @@ import {
   ChevronDown,
   Users,
 } from 'lucide-react';
-// Phase 2 & 3 Components
+// Phase 1, 2 & 3 Components
+import { SubTransactionList, SubTransactionEditor } from '@/components/sub-transactions';
 import { ReceiptSection } from '@/components/receipts';
 import { RefundStatusSection, RefundLinkSection, RefundSuggestionsModal } from '@/components/refunds';
-import { isReceiptParsingEnabled, isSmartRefundsEnabled } from '@/lib/features/flags';
+import { isSubTransactionsEnabled, isReceiptParsingEnabled, isSmartRefundsEnabled } from '@/lib/features/flags';
+import type { SubTransactionPublic, SubTransactionValidation, CreateSubTransactionInput } from '@/types/sub-transactions';
 import type { ReceiptPublic, ReceiptItemPublic } from '@/types/receipts';
 import type { RefundStatus, RefundLinkPublic } from '@/types/refunds';
 
@@ -64,6 +66,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   const [emailExpanded, setEmailExpanded] = useState(false);
   const [splitwiseStatus, setSplitwiseStatus] = useState<'checking' | 'exists' | 'none'>('none');
   const [splitwiseParticipants, setSplitwiseParticipants] = useState<string[]>([]);
+  // Phase 1: Sub-transactions state
+  const [subTransactions, setSubTransactions] = useState<SubTransactionPublic[]>([]);
+  const [subTransactionValidation, setSubTransactionValidation] = useState<SubTransactionValidation | null>(null);
+  const [subTransactionLoading, setSubTransactionLoading] = useState(false);
+  const [showSubTransactionEditor, setShowSubTransactionEditor] = useState(false);
+  const [subTransactionError, setSubTransactionError] = useState<string | null>(null);
+
   // Phase 2 & 3 state
   const [receipt, setReceipt] = useState<ReceiptPublic | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptItemPublic[]>([]);
@@ -111,6 +120,37 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
     checkSplitwiseExpense();
   }, [isOpen, transaction.splitwise_expense_id]);
+
+  // Fetch sub-transaction data when modal opens (Phase 1)
+  useEffect(() => {
+    const fetchSubTransactions = async () => {
+      if (!isOpen || !transaction.id || !isSubTransactionsEnabled()) {
+        setSubTransactions([]);
+        setSubTransactionValidation(null);
+        return;
+      }
+
+      setSubTransactionLoading(true);
+      try {
+        const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data) {
+            setSubTransactions(data.data.sub_transactions || []);
+            setSubTransactionValidation(data.data.validation || null);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching sub-transactions:', error);
+      } finally {
+        setSubTransactionLoading(false);
+      }
+    };
+
+    fetchSubTransactions();
+  }, [isOpen, transaction.id]);
 
   // Fetch receipt data when modal opens (Phase 2)
   useEffect(() => {
@@ -352,6 +392,75 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       setIsReExtracting(false);
     }
   };
+
+  // Sub-transaction handlers (Phase 1)
+  const handleCreateSubTransactions = useCallback(async (items: CreateSubTransactionInput[]) => {
+    setSubTransactionError(null);
+    setSubTransactionLoading(true);
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ items }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create sub-transactions');
+      }
+
+      const data = await response.json();
+      setSubTransactions(data.data?.sub_transactions || []);
+      setSubTransactionValidation(data.data?.validation || null);
+      setShowSubTransactionEditor(false);
+    } catch (error: any) {
+      console.error('Error creating sub-transactions:', error);
+      setSubTransactionError(error.message);
+      throw error;
+    } finally {
+      setSubTransactionLoading(false);
+    }
+  }, [transaction.id]);
+
+  const handleDeleteSubTransaction = useCallback(async (subId: string) => {
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions/${subId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Refresh the list
+        const refreshResponse = await fetch(`/api/transactions/${transaction.id}/sub-transactions`, {
+          credentials: 'include',
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          setSubTransactions(data.data?.sub_transactions || []);
+          setSubTransactionValidation(data.data?.validation || null);
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting sub-transaction:', error);
+    }
+  }, [transaction.id]);
+
+  const handleDeleteAllSubTransactions = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}/sub-transactions`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        setSubTransactions([]);
+        setSubTransactionValidation(null);
+      }
+    } catch (error) {
+      console.error('Error deleting all sub-transactions:', error);
+    }
+  }, [transaction.id]);
 
   // Receipt handlers (Phase 2)
   const handleReceiptUploadComplete = useCallback(async (receiptId: string) => {
@@ -784,6 +893,45 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               </CardContent>
             </Card>
 
+            {/* Sub-Transactions Section - Phase 1 */}
+            {isSubTransactionsEnabled() && (
+              <Card className="bg-card/50 border-border/50 overflow-hidden">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-base font-medium flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                        </svg>
+                      </div>
+                      Split Transaction
+                    </div>
+                    {subTransactions.length === 0 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowSubTransactionEditor(true)}
+                        className="h-8 text-xs"
+                      >
+                        Split Now
+                      </Button>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SubTransactionList
+                    items={subTransactions}
+                    validation={subTransactionValidation || undefined}
+                    loading={subTransactionLoading}
+                    currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+                    onAdd={() => setShowSubTransactionEditor(true)}
+                    onDelete={handleDeleteSubTransaction}
+                    defaultExpanded={subTransactions.length > 0}
+                  />
+                </CardContent>
+              </Card>
+            )}
+
             {/* Receipt Section - Phase 2 */}
             {isReceiptParsingEnabled() && (
               <ReceiptSection
@@ -1018,6 +1166,19 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
           onLink={handleRefundLink}
           linkedOriginalIds={new Set(refundLinks.map(l => l.original_transaction_id || l.original_sub_transaction_id || ''))}
+        />
+      )}
+
+      {/* Sub-Transaction Editor Modal - Phase 1 */}
+      {isSubTransactionsEnabled() && (
+        <SubTransactionEditor
+          isOpen={showSubTransactionEditor}
+          onClose={() => setShowSubTransactionEditor(false)}
+          onSubmit={handleCreateSubTransactions}
+          parentAmount={formData.amount ? parseFloat(formData.amount.toString()) : null}
+          currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
+          loading={subTransactionLoading}
+          error={subTransactionError}
         />
       )}
     </Dialog>
