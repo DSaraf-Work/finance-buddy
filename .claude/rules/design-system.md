@@ -250,6 +250,92 @@ hover:-translate-y-1    // Standard
 
 ---
 
+## MODALS & DIALOGS
+
+### MANDATORY: Always Use shadcn/ui Dialog
+
+**NEVER create custom modal implementations.** Always use the shadcn/ui Dialog component.
+
+```tsx
+// CORRECT - Using shadcn/ui Dialog
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+
+const MyModal = ({ isOpen, onClose }) => (
+  <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <DialogContent className="bg-card border-border sm:max-w-lg">
+      <DialogHeader className="border-b border-border pb-4">
+        <DialogTitle>Modal Title</DialogTitle>
+      </DialogHeader>
+      {/* Content */}
+      <DialogFooter className="border-t border-border pt-4">
+        <Button variant="outline" onClick={onClose}>Cancel</Button>
+        <Button>Save</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
+// WRONG - Custom modal implementation
+const MyModal = ({ isOpen, onClose }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+    <div className="relative bg-card rounded-xl">
+      {/* Content */}
+    </div>
+  </div>
+);
+```
+
+### Why This Matters
+
+1. **Consistent Backdrop**: Dialog provides standardized overlay styling
+2. **Portal Rendering**: Properly appends to body, avoiding z-index issues
+3. **Animations**: Built-in `animate-in`/`animate-out` transitions
+4. **Accessibility**: Proper focus trapping, ARIA attributes, ESC key handling
+5. **Close Button**: Standardized X button in top-right corner
+
+### Modal Styling Pattern
+
+```tsx
+<DialogContent
+  className="flex flex-col bg-card border-border overflow-hidden sm:max-w-lg sm:max-h-[90vh]"
+  onOpenAutoFocus={(e) => e.preventDefault()} // Optional: prevent auto-focus
+>
+  {/* Header - sticky at top */}
+  <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
+    <DialogTitle className="text-lg font-semibold text-foreground">
+      Title
+    </DialogTitle>
+  </DialogHeader>
+
+  {/* Scrollable content */}
+  <div className="flex-1 overflow-y-auto px-6 py-6">
+    {/* Content */}
+  </div>
+
+  {/* Footer - sticky at bottom */}
+  <DialogFooter className="shrink-0 px-6 py-4 border-t border-border bg-muted/20">
+    <Button variant="outline">Cancel</Button>
+    <Button>Save</Button>
+  </DialogFooter>
+</DialogContent>
+```
+
+### Nested Modals
+
+For modals that open on top of other modals (like SubTransactionEditor opening from TransactionModal):
+- Use the same Dialog component - Radix handles stacking automatically
+- Both modals use `z-50` but later ones naturally layer on top via DOM order
+- Never manually override z-index with values like `z-[60]`
+
+---
+
 ## FORBIDDEN PATTERNS
 
 ### Never Do These
@@ -283,12 +369,38 @@ hover:-translate-y-1    // Standard
    - Use Tailwind classes
    - Use `theme.css` only for CSS variables
 
+6. **Custom modal implementations**
+   ```tsx
+   // WRONG - Never do this
+   <div className="fixed inset-0 z-50">
+     <div className="bg-black/60" onClick={onClose} />
+     <div className="bg-card rounded-xl">...</div>
+   </div>
+
+   // CORRECT - Use shadcn/ui Dialog
+   <Dialog open={isOpen} onOpenChange={...}>
+     <DialogContent>...</DialogContent>
+   </Dialog>
+   ```
+
+7. **Legacy CSS variable patterns**
+   ```tsx
+   // WRONG - Legacy variables no longer in use
+   style={{ background: 'var(--color-bg-card)' }}
+   className="bg-[var(--color-bg-app)]"
+
+   // CORRECT - Use design system tokens
+   className="bg-card"
+   className="bg-background"
+   ```
+
 ---
 
 ## CHECKLIST BEFORE SUBMITTING UI CHANGES
 
-- [ ] All colors use CSS variables via Tailwind classes
+- [ ] All colors use CSS variables via Tailwind classes (no `#hex` or `var(--color-*)`)
 - [ ] Components use shadcn/ui primitives where applicable
+- [ ] **Modals use shadcn/ui Dialog** (never custom `fixed inset-0` implementations)
 - [ ] Loading states are implemented
 - [ ] Hover effects are included
 - [ ] Icons are from lucide-react
