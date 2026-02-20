@@ -30,6 +30,10 @@
     {
       "path": "/api/cron/gmail-watch-renewal",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/receipt-cleanup",
+      "schedule": "0 3 * * *"
     }
   ]
 }

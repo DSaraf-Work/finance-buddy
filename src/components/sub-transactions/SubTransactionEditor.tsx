@@ -7,7 +7,7 @@
  * Uses shadcn/ui Dialog for consistent modal styling across the app.
  */
 
-import { memo, useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback, useEffect, useRef } from 'react';
 import { Plus, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,9 +36,11 @@ interface SubTransactionEditorProps {
   loading?: boolean;
   /** Error message */
   error?: string | null;
+  /** Pre-filled items from receipt OCR scan (optional) */
+  initialItems?: EditableItem[];
 }
 
-interface EditableItem {
+export interface EditableItem {
   id: string; // Local unique ID for React key
   amount: string;
   category: string;
@@ -62,6 +64,7 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
   currency = '₹',
   loading = false,
   error = null,
+  initialItems,
 }: SubTransactionEditorProps) {
   // Initialize with 2 empty items
   const [items, setItems] = useState<EditableItem[]>([
@@ -69,10 +72,17 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
     createEmptyItem(),
   ]);
 
-  // Reset items when modal opens
+  // Track latest initialItems without making it a useEffect dependency.
+  // This avoids re-initialization if the parent re-renders with a new array reference
+  // while the editor is already open (safe: ref reads happen only when isOpen transitions).
+  const initialItemsRef = useRef<EditableItem[] | undefined>(initialItems);
+  useEffect(() => { initialItemsRef.current = initialItems; }, [initialItems]);
+
+  // Reset items when modal opens — seed from OCR items if provided, else two empty rows
   useEffect(() => {
     if (isOpen) {
-      setItems([createEmptyItem(), createEmptyItem()]);
+      const seeded = initialItemsRef.current;
+      setItems(seeded?.length ? seeded : [createEmptyItem(), createEmptyItem()]);
     }
   }, [isOpen]);
 

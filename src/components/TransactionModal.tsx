@@ -24,6 +24,7 @@ import {
   Wand2,
   Loader2,
   Users,
+  ScanLine,
 } from 'lucide-react';
 import {
   Dialog,
@@ -45,6 +46,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ModalToast } from '@/components/ui/modal-toast';
+import { ReceiptUploadModal } from '@/components/receipt';
+import type { EditableItem } from '@/components/sub-transactions/SubTransactionEditor';
+import { isReceiptParsingEnabled } from '@/lib/features/flags';
 
 interface TransactionModalProps {
   transaction: Transaction;
@@ -70,6 +74,8 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
 
   // Sub-transaction state
   const [showSplitEditor, setShowSplitEditor] = useState(false);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [receiptItems, setReceiptItems] = useState<EditableItem[]>([]);
   const [subTransactions, setSubTransactions] = useState<SubTransactionPublic[]>([]);
   const [subTransactionValidation, setSubTransactionValidation] = useState<SubTransactionValidation | null>(null);
   const [subTransactionsLoading, setSubTransactionsLoading] = useState(false);
@@ -248,6 +254,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
       [field]: value,
     }));
   };
+
+  // Handler for receipt OCR confirm — seeds SubTransactionEditor with parsed items
+  const handleReceiptConfirm = useCallback((items: EditableItem[]) => {
+    setReceiptItems(items);
+    setIsReceiptModalOpen(false);
+    setShowSplitEditor(true);
+  }, []);
 
   // Handler for when Splitwise expense is created
   const handleSplitwiseExpenseCreated = async (expenseId: string) => {
@@ -795,6 +808,17 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
                   <Layers className="h-5 w-5 text-primary" />
                 </button>
               )}
+              {/* Scan Receipt Button — only when receipt parsing is enabled and no splits yet */}
+              {isReceiptParsingEnabled() && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsReceiptModalOpen(true)}
+                  title="Scan receipt"
+                  className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors"
+                >
+                  <ScanLine className="h-5 w-5 text-primary" />
+                </button>
+              )}
               {formData.amount && parseFloat(formData.amount.toString()) > 0 && (
                 <SplitwiseDropdown
                   transactionAmount={parseFloat(formData.amount)}
@@ -866,12 +890,21 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
         onClose={() => {
           setShowSplitEditor(false);
           setSplitError(null);
+          setReceiptItems([]); // clear so next manual split starts with empty rows
         }}
         onSubmit={handleCreateSubTransactions}
         parentAmount={formData.amount ? parseFloat(formData.amount.toString()) : null}
         currency={formData.currency === 'INR' ? '₹' : formData.currency === 'USD' ? '$' : formData.currency || '₹'}
         loading={splitLoading}
         error={splitError}
+        initialItems={receiptItems}
+      />
+      <ReceiptUploadModal
+        transactionId={formData.id}
+        parentAmount={formData.amount ? parseFloat(formData.amount.toString()) : null}
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        onConfirm={handleReceiptConfirm}
       />
     </Dialog>
   );
