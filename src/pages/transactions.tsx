@@ -48,6 +48,7 @@ export interface Transaction {
   created_at: string;
   updated_at: string;
   splitwise_expense_id: string | null;
+  sub_transaction_count?: number;
 }
 
 // Helper to check if a date is today

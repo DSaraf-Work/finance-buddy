@@ -8,6 +8,7 @@ import {
   formatIndianAmount,
   displayAccountType,
 } from '@/lib/utils/transaction-formatters';
+import { SubTransactionBadge } from '@/components/sub-transactions';
 
 interface TxnCardProps {
   transaction: Transaction;
@@ -84,6 +85,10 @@ const TxnCard = memo(function TxnCard({ transaction, onClick, isLast }: TxnCardP
             >
               {displayAccountType(transaction.account_type)}
             </span>
+          )}
+
+          {(transaction.sub_transaction_count ?? 0) > 0 && (
+            <SubTransactionBadge count={transaction.sub_transaction_count!} />
           )}
 
           <span className="text-[10px] text-foreground/30 font-medium">

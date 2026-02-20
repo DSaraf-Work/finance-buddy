@@ -173,6 +173,10 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
       if (response.ok) {
         await fetchSubTransactions();
         setShowSplitEditor(false);
+        // Notify parent list to show badge immediately (before page reload)
+        if (onTransactionUpdated) {
+          onTransactionUpdated({ ...transaction, sub_transaction_count: items.length });
+        }
       } else {
         const error = await response.json();
         setSplitError(error.error || 'Failed to create sub-transactions');
