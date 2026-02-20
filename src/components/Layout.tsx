@@ -20,6 +20,7 @@ interface LayoutProps {
   description?: string;
   pageTitle?: string;
   pageIcon?: string;
+  headerActions?: React.ReactNode;
 }
 
 interface NavItem {
@@ -46,7 +47,7 @@ const dbNavigation: NavItem[] = [
   { name: 'Transaction Workbench', href: '/db/fb_extracted_transactions', icon: '🔧', description: 'Advanced transaction review' },
 ];
 
-export function Layout({ children, title, description, pageTitle: pageTitleProp, pageIcon }: LayoutProps) {
+export function Layout({ children, title, description, pageTitle: pageTitleProp, pageIcon, headerActions }: LayoutProps) {
   const { user, signOut } = useAuth();
   const { mockAIEnabled, toggleMockAI, loading } = useMockAI();
   const router = useRouter();
@@ -481,6 +482,13 @@ export function Layout({ children, title, description, pageTitle: pageTitleProp,
                     ))}
                   </div>
                 </div>
+
+                {/* Page-level actions (e.g. filter, add) */}
+                {headerActions && (
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {headerActions}
+                  </div>
+                )}
               </div>
             </div>
           </div>

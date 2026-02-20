@@ -12,7 +12,7 @@ import BackToTop from '@/components/BackToTop';
 import { Button } from '@/components/ui/button';
 import {
   TxnList,
-  TxnListHeader,
+
   TxnLoadingSkeleton,
   TxnEmptyState,
   TxnErrorState,
@@ -378,7 +378,45 @@ export default function TransactionsPage() {
 
   return (
     <ProtectedRoute>
-      <Layout title="Transactions" description="Your financial activity" pageTitle="Transactions" pageIcon="💰">
+      <Layout
+        title="Transactions"
+        description="Your financial activity"
+        pageTitle="Transactions"
+        pageIcon="💰"
+        headerActions={
+          <div className="flex items-center gap-2">
+            {isManualTransactionsEnabled() && (
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                title="Add transaction"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add
+              </button>
+            )}
+            <TransactionFilterModal
+              filters={filters}
+              onApplyFilters={handleApplyFilters}
+              onClearFilters={handleClearFilters}
+              totalCount={pagination.total}
+            />
+            <span
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.35)',
+                fontWeight: '600',
+                background: 'rgba(255,255,255,0.06)',
+                padding: '4px 10px',
+                borderRadius: '8px'
+              }}
+            >
+              {pagination.total}
+            </span>
+          </div>
+        }
+      >
         <Head>
           <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
         </Head>
@@ -394,31 +432,6 @@ export default function TransactionsPage() {
         >
           {/* Main Content - listContainer - padding 8px (matching /txn) */}
           <main style={{ padding: '8px' }}>
-            <TxnListHeader
-              count={pagination.total}
-              filterButton={
-                <TransactionFilterModal
-                  filters={filters}
-                  onApplyFilters={handleApplyFilters}
-                  onClearFilters={handleClearFilters}
-                  totalCount={pagination.total}
-                />
-              }
-              addButton={
-                isManualTransactionsEnabled() ? (
-                  <button
-                    type="button"
-                    onClick={() => setIsCreateModalOpen(true)}
-                    title="Add transaction"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add
-                  </button>
-                ) : undefined
-              }
-            />
-
             {loading && <TxnLoadingSkeleton count={8} />}
             {error && !loading && <TxnErrorState error={error} onRetry={() => searchTransactions(1, true)} />}
             {!loading && !error && transactions.length === 0 && <TxnEmptyState />}
