@@ -43,7 +43,7 @@ function mapToEditableItems(parsed: ParsedReceipt): EditableItem[] {
       id: crypto.randomUUID(),
       amount: item.total_price.toFixed(2),
       category: item.suggested_category || 'other',
-      merchant_name: parsed.store_name || item.item_name,
+      merchant_name: item.item_name,
       user_notes: item.unit
         ? `${item.quantity !== 1 ? `${item.quantity} ` : ''}${item.unit}`
         : '',
