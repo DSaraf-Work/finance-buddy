@@ -172,6 +172,7 @@ export default function TransactionsPage() {
         page,
         pageSize: pagination.pageSize,
         sort: 'desc', // Always sort by date descending
+        record_type: 'parent', // Only show parent transactions, not sub-transactions
       };
 
       // Add payment mode filter
