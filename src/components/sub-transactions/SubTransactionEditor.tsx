@@ -144,6 +144,7 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
       <DialogContent
         className="flex flex-col bg-card border-border overflow-hidden sm:max-w-lg sm:max-h-[90vh]"
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
       >
         {/* Header */}
         <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
