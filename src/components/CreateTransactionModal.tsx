@@ -6,8 +6,8 @@
  * Only requires Amount + Direction + Date — all other fields are optional.
  */
 
-import { memo, useState, useCallback, useEffect } from 'react';
-import { Loader2, PenLine } from 'lucide-react';
+import { memo, useState, useCallback, useEffect, useRef } from 'react';
+import { Loader2, PenLine, ScanLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,6 +17,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ModalToast } from '@/components/ui/modal-toast';
+import { isReceiptParsingEnabled } from '@/lib/features/flags';
 import type { Transaction } from '@/pages/transactions';
 
 interface CreateTransactionModalProps {
@@ -70,7 +71,9 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
 }: CreateTransactionModalProps) {
   const [form, setForm] = useState<FormState>({ ...EMPTY_FORM, txn_time: todayLocalDatetime() });
   const [isLoading, setIsLoading] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -86,6 +89,69 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
     },
     []
   );
+
+  const handleFileSelected = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Reset input so the same file can be re-selected
+    e.target.value = '';
+
+    if (file.size > 20 * 1024 * 1024) {
+      setErrorMsg('File exceeds 20MB limit. Please choose a smaller image.');
+      return;
+    }
+
+    setIsScanning(true);
+    setErrorMsg(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/receipts/parse', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to scan receipt');
+      }
+
+      const fields = data.fields;
+
+      // Build datetime-local value from extracted date + current time
+      const receiptDate = fields.date
+        ? (() => {
+            const pad = (n: number) => String(n).padStart(2, '0');
+            const now = new Date();
+            return `${fields.date}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+          })()
+        : null;
+
+      // Map AI categories to the form's category list
+      const CATEGORY_MAP: Record<string, string> = { bills: 'utilities', finance: 'other' };
+      const mappedCategory = fields.category
+        ? (CATEGORY_MAP[fields.category] ?? (CATEGORIES.includes(fields.category) ? fields.category : ''))
+        : '';
+
+      setForm(prev => ({
+        ...prev,
+        ...(fields.store_name ? { merchant_name: fields.store_name } : {}),
+        ...(fields.total_amount != null ? { amount: String(fields.total_amount) } : {}),
+        ...(fields.currency ? { currency: fields.currency } : {}),
+        ...(receiptDate ? { txn_time: receiptDate } : {}),
+        ...(mappedCategory ? { category: mappedCategory } : {}),
+        direction: fields.direction ?? prev.direction,
+      }));
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to scan receipt');
+    } finally {
+      setIsScanning(false);
+    }
+  }, []);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -140,6 +206,15 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
   const labelClass = 'block text-xs font-medium text-muted-foreground mb-1';
 
   return (
+    <>
+    {/* Hidden file input for receipt scanning */}
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
+      className="hidden"
+      onChange={handleFileSelected}
+    />
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         className="flex flex-col bg-card border-border overflow-hidden sm:max-w-md sm:max-h-[90vh]"
@@ -272,24 +347,44 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
           </div>
 
           {/* Footer */}
-          <DialogFooter className="shrink-0 px-6 py-4 border-t border-border bg-muted/20 flex items-center justify-end gap-2 sm:justify-end">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                  Saving…
-                </>
-              ) : (
-                'Save Transaction'
+          <DialogFooter className="shrink-0 px-6 py-4 border-t border-border bg-muted/20 flex items-center justify-between">
+            {/* Left: Scan Receipt */}
+            <div>
+              {isReceiptParsingEnabled() && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  title="Scan receipt to auto-fill"
+                  disabled={isLoading || isScanning}
+                  className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors disabled:opacity-50"
+                >
+                  {isScanning
+                    ? <Loader2 className="animate-spin h-5 w-5 text-primary" />
+                    : <ScanLine className="h-5 w-5 text-primary" />}
+                </button>
               )}
-            </Button>
+            </div>
+            {/* Right: Cancel + Save */}
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isLoading || isScanning}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading || isScanning}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    Saving…
+                  </>
+                ) : (
+                  'Save Transaction'
+                )}
+              </Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 });
 

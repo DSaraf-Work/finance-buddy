@@ -4,8 +4,13 @@
  */
 
 import OpenAI from 'openai';
-import { RECEIPT_PARSING_SYSTEM_PROMPT, buildReceiptUserPrompt } from './prompts';
-import type { ParsedReceipt, ParsedReceiptItem, ReceiptParseInput } from './types';
+import {
+  RECEIPT_PARSING_SYSTEM_PROMPT,
+  TRANSACTION_EXTRACT_SYSTEM_PROMPT,
+  buildReceiptUserPrompt,
+  buildTransactionExtractUserPrompt,
+} from './prompts';
+import type { ParsedReceipt, ParsedReceiptItem, ParsedTransactionFields, ReceiptParseInput } from './types';
 
 const MODEL = 'anthropic/claude-haiku-4.5';
 const MISMATCH_TOLERANCE = 1.0; // INR — differences ≤ ₹1 are rounding noise
@@ -33,6 +38,69 @@ export class ReceiptParseError extends Error {
     super(message);
     this.name = 'ReceiptParseError';
   }
+}
+
+/**
+ * Extract top-level transaction fields from a receipt image.
+ * Lightweight call (max_tokens: 500) — used to pre-fill CreateTransactionModal.
+ * Does NOT save anything to DB or Storage.
+ */
+export async function parseTransactionFields(
+  input: Pick<ReceiptParseInput, 'fileBuffer' | 'mimeType'>
+): Promise<ParsedTransactionFields> {
+  const { fileBuffer, mimeType } = input;
+  const client = getClient();
+  const base64 = fileBuffer.toString('base64');
+
+  let rawResponse: Record<string, unknown>;
+
+  try {
+    const response = await client.chat.completions.create({
+      model: MODEL,
+      max_tokens: 500,
+      temperature: 0,
+      messages: [
+        { role: 'system', content: TRANSACTION_EXTRACT_SYSTEM_PROMPT },
+        {
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
+            { type: 'text', text: buildTransactionExtractUserPrompt() },
+          ],
+        },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) throw new ReceiptParseError('Empty response from model', 'MODEL_ERROR');
+
+    const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    rawResponse = JSON.parse(cleaned) as Record<string, unknown>;
+  } catch (err) {
+    if (err instanceof ReceiptParseError) throw err;
+    if (err instanceof SyntaxError) throw new ReceiptParseError('Model returned invalid JSON', 'PARSE_ERROR');
+    throw new ReceiptParseError(
+      `OpenRouter API error: ${err instanceof Error ? err.message : String(err)}`,
+      'MODEL_ERROR'
+    );
+  }
+
+  if (rawResponse.error === 'NOT_A_RECEIPT') {
+    throw new ReceiptParseError(
+      'The uploaded image does not appear to be a receipt',
+      'NOT_A_RECEIPT',
+      typeof rawResponse.reason === 'string' ? rawResponse.reason : undefined
+    );
+  }
+
+  return {
+    store_name: rawResponse.store_name ? String(rawResponse.store_name) : null,
+    total_amount: rawResponse.total_amount != null ? Number(rawResponse.total_amount) : null,
+    currency: String(rawResponse.currency ?? 'INR'),
+    date: rawResponse.date ? String(rawResponse.date) : null,
+    category: rawResponse.category ? String(rawResponse.category) : null,
+    direction: rawResponse.is_debit === false ? 'credit' : 'debit',
+  };
 }
 
 export async function parseReceiptWithOpenRouter(input: ReceiptParseInput): Promise<ParsedReceipt> {

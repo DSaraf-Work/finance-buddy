@@ -37,3 +37,16 @@ export interface ReceiptParseInput {
   mimeType: string;              // effective MIME after HEIC→JPEG conversion
   parentAmount: number | null;
 }
+
+/**
+ * Extracted top-level transaction fields from a receipt.
+ * Used to pre-fill the CreateTransactionModal form.
+ */
+export interface ParsedTransactionFields {
+  store_name: string | null;
+  total_amount: number | null;
+  currency: string;
+  date: string | null;           // YYYY-MM-DD
+  category: string | null;
+  direction: 'debit' | 'credit';
+}
