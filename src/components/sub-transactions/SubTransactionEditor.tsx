@@ -185,6 +185,7 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
                   </span>
                   {items.length > SUB_TRANSACTION_LIMITS.MIN_COUNT && (
                     <button
+                      type="button"
                       onClick={() => handleRemoveItem(item.id)}
                       className="p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-colors"
                     >
@@ -266,6 +267,7 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
           {/* Add item button */}
           {items.length < SUB_TRANSACTION_LIMITS.MAX_COUNT && (
             <button
+              type="button"
               onClick={handleAddItem}
               className="w-full mt-3 py-2 rounded-lg border border-dashed border-border/50 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors flex items-center justify-center gap-2"
             >
@@ -357,10 +359,10 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
 
         {/* Footer */}
         <DialogFooter className="shrink-0 px-6 py-4 border-t border-border bg-muted/20 sm:justify-end">
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!canSubmit}>
+          <Button type="button" onClick={handleSubmit} disabled={!canSubmit}>
             {loading ? 'Saving...' : 'Save Split'}
           </Button>
         </DialogFooter>

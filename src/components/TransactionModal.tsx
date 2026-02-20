@@ -396,6 +396,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
       <DialogContent
         className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]"
         onOpenAutoFocus={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
           <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
