@@ -122,39 +122,35 @@ export default function RejectedEmailsPage() {
       <Layout
         title="Finance Buddy - Rejected Emails Management"
         description="Manage rejected emails"
+        pageTitle="Rejected Emails"
+        pageIcon="🚫"
+        headerActions={
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSelectedStatus('REVIEW')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                selectedStatus === 'REVIEW'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'
+              }`}
+            >
+              Review ({rejectedEmails.length})
+            </button>
+            <button
+              onClick={() => setSelectedStatus('INVALID')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                selectedStatus === 'INVALID'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'
+              }`}
+            >
+              Invalid
+            </button>
+          </div>
+        }
       >
         <div className="py-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[#f8fafc]">Rejected Emails Management</h1>
-            <p className="mt-2 text-[#cbd5e1]">Review and manage rejected emails</p>
-          </div>
-
-          {/* Status Filter */}
-          <div className="mb-6">
-            <div className="flex gap-4">
-              <button
-                onClick={() => setSelectedStatus('REVIEW')}
-                className={`px-4 py-2 rounded font-medium transition-colors ${
-                  selectedStatus === 'REVIEW'
-                    ? 'bg-[#6b4ce6] text-white'
-                    : 'bg-gray-200 text-[#cbd5e1] hover:bg-gray-300'
-                }`}
-              >
-                Review ({rejectedEmails.length})
-              </button>
-              <button
-                onClick={() => setSelectedStatus('INVALID')}
-                className={`px-4 py-2 rounded font-medium transition-colors ${
-                  selectedStatus === 'INVALID'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-200 text-[#cbd5e1] hover:bg-gray-300'
-                }`}
-              >
-                Invalid
-              </button>
-            </div>
-          </div>
 
           {/* Rejected Emails Table */}
           <div className="bg-[#1a1625] rounded-[var(--radius-md)] shadow overflow-hidden">

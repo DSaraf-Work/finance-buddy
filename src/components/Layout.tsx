@@ -124,15 +124,25 @@ export function Layout({ children, title, description, pageTitle: pageTitleProp,
                     >
                       <span className="text-xl font-bold text-[#FAFAFA]">₹</span>
                     </div>
-                    {/* App Name - 18px, 700, letterSpacing -0.3px */}
+                    {/* App Name - hidden on mobile when on an inner page (title takes its place) */}
                     <span
-                      className="text-lg font-bold text-[#FAFAFA] group-hover:text-[#A5B4FC] transition-colors duration-200 hidden sm:inline"
+                      className={`text-lg font-bold text-[#FAFAFA] group-hover:text-[#A5B4FC] transition-colors duration-200 ${pageTitleProp && router.pathname !== '/' ? 'hidden' : 'hidden sm:inline'}`}
                       style={{ letterSpacing: '-0.3px' }}
                     >
                       Finance Buddy
                     </span>
                   </Link>
                 </div>
+
+                {/* Page title in nav — mobile only, non-home pages */}
+                {pageTitleProp && router.pathname !== '/' && (
+                  <span
+                    className="lg:hidden text-[15px] font-semibold text-foreground truncate"
+                    style={{ letterSpacing: '-0.1px' }}
+                  >
+                    {pageTitleProp}
+                  </span>
+                )}
 
                 {/* Desktop navigation dropdown */}
                 <div className="hidden lg:block relative">
@@ -312,6 +322,13 @@ export function Layout({ children, title, description, pageTitle: pageTitleProp,
                   </>
                 )}
 
+                {/* Page-level actions — shown in nav on mobile */}
+                {headerActions && (
+                  <div className="lg:hidden flex items-center gap-2">
+                    {headerActions}
+                  </div>
+                )}
+
                 {/* Menu Button - 44x44, borderRadius 14px, gap 4px (matching /txn) */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -435,9 +452,9 @@ export function Layout({ children, title, description, pageTitle: pageTitleProp,
           )}
         </nav>
 
-        {/* Page Header - Matte Dark */}
+        {/* Page Header - desktop only (mobile shows title + actions in nav) */}
         {router.pathname !== '/' && (
-          <div className="bg-[#0D0D0F]" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="hidden lg:block bg-[#0D0D0F]" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex items-center gap-4">
                 {/* Page Icon */}
