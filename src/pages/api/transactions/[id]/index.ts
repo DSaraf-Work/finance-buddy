@@ -17,23 +17,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   if (req.method === 'GET') {
     try {
-      // Fetch transaction with related email
+      // Fetch transaction (no email JOIN — avoids schema cache issues with fb_emails FK)
       const { data, error: txnError } = await supabaseAdmin
         .from(TABLE_EMAILS_PROCESSED)
-        .select(`
-          *,
-          email:fb_emails!email_row_id (
-            id,
-            message_id,
-            from_address,
-            to_addresses,
-            subject,
-            snippet,
-            internal_date,
-            plain_body,
-            status
-          )
-        `)
+        .select('*')
         .eq('id', id)
         .eq('user_id', user.id)
         .single();
@@ -70,12 +57,12 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         }
       }
 
-      return res.status(200).json({ transaction });
+      return res.status(200).json({ success: true, transaction });
     } catch (error: any) {
       console.error('Failed to fetch transaction:', error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Failed to fetch transaction',
-        details: error.message 
+        details: error.message
       });
     }
   }
