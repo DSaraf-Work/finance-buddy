@@ -96,7 +96,7 @@ export function Layout({ children, title, description, pageTitle: pageTitleProp,
       <Head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
