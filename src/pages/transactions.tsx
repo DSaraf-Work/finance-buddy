@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import TransactionModal from '@/components/TransactionModal';
+import CreateTransactionModal from '@/components/CreateTransactionModal';
 import { ToastContainer } from '@/components/Toast';
 import { useToast } from '@/hooks/useToast';
 import BackToTop from '@/components/BackToTop';
@@ -18,6 +19,8 @@ import {
 } from '@/components/transactions';
 import { TransactionFilterModal, TransactionFilters } from '@/components/transactions/TransactionFilterModal';
 import { GroupedTransactions } from '@/components/transactions/TxnList';
+import { isManualTransactionsEnabled } from '@/lib/features/flags';
+import { Plus } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 
 export type TransactionStatus = 'REVIEW' | 'APPROVED' | 'INVALID' | 'REJECTED';
@@ -27,7 +30,7 @@ export interface Transaction {
   user_id: string;
   google_user_id: string;
   connection_id: string;
-  email_row_id: string;
+  email_row_id: string | null;
   txn_time: string | null;
   amount: string;
   currency: string | null;
@@ -49,6 +52,8 @@ export interface Transaction {
   updated_at: string;
   splitwise_expense_id: string | null;
   sub_transaction_count?: number;
+  /** TRUE for manually created transactions — only these can be deleted from UI */
+  is_manual?: boolean;
 }
 
 // Helper to check if a date is today
@@ -97,6 +102,7 @@ export default function TransactionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Filter state - default to last 7 days
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -356,6 +362,20 @@ export default function TransactionsPage() {
     setIsModalOpen(true);
   }, []);
 
+  const handleTransactionCreate = useCallback(async (newTransaction: Transaction) => {
+    setIsCreateModalOpen(false);
+    success('Transaction created');
+    // Refresh list to respect active filters rather than prepending
+    await searchTransactions(1, true);
+  }, [success]);
+
+  const handleTransactionDelete = useCallback(async (transactionId: string) => {
+    setTransactions(prev => prev.filter(t => t.id !== transactionId));
+    setIsModalOpen(false);
+    setSelectedTransaction(null);
+    success('Transaction deleted');
+  }, [success]);
+
   return (
     <ProtectedRoute>
       <Layout title="Transactions" description="Your financial activity" pageTitle="Transactions" pageIcon="💰">
@@ -383,6 +403,19 @@ export default function TransactionsPage() {
                   onClearFilters={handleClearFilters}
                   totalCount={pagination.total}
                 />
+              }
+              addButton={
+                isManualTransactionsEnabled() ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateModalOpen(true)}
+                    title="Add transaction"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add
+                  </button>
+                ) : undefined
               }
             />
 
@@ -427,8 +460,16 @@ export default function TransactionsPage() {
               }}
               onSave={handleTransactionUpdate}
               onTransactionUpdated={handleTransactionFieldUpdated}
+              onDelete={handleTransactionDelete}
             />
           )}
+
+          {/* Create Transaction Modal */}
+          <CreateTransactionModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+            onCreated={handleTransactionCreate}
+          />
 
           <ToastContainer toasts={toasts} onRemove={removeToast} />
           <BackToTop />

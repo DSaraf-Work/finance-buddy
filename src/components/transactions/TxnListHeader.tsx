@@ -4,28 +4,32 @@ interface TxnListHeaderProps {
   title?: string;
   count: number;
   filterButton?: ReactNode;
+  addButton?: ReactNode;
 }
 
 /**
  * Transaction List Header Component
  * Shows filter button and count (title is now in Layout header)
  */
-const TxnListHeader = memo(function TxnListHeader({ title, count, filterButton }: TxnListHeaderProps) {
+const TxnListHeader = memo(function TxnListHeader({ title, count, filterButton, addButton }: TxnListHeaderProps) {
   return (
     <div
       style={{
         display: 'flex',
-        justifyContent: title ? 'space-between' : 'flex-end',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '16px'
       }}
     >
-      {/* Left side: Title (optional, for backwards compatibility) */}
-      {title && (
-        <span style={{ fontSize: '15px', fontWeight: '600', color: 'rgba(255,255,255,0.9)' }}>
-          {title}
-        </span>
-      )}
+      {/* Left side: Title or Add button */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {title && (
+          <span style={{ fontSize: '15px', fontWeight: '600', color: 'rgba(255,255,255,0.9)' }}>
+            {title}
+          </span>
+        )}
+        {addButton}
+      </div>
 
       {/* Right side: Filter button and count */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

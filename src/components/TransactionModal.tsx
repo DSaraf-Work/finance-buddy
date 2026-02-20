@@ -25,6 +25,7 @@ import {
   Loader2,
   Users,
   ScanLine,
+  Trash2,
 } from 'lucide-react';
 import {
   Dialog,
@@ -56,9 +57,10 @@ interface TransactionModalProps {
   onClose: () => void;
   onSave: (updatedTransaction: Transaction) => void;
   onTransactionUpdated?: (updatedTransaction: Transaction) => void;
+  onDelete?: (transactionId: string) => void;
 }
 
-export default function TransactionModal({ transaction, isOpen, onClose, onSave, onTransactionUpdated }: TransactionModalProps) {
+export default function TransactionModal({ transaction, isOpen, onClose, onSave, onTransactionUpdated, onDelete }: TransactionModalProps) {
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [isLoading, setIsLoading] = useState(false);
   const [emailData, setEmailData] = useState<{ body: string | null; subject: string | null; from: string | null } | null>(null);
@@ -82,6 +84,8 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const [subTransactionsExpanded, setSubTransactionsExpanded] = useState(false);
   const [splitError, setSplitError] = useState<string | null>(null);
   const [splitLoading, setSplitLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     setFormData(transaction);
@@ -214,6 +218,29 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
       console.error('Error deleting sub-transaction:', error);
     }
   }, [transaction.id, fetchSubTransactions]);
+
+  // Handle deleting a manual transaction
+  const handleDeleteTransaction = useCallback(async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/transactions/${transaction.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        onDelete?.(transaction.id);
+      } else {
+        const data = await response.json();
+        console.error('Failed to delete transaction:', data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  }, [transaction.id, onDelete]);
 
   const fetchEmailBody = async (emailRowId: string) => {
     try {
@@ -795,64 +822,107 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
 
           {/* Footer - Sticky at bottom */}
           <div className="shrink-0 px-6 py-4 border-t border-border bg-card flex items-center justify-between">
-            {/* Left side - Action icons */}
+            {/* Left side - Action icons or delete confirm */}
             <div className="flex items-center gap-3">
-              {/* Split Transaction Button */}
-              {formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
-                <button
-                  type="button"
-                  onClick={() => setShowSplitEditor(true)}
-                  title="Split into sub-transactions"
-                  className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors"
-                >
-                  <Layers className="h-5 w-5 text-primary" />
-                </button>
+              {showDeleteConfirm ? (
+                <>
+                  <span className="text-sm text-destructive font-medium">Permanently delete?</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleDeleteTransaction}
+                    disabled={isDeleting}
+                    className="h-8 px-3"
+                  >
+                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Delete'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {/* Split Transaction Button — hidden for manual transactions */}
+                  {!formData.is_manual && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowSplitEditor(true)}
+                      title="Split into sub-transactions"
+                      className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors"
+                    >
+                      <Layers className="h-5 w-5 text-primary" />
+                    </button>
+                  )}
+                  {/* Scan Receipt Button — hidden for manual transactions */}
+                  {!formData.is_manual && isReceiptParsingEnabled() && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setIsReceiptModalOpen(true)}
+                      title="Scan receipt"
+                      className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors"
+                    >
+                      <ScanLine className="h-5 w-5 text-primary" />
+                    </button>
+                  )}
+                  {/* Splitwise — hidden for manual transactions */}
+                  {!formData.is_manual && formData.amount && parseFloat(formData.amount.toString()) > 0 && (
+                    <SplitwiseDropdown
+                      transactionAmount={parseFloat(formData.amount)}
+                      transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
+                      transactionDate={formData.txn_time?.split('T')[0]}
+                      currencyCode={formData.currency || 'INR'}
+                      iconOnly={true}
+                      transactionId={formData.id}
+                      existingExpenseId={formData.splitwise_expense_id}
+                      disabled={splitwiseStatus === 'exists' || splitwiseStatus === 'checking'}
+                      onExpenseCreated={handleSplitwiseExpenseCreated}
+                      onSuccess={() => {
+                        setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
+                        setTimeout(() => setSplitwiseMessage(null), 5000);
+                      }}
+                      onError={(error) => {
+                        setSplitwiseMessage({ type: 'error', text: error });
+                        setTimeout(() => setSplitwiseMessage(null), 5000);
+                      }}
+                    />
+                  )}
+                  {/* Re-extract with AI — hidden for manual transactions */}
+                  {!formData.is_manual && (
+                    <button
+                      type="button"
+                      onClick={handleReExtract}
+                      disabled={isReExtracting}
+                      title="Re-extract with AI"
+                      className="w-10 h-10 flex items-center justify-center bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50"
+                    >
+                      {isReExtracting ? (
+                        <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                      ) : (
+                        <Wand2 className="w-5 h-5 text-primary" />
+                      )}
+                    </button>
+                  )}
+                  {/* Delete button — only for manual transactions */}
+                  {formData.is_manual && (
+                    <button
+                      type="button"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      title="Delete transaction"
+                      className="w-10 h-10 flex items-center justify-center bg-destructive/10 hover:bg-destructive/20 rounded-full transition-colors"
+                    >
+                      <Trash2 className="h-5 w-5 text-destructive" />
+                    </button>
+                  )}
+                </>
               )}
-              {/* Scan Receipt Button — only when receipt parsing is enabled and no splits yet */}
-              {isReceiptParsingEnabled() && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
-                <button
-                  type="button"
-                  onClick={() => setIsReceiptModalOpen(true)}
-                  title="Scan receipt"
-                  className="w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors"
-                >
-                  <ScanLine className="h-5 w-5 text-primary" />
-                </button>
-              )}
-              {formData.amount && parseFloat(formData.amount.toString()) > 0 && (
-                <SplitwiseDropdown
-                  transactionAmount={parseFloat(formData.amount)}
-                  transactionDescription={formData.merchant_name || formData.merchant_normalized || 'Expense'}
-                  transactionDate={formData.txn_time?.split('T')[0]}
-                  currencyCode={formData.currency || 'INR'}
-                  iconOnly={true}
-                  transactionId={formData.id}
-                  existingExpenseId={formData.splitwise_expense_id}
-                  disabled={splitwiseStatus === 'exists' || splitwiseStatus === 'checking'}
-                  onExpenseCreated={handleSplitwiseExpenseCreated}
-                  onSuccess={() => {
-                    setSplitwiseMessage({ type: 'success', text: 'Expense split created on Splitwise!' });
-                    setTimeout(() => setSplitwiseMessage(null), 5000);
-                  }}
-                  onError={(error) => {
-                    setSplitwiseMessage({ type: 'error', text: error });
-                    setTimeout(() => setSplitwiseMessage(null), 5000);
-                  }}
-                />
-              )}
-              <button
-                type="button"
-                onClick={handleReExtract}
-                disabled={isReExtracting}
-                title="Re-extract with AI"
-                className="w-10 h-10 flex items-center justify-center bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50"
-              >
-                {isReExtracting ? (
-                  <Loader2 className="h-5 w-5 text-primary animate-spin" />
-                ) : (
-                  <Wand2 className="w-5 h-5 text-primary" />
-                )}
-              </button>
             </div>
 
             {/* Right side - Cancel & Save */}

@@ -127,6 +127,22 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
   if (req.method === 'DELETE') {
     try {
+      // Verify ownership and is_manual guard before deleting
+      const { data: txn, error: fetchError } = await supabaseAdmin
+        .from(TABLE_EMAILS_PROCESSED)
+        .select('is_manual')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (fetchError || !txn) {
+        return res.status(404).json({ error: 'Transaction not found' });
+      }
+
+      if (!((txn as any).is_manual ?? false)) {
+        return res.status(403).json({ error: 'Only manually created transactions can be deleted' });
+      }
+
       const { error: deleteError } = await supabaseAdmin
         .from(TABLE_EMAILS_PROCESSED)
         .delete()
@@ -134,18 +150,18 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         .eq('user_id', user.id);
 
       if (deleteError) {
-        return res.status(500).json({ 
+        return res.status(500).json({
           error: 'Failed to delete transaction',
-          details: deleteError.message 
+          details: deleteError.message
         });
       }
 
       return res.status(200).json({ success: true });
     } catch (error: any) {
       console.error('Failed to delete transaction:', error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Failed to delete transaction',
-        details: error.message 
+        details: error.message
       });
     }
   }

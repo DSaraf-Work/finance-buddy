@@ -28,7 +28,8 @@
 export type FeatureFlag =
   | 'SUB_TRANSACTIONS'
   | 'RECEIPT_PARSING'
-  | 'SMART_REFUNDS';
+  | 'SMART_REFUNDS'
+  | 'MANUAL_TRANSACTIONS';
 
 /**
  * Default feature flag states
@@ -41,6 +42,8 @@ const DEFAULT_FLAGS: Record<FeatureFlag, boolean> = {
   RECEIPT_PARSING: false,
   /** Phase 3: Smart refunds - disabled until migration 0008 and testing */
   SMART_REFUNDS: false,
+  /** Phase 4: Manual transactions - enabled after migration 0011 */
+  MANUAL_TRANSACTIONS: true,
 } as const;
 
 // ============================================================================
@@ -65,6 +68,8 @@ export function getFeatureFlags(): Record<FeatureFlag, boolean> {
       process.env.NEXT_PUBLIC_ENABLE_RECEIPT_PARSING === 'true',
     SMART_REFUNDS:
       process.env.NEXT_PUBLIC_ENABLE_SMART_REFUNDS === 'true',
+    MANUAL_TRANSACTIONS:
+      process.env.NEXT_PUBLIC_ENABLE_MANUAL_TRANSACTIONS !== 'false',
   };
 }
 
@@ -123,6 +128,14 @@ export function isReceiptParsingEnabled(): boolean {
  */
 export function isSmartRefundsEnabled(): boolean {
   return isFeatureEnabled('SMART_REFUNDS');
+}
+
+/**
+ * Check if manual transaction creation is enabled.
+ * Shorthand for isFeatureEnabled('MANUAL_TRANSACTIONS').
+ */
+export function isManualTransactionsEnabled(): boolean {
+  return isFeatureEnabled('MANUAL_TRANSACTIONS');
 }
 
 // ============================================================================

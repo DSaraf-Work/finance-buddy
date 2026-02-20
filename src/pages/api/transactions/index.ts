@@ -152,6 +152,53 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         details: error.message 
       });
     }
+  } else if (req.method === 'POST') {
+    try {
+      const { txn_time, amount, direction, currency, merchant_name, category, account_type, account_hint, user_notes } = req.body;
+
+      if (!amount || parseFloat(amount) <= 0) {
+        return res.status(400).json({ error: 'Amount must be greater than 0' });
+      }
+      if (!txn_time) {
+        return res.status(400).json({ error: 'Date is required' });
+      }
+      if (!direction || !['debit', 'credit'].includes(direction)) {
+        return res.status(400).json({ error: 'Direction must be debit or credit' });
+      }
+
+      const { data: newTransaction, error } = await (supabaseAdmin as any)
+        .from(TABLE_EMAILS_PROCESSED)
+        .insert({
+          user_id: user.id,
+          google_user_id: user.id,
+          email_row_id: null,
+          is_manual: true,
+          status: 'APPROVED',
+          confidence: 1.0,
+          extraction_version: 'manual',
+          txn_time: new Date(txn_time).toISOString(),
+          amount: parseFloat(amount),
+          direction,
+          currency: currency || 'INR',
+          merchant_name: merchant_name || null,
+          category: category || null,
+          account_type: account_type || null,
+          account_hint: account_hint || null,
+          user_notes: user_notes || null,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating transaction:', error);
+        return res.status(500).json({ error: 'Failed to create transaction', details: error.message });
+      }
+
+      return res.status(201).json({ success: true, transaction: newTransaction });
+    } catch (error: any) {
+      console.error('API error:', error);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
   } else {
     res.status(405).json({ error: 'Method not allowed' });
   }

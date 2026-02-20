@@ -306,7 +306,7 @@ export interface BackfillResponse {
 export interface UnifiedTransaction {
   id: UUID;
   user_id: UUID;
-  email_row_id: UUID;
+  email_row_id: UUID | null;
   txn_time: string | null;
   amount: number | null;
   currency: string | null;
@@ -335,5 +335,7 @@ export interface UnifiedTransaction {
   extraction_version: string | null;
   account_type: string | null;
   ai_notes: string | null;
+  /** TRUE for manually created transactions (no source email) */
+  is_manual?: boolean;
 }
 

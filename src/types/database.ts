@@ -122,10 +122,11 @@ export type Database = {
           created_at: string
           currency: string | null
           direction: string | null
-          email_row_id: string
+          email_row_id: string | null
           extraction_version: string | null
           google_user_id: string
           id: string
+          is_manual: boolean
           location: string | null
           merchant_name: string | null
           merchant_normalized: string | null
@@ -148,10 +149,11 @@ export type Database = {
           created_at?: string
           currency?: string | null
           direction?: string | null
-          email_row_id: string
+          email_row_id?: string | null
           extraction_version?: string | null
           google_user_id: string
           id?: string
+          is_manual?: boolean
           location?: string | null
           merchant_name?: string | null
           merchant_normalized?: string | null
@@ -174,10 +176,11 @@ export type Database = {
           created_at?: string
           currency?: string | null
           direction?: string | null
-          email_row_id?: string
+          email_row_id?: string | null
           extraction_version?: string | null
           google_user_id?: string
           id?: string
+          is_manual?: boolean
           location?: string | null
           merchant_name?: string | null
           merchant_normalized?: string | null
