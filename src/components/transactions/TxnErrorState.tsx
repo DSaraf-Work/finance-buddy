@@ -1,4 +1,6 @@
 import { memo } from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface TxnErrorStateProps {
   error: string;
@@ -12,16 +14,16 @@ interface TxnErrorStateProps {
 const TxnErrorState = memo(function TxnErrorState({ error, onRetry }: TxnErrorStateProps) {
   return (
     <div className="text-center py-12">
-      <p className="mb-4" style={{ color: '#F87171' }}>
+      <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+      <p className="mb-4 text-sm text-red-400">
         {error}
       </p>
-      <button
+      <Button
         onClick={onRetry}
-        className="px-4 py-2 rounded-xl font-medium"
-        style={{ background: '#6366F1', color: 'white' }}
+        className="bg-primary hover:bg-primary/90 text-primary-foreground"
       >
         Retry
-      </button>
+      </Button>
     </div>
   );
 });

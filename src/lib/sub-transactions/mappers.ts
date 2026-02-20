@@ -22,7 +22,7 @@ export function mapSubTransactionToPublic(row: {
   category: string | null;
   merchant_name: string | null;
   user_notes: string | null;
-  sub_transaction_order: number;
+  sub_transaction_order?: number | null;
   splitwise_expense_id: string | null;
   created_at: string;
   updated_at: string;
@@ -38,7 +38,7 @@ export function mapSubTransactionToPublic(row: {
     category: row.category,
     merchant_name: row.merchant_name,
     user_notes: row.user_notes,
-    sub_transaction_order: row.sub_transaction_order,
+    sub_transaction_order: row.sub_transaction_order ?? 0,
     splitwise_expense_id: row.splitwise_expense_id,
     created_at: row.created_at,
     updated_at: row.updated_at,

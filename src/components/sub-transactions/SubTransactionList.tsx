@@ -143,11 +143,7 @@ export const SubTransactionList = memo(function SubTransactionList({
                   <div className="flex items-center gap-3">
                     {/* Order number */}
                     <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium"
-                      style={{
-                        background: 'rgba(99, 102, 241, 0.15)',
-                        color: '#818CF8',
-                      }}
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium bg-primary/15 text-primary"
                     >
                       {index + 1}
                     </div>

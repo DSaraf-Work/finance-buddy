@@ -10,7 +10,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
+import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS, VIEW_ALL_TRANSACTIONS } from '@/lib/constants/database';
 import { isSubTransactionsEnabled } from '@/lib/features/flags';
 import {
   validateUpdateInput,
@@ -54,13 +54,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   // Type assertion for Supabase response
   const parent = parentData as Record<string, any>;
 
-  // Get the sub-transaction
-  const { data: existingData, error: getError } = await supabaseAdmin
-    .from(TABLE_SUB_TRANSACTIONS)
-    .select('*')
+  // Get the sub-transaction via view (bypasses missing table GRANT)
+  const { data: existingData, error: getError } = await (supabaseAdmin as any)
+    .from(VIEW_ALL_TRANSACTIONS)
+    .select('id, email_row_id, txn_time, amount, currency, direction, merchant_name, category, parent_transaction_id, created_at, updated_at, splitwise_expense_id, user_notes')
     .eq('id', subId)
     .eq('user_id', user.id)
-    .single();
+    .eq('record_type', 'sub')
+    .maybeSingle();
 
   if (getError || !existingData) {
     return res.status(404).json({ error: 'Sub-transaction not found' });
@@ -105,12 +106,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         : null;
 
       if (input.amount !== undefined && parentAmount !== null) {
-        // Get all other sub-transactions for this parent
+        // Get all other sub-transactions for this parent via view
         const { data: siblings } = await supabaseAdmin
-          .from(TABLE_SUB_TRANSACTIONS)
+          .from(VIEW_ALL_TRANSACTIONS)
           .select('amount')
           .eq('parent_transaction_id', parentId)
           .eq('user_id', user.id)
+          .eq('record_type', 'sub')
           .neq('id', subId);
 
         const siblingsTotal = ((siblings || []) as Array<{ amount: number }>).reduce(
@@ -178,13 +180,14 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   // ============================================================================
   if (req.method === 'DELETE') {
     try {
-      // Get all siblings (including the one being deleted) for modal info
+      // Get all siblings (including the one being deleted) for modal info via view
       const { data: allSiblings, error: siblingsError } = await supabaseAdmin
-        .from(TABLE_SUB_TRANSACTIONS)
+        .from(VIEW_ALL_TRANSACTIONS)
         .select('id, parent_transaction_id, amount, merchant_name, category')
         .eq('parent_transaction_id', parentId)
         .eq('user_id', user.id)
-        .order('sub_transaction_order');
+        .eq('record_type', 'sub')
+        .order('created_at');
 
       if (siblingsError) {
         console.error('[SubTransactions] Failed to get siblings:', siblingsError);

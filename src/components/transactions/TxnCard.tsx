@@ -1,8 +1,9 @@
 import { memo } from 'react';
 import { Transaction } from '@/pages/transactions';
+import { Users } from 'lucide-react';
 import {
   getCategoryEmoji,
-  getPaymentMethodColor,
+  getPaymentMethodColorClass,
   formatShortDate,
   formatIndianAmount,
   displayAccountType,
@@ -22,114 +23,79 @@ interface TxnCardProps {
  * - Gap between icon and text: 14px
  * - Gap within info column: 4px
  * - Gap in amount column: 2px
- * - Font: Outfit for text, JetBrains Mono for amounts
+ * - Font: Outfit for text, font-mono for amounts
  * - Animation: slideIn 0.35s ease-out
  */
 const TxnCard = memo(function TxnCard({ transaction, onClick, isLast }: TxnCardProps) {
   const isExpense = transaction.direction === 'debit';
   const emoji = getCategoryEmoji(transaction.category, transaction.merchant_name);
-  const paymentMethodColor = getPaymentMethodColor(transaction.account_type);
+  const paymentMethodColorClass = getPaymentMethodColorClass(transaction.account_type);
 
   return (
     <>
-      {/* transactionItem - exact match to /txn design */}
+      {/* Transaction item */}
       <div
-        className="transaction-item"
+        className="transaction-item flex justify-between items-center px-2 py-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-muted/10"
         onClick={onClick}
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '16px 8px',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease'
-        }}
       >
-        {/* transactionLeft - gap 14px */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          {/* transactionIcon - 48x48, borderRadius 14px */}
+        {/* Left side */}
+        <div className="flex items-center gap-3.5">
+          {/* Icon: 48x48, borderRadius 14px */}
           <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '14px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: isExpense ? 'rgba(255,255,255,0.04)' : 'rgba(34, 197, 94, 0.12)'
-            }}
+            className={`w-12 h-12 rounded-[14px] flex items-center justify-center ${
+              isExpense ? 'bg-foreground/[0.04]' : 'bg-green-500/10'
+            }`}
           >
-            <span style={{ fontSize: '18px' }}>{emoji}</span>
+            <span className="text-lg">{emoji}</span>
           </div>
 
-          {/* transactionInfo - gap 4px */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {/* transactionTitle - 15px, 500 */}
-            <span style={{ fontSize: '15px', fontWeight: '500' }}>
+          {/* Info column */}
+          <div className="flex flex-col gap-1">
+            <span className="text-[15px] font-medium text-foreground">
               {transaction.merchant_name || 'Unknown'}
             </span>
-            {/* transactionCategory - 12px, rgba(255,255,255,0.35) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)' }}>
+            {/* Category + Splitwise indicator */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-foreground/35">
                 {transaction.category || 'Uncategorized'}
               </span>
-              {/* Splitwise indicator */}
               {transaction.splitwise_expense_id && (
-                <span title="Split on Splitwise" style={{ display: 'flex', alignItems: 'center' }}>
-                  <svg
-                    style={{ width: '12px', height: '12px' }}
-                    viewBox="0 0 24 24"
-                    fill="#10B981"
-                  >
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                  </svg>
+                <span title="Split on Splitwise" className="flex items-center">
+                  <Users className="w-3 h-3 text-emerald-400" />
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        {/* transactionRight - gap 2px for tighter spacing */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-          {/* transactionAmount - 15px, 600, JetBrains Mono */}
+        {/* Right side */}
+        <div className="flex flex-col items-end gap-0.5">
           <span
-            style={{
-              fontSize: '15px',
-              fontWeight: '600',
-              fontFamily: '"JetBrains Mono", monospace',
-              color: isExpense ? '#F87171' : '#22C55E'
-            }}
+            className={`text-[15px] font-semibold font-mono ${
+              isExpense ? 'text-red-400' : 'text-green-400'
+            }`}
           >
             {isExpense ? '-' : '+'}₹{formatIndianAmount(transaction.amount)}
           </span>
 
-          {/* Payment method - 10px, 500, uppercase, colored */}
           {transaction.account_type && (
             <span
-              style={{
-                fontSize: '10px',
-                fontWeight: '500',
-                textTransform: 'uppercase',
-                letterSpacing: '0.3px',
-                color: paymentMethodColor
-              }}
+              className={`text-[10px] font-medium uppercase tracking-[0.3px] ${paymentMethodColorClass}`}
             >
               {displayAccountType(transaction.account_type)}
             </span>
           )}
 
-          {/* transactionDate - 10px, rgba(255,255,255,0.3), 500 */}
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: '500' }}>
+          <span className="text-[10px] text-foreground/30 font-medium">
             {formatShortDate(transaction.txn_time)}
           </span>
         </div>
       </div>
 
-      {/* separatorWrapper + separator - 80%, 1px, rgba(255,255,255,0.06) */}
+      {/* Separator */}
       {!isLast && (
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          <div style={{ width: '80%', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+        <div className="flex justify-center w-full">
+          <div className="w-4/5 h-px bg-foreground/[0.06]" />
         </div>
       )}
     </>

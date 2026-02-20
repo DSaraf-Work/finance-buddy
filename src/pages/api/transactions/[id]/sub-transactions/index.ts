@@ -11,7 +11,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS } from '@/lib/constants/database';
+import { TABLE_EMAILS_PROCESSED, TABLE_SUB_TRANSACTIONS, VIEW_ALL_TRANSACTIONS } from '@/lib/constants/database';
 import { isSubTransactionsEnabled } from '@/lib/features/flags';
 import {
   validateBulkCreateRequest,
@@ -58,12 +58,13 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (req.method === 'GET') {
     try {
       // Get sub-transactions
-      const { data: items, error: listError } = await (supabaseAdmin as any)
-        .from(TABLE_SUB_TRANSACTIONS)
-        .select('*')
+      const { data: items, error: listError } = await supabaseAdmin
+        .from(VIEW_ALL_TRANSACTIONS)
+        .select('id, email_row_id, txn_time, amount, currency, direction, merchant_name, category, parent_transaction_id, created_at, updated_at, splitwise_expense_id, user_notes')
         .eq('parent_transaction_id', parentId)
         .eq('user_id', user.id)
-        .order('sub_transaction_order', { ascending: true });
+        .eq('record_type', 'sub')
+        .order('created_at', { ascending: true });
 
       if (listError) {
         console.error('[SubTransactions] List error:', listError);
@@ -133,10 +134,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
       // Check existing count - prevent adding if sub-transactions already exist
       const { count: existingCount } = await supabaseAdmin
-        .from(TABLE_SUB_TRANSACTIONS)
-        .select('*', { count: 'exact', head: true })
+        .from(VIEW_ALL_TRANSACTIONS)
+        .select('id', { count: 'exact', head: true })
         .eq('parent_transaction_id', parentId)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('record_type', 'sub');
 
       if (existingCount && existingCount > 0) {
         return res.status(409).json({
@@ -161,26 +163,17 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         });
       }
 
-      // Insert sub-transactions
-      const insertData = request.items.map((item, index) => ({
-        parent_transaction_id: parentId,
-        user_id: user.id,
-        email_row_id: parent.email_row_id,
-        currency: parent.currency,
-        direction: parent.direction,
-        txn_time: parent.txn_time,
-        amount: item.amount,
-        category: item.category ?? null,
-        merchant_name: item.merchant_name ?? null,
-        user_notes: item.user_notes ?? null,
-        sub_transaction_order: index,
-        splitwise_expense_id: parent.splitwise_expense_id,
-      }));
-
+      // Insert sub-transactions via SECURITY DEFINER RPC (bypasses missing table GRANT)
       const { data: created, error: insertError } = await (supabaseAdmin as any)
-        .from(TABLE_SUB_TRANSACTIONS)
-        .insert(insertData)
-        .select();
+        .rpc('create_sub_transactions', {
+          p_parent_id: parentId,
+          p_items: request.items.map((item) => ({
+            amount: item.amount,
+            category: item.category ?? null,
+            merchant_name: item.merchant_name ?? null,
+            user_notes: item.user_notes ?? null,
+          })),
+        });
 
       if (insertError) {
         console.error('[SubTransactions] Insert error:', insertError);

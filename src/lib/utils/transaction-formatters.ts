@@ -34,7 +34,21 @@ export const getCategoryEmoji = (category?: string | null, merchantName?: string
   }
 };
 
-// Payment method color mapping (from /txn design spec)
+// Payment method color mapping — Tailwind CSS class version (preferred)
+export const getPaymentMethodColorClass = (accountType?: string | null): string => {
+  const type = accountType?.toUpperCase() || '';
+
+  if (type.includes('UPI')) return 'text-primary';
+  if (type.includes('GPAY') || type.includes('GOOGLE')) return 'text-blue-400';
+  if (type.includes('PHONEPE')) return 'text-purple-400';
+  if (type.includes('PAYTM')) return 'text-cyan-400';
+  if (type.includes('NEFT') || type.includes('WIRE') || type.includes('IMPS')) return 'text-green-400';
+  if (type.includes('CARD') || type.includes('CREDIT') || type.includes('DEBIT')) return 'text-amber-400';
+  if (type.includes('AUTO')) return 'text-red-400';
+  return 'text-muted-foreground';
+};
+
+// Payment method color mapping — hex color version (legacy, kept for chart/SVG use cases)
 export const getPaymentMethodColor = (accountType?: string | null): string => {
   const type = accountType?.toUpperCase() || '';
 

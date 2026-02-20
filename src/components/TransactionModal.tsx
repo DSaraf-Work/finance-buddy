@@ -392,7 +392,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const transactionTypes = ['Dr', 'Cr'];
 
   return (
-    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className="flex flex-col bg-card border-border overflow-hidden sm:max-w-4xl sm:max-h-[90vh]"
@@ -855,9 +854,8 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
           </div>
         </form>
       </DialogContent>
-    </Dialog>
 
-      {/* Sub-Transaction Editor Modal */}
+      {/* Sub-Transaction Editor Modal — nested inside outer Dialog so Radix tracks the stack correctly */}
       <SubTransactionEditor
         isOpen={showSplitEditor}
         onClose={() => {
@@ -870,6 +868,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
         loading={splitLoading}
         error={splitError}
       />
-    </>
+    </Dialog>
   );
 }
