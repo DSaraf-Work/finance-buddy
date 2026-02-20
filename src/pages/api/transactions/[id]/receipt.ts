@@ -192,7 +192,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     raw_ocr_response: JSON.stringify(parsed.raw),
     parsing_status: 'completed' as const,
     confidence: parsed.confidence,
-    ai_model_used: 'anthropic/claude-haiku-3-5',
+    ai_model_used: 'anthropic/claude-haiku-4.5',
   };
 
   const { error: dbError } = await (supabaseAdmin as any).from(TABLE_RECEIPTS).insert(receiptRow);

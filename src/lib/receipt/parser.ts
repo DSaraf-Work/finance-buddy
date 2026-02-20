@@ -7,7 +7,7 @@ import OpenAI from 'openai';
 import { RECEIPT_PARSING_SYSTEM_PROMPT, buildReceiptUserPrompt } from './prompts';
 import type { ParsedReceipt, ParsedReceiptItem, ReceiptParseInput } from './types';
 
-const MODEL = 'anthropic/claude-haiku-3-5';
+const MODEL = 'anthropic/claude-haiku-4.5';
 const MISMATCH_TOLERANCE = 1.0; // INR — differences ≤ ₹1 are rounding noise
 
 function getClient(): OpenAI {

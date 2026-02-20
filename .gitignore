@@ -18,3 +18,9 @@ out
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Playwright MCP console logs
+.playwright-mcp/
+
+# Test fixtures (local only)
+test_receipt.*
