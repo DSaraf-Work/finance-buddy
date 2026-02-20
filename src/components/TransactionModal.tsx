@@ -13,7 +13,18 @@ import type {
   CreateSubTransactionInput,
   SubTransactionListResponse,
 } from '@/types/sub-transactions';
-import { Layers } from 'lucide-react';
+import {
+  Pencil,
+  Store,
+  FileText,
+  Mail,
+  StickyNote,
+  Layers,
+  ChevronDown,
+  Wand2,
+  Loader2,
+  Users,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -33,15 +44,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ModalToast } from '@/components/ui/modal-toast';
 
 interface TransactionModalProps {
   transaction: Transaction;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedTransaction: Transaction) => void;
+  onTransactionUpdated?: (updatedTransaction: Transaction) => void;
 }
 
-export default function TransactionModal({ transaction, isOpen, onClose, onSave }: TransactionModalProps) {
+export default function TransactionModal({ transaction, isOpen, onClose, onSave, onTransactionUpdated }: TransactionModalProps) {
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [isLoading, setIsLoading] = useState(false);
   const [emailData, setEmailData] = useState<{ body: string | null; subject: string | null; from: string | null } | null>(null);
@@ -89,7 +102,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           setSplitwiseStatus('exists');
           setSplitwiseParticipants(data.splitWith || []);
         } else {
-          // Expense doesn't exist or was deleted
           setSplitwiseStatus('none');
           setSplitwiseParticipants([]);
         }
@@ -159,7 +171,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       });
 
       if (response.ok) {
-        // Refresh sub-transactions
         await fetchSubTransactions();
         setShowSplitEditor(false);
       } else {
@@ -185,7 +196,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       });
 
       if (response.ok) {
-        // Refresh sub-transactions
         await fetchSubTransactions();
       } else {
         console.error('Failed to delete sub-transaction');
@@ -201,7 +211,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       const response = await fetch(`/api/emails/${emailRowId}`);
       if (response.ok) {
         const data = await response.json();
-        // Use plain_body, fallback to snippet
         const body = data.plain_body || data.snippet || null;
         setEmailData({
           body,
@@ -239,7 +248,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
   // Handler for when Splitwise expense is created
   const handleSplitwiseExpenseCreated = async (expenseId: string) => {
     try {
-      // Update transaction with expense ID in the database
       const response = await fetch(`/api/transactions/${formData.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -248,12 +256,11 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       });
 
       if (response.ok) {
-        // Update local state
         const updatedTransaction = { ...formData, splitwise_expense_id: expenseId };
         setFormData(updatedTransaction);
         setSplitwiseStatus('exists');
-        // Notify parent to update the transaction list
-        onSave(updatedTransaction);
+        // Use onTransactionUpdated to update the list without closing the modal or triggering a full save
+        onTransactionUpdated?.(updatedTransaction);
       } else {
         console.error('Failed to save Splitwise expense ID to transaction');
       }
@@ -275,7 +282,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
           const data = await response.json();
           const enums: string[] = [];
 
-          // Generate account type enums from email addresses
           for (const email of data.accountTypes || []) {
             const match = email.match(/@([^.]+)/);
             if (match) {
@@ -287,7 +293,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             }
           }
 
-          // Fetch and add custom account types from database
           const customResponse = await fetch('/api/admin/config/custom-account-types', {
             method: 'GET',
             credentials: 'include',
@@ -334,7 +339,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
 
       if (response.ok) {
         const result = await response.json();
-        // Use result.transaction which contains all the updated fields from the database
         if (result.transaction) {
           setFormData(prev => ({
             ...prev,
@@ -396,91 +400,31 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
       >
         <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
           <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
+            <Pencil className="w-5 h-5 text-primary" />
             Edit Transaction
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Edit transaction details, split into sub-transactions, or add notes.
+          </DialogDescription>
         </DialogHeader>
 
         {/* Splitwise Message Toast */}
         {splitwiseMessage && (
-          <div className={`px-4 py-3 flex items-center justify-between ${
-            splitwiseMessage.type === 'success'
-              ? 'bg-success/20 border-b border-success/30'
-              : 'bg-destructive/20 border-b border-destructive/30'
-          }`}>
-            <div className="flex items-center">
-              {splitwiseMessage.type === 'success' ? (
-                <svg className="w-5 h-5 text-success mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-destructive mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              )}
-              <span className={`text-sm ${splitwiseMessage.type === 'success' ? 'text-success' : 'text-destructive'}`}>
-                {splitwiseMessage.text}
-              </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSplitwiseMessage(null)}
-              className={splitwiseMessage.type === 'success' ? 'text-success hover:text-success/80' : 'text-destructive hover:text-destructive/80'}
-            >
-              Dismiss
-            </Button>
-          </div>
+          <ModalToast
+            type={splitwiseMessage.type}
+            message={splitwiseMessage.text}
+            onDismiss={() => setSplitwiseMessage(null)}
+          />
         )}
 
         {/* Re-extract Message Toast */}
         {reExtractMessage && (
-          <div className={`px-4 py-3 flex items-center justify-between ${
-            reExtractMessage.type === 'success'
-              ? 'bg-success/20 border-b border-success/30'
-              : reExtractMessage.type === 'info'
-              ? 'bg-primary/20 border-b border-primary/30'
-              : 'bg-destructive/20 border-b border-destructive/30'
-          }`}>
-            <div className="flex items-center">
-              {reExtractMessage.type === 'success' ? (
-                <svg className="w-5 h-5 text-success mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              ) : reExtractMessage.type === 'info' ? (
-                <svg className="w-5 h-5 text-primary mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-destructive mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              )}
-              <span className={`text-sm ${
-                reExtractMessage.type === 'success' ? 'text-success' :
-                reExtractMessage.type === 'info' ? 'text-primary' :
-                'text-destructive'
-              }`}>
-                {reExtractMessage.text}
-              </span>
-            </div>
-            {reExtractMessage.type !== 'info' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setReExtractMessage(null)}
-                className={
-                  reExtractMessage.type === 'success' ? 'text-success hover:text-success/80' :
-                  'text-destructive hover:text-destructive/80'
-                }
-              >
-                Dismiss
-              </Button>
-            )}
-          </div>
+          <ModalToast
+            type={reExtractMessage.type}
+            message={reExtractMessage.text}
+            loading={reExtractMessage.type === 'info' && isReExtracting}
+            onDismiss={reExtractMessage.type !== 'info' ? () => setReExtractMessage(null) : undefined}
+          />
         )}
 
         {/* Form */}
@@ -490,9 +434,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
+                  <FileText className="w-5 h-5 mr-2 text-primary" />
                   Transaction Details
                 </CardTitle>
               </CardHeader>
@@ -561,9 +503,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+                  <Store className="w-5 h-5 mr-2 text-green-400" />
                   Merchant Information
                 </CardTitle>
               </CardHeader>
@@ -625,9 +565,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+                  <FileText className="w-5 h-5 mr-2 text-purple-400" />
                   Additional Details
                 </CardTitle>
               </CardHeader>
@@ -709,14 +647,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                       </span>
                     )}
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-muted-foreground transition-transform ${subTransactionsExpanded ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown
+                    className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${subTransactionsExpanded ? 'rotate-180' : ''}`}
+                  />
                 </CardTitle>
               </CardHeader>
               {subTransactionsExpanded && (
@@ -743,19 +676,12 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 >
                   <CardTitle className="text-lg flex items-center justify-between">
                     <div className="flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
+                      <Mail className="w-5 h-5 mr-2 text-primary" />
                       Source Email
                     </div>
-                    <svg
-                      className={`w-5 h-5 text-muted-foreground transition-transform ${emailExpanded ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <ChevronDown
+                      className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${emailExpanded ? 'rotate-180' : ''}`}
+                    />
                   </CardTitle>
                 </CardHeader>
                 {emailExpanded && (
@@ -764,7 +690,6 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                       <LoadingScreen message="Loading email..." fullScreen={false} size="sm" />
                     ) : emailData ? (
                       <div className="space-y-3">
-                        {/* Email body */}
                         {emailData.body ? (
                           <div className="bg-background border border-border rounded-xl p-4 max-h-80 overflow-y-auto">
                             <div
@@ -792,19 +717,12 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               >
                 <CardTitle className="text-lg flex items-center justify-between">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
+                    <StickyNote className="w-5 h-5 mr-2 text-amber-400" />
                     Notes & Comments
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-muted-foreground transition-transform ${notesExpanded ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown
+                    className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${notesExpanded ? 'rotate-180' : ''}`}
+                  />
                 </CardTitle>
               </CardHeader>
               {notesExpanded && (
@@ -842,17 +760,12 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
             <div className="shrink-0 px-6 py-2.5 bg-emerald-500/10 border-t border-emerald-500/20 flex items-center gap-2">
               {splitwiseStatus === 'checking' ? (
                 <>
-                  <svg className="animate-spin h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <Loader2 className="h-4 w-4 text-emerald-400 animate-spin" />
                   <span className="text-sm text-emerald-400">Checking Splitwise...</span>
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                  </svg>
+                  <Users className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span className="text-sm text-emerald-400">
                     Split with {splitwiseParticipants.length > 0
                       ? splitwiseParticipants.join(', ')
@@ -907,14 +820,9 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
                 className="w-10 h-10 flex items-center justify-center bg-muted hover:bg-muted/80 rounded-full transition-colors disabled:opacity-50"
               >
                 {isReExtracting ? (
-                  <svg className="animate-spin h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <Loader2 className="h-5 w-5 text-primary animate-spin" />
                 ) : (
-                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
+                  <Wand2 className="w-5 h-5 text-primary" />
                 )}
               </button>
             </div>
@@ -936,10 +844,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave 
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
                     Saving...
                   </>
                 ) : (

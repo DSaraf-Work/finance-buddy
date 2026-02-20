@@ -303,6 +303,10 @@ export default function TransactionsPage() {
     }
   }, [success, showError]);
 
+  const handleTransactionFieldUpdated = useCallback((updatedTransaction: Transaction) => {
+    setTransactions(prev => prev.map(t => t.id === updatedTransaction.id ? { ...t, ...updatedTransaction } : t));
+  }, []);
+
   const handleTransactionUpdate = async (updatedTransaction: Transaction) => {
     // Re-use logic from previous implementation
     try {
@@ -420,6 +424,7 @@ export default function TransactionsPage() {
                 }
               }}
               onSave={handleTransactionUpdate}
+              onTransactionUpdated={handleTransactionFieldUpdated}
             />
           )}
 
