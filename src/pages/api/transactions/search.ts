@@ -80,7 +80,8 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         status,
         created_at,
         updated_at,
-        splitwise_expense_id
+        splitwise_expense_id,
+        sub_transaction_count
       `, { count: 'exact' })
       .eq('user_id', user.id);
 
