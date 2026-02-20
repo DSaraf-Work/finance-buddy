@@ -3,12 +3,21 @@
  *
  * Modal component for creating and editing sub-transactions.
  * Supports bulk creation with dynamic row addition/removal.
+ *
+ * Uses shadcn/ui Dialog for consistent modal styling across the app.
  */
 
 import { memo, useState, useCallback, useEffect } from 'react';
-import { X, Plus, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { SUB_TRANSACTION_LIMITS } from '@/types/sub-transactions';
 import type { CreateSubTransactionInput } from '@/types/sub-transactions';
 
@@ -130,33 +139,21 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
     validItemCount >= SUB_TRANSACTION_LIMITS.MIN_COUNT &&
     !isExceeding;
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
-      {/* Backdrop - higher z-index to overlay parent TransactionModal dialog */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-lg mx-4 max-h-[90vh] overflow-hidden rounded-xl bg-card border border-border shadow-2xl">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        className="flex flex-col bg-card border-border overflow-hidden sm:max-w-lg sm:max-h-[90vh]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">
+        <DialogHeader className="shrink-0 pt-4 pb-3 px-6 border-b border-border">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Split Transaction
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+          </DialogTitle>
+        </DialogHeader>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+        <div className="flex-1 overflow-y-auto px-6 py-6 max-h-[calc(90vh-180px)]">
           {/* Parent amount info */}
           {parentAmount !== null && (
             <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border/50">
@@ -359,16 +356,16 @@ export const SubTransactionEditor = memo(function SubTransactionEditor({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-muted/20">
+        <DialogFooter className="shrink-0 px-6 py-4 border-t border-border bg-muted/20 sm:justify-end">
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={!canSubmit}>
             {loading ? 'Saving...' : 'Save Split'}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 });
 
