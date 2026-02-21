@@ -37,7 +37,7 @@
     },
     {
       "path": "/api/cron/gmail-daily-sync",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 6 * * *"
     }
   ]
 }
