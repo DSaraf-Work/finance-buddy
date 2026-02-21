@@ -6,6 +6,7 @@ import {
   TABLE_TRANSACTION_KEYWORDS
 } from '@/lib/constants/database';
 import { lookupMerchantNormalized } from '@/lib/merchant-mappings/service';
+import { createTransactionNotification } from '@/lib/notifications/service';
 
 // Helper function to update keyword usage counts
 async function updateKeywordUsage(userId: string, aiNotes: string) {
@@ -215,6 +216,15 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           console.error('Failed to link receipt to transaction:', receiptLinkError);
         }
       }
+
+      // Create in-app notification (fire-and-forget)
+      createTransactionNotification({
+        userId: user.id,
+        transactionId: newTransaction.id,
+        merchantName: newTransaction.merchant_name,
+        amount: newTransaction.amount,
+        direction: newTransaction.direction,
+      });
 
       return res.status(201).json({ success: true, transaction: newTransaction });
     } catch (error: any) {

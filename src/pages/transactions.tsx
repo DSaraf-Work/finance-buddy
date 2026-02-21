@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotificationContext } from '@/contexts/NotificationContext';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import TransactionModal from '@/components/TransactionModal';
@@ -96,6 +97,7 @@ export default function TransactionsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toasts, removeToast, success, error: showError } = useToast();
+  const { refresh: refreshNotifications } = useNotificationContext();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -367,10 +369,12 @@ export default function TransactionsPage() {
     success('Transaction created');
     // Refresh list to respect active filters rather than prepending
     await searchTransactions(1, true);
+    // Refresh notifications so the new transaction notification appears in the bell
+    refreshNotifications();
     // Auto-open TransactionModal so user can immediately add splits
     setSelectedTransaction(newTransaction);
     setIsModalOpen(true);
-  }, [success]);
+  }, [success, refreshNotifications]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleTransactionDelete = useCallback(async (transactionId: string) => {
     setTransactions(prev => prev.filter(t => t.id !== transactionId));

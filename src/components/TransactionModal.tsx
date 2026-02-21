@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Transaction } from '@/pages/transactions';
+import { useNotificationContext } from '@/contexts/NotificationContext';
 import InteractiveKeywordSelector from './InteractiveKeywordSelector';
 import LoadingScreen from './LoadingScreen';
 import SplitwiseDropdown from './SplitwiseDropdown';
@@ -64,6 +65,7 @@ interface TransactionModalProps {
 }
 
 export default function TransactionModal({ transaction, isOpen, onClose, onSave, onTransactionUpdated, onDelete }: TransactionModalProps) {
+  const { dismissForTransaction } = useNotificationContext();
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [isLoading, setIsLoading] = useState(false);
   const [emailData, setEmailData] = useState<{ body: string | null; subject: string | null; from: string | null } | null>(null);
@@ -94,6 +96,13 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const [mappingSaved, setMappingSaved] = useState(false);
   const subTransactionSectionRef = useRef<HTMLDivElement>(null);
   const [receiptPreview, setReceiptPreview] = useState<{ signed_url: string; store_name: string | null } | null>(null);
+
+  // Auto-dismiss any in-app notification for this transaction when the modal opens
+  useEffect(() => {
+    if (isOpen && transaction?.id) {
+      dismissForTransaction(transaction.id);
+    }
+  }, [isOpen, transaction?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setFormData(transaction);

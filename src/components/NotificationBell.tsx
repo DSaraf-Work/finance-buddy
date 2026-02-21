@@ -1,94 +1,96 @@
-// Notification Bell Component
+import { memo, useState, useRef, useEffect } from 'react';
+import { Bell, X, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { useNotificationContext, InAppNotification } from '@/contexts/NotificationContext';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import LoadingScreen from '@/components/LoadingScreen';
-
-interface Notification {
-  id: string;
-  type: string;
-  title: string;
-  message: string;
-  action_url: string | null;
-  action_label: string | null;
-  read: boolean;
-  created_at: string;
+function formatTimeAgo(dateString: string): string {
+  const seconds = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
+  if (seconds < 60) return 'just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
 }
 
-export default function NotificationBell() {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+function NotificationItem({
+  notification,
+  onDismiss,
+  onClick,
+}: {
+  notification: InAppNotification;
+  onDismiss: (id: string) => void;
+  onClick: (n: InAppNotification) => void;
+}) {
+  return (
+    <div
+      className="flex items-start gap-3 px-4 py-3 border-b border-border/30 last:border-0 cursor-pointer group hover:bg-foreground/[0.04] transition-colors duration-100"
+      onClick={() => onClick(notification)}
+    >
+      {/* Unread dot */}
+      {!notification.read && (
+        <span className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-primary" />
+      )}
+
+      <div className={`flex-1 min-w-0 ${notification.read ? 'pl-3' : ''}`}>
+        <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
+          {notification.title}
+        </p>
+        <p className="text-[12px] text-foreground/50 mt-0.5 leading-tight">
+          {notification.message}
+        </p>
+        <p className="text-[10px] text-foreground/25 mt-1.5 font-medium">
+          {formatTimeAgo(notification.created_at)}
+        </p>
+      </div>
+
+      {/* Dismiss button — visible on hover */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onDismiss(notification.id); }}
+        className="mt-0.5 shrink-0 p-1 rounded-lg text-foreground/20 hover:text-foreground/60 hover:bg-foreground/[0.06] opacity-0 group-hover:opacity-100 transition-all duration-150"
+        aria-label="Dismiss notification"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
+export default memo(function NotificationBell() {
+  const { notifications, unreadCount, dismiss, dismissAll } = useNotificationContext();
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Removed polling - notifications will be triggered via other mechanisms
-  // (e.g., WebSocket, Server-Sent Events, or manual refresh)
-  // useEffect(() => {
-  //   fetchUnreadCount();
-  //   // Disable Notification auto fetch for now
-  //   // const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
-  //   // return () => clearInterval(interval);
-  // }, []);
-
-  // Fetch recent notifications when dropdown opens
+  // Close on outside click
   useEffect(() => {
-    if (isOpen) {
-      fetchRecentNotifications();
-    }
+    if (!isOpen) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => document.removeEventListener('mousedown', handleMouseDown);
   }, [isOpen]);
 
-  const fetchUnreadCount = async () => {
-    // DISABLED: Notification API calls disabled
-    return;
-  };
-
-  const fetchRecentNotifications = async () => {
-    // DISABLED: Notification API calls disabled
-    setLoading(false);
-    return;
-  };
-
-  const markAsRead = async (id: string) => {
-    // DISABLED: Notification API calls disabled
-    return;
-  };
-
-  const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    return `${Math.floor(seconds / 86400)}d ago`;
+  const handleNotificationClick = (notification: InAppNotification) => {
+    if (notification.action_url) {
+      router.push(notification.action_url);
+    }
+    setIsOpen(false);
   };
 
   return (
-    <div className="relative">
-      {/* Bell Icon - Dark Purple Theme */}
+    <div className="relative" ref={containerRef}>
+      {/* Bell trigger */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-[#cbd5e1] hover:text-[#f8fafc] hover:bg-[#2d1b4e]/30 rounded-[var(--radius-md)] border border-transparent hover:border-[#2d1b4e] focus:outline-none focus:ring-2 focus:ring-[#6b4ce6] focus:ring-offset-2 focus:ring-offset-[#1a1625] transition-all duration-200"
-        aria-label="Notifications"
+        onClick={() => setIsOpen(prev => !prev)}
+        className="relative w-10 h-10 rounded-xl flex items-center justify-center text-foreground/50 hover:text-foreground hover:bg-foreground/[0.06] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+        aria-expanded={isOpen}
       >
-        <svg
-          className="w-5 h-5 sm:w-6 sm:h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
-        </svg>
-
-        {/* Badge */}
+        <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-[#ec4899] rounded-full shadow-[0_0_10px_rgba(236,72,153,0.5)] animate-pulse">
+          <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 flex items-center justify-center px-1 text-[9px] font-bold leading-none text-white bg-primary rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -96,125 +98,42 @@ export default function NotificationBell() {
 
       {/* Dropdown */}
       {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-
-          {/* Dropdown Content - Dark Purple Theme */}
-          <div className="absolute right-0 z-20 mt-3 w-80 sm:w-96 bg-[#1a1625] rounded-[var(--radius-lg)] shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-[#2d1b4e] overflow-hidden">
-            {/* Header */}
-            <div className="px-4 py-3 border-b border-[#2d1b4e] bg-[#0f0a1a]/50">
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-[#f8fafc]">
-                  Notifications
-                </h3>
-                {unreadCount > 0 && (
-                  <button
-                    onClick={async () => {
-                      // DISABLED: Notification API calls disabled
-                      // await fetch('/api/notifications/mark-all-read', {
-                      //   method: 'PATCH',
-                      // });
-                      setUnreadCount(0);
-                      fetchRecentNotifications();
-                    }}
-                    className="text-xs font-medium text-[#a78bfa] hover:text-[#6b4ce6] transition-colors duration-200"
-                  >
-                    Mark all read
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Notifications List */}
-            <div className="max-h-96 overflow-y-auto">
-              {loading ? (
-                <div className="px-4 py-8">
-                  <LoadingScreen message="Loading..." fullScreen={false} size="sm" />
-                </div>
-              ) : notifications.length === 0 ? (
-                <div className="px-4 py-8 text-center">
-                  <svg className="w-12 h-12 mx-auto text-[#2d1b4e] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                  <p className="text-sm text-[#94a3b8]">No notifications</p>
-                </div>
-              ) : (
-                notifications.map(notification => (
-                  <div
-                    key={notification.id}
-                    className={`px-4 py-3 border-b border-[#2d1b4e] hover:bg-[#2d1b4e]/20 transition-colors duration-150 ${
-                      !notification.read ? 'bg-[#6b4ce6]/10' : ''
-                    }`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#f8fafc] truncate">
-                          {notification.title}
-                        </p>
-                        <p className="text-sm text-[#cbd5e1] mt-1">
-                          {notification.message}
-                        </p>
-                        <div className="flex items-center mt-2 gap-2">
-                          <span className="text-xs text-[#94a3b8]">
-                            {formatTimeAgo(notification.created_at)}
-                          </span>
-                          {notification.action_url && (
-                            <Link
-                              href={notification.action_url}
-                              onClick={() => {
-                                markAsRead(notification.id);
-                                setIsOpen(false);
-                              }}
-                              className="text-xs text-[#a78bfa] hover:text-[#6b4ce6] font-medium transition-colors duration-200"
-                            >
-                              {notification.action_label || 'View'}
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-                      {!notification.read && (
-                        <button
-                          onClick={() => markAsRead(notification.id)}
-                          className="ml-2 text-[#6b4ce6] hover:text-[#a78bfa] transition-colors duration-200"
-                          aria-label="Mark as read"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="px-4 py-3 border-t border-[#2d1b4e] bg-[#0f0a1a]/50">
-              <Link
-                href="/notifications"
-                onClick={() => setIsOpen(false)}
-                className="block text-center text-sm text-[#a78bfa] hover:text-[#6b4ce6] font-medium transition-colors duration-200"
+        <div className="absolute right-0 top-full mt-2 w-80 rounded-xl bg-card border border-border shadow-2xl z-50 overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+            <span className="text-[13px] font-semibold text-foreground">Notifications</span>
+            {notifications.length > 0 && (
+              <button
+                onClick={dismissAll}
+                className="flex items-center gap-1.5 text-[11px] text-foreground/35 hover:text-destructive transition-colors duration-150"
+                aria-label="Clear all notifications"
               >
-                View all notifications →
-              </Link>
-            </div>
+                <Trash2 className="h-3 w-3" />
+                Clear all
+              </button>
+            )}
           </div>
-        </>
+
+          {/* Notification list */}
+          <div className="max-h-[380px] overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 gap-2">
+                <Bell className="h-8 w-8 text-foreground/10" />
+                <p className="text-[13px] text-foreground/25">No notifications</p>
+              </div>
+            ) : (
+              notifications.map(n => (
+                <NotificationItem
+                  key={n.id}
+                  notification={n}
+                  onDismiss={dismiss}
+                  onClick={handleNotificationClick}
+                />
+              ))
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
-}
-
+});

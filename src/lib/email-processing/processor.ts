@@ -9,6 +9,7 @@ import {
   TABLE_REJECTED_EMAILS
 } from '@/lib/constants/database';
 import { lookupMerchantNormalized } from '@/lib/merchant-mappings/service';
+import { createTransactionNotification } from '@/lib/notifications/service';
 import type { Database } from '@/types';
 
 export interface EmailProcessingRequest {
@@ -290,6 +291,15 @@ export class EmailProcessor {
       // We need to wait a bit for the trigger to complete, then send the push
       this.sendPushNotificationForTransaction(transactionId).catch((error) => {
         console.error('❌ Failed to send push notification:', error);
+      });
+
+      // Create in-app notification (fire and forget)
+      createTransactionNotification({
+        userId: email.user_id,
+        transactionId,
+        merchantName: transactionData.merchant_name ?? null,
+        amount: transactionData.amount ?? 0,
+        direction: transactionData.direction ?? 'debit',
       });
     }
 
