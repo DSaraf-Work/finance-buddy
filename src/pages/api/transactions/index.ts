@@ -154,7 +154,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     }
   } else if (req.method === 'POST') {
     try {
-      const { txn_time, amount, direction, currency, merchant_name, category, account_type, account_hint, user_notes } = req.body;
+      const { txn_time, amount, direction, currency, merchant_name, category, account_type, account_hint, user_notes, receipt_id } = req.body;
 
       if (!amount || parseFloat(amount) <= 0) {
         return res.status(400).json({ error: 'Amount must be greater than 0' });
@@ -192,6 +192,21 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       if (error) {
         console.error('Error creating transaction:', error);
         return res.status(500).json({ error: 'Failed to create transaction', details: error.message });
+      }
+
+      // Link pending receipt to the new transaction if one was scanned
+      if (receipt_id && typeof receipt_id === 'string') {
+        const { error: receiptLinkError } = await (supabaseAdmin as any)
+          .from('fb_receipts')
+          .update({ transaction_id: newTransaction.id, updated_at: new Date().toISOString() })
+          .eq('id', receipt_id)
+          .eq('user_id', user.id)
+          .is('transaction_id', null); // Safety: only link if not already linked
+
+        if (receiptLinkError) {
+          // Non-fatal: transaction was created, just couldn't link receipt
+          console.error('Failed to link receipt to transaction:', receiptLinkError);
+        }
       }
 
       return res.status(201).json({ success: true, transaction: newTransaction });

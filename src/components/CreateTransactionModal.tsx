@@ -7,7 +7,7 @@
  */
 
 import { memo, useState, useCallback, useEffect, useRef } from 'react';
-import { Loader2, PenLine, ScanLine } from 'lucide-react';
+import { Loader2, PenLine, ScanLine, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -73,6 +73,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [receiptPreview, setReceiptPreview] = useState<{ receipt_id: string; signed_url: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when modal opens
@@ -80,6 +81,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
     if (isOpen) {
       setForm({ ...EMPTY_FORM, txn_time: todayLocalDatetime() });
       setErrorMsg(null);
+      setReceiptPreview(null);
     }
   }, [isOpen]);
 
@@ -121,6 +123,10 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
       }
 
       const fields = data.fields;
+
+      if (data.receipt_id && data.signed_url) {
+        setReceiptPreview({ receipt_id: data.receipt_id, signed_url: data.signed_url });
+      }
 
       // Build datetime-local value from extracted date + current time
       const receiptDate = fields.date
@@ -183,6 +189,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
             account_type: form.account_type || null,
             account_hint: form.account_hint || null,
             user_notes: form.user_notes || null,
+            receipt_id: receiptPreview?.receipt_id ?? null,
           }),
         });
 
@@ -198,7 +205,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
         setIsLoading(false);
       }
     },
-    [form, onCreated]
+    [form, onCreated, receiptPreview]
   );
 
   const inputClass =
@@ -230,6 +237,30 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
 
         {errorMsg && (
           <ModalToast type="error" message={errorMsg} className="border-b-0" />
+        )}
+
+        {/* Receipt Preview — shows after scan */}
+        {receiptPreview && (
+          <div className="shrink-0 px-6 pt-4 pb-0 flex items-center gap-3">
+            <img
+              src={receiptPreview.signed_url}
+              alt="Scanned receipt"
+              className="h-16 w-auto rounded-lg object-cover border border-border"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-foreground">Receipt scanned</p>
+              <p className="text-xs text-muted-foreground">Fields auto-filled from receipt</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setReceiptPreview(null)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              title="Remove receipt"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         )}
 
         {/* Scrollable body */}

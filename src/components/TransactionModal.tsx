@@ -86,6 +86,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const [splitLoading, setSplitLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [receiptPreview, setReceiptPreview] = useState<{ signed_url: string; store_name: string | null } | null>(null);
 
   useEffect(() => {
     setFormData(transaction);
@@ -124,6 +125,21 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
 
     checkSplitwiseExpense();
   }, [isOpen, transaction.splitwise_expense_id]);
+
+  // Fetch receipt preview when modal opens
+  useEffect(() => {
+    if (!isOpen || !transaction?.id) {
+      setReceiptPreview(null);
+      return;
+    }
+    fetch(`/api/transactions/${transaction.id}/receipt`, { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.signed_url) setReceiptPreview({ signed_url: data.signed_url, store_name: data.store_name ?? null });
+        else setReceiptPreview(null);
+      })
+      .catch(() => setReceiptPreview(null));
+  }, [isOpen, transaction?.id]);
 
   // Load sub-transactions when modal opens
   const fetchSubTransactions = useCallback(async () => {
@@ -605,6 +621,30 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
               </CardContent>
             </Card>
 
+            {/* Receipt Preview */}
+            {receiptPreview && (
+              <a
+                href={receiptPreview.signed_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-muted/30 border border-border rounded-lg p-3 hover:bg-muted/50 transition-colors"
+                title="View receipt"
+              >
+                <img
+                  src={receiptPreview.signed_url}
+                  alt="Receipt"
+                  className="h-12 w-auto rounded object-cover shrink-0"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-foreground truncate">
+                    {receiptPreview.store_name ? `Receipt — ${receiptPreview.store_name}` : 'View Receipt'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Click to open full image</p>
+                </div>
+              </a>
+            )}
+
             {/* Additional Details Section */}
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
@@ -850,8 +890,8 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
                 </>
               ) : (
                 <>
-                  {/* Split Transaction Button — hidden for manual transactions */}
-                  {!formData.is_manual && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
+                  {/* Split Transaction Button */}
+                  {formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
                     <button
                       type="button"
                       onClick={() => setShowSplitEditor(true)}
@@ -861,8 +901,8 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
                       <Layers className="h-5 w-5 text-primary" />
                     </button>
                   )}
-                  {/* Scan Receipt Button — hidden for manual transactions */}
-                  {!formData.is_manual && isReceiptParsingEnabled() && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
+                  {/* Scan Receipt Button */}
+                  {isReceiptParsingEnabled() && formData.amount && parseFloat(formData.amount.toString()) > 0 && subTransactions.length === 0 && (
                     <button
                       type="button"
                       onClick={() => setIsReceiptModalOpen(true)}

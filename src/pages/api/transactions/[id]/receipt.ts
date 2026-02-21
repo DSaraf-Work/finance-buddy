@@ -1,14 +1,6 @@
 /**
- * POST /api/transactions/[id]/receipt
- *
- * Accepts a multipart upload (image file), runs it through:
- *   1. HEIC→JPEG conversion (if applicable)
- *   2. Sharp resize/grayscale/compress (1024px, grayscale, 70% JPEG)
- *   3. Supabase Storage upload
- *   4. OpenRouter Claude Haiku OCR parsing
- *   5. DB save (fb_receipts + fb_receipt_items)
- *
- * Returns: { receipt_id, parsed: ParsedReceipt }
+ * GET  /api/transactions/[id]/receipt — fetch stored receipt preview (signed URL)
+ * POST /api/transactions/[id]/receipt — upload image, OCR parse, save to DB
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -35,13 +27,46 @@ const ACCEPTED_IMAGE_TYPES = new Set([
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
   const { id: transactionId } = req.query;
   if (!transactionId || typeof transactionId !== 'string') {
     return res.status(400).json({ error: 'Invalid transaction ID' });
+  }
+
+  // ── GET: return signed URL for the most recent receipt linked to this transaction ──
+  if (req.method === 'GET') {
+    const { data: receipt, error } = await (supabaseAdmin as any)
+      .from(TABLE_RECEIPTS)
+      .select('id, storage_path, store_name, total_amount, currency, receipt_date, confidence')
+      .eq('transaction_id', transactionId)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle() as { data: Record<string, unknown> | null; error: unknown };
+
+    if (error || !receipt) {
+      return res.status(404).json({ error: 'No receipt found for this transaction' });
+    }
+
+    const { data: signedData, error: signError } = await supabaseAdmin.storage
+      .from('receipts')
+      .createSignedUrl(String(receipt.storage_path), 3600); // 1-hour URL
+
+    if (signError || !signedData?.signedUrl) {
+      console.error('Failed to generate signed URL:', signError);
+      return res.status(500).json({ error: 'Failed to generate receipt URL' });
+    }
+
+    return res.status(200).json({
+      receipt_id: receipt.id,
+      signed_url: signedData.signedUrl,
+      store_name: receipt.store_name ?? null,
+      total_amount: receipt.total_amount ?? null,
+      receipt_date: receipt.receipt_date ?? null,
+    });
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   // Verify transaction belongs to this user

@@ -1,12 +1,14 @@
 /**
  * POST /api/receipts/parse
  *
- * Stateless receipt scanning for new manual transactions.
- * Accepts a multipart image upload and returns extracted top-level transaction fields:
- *   merchant name, total amount, currency, date, category, direction.
+ * Stateless-ish receipt scanning for new manual transactions.
+ * Accepts a multipart image upload, processes it, runs OCR, persists the image
+ * to Supabase Storage + fb_receipts (with transaction_id=null), and returns
+ * extracted top-level transaction fields + receipt_id + signed URL so the UI
+ * can show a thumbnail and link the receipt after transaction creation.
  *
- * No DB persistence — used purely to pre-fill CreateTransactionModal form.
- * Image pipeline: HEIC→JPEG → Sharp resize/grayscale/compress → OpenRouter Claude Haiku.
+ * Image pipeline: HEIC→JPEG → Sharp resize/grayscale/compress → Storage → OCR
+ * Returns: { receipt_id, signed_url, fields: ParsedTransactionFields }
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -14,6 +16,8 @@ import formidable, { type Files as FormidableFiles } from 'formidable';
 import { readFileSync } from 'fs';
 import sharp from 'sharp';
 import { withAuth } from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabase';
+import { TABLE_RECEIPTS } from '@/lib/constants/database';
 import { parseTransactionFields, ReceiptParseError } from '@/lib/receipt/parser';
 
 // Disable Next.js body parser — formidable handles multipart
@@ -30,7 +34,7 @@ const ACCEPTED_IMAGE_TYPES = new Set([
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
-export default withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
+export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -97,21 +101,32 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ error: 'Failed to process image' });
   }
 
+  // Upload processed image to Supabase Storage so user can view it later
+  const receiptId = crypto.randomUUID();
+  const storagePath = `${user.id}/${receiptId}/receipt.jpg`;
+
+  const { error: uploadError } = await supabaseAdmin.storage
+    .from('receipts')
+    .upload(storagePath, fileBuffer, { contentType: 'image/jpeg', upsert: false });
+
+  if (uploadError) {
+    console.error('Storage upload failed:', uploadError);
+    return res.status(500).json({ error: 'Failed to upload receipt image' });
+  }
+
+  // OCR: extract top-level transaction fields
+  let fields;
   try {
-    const fields = await parseTransactionFields({ fileBuffer, mimeType: effectiveMime });
-    console.log('✅ Transaction fields extracted from receipt:', {
-      store_name: fields.store_name,
-      total_amount: fields.total_amount,
-      category: fields.category,
-      direction: fields.direction,
-    });
-    return res.status(200).json({ fields });
+    fields = await parseTransactionFields({ fileBuffer, mimeType: effectiveMime });
   } catch (err) {
+    // Clean up orphaned storage file on OCR failure
+    await supabaseAdmin.storage.from('receipts').remove([storagePath]);
+
     if (err instanceof ReceiptParseError) {
       if (err.code === 'NOT_A_RECEIPT') {
         return res.status(422).json({
           error: 'The uploaded image does not appear to be a receipt',
-          reason: err.reason,
+          reason: (err as ReceiptParseError).reason,
         });
       }
       return res.status(500).json({ error: err.message });
@@ -119,4 +134,56 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse) => {
     console.error('Transaction fields parsing failed:', err);
     return res.status(500).json({ error: 'Failed to parse receipt' });
   }
+
+  // Save receipt record with transaction_id=null (will be linked after transaction creation)
+  const receiptRow = {
+    id: receiptId,
+    user_id: user.id,
+    transaction_id: null,
+    storage_path: storagePath,
+    original_filename: uploadedFile.originalFilename || 'receipt.jpg',
+    file_type: detectedMime,
+    file_size_bytes: uploadedFile.size ?? null,
+    store_name: fields.store_name,
+    receipt_date: fields.date,
+    total_amount: fields.total_amount,
+    currency: fields.currency,
+    parsing_status: 'completed' as const,
+    confidence: null,
+    ai_model_used: 'anthropic/claude-haiku-4.5',
+  };
+
+  const { error: dbError } = await (supabaseAdmin as any).from(TABLE_RECEIPTS).insert(receiptRow);
+
+  if (dbError) {
+    // Orphan prevention: delete storage file if DB insert fails
+    await supabaseAdmin.storage.from('receipts').remove([storagePath]);
+    console.error('Failed to save receipt to DB:', dbError);
+    return res.status(500).json({ error: 'Failed to save receipt' });
+  }
+
+  // Generate a 1-hour signed URL for the frontend to display as thumbnail
+  const { data: signedData, error: signError } = await supabaseAdmin.storage
+    .from('receipts')
+    .createSignedUrl(storagePath, 3600);
+
+  if (signError || !signedData?.signedUrl) {
+    console.error('Failed to generate signed URL:', signError);
+    // Non-fatal: return without signed URL (thumbnail won't show but OCR still worked)
+    return res.status(200).json({ receipt_id: receiptId, signed_url: null, fields });
+  }
+
+  console.log('✅ Transaction fields extracted from receipt:', {
+    receipt_id: receiptId,
+    store_name: fields.store_name,
+    total_amount: fields.total_amount,
+    category: fields.category,
+    direction: fields.direction,
+  });
+
+  return res.status(200).json({
+    receipt_id: receiptId,
+    signed_url: signedData.signedUrl,
+    fields,
+  });
 });
