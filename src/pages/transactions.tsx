@@ -367,6 +367,9 @@ export default function TransactionsPage() {
     success('Transaction created');
     // Refresh list to respect active filters rather than prepending
     await searchTransactions(1, true);
+    // Auto-open TransactionModal so user can immediately add splits
+    setSelectedTransaction(newTransaction);
+    setIsModalOpen(true);
   }, [success]);
 
   const handleTransactionDelete = useCallback(async (transactionId: string) => {
