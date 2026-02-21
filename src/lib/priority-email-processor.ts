@@ -373,24 +373,21 @@ async function processSingleEmail(
   }
 }
 
+/** Refresh tokens this many milliseconds before actual expiry. */
+const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000; // 5 minutes
+
 /**
  * Get valid access token for a connection (refresh if needed)
  */
 async function getValidAccessToken(connection: any): Promise<string> {
-  // Check if access token exists and is not expired
+  // Check if access token exists and is not expired (with 5-min buffer)
   const tokenExpiry = connection.token_expiry || connection.token_expires_at;
   const now = new Date();
   const expiryDate = tokenExpiry ? new Date(tokenExpiry) : null;
 
-  // Check if token expiry is suspiciously far in the future (> 2 hours)
-  // This indicates the old bug where we set expiry to 1 year
-  const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
-  const isSuspiciousExpiry = expiryDate && expiryDate > twoHoursFromNow;
-
   const isTokenValid = connection.access_token &&
                        expiryDate &&
-                       expiryDate > now &&
-                       !isSuspiciousExpiry;
+                       expiryDate > new Date(now.getTime() + TOKEN_REFRESH_BUFFER_MS);
 
   if (isTokenValid) {
     console.log(`✅ [PriorityEmailProcessor] Using existing valid access token for ${connection.email_address}`, {
@@ -403,7 +400,6 @@ async function getValidAccessToken(connection: any): Promise<string> {
   // Refresh access token
   const reason = !connection.access_token ? 'missing' :
                  !expiryDate ? 'no expiry' :
-                 isSuspiciousExpiry ? 'suspicious expiry (old bug)' :
                  'expired';
   console.log(`🔑 [PriorityEmailProcessor] Refreshing access token for ${connection.email_address} (${reason})`);
 
@@ -417,13 +413,18 @@ async function getValidAccessToken(connection: any): Promise<string> {
     const bufferSeconds = 300; // 5 minutes
     const tokenExpiry = new Date(Date.now() + (expiresInSeconds - bufferSeconds) * 1000);
 
-    // Update connection with new access token
+    // Update connection with new access token (persist rotated refresh_token if issued)
+    const tokenUpdate: Record<string, string> = {
+      access_token: tokens.access_token!,
+      token_expiry: tokenExpiry.toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    if ((tokens as any).refresh_token) {
+      tokenUpdate.refresh_token = (tokens as any).refresh_token;
+    }
     await (supabaseAdmin as any)
       .from(TABLE_GMAIL_CONNECTIONS)
-      .update({
-        access_token: tokens.access_token,
-        token_expiry: tokenExpiry.toISOString(),
-      })
+      .update(tokenUpdate)
       .eq('id', connection.id);
 
     console.log(`✅ [PriorityEmailProcessor] Access token refreshed successfully for ${connection.email_address}`, {
