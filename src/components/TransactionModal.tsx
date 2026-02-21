@@ -27,6 +27,8 @@ import {
   ScanLine,
   Trash2,
   RefreshCw,
+  Save,
+  Check,
 } from 'lucide-react';
 import {
   Dialog,
@@ -88,6 +90,8 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isReprocessing, setIsReprocessing] = useState(false);
+  const [isSavingMapping, setIsSavingMapping] = useState(false);
+  const [mappingSaved, setMappingSaved] = useState(false);
   const subTransactionSectionRef = useRef<HTMLDivElement>(null);
   const [receiptPreview, setReceiptPreview] = useState<{ signed_url: string; store_name: string | null } | null>(null);
 
@@ -182,6 +186,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
       setSubTransactions([]);
       setSubTransactionValidation(null);
       setSubTransactionsExpanded(false);
+      setMappingSaved(false);
     }
   }, [isOpen, transaction.id, fetchSubTransactions]);
 
@@ -337,6 +342,33 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
       setIsReprocessing(false);
     }
   }, [formData.id, setReceiptItems, setShowSplitEditor]);
+
+  // Save the current merchant_name → merchant_normalized mapping to the DB
+  const handleSaveMerchantMapping = useCallback(async () => {
+    if (!formData.merchant_name?.trim() || !formData.merchant_normalized?.trim()) return;
+    setIsSavingMapping(true);
+    try {
+      const response = await fetch('/api/merchant-mappings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          merchant_name: formData.merchant_name,
+          merchant_normalized: formData.merchant_normalized,
+        }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save mapping');
+      }
+      setMappingSaved(true);
+      setTimeout(() => setMappingSaved(false), 2000);
+    } catch (err) {
+      console.error('Failed to save merchant mapping:', err);
+    } finally {
+      setIsSavingMapping(false);
+    }
+  }, [formData.merchant_name, formData.merchant_normalized]);
 
   // Handler for when Splitwise expense is created
   const handleSplitwiseExpenseCreated = async (expenseId: string) => {
@@ -614,13 +646,30 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="merchant-normalized">Normalized Merchant</Label>
-                    <Input
-                      id="merchant-normalized"
-                      type="text"
-                      value={formData.merchant_normalized || ''}
-                      onChange={(e) => handleInputChange('merchant_normalized', e.target.value)}
-                      placeholder="e.g., Starbucks"
-                    />
+                    <div className="flex items-center gap-1.5">
+                      <Input
+                        id="merchant-normalized"
+                        type="text"
+                        value={formData.merchant_normalized || ''}
+                        onChange={(e) => handleInputChange('merchant_normalized', e.target.value)}
+                        placeholder="e.g., Starbucks"
+                      />
+                      <button
+                        type="button"
+                        title="Save mapping: future transactions with this merchant name will use this normalized name"
+                        onClick={handleSaveMerchantMapping}
+                        disabled={isSavingMapping || !formData.merchant_name?.trim() || !formData.merchant_normalized?.trim()}
+                        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-md bg-primary/10 hover:bg-primary/20 text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isSavingMapping ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : mappingSaved ? (
+                          <Check className="h-4 w-4 text-green-400" />
+                        ) : (
+                          <Save className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>

@@ -5,6 +5,7 @@ import {
   TABLE_EMAILS_PROCESSED,
   TABLE_TRANSACTION_KEYWORDS
 } from '@/lib/constants/database';
+import { lookupMerchantNormalized } from '@/lib/merchant-mappings/service';
 
 // Helper function to update keyword usage counts
 async function updateKeywordUsage(userId: string, aiNotes: string) {
@@ -166,6 +167,11 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
         return res.status(400).json({ error: 'Direction must be debit or credit' });
       }
 
+      // Apply user-saved merchant mapping (case-insensitive) for manual transactions
+      const autoNormalized = merchant_name
+        ? await lookupMerchantNormalized(user.id, merchant_name)
+        : null;
+
       const { data: newTransaction, error } = await (supabaseAdmin as any)
         .from(TABLE_EMAILS_PROCESSED)
         .insert({
@@ -181,6 +187,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
           direction,
           currency: currency || 'INR',
           merchant_name: merchant_name || null,
+          merchant_normalized: autoNormalized || null,
           category: category || null,
           account_type: account_type || null,
           account_hint: account_hint || null,

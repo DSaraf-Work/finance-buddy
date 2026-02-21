@@ -68,6 +68,12 @@ export const TABLE_RECEIPT_ITEMS = 'fb_receipt_items' as const;
 export const TABLE_RECEIPT_ITEM_LINKS = 'fb_receipt_item_links' as const;
 
 /**
+ * User-defined merchant name → normalized merchant mappings
+ * Added in migration 0014_merchant_mappings.sql
+ */
+export const TABLE_MERCHANT_MAPPINGS = 'fb_merchant_mappings' as const;
+
+/**
  * Refund links (M:N relationship between refunds and originals)
  * Added in migration 0008_smart_refunds.sql
  */

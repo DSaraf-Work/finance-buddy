@@ -8,6 +8,7 @@ import {
   TABLE_EMAILS_PROCESSED,
   TABLE_REJECTED_EMAILS
 } from '@/lib/constants/database';
+import { lookupMerchantNormalized } from '@/lib/merchant-mappings/service';
 import type { Database } from '@/types';
 
 export interface EmailProcessingRequest {
@@ -159,6 +160,12 @@ export class EmailProcessor {
 
     if (!extractedTransaction) {
       throw new Error('Transaction extraction failed - no result returned');
+    }
+
+    // Apply user-saved merchant mapping override (case-insensitive exact match)
+    const merchantOverride = await lookupMerchantNormalized(email.user_id, extractedTransaction.merchant_name);
+    if (merchantOverride) {
+      extractedTransaction.merchant_normalized = merchantOverride;
     }
 
     // Save extracted transaction and get the ID

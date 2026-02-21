@@ -6,6 +6,7 @@ import {
   TABLE_EMAILS_FETCHED,
   TABLE_EMAILS_PROCESSED
 } from '@/lib/constants/database';
+import { lookupMerchantNormalized } from '@/lib/merchant-mappings/service';
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUser) => {
   if (req.method !== 'POST') {
@@ -117,6 +118,12 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, authUs
         details: error.message,
         reason: 'All AI models failed after retries. Please check your AI configuration and API keys.'
       });
+    }
+
+    // Apply user-saved merchant mapping override (case-insensitive exact match)
+    const merchantOverride = await lookupMerchantNormalized(userId, extractedTransaction.merchant_name);
+    if (merchantOverride) {
+      extractedTransaction.merchant_normalized = merchantOverride;
     }
 
     // Update the transaction with new extracted data
