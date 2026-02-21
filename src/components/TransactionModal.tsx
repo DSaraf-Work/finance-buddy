@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Transaction } from '@/pages/transactions';
 import InteractiveKeywordSelector from './InteractiveKeywordSelector';
 import LoadingScreen from './LoadingScreen';
@@ -86,6 +86,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const [splitLoading, setSplitLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const subTransactionSectionRef = useRef<HTMLDivElement>(null);
   const [receiptPreview, setReceiptPreview] = useState<{ signed_url: string; store_name: string | null } | null>(null);
 
   useEffect(() => {
@@ -157,9 +158,10 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
         const data: SubTransactionListResponse = result.data || result;
         setSubTransactions(data.items || []);
         setSubTransactionValidation(data.validation || null);
-        // Auto-expand if there are sub-transactions
+        // Auto-expand if there are sub-transactions and scroll into view
         if (data.items && data.items.length > 0) {
           setSubTransactionsExpanded(true);
+          setTimeout(() => subTransactionSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
         }
       }
     } catch (error) {
@@ -716,6 +718,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
             </Card>
 
             {/* Sub-Transactions Section - Collapsible */}
+            <div ref={subTransactionSectionRef}>
             <Card className="bg-card/50 border-border/50">
               <CardHeader
                 className="cursor-pointer select-none"
@@ -750,6 +753,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
                 </CardContent>
               )}
             </Card>
+            </div>
 
             {/* Email Body Section - Collapsible */}
             {transaction.email_row_id && (
