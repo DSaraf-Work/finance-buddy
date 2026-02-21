@@ -10,9 +10,9 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { TABLE_GMAIL_CONNECTIONS } from '@/lib/constants/database';
-import { refreshAccessToken, listMessages, getMessage, markAsRead } from '@/lib/gmail';
+import { refreshAccessToken, listMessages, getEnhancedMessage, markAsRead } from '@/lib/gmail';
 import { EmailProcessor } from '@/lib/email-processing/processor';
-import { extractEmailFromHeaders, extractSubjectFromHeaders, extractPlainTextBody } from '@/lib/gmail';
+import { extractEmailFromHeaders, extractSubjectFromHeaders } from '@/lib/gmail';
 
 // Priority senders to check for unread emails
 const PRIORITY_SENDERS = [
@@ -160,9 +160,9 @@ async function processConnectionPriorityEmails(connection: any): Promise<{
     // Process each email
     for (const messageId of messageIds) {
       try {
-        await processSingleEmail(connection, accessToken, messageId, true); // Mark as read for priority emails
+        const { markedAsRead } = await processSingleEmail(connection, accessToken, messageId, true); // Mark as read for priority emails
         result.emailsProcessed++;
-        result.emailsMarkedRead++;
+        if (markedAsRead) result.emailsMarkedRead++;
       } catch (error: any) {
         console.error(`❌ [PriorityEmailProcessor] Failed to process email ${messageId}:`, error);
         // Continue processing other emails even if one fails
@@ -236,29 +236,32 @@ export async function processWebhookEmail(
 /**
  * Process a single email message
  * Similar to the gmail-pubsub webhook flow
+ * Returns true if the email was successfully marked as read
  */
 async function processSingleEmail(
   connection: any,
   accessToken: string,
   messageId: string,
   shouldMarkAsRead: boolean = true  // Default to true for priority email cron
-): Promise<void> {
+): Promise<{ markedAsRead: boolean }> {
   console.log(`📧 [PriorityEmailProcessor] Processing email: ${messageId}`);
 
-  // Fetch email details from Gmail
-  const gmailMessage = await getMessage(accessToken, messageId);
+  // Fetch email using enhanced strategy (tries 4 parsing methods for robust body extraction)
+  const enhanced = await getEnhancedMessage(accessToken, messageId);
+  const gmailMessage = enhanced.message;
+  const plainBody = enhanced.content;
 
   // Extract email metadata
   const headers = gmailMessage.payload?.headers || [];
   const fromAddress = extractEmailFromHeaders(headers);
   const subject = extractSubjectFromHeaders(headers);
-  const plainBody = extractPlainTextBody(gmailMessage.payload);
 
   console.log(`📧 [PriorityEmailProcessor] Email details:`, {
     messageId,
     from: fromAddress,
     subject,
-    hasBody: !!plainBody,
+    bodyLength: plainBody?.length ?? 0,
+    strategy: enhanced.strategy,
   });
 
   // Check if this email is already in our database
@@ -281,17 +284,18 @@ async function processSingleEmail(
       try {
         await markAsRead(accessToken, messageId);
         console.log(`✅ [PriorityEmailProcessor] Marked duplicate email as read: ${messageId}`);
+        return { markedAsRead: true };
       } catch (error: any) {
         console.warn(`⚠️ [PriorityEmailProcessor] Could not mark email as read (insufficient permissions):`, {
           messageId,
           error: error.message,
         });
-        // Continue - this is not a critical error
-        // Gmail OAuth scope 'gmail.readonly' doesn't allow modifying emails
+        // gmail.modify scope is required — existing connections with gmail.readonly need to re-authorize
+        return { markedAsRead: false };
       }
     }
 
-    return;
+    return { markedAsRead: false };
   }
 
   // Store email in database and get the database ID
@@ -306,6 +310,7 @@ async function processSingleEmail(
     subject: subject,
     snippet: gmailMessage.snippet,
     internal_date: new Date(parseInt(gmailMessage.internalDate || '0')).toISOString(),
+    plain_body: plainBody,  // Store body so re-processing and daily sync can use it
     // Note: status is auto-maintained by database triggers, don't set it manually
   };
 
@@ -352,17 +357,19 @@ async function processSingleEmail(
     try {
       await markAsRead(accessToken, messageId);
       console.log(`✅ [PriorityEmailProcessor] Marked email as read: ${messageId}`);
+      return { markedAsRead: true };
     } catch (error: any) {
       console.warn(`⚠️ [PriorityEmailProcessor] Could not mark email as read (insufficient permissions):`, {
         messageId,
         error: error.message,
       });
-      // Continue - this is not a critical error
-      // Gmail OAuth scope 'gmail.readonly' doesn't allow modifying emails
+      // gmail.modify scope is required — existing connections with gmail.readonly need to re-authorize
       // The email has been processed and stored successfully
+      return { markedAsRead: false };
     }
   } else {
     console.log(`ℹ️ [PriorityEmailProcessor] Skipped marking email as read (shouldMarkAsRead=false): ${messageId}`);
+    return { markedAsRead: false };
   }
 }
 

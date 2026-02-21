@@ -254,36 +254,56 @@ export class SyncExecutor {
 
       console.log(`📬 Found ${messageIds.length} emails`);
 
-      // Step 5: Skip messages already stored
-      const { data: existingEmails } = await (supabaseAdmin as any)
+      // Step 5: Categorise emails — new (not yet fetched) vs already fetched but unprocessed
+      const { data: existingFetched } = await (supabaseAdmin as any)
         .from(TABLE_EMAILS_FETCHED)
-        .select('message_id')
+        .select('id, message_id, processed_id, rejected_id')
         .eq('user_id', connection.user_id)
         .eq('google_user_id', connection.google_user_id)
         .in('message_id', messageIds);
 
-      const existingIds = new Set(existingEmails?.map((e: any) => e.message_id) || []);
-      const newMessageIds = messageIds.filter(id => !existingIds.has(id));
+      const existingFetchedMap = new Map(
+        (existingFetched || []).map((e: any) => [e.message_id, e])
+      );
 
-      console.log(`🆕 ${newMessageIds.length} new emails to sync`);
+      const newMessageIds = messageIds.filter(id => !existingFetchedMap.has(id));
+      const unprocessedExistingDbIds: string[] = (existingFetched || [])
+        .filter((e: any) => !e.processed_id && !e.rejected_id)
+        .map((e: any) => e.id);
 
-      if (newMessageIds.length === 0) {
+      console.log(`🆕 ${newMessageIds.length} new emails to fetch, 🔁 ${unprocessedExistingDbIds.length} already-fetched but unprocessed`);
+
+      // Step 6: Fetch and store new messages
+      let newEmailDbIds: string[] = [];
+      if (newMessageIds.length > 0) {
+        const { fetched, upserted } = await fetchAndStoreMessages(
+          accessToken,
+          newMessageIds,
+          connection
+        );
+        result.emails_synced = upserted;
+        console.log(`📦 Stored ${upserted}/${fetched} emails`);
+
+        const { data: newEmails } = await (supabaseAdmin as any)
+          .from(TABLE_EMAILS_FETCHED)
+          .select('id')
+          .eq('user_id', connection.user_id)
+          .eq('google_user_id', connection.google_user_id)
+          .in('message_id', newMessageIds);
+        newEmailDbIds = (newEmails || []).map((e: any) => e.id);
+      }
+
+      // Step 7: Process all unprocessed emails (new + existing unprocessed)
+      const allDbIdsToProcess = [...newEmailDbIds, ...unprocessedExistingDbIds];
+
+      if (allDbIdsToProcess.length === 0) {
+        console.log('✅ All emails already processed, nothing to do');
         result.success = true;
         return result;
       }
 
-      // Step 6: Fetch and store new messages
-      const { fetched, upserted } = await fetchAndStoreMessages(
-        accessToken,
-        newMessageIds,
-        connection
-      );
-      result.emails_synced = upserted;
-      console.log(`📦 Stored ${upserted}/${fetched} emails`);
-
-      // Step 7: Process emails with AI
-      console.log(`🤖 Processing ${result.emails_synced} emails with AI...`);
-      const processedTransactions = await this.processNewEmails(newMessageIds, connection.user_id);
+      console.log(`🤖 Processing ${allDbIdsToProcess.length} emails with AI...`);
+      const processedTransactions = await this.processEmailsByDbIds(allDbIdsToProcess, connection.user_id);
       result.transactions_processed = processedTransactions.length;
       console.log(`✅ Processed ${result.transactions_processed} transactions`);
 
@@ -322,14 +342,12 @@ export class SyncExecutor {
   }
 
   /**
-   * Process newly synced emails with AI
+   * Process emails by Gmail message IDs (used by executeAutoSync)
    */
   private async processNewEmails(
     emailIds: string[],
     userId: string
   ): Promise<any[]> {
-    const processedTransactions: any[] = [];
-
     // Get email row IDs from message IDs
     const { data: emails } = await supabaseAdmin
       .from(TABLE_EMAILS_FETCHED)
@@ -338,24 +356,38 @@ export class SyncExecutor {
       .in('message_id', emailIds);
 
     if (!emails || emails.length === 0) {
-      return processedTransactions;
+      return [];
     }
 
-    for (const email of emails) {
+    return this.processEmailsByDbIds(
+      emails.map((e: any) => e.id),
+      userId
+    );
+  }
+
+  /**
+   * Process emails by their fb_emails_fetched DB UUIDs.
+   * Skips any that are already processed (processed_id IS NOT NULL) — enforced by EmailProcessor.
+   */
+  private async processEmailsByDbIds(
+    dbIds: string[],
+    userId: string
+  ): Promise<any[]> {
+    const processedTransactions: any[] = [];
+
+    for (const dbId of dbIds) {
       try {
-        // Process email with AI
         const result = await this.emailProcessor.processEmails({
-          emailId: (email as any).id,
+          emailId: dbId,
           userId: userId,
           batchSize: 1,
         });
 
         if (result.success && result.successCount > 0) {
-          // Fetch the created transaction
           const { data: transaction } = await (supabaseAdmin as any)
             .from(TABLE_EMAILS_PROCESSED)
             .select('*')
-            .eq('email_row_id', (email as any).id)
+            .eq('email_row_id', dbId)
             .order('created_at', { ascending: false })
             .limit(1)
             .single();
@@ -365,7 +397,7 @@ export class SyncExecutor {
           }
         }
       } catch (error: any) {
-        console.error(`Failed to process email ${(email as any).id}:`, error);
+        console.error(`Failed to process email ${dbId}:`, error);
       }
     }
 

@@ -117,8 +117,8 @@ export class EmailProcessor {
       date: email.internal_date,
     });
 
-    // Parse HTML content if needed
-    let plainBody = email.plain_body || '';
+    // Parse HTML content if needed — fall back to snippet if plain_body is missing
+    let plainBody = email.plain_body || email.snippet || '';
 
     // Check if the content is HTML and parse it to clean text
     if (plainBody.includes('<') && plainBody.includes('>')) {
