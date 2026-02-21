@@ -227,9 +227,9 @@ export class SyncExecutor {
         }
       }
 
-      // Step 2: Fixed 24-hour sync window
-      const syncFrom = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      console.log(`📅 Daily sync window: last 24h from ${syncFrom.toISOString()}`);
+      // Step 2: Fixed 48-hour sync window
+      const syncFrom = new Date(Date.now() - 48 * 60 * 60 * 1000);
+      console.log(`📅 Daily sync window: last 48h from ${syncFrom.toISOString()}`);
 
       // Step 3: Build Gmail query — time filter + sender allowlist
       const timeQuery = `after:${Math.floor(syncFrom.getTime() / 1000)}`;
