@@ -7,22 +7,17 @@ import {
 } from '@/lib/constants/database';
 import {
   listMessages,
-  getMessage,
-  getMessageRaw,
-  getEnhancedMessage,
   refreshAccessToken,
-  extractEmailFromHeaders,
-  extractSubjectFromHeaders,
-  extractToAddressesFromHeaders,
-  extractPlainTextBody,
-  parseRawEmailContent,
-  validateEmailContent
 } from '@/lib/gmail';
-import { 
-  ManualSyncRequest, 
-  ManualSyncResponse, 
-  EmailPublic 
+import { fetchAndStoreMessages } from '@/lib/gmail/email-storage';
+import {
+  ManualSyncRequest,
+  ManualSyncResponse,
+  EmailPublic
 } from '@/types';
+
+/** Refresh tokens this many milliseconds before actual expiry (Bug 4 fix). */
+const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000; // 5 minutes
 
 export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) => {
   if (req.method !== 'POST') {
@@ -66,25 +61,33 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
 
     let accessToken = (connection as any).access_token;
 
-    // Check if token needs refresh
+    // Check if token needs refresh.
+    // Bug 4 fix: refresh 5 minutes before actual expiry to avoid mid-sync 401s.
     const tokenExpiry = new Date((connection as any).token_expiry);
-    const now = new Date();
-    if (tokenExpiry <= now) {
+    if (tokenExpiry <= new Date(Date.now() + TOKEN_REFRESH_BUFFER_MS)) {
       try {
         const newTokens = await refreshAccessToken((connection as any).refresh_token);
         accessToken = newTokens.access_token!;
 
-        // Set token expiry to 1 year from now
-        const newExpiry = new Date();
-        newExpiry.setFullYear(newExpiry.getFullYear() + 1);
+        // Bug 1 fix: use the actual expiry Google returns instead of a fake +1 year.
+        // expiry_date is an epoch-ms timestamp; fall back to expires_in (seconds) if absent.
+        const newExpiry = newTokens.expiry_date
+          ? new Date(newTokens.expiry_date)
+          : new Date(Date.now() + (newTokens.expires_in ?? 3600) * 1000);
+
+        // Bug 2 fix: persist a new refresh_token if Google issued one (token rotation).
+        const tokenUpdate: Record<string, string> = {
+          access_token: accessToken,
+          token_expiry: newExpiry.toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        if (newTokens.refresh_token) {
+          tokenUpdate.refresh_token = newTokens.refresh_token;
+        }
 
         await (supabaseAdmin as any)
           .from(TABLE_GMAIL_CONNECTIONS)
-          .update({
-            access_token: accessToken,
-            token_expiry: newExpiry.toISOString(),
-            updated_at: new Date().toISOString(),
-          })
+          .update(tokenUpdate)
           .eq('id', connection_id);
       } catch (refreshError) {
         console.error('Token refresh error:', refreshError);
@@ -163,70 +166,17 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     const existingMessageIds = new Set(existingMessages.map((m: any) => m.message_id));
     const missingIds = pageIds.filter(id => !existingMessageIds.has(id));
 
-    let fetchedCount = 0;
-    let upsertCount = 0;
-
-    // Step 4: Fetch missing messages from Gmail using enhanced fetching
-    for (const messageId of missingIds) {
-      try {
-        console.log(`📧 Fetching message ${messageId} with enhanced method...`);
-
-        // Use enhanced message fetching for better content extraction
-        const enhancedResult = await getEnhancedMessage(accessToken, messageId);
-        fetchedCount++;
-
-        // Extract email data from the enhanced result
-        const headers = enhancedResult.message.payload?.headers || [];
-        const fromAddress = extractEmailFromHeaders(headers);
-        const subject = extractSubjectFromHeaders(headers);
-        const toAddresses = extractToAddressesFromHeaders(headers);
-        const plainBody = enhancedResult.content;
-
-        console.log(`📊 Enhanced fetch results for ${messageId}:`, {
-          strategy: enhancedResult.strategy,
-          contentLength: enhancedResult.content?.length || 0,
-          isValid: enhancedResult.validation.isValid,
-          hasTransaction: enhancedResult.validation.hasTransaction,
-          issues: enhancedResult.validation.issues
-        });
-
-        // Convert Gmail internalDate (ms) to UTC timestamp
-        const internalDate = enhancedResult.message.internalDate
-          ? new Date(parseInt(enhancedResult.message.internalDate)).toISOString()
-          : null;
-
-        // Step 5: Upsert into fb_emails
-        const { error: upsertError } = await (supabaseAdmin as any)
-          .from(TABLE_EMAILS_FETCHED)
-          .upsert({
-            user_id: user.id,
-            google_user_id: (connection as any).google_user_id,
-            connection_id: (connection as any).id,
-            email_address: connection.email_address,
-            message_id: messageId,
-            thread_id: enhancedResult.message.threadId || '',
-            from_address: fromAddress,
-            to_addresses: toAddresses,
-            subject,
-            snippet: enhancedResult.message.snippet,
-            internal_date: internalDate,
-            plain_body: plainBody,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }, {
-            onConflict: 'user_id,google_user_id,message_id',
-            ignoreDuplicates: false,
-          });
-
-        if (upsertError) {
-          console.error('Upsert error for message', messageId, ':', upsertError);
-        } else {
-          upsertCount++;
-        }
-      } catch (fetchError) {
-        console.error('Error fetching message', messageId, ':', fetchError);
+    // Step 4 + 5: Fetch missing messages from Gmail and store them.
+    const { fetched: fetchedCount, upserted: upsertCount } = await fetchAndStoreMessages(
+      accessToken,
+      missingIds,
+      {
+        id: (connection as any).id,
+        user_id: user.id,
+        google_user_id: (connection as any).google_user_id,
+        email_address: (connection as any).email_address,
       }
-    }
+    );
 
     // Update last sync time
     await (supabaseAdmin as any)

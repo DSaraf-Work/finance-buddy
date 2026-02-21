@@ -2,6 +2,7 @@
 
 import { supabaseAdmin } from '../supabase';
 import { listMessages, refreshAccessToken } from '../gmail';
+import { fetchAndStoreMessages } from '../gmail/email-storage';
 import { EmailProcessor } from '../email-processing/processor';
 import { SyncResult, GmailConnection } from './types';
 import {
@@ -9,6 +10,9 @@ import {
   TABLE_EMAILS_PROCESSED,
   TABLE_GMAIL_CONNECTIONS
 } from '@/lib/constants/database';
+
+/** Refresh tokens this many milliseconds before actual expiry (Bug 4 fix). */
+const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000; // 5 minutes
 
 export class SyncExecutor {
   private emailProcessor = new EmailProcessor();
@@ -29,25 +33,35 @@ export class SyncExecutor {
       console.log(`🔄 Starting auto-sync for connection ${connection.id}`);
 
       // Step 1: Refresh token if needed
+      // Bug 4 fix: refresh 5 minutes before actual expiry to avoid mid-sync 401s.
       let accessToken = connection.access_token;
-      if (new Date(connection.token_expiry) <= new Date()) {
+      if (new Date(connection.token_expiry) <= new Date(Date.now() + TOKEN_REFRESH_BUFFER_MS)) {
         try {
           console.log('🔑 Refreshing access token...');
           // refreshAccessToken now has built-in retry logic
           const newTokens = await refreshAccessToken(connection.refresh_token);
           accessToken = newTokens.access_token!;
 
-          // Set token expiry to 1 year from now
-          const newExpiry = new Date();
-          newExpiry.setFullYear(newExpiry.getFullYear() + 1);
+          // Bug 1 fix: use the actual expiry Google returns instead of a fake +1 year.
+          // expiry_date is an epoch-ms timestamp; fall back to expires_in (seconds) if absent.
+          const newExpiry = newTokens.expiry_date
+            ? new Date(newTokens.expiry_date)
+            : new Date(Date.now() + (newTokens.expires_in ?? 3600) * 1000);
+
+          // Bug 2 fix: persist a new refresh_token if Google issued one (token rotation).
+          const tokenUpdate: Record<string, string> = {
+            access_token: accessToken,
+            token_expiry: newExpiry.toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          if (newTokens.refresh_token) {
+            tokenUpdate.refresh_token = newTokens.refresh_token;
+          }
 
           // Update token in database
           await (supabaseAdmin as any)
             .from(TABLE_GMAIL_CONNECTIONS)
-            .update({
-              access_token: accessToken,
-              token_expiry: newExpiry.toISOString(),
-            })
+            .update(tokenUpdate)
             .eq('id', connection.id);
         } catch (refreshError) {
           console.error('❌ Token refresh failed:', refreshError);
@@ -119,26 +133,18 @@ export class SyncExecutor {
         return result;
       }
 
-      // Step 6: Fetch and store new messages (using existing manual-sync logic)
-      // We'll call the existing manual-sync endpoint internally
-      const syncResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/gmail/manual-sync`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          connection_id: connection.id,
-          user_id: connection.user_id,
-          message_ids: newMessageIds,
-        }),
-      });
-
-      if (!syncResponse.ok) {
-        throw new Error('Failed to sync emails via manual-sync endpoint');
-      }
-
-      const syncData = await syncResponse.json();
-      result.emails_synced = syncData.synced || newMessageIds.length;
+      // Step 6: Fetch and store new messages directly.
+      // Bug 3 fix: previously called the manual-sync HTTP endpoint here, which always
+      // failed because (a) it requires session auth cookies the cron job doesn't have,
+      // and (b) the payload format didn't match what manual-sync expected.
+      // Now we call the shared fetchAndStoreMessages utility directly.
+      const { fetched, upserted } = await fetchAndStoreMessages(
+        accessToken,
+        newMessageIds,
+        connection
+      );
+      result.emails_synced = upserted;
+      console.log(`📦 Stored ${upserted}/${fetched} emails`);
 
       // Step 7: Process emails with AI immediately
       console.log(`🤖 Processing ${result.emails_synced} emails with AI...`);

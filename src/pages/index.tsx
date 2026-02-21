@@ -179,9 +179,15 @@ const HomePage: NextPage = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
         // Reload dashboard data after sync
         await loadDashboardData();
-        setLastSyncTime(new Date());
+        // Only update "Last sync" when the sync actually succeeded.
+        // The API returns HTTP 200 even on invalid_grant failures, so
+        // check the success field — not just the HTTP status.
+        if (data.success) {
+          setLastSyncTime(new Date());
+        }
       }
     } catch (error) {
       console.error('Failed to sync:', error);
