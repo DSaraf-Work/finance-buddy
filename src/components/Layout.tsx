@@ -322,13 +322,6 @@ export function Layout({ children, title, description, pageTitle: pageTitleProp,
                   </>
                 )}
 
-                {/* Page-level actions — shown in nav on mobile */}
-                {headerActions && (
-                  <div className="lg:hidden flex items-center gap-2">
-                    {headerActions}
-                  </div>
-                )}
-
                 {/* Menu Button - 44x44, borderRadius 14px, gap 4px (matching /txn) */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

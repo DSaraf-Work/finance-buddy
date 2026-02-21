@@ -387,7 +387,8 @@ export default function TransactionsPage() {
         pageTitle="Transactions"
         pageIcon="💰"
         headerActions={
-          <div className="flex items-center gap-2">
+          /* Desktop page header actions — hidden on mobile (moved to inline content bar) */
+          <div className="hidden lg:flex items-center gap-2">
             {isManualTransactionsEnabled() && (
               <button
                 type="button"
@@ -405,16 +406,7 @@ export default function TransactionsPage() {
               onClearFilters={handleClearFilters}
               totalCount={pagination.total}
             />
-            <span
-              style={{
-                fontSize: '12px',
-                color: 'rgba(255,255,255,0.35)',
-                fontWeight: '600',
-                background: 'rgba(255,255,255,0.06)',
-                padding: '4px 10px',
-                borderRadius: '8px'
-              }}
-            >
+            <span className="text-xs font-semibold text-foreground/35 bg-foreground/[0.06] px-2.5 py-1 rounded-lg">
               {pagination.total}
             </span>
           </div>
@@ -435,6 +427,30 @@ export default function TransactionsPage() {
         >
           {/* Main Content - listContainer - padding 8px (matching /txn) */}
           <main style={{ padding: '8px' }}>
+            {/* Mobile filter/add bar — scrolls with content, not in sticky header */}
+            <div className="lg:hidden flex items-center gap-2 px-1 mb-4 pt-1">
+              {isManualTransactionsEnabled() && (
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-primary/15 hover:bg-primary/25 text-primary text-[12px] font-semibold transition-colors shrink-0"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add
+                </button>
+              )}
+              <TransactionFilterModal
+                filters={filters}
+                onApplyFilters={handleApplyFilters}
+                onClearFilters={handleClearFilters}
+                totalCount={pagination.total}
+              />
+              <div className="flex-1" />
+              <span className="text-[11px] font-semibold text-foreground/30 bg-foreground/[0.05] px-2.5 py-1 rounded-full shrink-0">
+                {pagination.total}
+              </span>
+            </div>
+
             {loading && <TxnLoadingSkeleton count={8} />}
             {error && !loading && <TxnErrorState error={error} onRetry={() => searchTransactions(1, true)} />}
             {!loading && !error && transactions.length === 0 && <TxnEmptyState />}
