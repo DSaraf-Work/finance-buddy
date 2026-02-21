@@ -26,6 +26,7 @@ import {
   Users,
   ScanLine,
   Trash2,
+  RefreshCw,
 } from 'lucide-react';
 import {
   Dialog,
@@ -86,6 +87,7 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
   const [splitLoading, setSplitLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isReprocessing, setIsReprocessing] = useState(false);
   const subTransactionSectionRef = useRef<HTMLDivElement>(null);
   const [receiptPreview, setReceiptPreview] = useState<{ signed_url: string; store_name: string | null } | null>(null);
 
@@ -306,6 +308,35 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
     setIsReceiptModalOpen(false);
     setShowSplitEditor(true);
   }, []);
+
+  // Handler for re-running OCR on the stored receipt image
+  const handleReprocessReceipt = useCallback(async () => {
+    setIsReprocessing(true);
+    try {
+      const response = await fetch(`/api/transactions/${formData.id}/receipt/reprocess`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to reprocess receipt');
+
+      // Map ParsedReceiptItem[] → EditableItem[]
+      const items: EditableItem[] = (data.items || []).map((item: any) => ({
+        id: crypto.randomUUID(),
+        amount: item.total_price.toFixed(2),
+        category: item.suggested_category || 'other',
+        merchant_name: item.item_name,
+        user_notes: item.unit ? `${item.quantity} ${item.unit}` : (item.quantity > 1 ? `×${item.quantity}` : ''),
+      }));
+
+      setReceiptItems(items);
+      setShowSplitEditor(true);
+    } catch (err) {
+      console.error('Reprocess failed:', err);
+    } finally {
+      setIsReprocessing(false);
+    }
+  }, [formData.id, setReceiptItems, setShowSplitEditor]);
 
   // Handler for when Splitwise expense is created
   const handleSplitwiseExpenseCreated = async (expenseId: string) => {
@@ -625,26 +656,39 @@ export default function TransactionModal({ transaction, isOpen, onClose, onSave,
 
             {/* Receipt Preview */}
             {receiptPreview && (
-              <a
-                href={receiptPreview.signed_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 bg-muted/30 border border-border rounded-lg p-3 hover:bg-muted/50 transition-colors"
-                title="View receipt"
-              >
-                <img
-                  src={receiptPreview.signed_url}
-                  alt="Receipt"
-                  className="h-12 w-auto rounded object-cover shrink-0"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">
-                    {receiptPreview.store_name ? `Receipt — ${receiptPreview.store_name}` : 'View Receipt'}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Click to open full image</p>
-                </div>
-              </a>
+              <div className="flex items-center gap-2">
+                <a
+                  href={receiptPreview.signed_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center gap-3 bg-muted/30 border border-border rounded-lg p-3 hover:bg-muted/50 transition-colors"
+                  title="View receipt"
+                >
+                  <img
+                    src={receiptPreview.signed_url}
+                    alt="Receipt"
+                    className="h-12 w-auto rounded object-cover shrink-0"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-foreground truncate">
+                      {receiptPreview.store_name ? `Receipt — ${receiptPreview.store_name}` : 'View Receipt'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Click to open full image</p>
+                  </div>
+                </a>
+                <button
+                  type="button"
+                  onClick={handleReprocessReceipt}
+                  disabled={isReprocessing}
+                  title="Re-scan receipt to pre-fill splits"
+                  className="shrink-0 w-10 h-10 flex items-center justify-center bg-primary/10 hover:bg-primary/20 rounded-full transition-colors disabled:opacity-50"
+                >
+                  {isReprocessing
+                    ? <Loader2 className="animate-spin h-4 w-4 text-primary" />
+                    : <RefreshCw className="h-4 w-4 text-primary" />}
+                </button>
+              </div>
             )}
 
             {/* Additional Details Section */}

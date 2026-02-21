@@ -8,6 +8,7 @@
 
 import { memo, useState, useCallback, useEffect, useRef } from 'react';
 import { Loader2, PenLine, ScanLine, X } from 'lucide-react';
+import type { ParsedReceiptItem } from '@/lib/receipt/types';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -74,6 +75,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
   const [isScanning, setIsScanning] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<{ receipt_id: string; signed_url: string } | null>(null);
+  const [receiptItems, setReceiptItems] = useState<ParsedReceiptItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when modal opens
@@ -82,6 +84,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
       setForm({ ...EMPTY_FORM, txn_time: todayLocalDatetime() });
       setErrorMsg(null);
       setReceiptPreview(null);
+      setReceiptItems([]);
     }
   }, [isOpen]);
 
@@ -91,6 +94,10 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
     },
     []
   );
+
+  const handleRemoveItem = useCallback((idx: number) => {
+    setReceiptItems(prev => prev.filter((_, i) => i !== idx));
+  }, []);
 
   const handleFileSelected = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -127,6 +134,9 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
       if (data.receipt_id && data.signed_url) {
         setReceiptPreview({ receipt_id: data.receipt_id, signed_url: data.signed_url });
       }
+
+      // Capture line items for sub-transaction seeding
+      setReceiptItems(Array.isArray(data.items) ? data.items : []);
 
       // Build datetime-local value from extracted date + current time
       const receiptDate = fields.date
@@ -198,14 +208,40 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
           throw new Error(data.error || 'Failed to create transaction');
         }
 
-        onCreated(data.transaction as Transaction);
+        const newTransaction = data.transaction as Transaction;
+
+        // If we have receipt items, create sub-transactions before notifying parent
+        // (so TransactionModal auto-opens with sub-transactions already populated)
+        if (receiptItems.length >= 2) {
+          const subItems = receiptItems.map(item => ({
+            amount: item.total_price,
+            category: item.suggested_category ?? null,
+            merchant_name: item.item_name,
+            user_notes: item.unit
+              ? `${item.quantity} ${item.unit}`
+              : item.quantity > 1 ? `×${item.quantity}` : null,
+          }));
+          try {
+            await fetch(`/api/transactions/${newTransaction.id}/sub-transactions`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ items: subItems }),
+            });
+          } catch (err) {
+            // Non-fatal: transaction created; user can split manually in TransactionModal
+            console.error('Failed to create sub-transactions from receipt:', err);
+          }
+        }
+
+        onCreated(newTransaction);
       } catch (err) {
         setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
       } finally {
         setIsLoading(false);
       }
     },
-    [form, onCreated, receiptPreview]
+    [form, onCreated, receiptPreview, receiptItems]
   );
 
   const inputClass =
@@ -254,7 +290,7 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
             </div>
             <button
               type="button"
-              onClick={() => setReceiptPreview(null)}
+              onClick={() => { setReceiptPreview(null); setReceiptItems([]); }}
               className="text-muted-foreground hover:text-foreground transition-colors"
               title="Remove receipt"
             >
@@ -266,6 +302,49 @@ export const CreateTransactionModal = memo(function CreateTransactionModal({
         {/* Scrollable body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
           <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4">
+
+            {/* Receipt items — shown after a receipt scan */}
+            {receiptItems.length > 0 && (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  {receiptItems.length} items · will auto-split on save
+                </p>
+                <div className="flex flex-col rounded-lg border border-border overflow-hidden">
+                  {receiptItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 px-3 py-2 bg-muted/20 hover:bg-muted/30 transition-colors border-b border-border/50 last:border-b-0"
+                    >
+                      <span className="flex-1 text-xs text-foreground truncate">
+                        {item.item_name}
+                        {item.is_tax_line && (
+                          <span className="text-muted-foreground ml-1.5 text-[10px]">tax</span>
+                        )}
+                        {item.is_discount_line && (
+                          <span className="text-green-400 ml-1.5 text-[10px]">discount</span>
+                        )}
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground shrink-0">
+                        ₹{item.total_price.toFixed(2)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(idx)}
+                        className="shrink-0 text-muted-foreground hover:text-destructive transition-colors"
+                        title="Remove item"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                {receiptItems.length === 1 && (
+                  <p className="text-xs text-amber-400">
+                    Need at least 2 items to split — add another or remove to skip splitting
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Amount + Direction row */}
             <div className="flex gap-3">

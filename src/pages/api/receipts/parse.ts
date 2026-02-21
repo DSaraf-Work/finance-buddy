@@ -3,12 +3,12 @@
  *
  * Stateless-ish receipt scanning for new manual transactions.
  * Accepts a multipart image upload, processes it, runs OCR, persists the image
- * to Supabase Storage + fb_receipts (with transaction_id=null), and returns
- * extracted top-level transaction fields + receipt_id + signed URL so the UI
- * can show a thumbnail and link the receipt after transaction creation.
+ * to Supabase Storage + fb_receipts (with transaction_id=null), and returns:
+ *   - fields: ParsedTransactionFields  — top-level fields for form pre-fill
+ *   - items: ParsedReceiptItem[]       — line items for sub-transaction seeding
  *
  * Image pipeline: HEIC→JPEG → Sharp resize/grayscale/compress → Storage → OCR
- * Returns: { receipt_id, signed_url, fields: ParsedTransactionFields }
+ * Returns: { receipt_id, signed_url, fields, items }
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -17,8 +17,9 @@ import { readFileSync } from 'fs';
 import sharp from 'sharp';
 import { withAuth } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
-import { TABLE_RECEIPTS } from '@/lib/constants/database';
-import { parseTransactionFields, ReceiptParseError } from '@/lib/receipt/parser';
+import { TABLE_RECEIPTS, TABLE_RECEIPT_ITEMS } from '@/lib/constants/database';
+import { parseReceiptWithOpenRouter, ReceiptParseError } from '@/lib/receipt/parser';
+import type { ParsedTransactionFields } from '@/lib/receipt/types';
 
 // Disable Next.js body parser — formidable handles multipart
 export const config = { api: { bodyParser: false } };
@@ -114,10 +115,10 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     return res.status(500).json({ error: 'Failed to upload receipt image' });
   }
 
-  // OCR: extract top-level transaction fields
-  let fields;
+  // OCR: full parse to get both top-level fields AND line items
+  let parsed;
   try {
-    fields = await parseTransactionFields({ fileBuffer, mimeType: effectiveMime });
+    parsed = await parseReceiptWithOpenRouter({ fileBuffer, mimeType: effectiveMime, parentAmount: null });
   } catch (err) {
     // Clean up orphaned storage file on OCR failure
     await supabaseAdmin.storage.from('receipts').remove([storagePath]);
@@ -131,9 +132,19 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       }
       return res.status(500).json({ error: err.message });
     }
-    console.error('Transaction fields parsing failed:', err);
+    console.error('Receipt parsing failed:', err);
     return res.status(500).json({ error: 'Failed to parse receipt' });
   }
+
+  // Derive top-level transaction fields from full parse result
+  const fields: ParsedTransactionFields = {
+    store_name: parsed.store_name,
+    total_amount: parsed.total_amount,
+    currency: parsed.currency,
+    date: parsed.receipt_date,
+    category: parsed.items.find(i => !i.is_tax_line && !i.is_discount_line)?.suggested_category ?? null,
+    direction: 'debit',
+  };
 
   // Save receipt record with transaction_id=null (will be linked after transaction creation)
   const receiptRow = {
@@ -144,12 +155,17 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     original_filename: uploadedFile.originalFilename || 'receipt.jpg',
     file_type: detectedMime,
     file_size_bytes: uploadedFile.size ?? null,
-    store_name: fields.store_name,
-    receipt_date: fields.date,
-    total_amount: fields.total_amount,
-    currency: fields.currency,
+    store_name: parsed.store_name,
+    receipt_date: parsed.receipt_date,
+    receipt_number: parsed.receipt_number,
+    subtotal: parsed.subtotal,
+    tax_amount: parsed.tax_amount,
+    discount_amount: parsed.discount_amount,
+    total_amount: parsed.total_amount,
+    currency: parsed.currency,
+    raw_ocr_response: JSON.stringify(parsed.raw),
     parsing_status: 'completed' as const,
-    confidence: null,
+    confidence: parsed.confidence,
     ai_model_used: 'anthropic/claude-haiku-4.5',
   };
 
@@ -162,6 +178,29 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     return res.status(500).json({ error: 'Failed to save receipt' });
   }
 
+  // Bulk save line items into fb_receipt_items
+  if (parsed.items.length > 0) {
+    const itemRows = parsed.items.map((item, idx) => ({
+      receipt_id: receiptId,
+      user_id: user.id,
+      item_order: idx,
+      item_name: item.item_name,
+      quantity: item.quantity,
+      unit: item.unit,
+      unit_price: item.unit_price,
+      total_price: item.total_price,
+      suggested_category: item.suggested_category,
+      is_tax_line: item.is_tax_line,
+      is_discount_line: item.is_discount_line,
+    }));
+
+    const { error: itemsError } = await (supabaseAdmin as any).from(TABLE_RECEIPT_ITEMS).insert(itemRows);
+    if (itemsError) {
+      console.error('Failed to save receipt items:', itemsError);
+      // Non-fatal: receipt is saved, items failed
+    }
+  }
+
   // Generate a 1-hour signed URL for the frontend to display as thumbnail
   const { data: signedData, error: signError } = await supabaseAdmin.storage
     .from('receipts')
@@ -170,20 +209,21 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
   if (signError || !signedData?.signedUrl) {
     console.error('Failed to generate signed URL:', signError);
     // Non-fatal: return without signed URL (thumbnail won't show but OCR still worked)
-    return res.status(200).json({ receipt_id: receiptId, signed_url: null, fields });
+    return res.status(200).json({ receipt_id: receiptId, signed_url: null, fields, items: parsed.items });
   }
 
-  console.log('✅ Transaction fields extracted from receipt:', {
+  console.log('✅ Receipt parsed:', {
     receipt_id: receiptId,
     store_name: fields.store_name,
     total_amount: fields.total_amount,
+    item_count: parsed.items.length,
     category: fields.category,
-    direction: fields.direction,
   });
 
   return res.status(200).json({
     receipt_id: receiptId,
     signed_url: signedData.signedUrl,
     fields,
+    items: parsed.items,
   });
 });
