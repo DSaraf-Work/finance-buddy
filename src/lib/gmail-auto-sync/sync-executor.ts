@@ -168,6 +168,136 @@ export class SyncExecutor {
   }
 
   /**
+   * Execute daily sync for a connection, scoped to the last 12 hours and filtered
+   * to whitelisted senders only.
+   */
+  async executeDailySync(connection: GmailConnection, whitelistedSenders: string[]): Promise<SyncResult> {
+    const result: SyncResult = {
+      success: false,
+      emails_found: 0,
+      emails_synced: 0,
+      transactions_processed: 0,
+      errors: [],
+    };
+
+    try {
+      console.log(`🔄 Starting daily sync for connection ${connection.id}`);
+
+      // Step 1: Refresh token if needed (same logic as executeAutoSync)
+      let accessToken = connection.access_token;
+      if (new Date(connection.token_expiry) <= new Date(Date.now() + TOKEN_REFRESH_BUFFER_MS)) {
+        try {
+          console.log('🔑 Refreshing access token...');
+          const newTokens = await refreshAccessToken(connection.refresh_token);
+          accessToken = newTokens.access_token!;
+
+          const newExpiry = newTokens.expiry_date
+            ? new Date(newTokens.expiry_date)
+            : new Date(Date.now() + (newTokens.expires_in ?? 3600) * 1000);
+
+          const tokenUpdate: Record<string, string> = {
+            access_token: accessToken,
+            token_expiry: newExpiry.toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          if (newTokens.refresh_token) {
+            tokenUpdate.refresh_token = newTokens.refresh_token;
+          }
+
+          await (supabaseAdmin as any)
+            .from(TABLE_GMAIL_CONNECTIONS)
+            .update(tokenUpdate)
+            .eq('id', connection.id);
+        } catch (refreshError) {
+          const { isInvalidGrantError, parseGmailOAuthError } = await import('../gmail/error-handler');
+          const { resetGmailConnection } = await import('../gmail/connection-reset');
+
+          const parsedError = parseGmailOAuthError(refreshError);
+
+          if (isInvalidGrantError(refreshError)) {
+            console.log('🔒 Invalid grant error, resetting connection...');
+            await resetGmailConnection(connection.id, refreshError);
+            result.errors.push('Gmail connection expired. Please reconnect your account.');
+            return result;
+          }
+
+          console.error('⚠️ Token refresh failed:', parsedError.message);
+          result.errors.push(`Token refresh failed: ${parsedError.message}`);
+          return result;
+        }
+      }
+
+      // Step 2: Fixed 12-hour sync window
+      const syncFrom = new Date(Date.now() - 12 * 60 * 60 * 1000);
+      console.log(`📅 Daily sync window: last 12h from ${syncFrom.toISOString()}`);
+
+      // Step 3: Build Gmail query — time filter + sender allowlist
+      const timeQuery = `after:${Math.floor(syncFrom.getTime() / 1000)}`;
+      const senderQuery = whitelistedSenders.map(s => `from:${s}`).join(' OR ');
+      const fullQuery = `${timeQuery} (${senderQuery})`;
+
+      // Step 4: Fetch messages from Gmail
+      console.log(`📧 Fetching emails with query: ${fullQuery}`);
+      const gmailResponse = await listMessages(accessToken, {
+        q: fullQuery,
+        maxResults: 50,
+      });
+
+      const messageIds: string[] = gmailResponse.messages?.map((m: any) => m.id as string) || [];
+      result.emails_found = messageIds.length;
+
+      if (messageIds.length === 0) {
+        console.log('✅ No new emails in daily sync window');
+        result.success = true;
+        return result;
+      }
+
+      console.log(`📬 Found ${messageIds.length} emails`);
+
+      // Step 5: Skip messages already stored
+      const { data: existingEmails } = await (supabaseAdmin as any)
+        .from(TABLE_EMAILS_FETCHED)
+        .select('message_id')
+        .eq('user_id', connection.user_id)
+        .eq('google_user_id', connection.google_user_id)
+        .in('message_id', messageIds);
+
+      const existingIds = new Set(existingEmails?.map((e: any) => e.message_id) || []);
+      const newMessageIds = messageIds.filter(id => !existingIds.has(id));
+
+      console.log(`🆕 ${newMessageIds.length} new emails to sync`);
+
+      if (newMessageIds.length === 0) {
+        result.success = true;
+        return result;
+      }
+
+      // Step 6: Fetch and store new messages
+      const { fetched, upserted } = await fetchAndStoreMessages(
+        accessToken,
+        newMessageIds,
+        connection
+      );
+      result.emails_synced = upserted;
+      console.log(`📦 Stored ${upserted}/${fetched} emails`);
+
+      // Step 7: Process emails with AI
+      console.log(`🤖 Processing ${result.emails_synced} emails with AI...`);
+      const processedTransactions = await this.processNewEmails(newMessageIds, connection.user_id);
+      result.transactions_processed = processedTransactions.length;
+      console.log(`✅ Processed ${result.transactions_processed} transactions`);
+
+      result.success = true;
+      return result;
+
+    } catch (error: any) {
+      console.error(`❌ Daily sync failed for connection ${connection.id}:`, error);
+      result.errors.push(error.message);
+      return result;
+    }
+  }
+
+  /**
    * Calculate sync window from last processed email
    */
   private async calculateSyncWindow(userId: string): Promise<Date> {

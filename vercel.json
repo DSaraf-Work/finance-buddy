@@ -34,6 +34,10 @@
     {
       "path": "/api/cron/receipt-cleanup",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/gmail-daily-sync",
+      "schedule": "0 6 * * *"
     }
   ]
 }
