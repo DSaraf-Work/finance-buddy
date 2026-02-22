@@ -13,7 +13,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
     // List unread notifications within the 3-month window
     const { data, error } = await (supabaseAdmin as any)
       .from('fb_notifications')
-      .select('id, type, title, message, transaction_id, action_url, read, created_at')
+      .select('id, type, title, body, url, metadata, read, created_at')
       .eq('user_id', user.id)
       .gte('created_at', threeMonthsAgo())
       .order('created_at', { ascending: false })
@@ -36,7 +36,7 @@ export default withAuth(async (req: NextApiRequest, res: NextApiResponse, user) 
       .eq('user_id', user.id);
 
     if (transaction_id && typeof transaction_id === 'string') {
-      query = query.eq('transaction_id', transaction_id);
+      query = query.eq('metadata->>transaction_id', transaction_id);
     }
 
     const { error } = await query;

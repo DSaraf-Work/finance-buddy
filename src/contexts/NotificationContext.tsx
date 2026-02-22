@@ -12,9 +12,9 @@ export interface InAppNotification {
   id: string;
   type: string;
   title: string;
-  message: string;
-  transaction_id: string | null;
-  action_url: string | null;
+  body: string | null;
+  url: string | null;
+  metadata: Record<string, unknown> | null;
   read: boolean;
   created_at: string;
 }
@@ -73,7 +73,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   const dismissForTransaction = useCallback(async (transactionId: string) => {
     // Optimistically remove from local state
-    setNotifications(prev => prev.filter(n => n.transaction_id !== transactionId));
+    setNotifications(prev => prev.filter(n => n.metadata?.transaction_id !== transactionId));
     // Delete server-side by transaction_id
     await fetch(`/api/notifications?transaction_id=${encodeURIComponent(transactionId)}`, {
       method: 'DELETE',

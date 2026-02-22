@@ -35,7 +35,7 @@ function NotificationItem({
           {notification.title}
         </p>
         <p className="text-[12px] text-foreground/50 mt-0.5 leading-tight">
-          {notification.message}
+          {notification.body}
         </p>
         <p className="text-[10px] text-foreground/25 mt-1.5 font-medium">
           {formatTimeAgo(notification.created_at)}
@@ -73,8 +73,8 @@ export default memo(function NotificationBell() {
   }, [isOpen]);
 
   const handleNotificationClick = (notification: InAppNotification) => {
-    if (notification.action_url) {
-      router.push(notification.action_url);
+    if (notification.url) {
+      router.push(notification.url);
     }
     setIsOpen(false);
   };

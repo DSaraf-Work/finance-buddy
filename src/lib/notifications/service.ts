@@ -30,13 +30,11 @@ export async function createTransactionNotification(
         user_id: userId,
         type: 'transaction_created',
         title: merchant,
-        message: `${amountDisplay} · ${isExpense ? 'expense' : 'credit'}`,
-        transaction_id: transactionId,
-        action_url: `/transactions?editTxnId=${transactionId}`,
-        action_label: 'View',
+        body: `${amountDisplay} · ${isExpense ? 'expense' : 'credit'}`,
+        url: `/transactions?editTxnId=${transactionId}`,
+        metadata: { transaction_id: transactionId },
         read: false,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
       });
 
     if (error) {
